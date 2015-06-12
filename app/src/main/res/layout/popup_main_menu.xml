@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="236dp"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.0dp"
+        android:background="@drawable/popup_menu_bg"
+        android:orientation="vertical"
+        android:padding="0.33dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="36.67dp"
+            android:background="@color/bgColorType01">
+
+            <ImageView
+                android:id="@+id/imageProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_user" />
+
+            <ImageButton
+                android:id="@+id/buttonLogOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="18dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/button_logout" />
+
+            <TextView
+                android:id="@+id/labelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8.67dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/buttonLogOut"
+                android:layout_toRightOf="@id/imageProfile"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="name"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36.67dp"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="45dp"
+                android:text="포인트 얻기"
+                android:textColor="#2A5E72" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36.67dp"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="45dp"
+                android:text="FAQ"
+                android:textColor="#2A5E72" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36.67dp"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="45dp"
+                android:text="1:1문의"
+                android:textColor="#2A5E72" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36.67dp"
+            android:layout_marginBottom="36.67dp"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="45dp"
+                android:text="탈퇴하기"
+                android:textColor="#2A5E72" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="10.66dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="18dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/menu_point" />
+</FrameLayout>

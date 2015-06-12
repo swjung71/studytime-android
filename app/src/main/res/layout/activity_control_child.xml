@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">\
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/buttonShutdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/checkbox_shutdown" />
+
+        <ImageButton
+            android:id="@+id/buttonChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="91.67dp"
+            android:background="@null"
+            android:src="@drawable/button_chat" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/buttonUse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="23.33dp"
+        android:layout_marginRight="18dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/button_use" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/black_opacity_50">
+
+        <RelativeLayout
+            android:layout_width="142dp"
+            android:layout_height="34.67dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:background="@drawable/img_point">
+
+            <ImageButton
+                android:id="@+id/buttonPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5.67dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/button_point" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/buttonPoint"
+                android:maxLength="3"
+                android:text="99999"
+                android:textColor="@color/white"
+                android:textSize="18.33dp" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/buttonMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:clickable="true"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_menu" />
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="black_opacity_50">#7F000000</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="bgColorType01">#A65EA8</color>
+    <color name="bgColorType02">#0179B8</color>
+    <color name="bgColorType03">#00A8FF</color>
+
+    <color name="lineColorType01">#882B8B</color>
+    <color name="lineColorType02">#0179B8</color>
+
+    <color name="textColorType01">#dfdfdf</color>
+    <color name="textColorType02">#ff7800</color>
+    <color name="textColorType03">#4a4a4a</color>
+
+</resources>

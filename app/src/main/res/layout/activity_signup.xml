@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/labelTitle"
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/bgColorType01"
+        android:gravity="center"
+        android:text="회원가입"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingTop="23.33dp">
+
+            <EditText
+                android:id="@+id/editEmailAddr"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="이메일 주소 (아이디로 사용됩니다.)"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="23.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="비밀번호 (영문, 숫자 조합 6자리 이상)"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/editPasswordAgain"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="23.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="비밀번호를 한번 더 입력하세요."
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/editBirthDate"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="23.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="생년월일 ('-' 없이 압력해 주세요.)"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="23.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="부모님 이름"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8.67dp"
+                android:text="성별"
+                android:textSize="16dp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="8.67dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/box_type_06_bg"
+                    android:button="@null"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="남성"
+                    android:textColor="@color/text_01_selector"
+                    android:textSize="16dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="11dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/box_type_06_bg"
+                    android:button="@null"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="여성"
+                    android:textColor="@color/text_01_selector"
+                    android:textSize="16dp" />
+
+            </RadioGroup>
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_01_selector"
+                android:drawablePadding="5dp"
+                android:text="서비스 이용약관에 동의합니다."
+                android:textColor="#4A4A4A"
+                android:textSize="16dp" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_01_selector"
+                android:drawablePadding="5dp"
+                android:text="개인정보 취급방침에 동의합니다."
+                android:textColor="#4A4A4A"
+                android:textSize="16dp" />
+
+            <Button
+                android:id="@+id/buttonSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/box_type_07_bg"
+                android:gravity="center"
+                android:text="회원가입"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
