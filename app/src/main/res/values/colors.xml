@@ -5,7 +5,7 @@
 
     <color name="black_opacity_50">#7F000000</color>
 
-    <color name="transparent">#00000000</color>
+    <color name="transparent">@android:color/transparent</color>
 
     <color name="bgColorType01">#A65EA8</color>
     <color name="bgColorType02">#0179B8</color>

@@ -22,26 +22,28 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/login_logo" />
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editEmailAddr"
                 android:layout_width="270dp"
                 android:layout_height="46.67dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="52.33dp"
                 android:background="@drawable/box_type_03_bg"
+                android:gravity="center_vertical"
                 android:hint="이메일 주소"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="@color/bgColorType01" />
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPassword"
                 android:layout_width="270dp"
                 android:layout_height="46.67dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="18.67dp"
                 android:background="@drawable/box_type_03_bg"
+                android:gravity="center_vertical"
                 android:hint="Password"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
@@ -79,6 +81,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/buttonFindPwd"
                 android:layout_width="270dp"
                 android:layout_height="46.67dp"
                 android:layout_gravity="center_horizontal"
@@ -88,14 +91,6 @@
                 android:text="비밀번호 찾기"
                 android:textColor="@color/white"
                 android:textSize="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:text="@string/copyright"
-                android:visibility="gone" />
 
         </LinearLayout>
 

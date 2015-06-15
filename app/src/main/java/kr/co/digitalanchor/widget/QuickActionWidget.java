@@ -3,12 +3,10 @@ package kr.co.digitalanchor.widget;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import java.util.ArrayList;
@@ -63,8 +61,9 @@ public abstract class QuickActionWidget extends PopupWindow {
         setFocusable(true);
         setTouchable(true);
         setOutsideTouchable(true);
-        setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        setWidth(LinearLayout.LayoutParams.WRAP_CONTENT);
+        setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
 
         final WindowManager manager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 
@@ -99,11 +98,6 @@ public abstract class QuickActionWidget extends PopupWindow {
     public int getArrowOffsetY() {
 
         return mArrowOffsetY;
-    }
-
-    public void setArrowOffsetY(int offsetY) {
-
-        mArrowOffsetY = offsetY;
     }
 
     protected int getScreenWidth() {
@@ -153,64 +147,9 @@ public abstract class QuickActionWidget extends PopupWindow {
 
     public void show(View anchor) {
 
-        final View contentView = getContentView();
-
-        if (contentView == null) {
-
-            throw new IllegalStateException("You need to set the content view using the setContentView method");
-        }
-
-        contentView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                final int x = (int) event.getX();
-                final int y = (int) event.getY();
-
-                if ((event.getAction() == MotionEvent.ACTION_DOWN) && ((x < 0) || (x >= getWidth()) || (y < 0) || (y >= getHeight()))) {
-
-                    dismiss();
-
-                    return true;
-
-                } else if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-
-                    dismiss();
-
-                    return true;
-
-                } else {
-
-                    return contentView.onTouchEvent(event);
-                }
-            }
-        });
-
-        setBackgroundDrawable(null);
-
-        final int[] loc = mLocation;
-
-        anchor.getLocationOnScreen(loc);
-
-        mRect.set(loc[0], loc[1], loc[0] + anchor.getWidth(), loc[1] + anchor.getHeight());
-
-        if (mIsDirty) {
-
-            clearAllQuickActions();
-
-            populateQuickActions(mQuickActions);
-        }
-
-        onMeasureAndLayout(mRect, contentView);
-
-        if ((mPrivateFlags & MEASURE_AND_LAYOUT_DONE) != MEASURE_AND_LAYOUT_DONE) {
-            throw new IllegalStateException("onMeasureAndLayout() did not set the widget specification by calling"
-                    + " setWidgetSpecs()");
-        }
-
-        showAtLocation(anchor, Gravity.NO_GRAVITY, 0, mPopupY);
+        showAsDropDown(anchor, 0, -10);
     }
+
 
     public void show(View anchor, boolean isMenuClick) {
         this.mIsMenuClick = isMenuClick;

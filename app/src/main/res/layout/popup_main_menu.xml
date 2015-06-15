@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="236dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@color/transparent">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="236dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10.0dp"
         android:background="@drawable/popup_menu_bg"
@@ -54,6 +54,7 @@
         </RelativeLayout>
 
         <FrameLayout
+            android:id="@+id/menuPoint"
             android:layout_width="match_parent"
             android:layout_height="36.67dp"
             android:background="@drawable/menu_item_bg"
@@ -77,6 +78,7 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/menuFAQ"
             android:layout_width="match_parent"
             android:layout_height="36.67dp"
             android:background="@drawable/menu_item_bg"
@@ -100,6 +102,7 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/menuInquiry"
             android:layout_width="match_parent"
             android:layout_height="36.67dp"
             android:background="@drawable/menu_item_bg"
@@ -123,9 +126,9 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/menuWithdraw"
             android:layout_width="match_parent"
             android:layout_height="36.67dp"
-            android:layout_marginBottom="36.67dp"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 

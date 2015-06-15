@@ -5,9 +5,13 @@ package kr.co.digitalanchor.studytime;
  */
 public class StaticValues {
 
+    public static boolean isDebug = true;
+
     /**
      * font file path
      */
     public static String FONT_NANUM_GOTHIC = "fonts/NanumGothic.ttf.mp3";
     public static String Font_NANUM_GOTHIC_BOLD = "fonts/NanumGothicBold.ttf.mp3";
+
+    public static String PREF = "studyTime";
 }

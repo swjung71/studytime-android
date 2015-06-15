@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg">\
+    android:background="@drawable/bg2">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -42,50 +42,68 @@
         android:layout_height="53.33dp"
         android:background="@color/black_opacity_50">
 
-        <RelativeLayout
-            android:layout_width="142dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="34.67dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="18dp"
-            android:background="@drawable/img_point">
+            android:background="@drawable/img_point"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="26.33dp"
+                android:maxLength="3"
+                android:minEms="1"
+                android:paddingLeft="6.67dp"
+                android:singleLine="true"
+                android:text="9934234"
+                android:textColor="@color/white"
+                android:textSize="18.33dp" />
 
             <ImageButton
                 android:id="@+id/buttonPoint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5.67dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/button_point" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@id/buttonPoint"
-                android:maxLength="3"
-                android:text="99999"
-                android:textColor="@color/white"
-                android:textSize="18.33dp" />
+        </LinearLayout>
 
-        </RelativeLayout>
-
-        <ImageView
+        <ImageButton
             android:id="@+id/buttonMenu"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
+            android:background="@null"
             android:clickable="true"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_menu" />
 
     </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/guide"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/buttonClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null" />
+
+    </FrameLayout>
 
 </FrameLayout>

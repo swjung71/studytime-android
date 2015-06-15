@@ -33,8 +33,8 @@
         <activity
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,14 +43,36 @@
 
         </activity>
 
+        <activity
+            android:name=".intro.SplashChildActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".intro.SplashParentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
         <!--
             LoginActivity
 
             부모용/자식용 로그인 (공통?)
          -->
-        <activity android:name=".login.LoginActivity" />
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@android:style/Theme.NoTitleBar" />
 
         <!-- 회원 가입 Activity -->
+
+        <activity android:name=".signup.SignUpActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+
+
         <!-- 부모용 메인 (자녀 목록) Activity -->
         <!-- 자녀 상세 (자녀 목록 다음) Activity -->
         <!-- 부모용 채팅 Activity -->
