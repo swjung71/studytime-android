@@ -4,39 +4,41 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class StringUtils {
-	// convert InputStream to String
-	public static String inputStreamToString(InputStream is) {
+    // convert InputStream to String
+    public static String inputStreamToString(InputStream is) {
 
-		BufferedReader br = null;
-		StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
 
-		String line;
-		try {
+        String line;
+        try {
 
-			br = new BufferedReader(new InputStreamReader(is));
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-		return sb.toString();
+        return sb.toString();
 
-	}
-	
-	 // convert from UTF-8 -> internal Java String format
+    }
+
+    // convert from UTF-8 -> internal Java String format
     public static String convertFromUTF8(String s) {
         String out = null;
         try {
@@ -46,7 +48,7 @@ public class StringUtils {
         }
         return out;
     }
- 
+
     // convert from internal Java String format -> UTF-8
     public static String convertToUTF8(String s) {
         String out = null;
@@ -57,7 +59,7 @@ public class StringUtils {
         }
         return out;
     }
-    
+
     public static boolean containsIgnoreCase(String src, String what) {
         final int length = what.length();
         if (length == 0)
@@ -77,5 +79,16 @@ public class StringUtils {
         }
 
         return false;
+    }
+
+    public static String getCurrentTimeIncludeMs() {
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.getTime();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+        return format.format(cal.getTime());
     }
 }
