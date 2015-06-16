@@ -10,6 +10,7 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
+import kr.co.digitalanchor.studytime.login.LoginChildActivity;
 
 /**
  * Created by Thomas on 2015-06-15.
@@ -44,7 +45,7 @@ public class SplashChildActivity extends BaseActivity {
                 public void run() {
 
                     Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), LoginActivity.class);
+                    intent.setClass(getApplicationContext(), LoginChildActivity.class);
 
                     startActivity(intent);
 

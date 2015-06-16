@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/app/libs/apache-mime4j-core-0.7.2.jar" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/libs/httpclient-4.3.3.jar" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/libs/httpcore-4.3.2.jar" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/libs/httpmime-4.3.3.jar" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/studytime/STApplication.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/studytime/intro/IntroActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/HTTPUtils.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/MyHttpClient.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/MySSLSocketFactory.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/StringUtils.java" charset="x-windows-949" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

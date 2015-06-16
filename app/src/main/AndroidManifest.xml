@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.co.digitalanchor.studytime">
+    package="kr.co.digitalanchor.studytime" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,14 +14,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
 
-        <!-- 광고 대행사 용 (발급 전)-->
+        <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
             android:name="igaworks_app_key"
             android:value="123456789" />
 
-        <!-- 광고 대행사 용 (발급 전)-->
+        <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
             android:name="igaworks_hash_key"
             android:value="1a2b3c4d5f6g7h8i9j" />
@@ -34,13 +35,12 @@
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustPan">
-
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
@@ -57,21 +57,31 @@
             LoginActivity
 
             부모용/자식용 로그인 (공통?)
-         -->
+        -->
         <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".login.LoginChildActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity android:name=".login.AddInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan"/>
 
         <!-- 회원 가입 Activity -->
 
-        <activity android:name=".signup.SignUpActivity"
+        <activity
+            android:name=".signup.SignUpActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@android:style/Theme.NoTitleBar" />
-
-
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- 부모용 메인 (자녀 목록) Activity -->
         <!-- 자녀 상세 (자녀 목록 다음) Activity -->
@@ -79,24 +89,20 @@
         <!-- 부모용 설정 Activity -->
         <!-- 자녀용 메인 (채팅창?) Activity -->
 
-        <!--
-            애드 팝콘 (광고) Activities
-        -->
+
+<!--             애드 팝콘 (광고) Activities -->
         <activity
             android:name="com.igaworks.adpopcorn.activity.ApOfferWallActivity_NT"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <activity
             android:name="com.igaworks.adpopcorn.activity.ApCSActivity_NT"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <!-- 그밖에 서비스/리시버 등등 -->
-
 
     </application>
 

@@ -49,15 +49,11 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.buttonModeKids:
 
-                Toast.makeText(getApplicationContext(), "buttonModeKids", Toast.LENGTH_SHORT).show();
-
                 showChildIntro();
 
                 break;
 
             case R.id.buttonModeParent:
-
-                Toast.makeText(getApplicationContext(), "buttonModeParent", Toast.LENGTH_SHORT).show();
 
                 showParentIntro();
 

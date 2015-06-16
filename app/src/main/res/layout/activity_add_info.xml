@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/labelTitle"
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/bgColorType03"
+        android:gravity="center"
+        android:text="추가 정보입력"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingTop="23.33dp">
+
+            <EditText
+                android:id="@+id/emailBirthDate"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:background="@drawable/box_type_05_bg"
+                android:gravity="center_vertical"
+                android:hint="자녀 생년월일 ('-' 없이 입력해 주세요.)"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8.67dp"
+                android:text="자녀 성별"
+                android:textSize="16dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGender"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:layout_marginTop="8.67dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/box_type_06_bg"
+                    android:button="@null"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="남성"
+                    android:textColor="@color/text_01_selector"
+                    android:textSize="16dp" />
+
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="11dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/box_type_06_bg"
+                    android:button="@null"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="여성"
+                    android:textColor="@color/text_01_selector"
+                    android:textSize="16dp" />
+
+            </RadioGroup>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/buttonServiceInfo"
+                    android:layout_width="68.33dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/box_type_09_bg"
+                    android:minHeight="20dp"
+                    android:text="약관보기"
+                    android:textColor="@color/text_03_selector"
+                    android:textSize="11.33dp" />
+
+                <CheckBox
+                    android:id="@+id/checkServiceInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@id/buttonServiceInfo"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/checkbox_01_selector"
+                    android:drawablePadding="5dp"
+                    android:text="서비스 이용약관에 동의합니다."
+                    android:textColor="#4A4A4A"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/buttonPersonalInfo"
+                    android:layout_width="68.33dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/box_type_09_bg"
+                    android:minHeight="20dp"
+                    android:text="약관보기"
+                    android:textColor="@color/text_03_selector"
+                    android:textSize="11.33dp" />
+
+                <CheckBox
+                    android:id="@+id/checkPersonalInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@id/buttonPersonalInfo"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/checkbox_01_selector"
+                    android:drawablePadding="5dp"
+                    android:text="개인정보 취급방침에 동의합니다."
+                    android:textColor="#4A4A4A"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/buttonConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/box_type_07_bg"
+                android:gravity="center"
+                android:text="확인"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
