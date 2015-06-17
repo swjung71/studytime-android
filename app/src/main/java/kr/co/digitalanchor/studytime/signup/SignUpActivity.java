@@ -22,9 +22,9 @@ import java.util.HashMap;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
-import kr.co.digitalanchor.studytime.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.ParentRegResult;
 import kr.co.digitalanchor.studytime.model.ParentRegister;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.utils.StringValidator;
 
 /**
