@@ -152,6 +152,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         String tmp = null;
 
 
+
+
     }
 
     private void showSignUp() {

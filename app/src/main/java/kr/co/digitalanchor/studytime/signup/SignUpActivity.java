@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.SimpleXmlRequest;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -23,6 +22,7 @@ import java.util.HashMap;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.ParentRegResult;
 import kr.co.digitalanchor.studytime.model.ParentRegister;
 import kr.co.digitalanchor.utils.StringValidator;
@@ -213,8 +213,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         map.put("xml", writer.toString());
 
-        mQueue.add(new SimpleXmlRequest("http://14.63.225.89/studytime-server/parent/register",
-                ParentRegResult.class, map, new Response.Listener<ParentRegResult>() {
+        mQueue.add(HttpHelper.getParentRegister(map, new Response.Listener<ParentRegResult>() {
             @Override
             public void onResponse(ParentRegResult response) {
 
@@ -227,6 +226,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 System.out.println(error.toString());
             }
         }));
+
     }
 
     private boolean isValidateInfo() {

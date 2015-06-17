@@ -14,4 +14,6 @@ public class StaticValues {
     public static String Font_NANUM_GOTHIC_BOLD = "fonts/NanumGothicBold.ttf.mp3";
 
     public static String PREF = "studyTime";
+
+
 }
