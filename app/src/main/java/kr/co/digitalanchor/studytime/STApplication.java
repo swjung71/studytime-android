@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,10 +46,6 @@ public class STApplication extends Application {
         applicationContext = getApplicationContext();
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
-
-        getTypeface(StaticValues.FONT_NANUM_GOTHIC);
-
-        getTypeface(StaticValues.Font_NANUM_GOTHIC_BOLD);
 
     }
 
@@ -99,6 +96,17 @@ public class STApplication extends Application {
 
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getNationalCode() {
+
+        String countryCode = null;
+
+        TelephonyManager manager = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+        countryCode = manager.getSimCountryIso();
+
+        return countryCode;
     }
 
     /**
@@ -154,7 +162,7 @@ public class STApplication extends Application {
 
             // TODO Exception
 
-            res = true;
+            res = false;
 
         } finally {
 
@@ -246,4 +254,5 @@ public class STApplication extends Application {
 
         return res;
     }
+
 }

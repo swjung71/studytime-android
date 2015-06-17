@@ -96,6 +96,7 @@
     <orderEntry type="library" exported="" name="httpclient-4.3.3" level="project" />
     <orderEntry type="library" exported="" name="apache-mime4j-core-0.7.2" level="project" />
     <orderEntry type="library" exported="" name="IgawAdbrix_v4.0.0a" level="project" />
+    <orderEntry type="library" exported="" name="simple-xml-2.7.1" level="project" />
     <orderEntry type="library" exported="" name="IgawAdpopcorn_v3.5.2a" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
   </component>

@@ -39,7 +39,8 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:inputType="textUri"/>
 
             <EditText
                 android:id="@+id/editPassword"
@@ -53,7 +54,8 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:inputType="textPassword"/>
 
             <EditText
                 android:id="@+id/editPasswordAgain"
@@ -67,7 +69,8 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:inputType="textPassword"/>
 
             <View
                 android:layout_width="match_parent"
@@ -95,7 +98,8 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:inputType="text"/>
 
             <EditText
                 android:id="@+id/editBirthDate"
@@ -109,7 +113,8 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:inputType="date"/>
 
 
             <TextView

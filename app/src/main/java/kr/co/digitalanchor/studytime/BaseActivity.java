@@ -1,9 +1,13 @@
 package kr.co.digitalanchor.studytime;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
 
 
@@ -16,6 +20,8 @@ public class BaseActivity extends Activity {
 
     private long draft = 0;
 
+    protected RequestQueue mQueue;
+
     private final Handler mHandler = new Handler() {
 
         @Override
@@ -26,6 +32,13 @@ public class BaseActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        mQueue = Volley.newRequestQueue(getApplicationContext());
+    }
 
     @Override
     protected void onResume() {
@@ -52,9 +65,16 @@ public class BaseActivity extends Activity {
         return mHandler;
     }
 
+    public void sendEmptyMessage(int what) {
+
+        if (mHandler != null) {
+
+            mHandler.sendEmptyMessage(what);
+        }
+    }
+
     /**
      * 짧은 더블 클릭 방지
-     *
      */
     public boolean isDuplicateRuns() {
 

@@ -19,12 +19,12 @@
         <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
             android:name="igaworks_app_key"
-            android:value="123456789" />
+            android:value="93071393" />
 
         <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
             android:name="igaworks_hash_key"
-            android:value="1a2b3c4d5f6g7h8i9j" />
+            android:value="0e161219e6a840a8" />
 
         <!--
             IntroActivity (공통)

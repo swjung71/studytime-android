@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -19,10 +20,11 @@ import kr.co.digitalanchor.utils.StringValidator;
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
+    private final int REQUEST_LOGIN = 50001;
+
     EditText mEditEmailAddr;
 
     EditText mEditPassword;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         ((Button) findViewById(R.id.buttonSignUp)).setOnClickListener(this);
 
         ((Button) findViewById(R.id.buttonFindPwd)).setOnClickListener(this);
+    }
+
+    @Override
+    protected void onHandleMessage(Message msg) {
+
+        switch (msg.what) {
+
+            case REQUEST_LOGIN:
+
+                requestParentLogin();
+
+                break;
+
+            default:
+
+                break;
+        }
+
     }
 
     @Override
@@ -62,6 +82,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (isValidateInputInfo()) {
 
                     // TODO 다음 화면
+
+                    sendEmptyMessage(REQUEST_LOGIN);
 
                     Toast.makeText(getApplicationContext(), "다음 화면 : 메인 화면", Toast.LENGTH_SHORT).show();
                 }
@@ -123,6 +145,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             return false;
         }
+    }
+
+    private void requestParentLogin() {
+
+        String tmp = null;
+
+
     }
 
     private void showSignUp() {

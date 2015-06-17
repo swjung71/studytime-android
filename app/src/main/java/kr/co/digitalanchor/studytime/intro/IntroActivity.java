@@ -1,12 +1,14 @@
 package kr.co.digitalanchor.studytime.intro;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.igaworks.IgawCommon;
+import com.igaworks.adpopcorn.IgawAdpopcorn;
+import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -57,6 +59,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                 showParentIntro();
 
+                // showOfferWall();
+
                 break;
 
             default:
@@ -88,4 +92,19 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         finish();
     }
+
+    /**
+     * Only test
+     */
+//    private void showOfferWall() {
+//
+//
+//        IgawCommon.setUserId("test100001");
+//
+//        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
+//        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
+//        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
+//
+//        IgawAdpopcorn.openOfferWall(IntroActivity.this);
+//    }
 }
