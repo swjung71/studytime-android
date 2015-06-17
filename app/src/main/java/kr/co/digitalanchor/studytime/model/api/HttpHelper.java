@@ -1,4 +1,4 @@
-package kr.co.digitalanchor.studytime.api;
+package kr.co.digitalanchor.studytime.model.api;
 
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
