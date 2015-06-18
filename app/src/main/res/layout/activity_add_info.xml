@@ -5,7 +5,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <TextView
+    <kr.co.digitalanchor.studytime.view.FontTextView
         android:id="@+id/labelTitle"
         android:layout_width="match_parent"
         android:layout_height="53.33dp"
@@ -28,7 +28,7 @@
             android:paddingRight="18dp"
             android:paddingTop="23.33dp">
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/emailBirthDate"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
@@ -41,7 +41,7 @@
                 android:textColorHint="#A3A3A3"
                 android:textSize="16dp" />
 
-            <TextView
+            <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8.67dp"
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonServiceInfo"
                     android:layout_width="68.33dp"
                     android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonPersonalInfo"
                     android:layout_width="68.33dp"
                     android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
 
             </RelativeLayout>
 
-            <Button
+            <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"

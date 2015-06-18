@@ -30,4 +30,5 @@ dependencies {
     compile files('libs/httpcore-4.3.2.jar')
     compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/simple-xml-2.7.1.jar')
+    compile 'it.neokree:MaterialTabs:0.11'
 }

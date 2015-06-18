@@ -1,14 +1,11 @@
 package kr.co.digitalanchor.studytime.intro;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.igaworks.IgawCommon;
-import com.igaworks.adpopcorn.IgawAdpopcorn;
-import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -57,6 +54,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.buttonModeParent:
 
+
                 showParentIntro();
 
                 // showOfferWall();
@@ -92,6 +90,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         finish();
     }
+
 
     /**
      * Only test

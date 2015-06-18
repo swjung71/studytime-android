@@ -34,6 +34,7 @@
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
+                android:inputType="textUri"
                 android:textColorHint="@color/bgColorType01" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
@@ -48,6 +49,7 @@
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
+                android:inputType="textPassword"
                 android:textColorHint="@color/bgColorType01" />
 
             <LinearLayout
@@ -57,7 +59,7 @@
                 android:layout_marginTop="18.67dp"
                 android:orientation="horizontal">
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonSignUp"
                     android:layout_width="129.33dp"
                     android:layout_height="46.67dp"
@@ -67,7 +69,7 @@
                     android:textColor="@color/white"
                     android:textSize="16dp" />
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonLogin"
                     android:layout_width="129.33dp"
                     android:layout_height="46.67dp"
@@ -80,7 +82,7 @@
 
             </LinearLayout>
 
-            <Button
+            <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonFindPwd"
                 android:layout_width="270dp"
                 android:layout_height="46.67dp"

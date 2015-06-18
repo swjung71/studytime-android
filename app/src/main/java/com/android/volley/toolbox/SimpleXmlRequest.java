@@ -60,6 +60,8 @@ public class SimpleXmlRequest<T> extends Request<T> {
         this.headers = headers;
         this.params = params;
         this.listener = listener;
+
+        System.out.println(params.toString());
     }
 
     @Override

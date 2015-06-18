@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -102,12 +103,40 @@ public class STApplication extends Application {
 
         String countryCode = null;
 
-        TelephonyManager manager = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
 
-        countryCode = manager.getSimCountryIso();
+            TelephonyManager manager = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
 
-        return countryCode;
+            countryCode = manager.getSimCountryIso();
+
+        } catch (Exception e) {
+
+            countryCode = null;
+        }
+
+        return TextUtils.isEmpty(countryCode) ? "" : countryCode;
     }
+
+    public static String getPhoneNumber() {
+
+        String number = null;
+
+        try {
+
+            TelephonyManager manager = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+            number = manager.getLine1Number();
+
+            number = "0" + number.substring(number.length() - 10, number.length());
+
+        } catch (Exception e) {
+
+            number = null;
+        }
+
+        return TextUtils.isEmpty(number) ? "" : number;
+    }
+
 
     /**
      * @param assetPath path of font
@@ -140,6 +169,31 @@ public class STApplication extends Application {
 
         return applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
 
+    }
+
+    /**
+     * 프리퍼런스에 저장
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public static boolean putString(String key, String value) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(key, value);
+
+        return editor.commit();
+    }
+
+    public static String getString(String key) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        return pref.getString(key, null);
     }
 
     private boolean saveSharedPreferenceToFile(File dest) {

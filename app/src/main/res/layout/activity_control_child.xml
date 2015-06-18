@@ -51,7 +51,7 @@
             android:background="@drawable/img_point"
             android:orientation="horizontal">
 
-            <TextView
+            <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

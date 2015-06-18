@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.signup;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -13,12 +14,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-
-import java.io.StringWriter;
-import java.util.HashMap;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -27,12 +22,16 @@ import kr.co.digitalanchor.studytime.model.ParentRegister;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.utils.StringValidator;
 
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+
 /**
  * Created by Thomas on 2015-06-11.
  */
 public class SignUpActivity extends BaseActivity implements View.OnClickListener {
 
     private final int REQUEST_REGISTER = 50001;
+
+    private final int COMPLETE_REGISTER = 50002;
 
     EditText mEditEmailAddr;
 
@@ -110,6 +109,12 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
                 break;
 
+            case COMPLETE_REGISTER:
+
+                completeRegister();
+
+                break;
+
             default:
 
                 break;
@@ -119,14 +124,22 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
 
+        if (isDuplicateRuns()) {
+
+            return;
+        }
+
         switch (v.getId()) {
 
             case R.id.buttonServiceInfo:
 
+                showClause();
 
                 break;
 
             case R.id.buttonPersonalInfo:
+
+                showClause();
 
                 break;
 
@@ -141,6 +154,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             default:
 
+                // it is dfault
+
                 break;
         }
     }
@@ -153,11 +168,17 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         model.setEmail(mEditEmailAddr.getText().toString());
 
+        model.setPassword(mEditPassword.getText().toString());
+
         temp = mEditName.getText().toString();
 
         if (!TextUtils.isEmpty(temp)) {
 
             model.setName(temp);
+
+        } else {
+
+            model.setName("");
         }
 
         temp = null;
@@ -167,9 +188,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (!TextUtils.isEmpty(temp)) {
 
             model.setBirthday(temp);
+
+        } else {
+
+            model.setBirthday("");
         }
 
-        switch (mRadioGender.getId()) {
+        switch (mRadioGender.getCheckedRadioButtonId()) {
 
             case R.id.male:
 
@@ -185,39 +210,37 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             default:
 
-                model.setSex(null);
+                model.setSex("");
 
                 break;
         }
 
         // 전화번호
+        model.setPhoneNumber(STApplication.getPhoneNumber());
 
         // 국가코드
+        model.setNationalCode(STApplication.getNationalCode());
 
+        // App 버전
         model.setAppVersion(STApplication.getAppVersionName());
 
-        Serializer serializer = new Persister();
 
-        StringWriter writer = new StringWriter();
-
-        try {
-
-            serializer.write(model, writer);
-
-        } catch (Exception e) {
-
-
-        }
-
-        HashMap<String, String> map = new HashMap<>();
-
-        map.put("xml", writer.toString());
-
-        mQueue.add(HttpHelper.getParentRegister(map, new Response.Listener<ParentRegResult>() {
+        mQueue.add(HttpHelper.getParentRegister(model, new Response.Listener<ParentRegResult>() {
             @Override
             public void onResponse(ParentRegResult response) {
 
-                System.out.println(response.toString());
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        sendEmptyMessage(COMPLETE_REGISTER);
+
+                        break;
+
+                    default:
+
+                        break;
+                }
             }
         }, new Response.ErrorListener() {
 
@@ -226,7 +249,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 System.out.println(error.toString());
             }
         }));
+    }
 
+    private void completeRegister() {
+
+        Toast.makeText(getApplicationContext(), "성공: 회원가입", Toast.LENGTH_SHORT).show();
+
+        finish();
     }
 
     private boolean isValidateInfo() {
@@ -324,5 +353,15 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             return false;
         }
+    }
+
+    private void showClause() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), ClauseViewActivity.class);
+
+        startActivity(intent);
+
     }
 }

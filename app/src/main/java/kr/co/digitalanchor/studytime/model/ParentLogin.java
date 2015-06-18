@@ -10,19 +10,18 @@ import org.simpleframework.xml.Root;
 @Root(name = "ParentLogin")
 public class ParentLogin {
 
+    @Attribute(name = "xmlns", required = false)
+    String tag;
 
-    @Attribute(name = "xmlns")
-    final String tag;
-
-    @Element(name = "Email")
+    @Element(name = "Email", required = false)
     String email;
 
-    @Element(name = "Password")
+    @Element(name = "Password", required = false)
     String password;
 
     public ParentLogin() {
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentRequstDataModel";
+        tag = "http://studytime.digitalanchor.co.kr/ParentResponseDataModel";
     }
 
     public ParentLogin(String email, String password) {

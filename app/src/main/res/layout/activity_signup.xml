@@ -28,7 +28,7 @@
             android:paddingRight="18dp"
             android:paddingTop="23.33dp">
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editEmailAddr"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
@@ -42,7 +42,7 @@
                 android:textSize="16dp"
                 android:inputType="textUri"/>
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPassword"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
@@ -57,7 +57,7 @@
                 android:textSize="16dp"
                 android:inputType="textPassword"/>
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPasswordAgain"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
@@ -78,7 +78,7 @@
                 android:layout_marginTop="23.33dp"
                 android:background="@color/bgColorType01" />
 
-            <TextView
+            <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -86,7 +86,7 @@
                 android:textColor="@color/textColorType04"
                 android:textSize="16dp" />
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
@@ -101,14 +101,14 @@
                 android:textSize="16dp"
                 android:inputType="text"/>
 
-            <EditText
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editBirthDate"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
                 android:layout_marginTop="23.33dp"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
-                android:hint="생년월일 ('-' 없이 압력해 주세요.)"
+                android:hint="생년월일 ('-' 없이 입력해 주세요.)"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
@@ -117,7 +117,7 @@
                 android:inputType="date"/>
 
 
-            <TextView
+            <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8.67dp"
@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonServiceInfo"
                     android:layout_width="68.33dp"
                     android:layout_height="wrap_content"
@@ -200,7 +200,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <Button
+                <kr.co.digitalanchor.studytime.view.FontButton
                     android:id="@+id/buttonPersonalInfo"
                     android:layout_width="68.33dp"
                     android:layout_height="wrap_content"
@@ -230,7 +230,7 @@
 
             </RelativeLayout>
 
-            <Button
+            <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
