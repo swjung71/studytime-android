@@ -102,7 +102,7 @@
                     android:textColor="@color/text_03_selector"
                     android:textSize="11.33dp" />
 
-                <CheckBox
+                <kr.co.digitalanchor.studytime.view.FontCheckBox
                     android:id="@+id/checkServiceInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
                     android:textColor="@color/text_03_selector"
                     android:textSize="11.33dp" />
 
-                <CheckBox
+                <kr.co.digitalanchor.studytime.view.FontCheckBox
                     android:id="@+id/checkPersonalInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

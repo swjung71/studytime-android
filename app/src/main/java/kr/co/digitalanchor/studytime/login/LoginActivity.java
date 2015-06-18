@@ -17,8 +17,10 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.control.ControlChildActivity;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.signup.SignUpActivity;
 import kr.co.digitalanchor.utils.StringValidator;
@@ -223,6 +225,39 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         showMain();
 
+    }
+
+    private void requestPhoneInfo() {
+
+        ParentPhoneInfo model = new ParentPhoneInfo();
+
+        // ParentID
+        model.setParentID("");
+
+        model.setPhoneNumber(STApplication.getPhoneNumber());
+
+        model.setAppVersion(STApplication.getAppVersionName());
+
+        // GCM
+        model.setGcm("");
+
+        model.setNationCode(STApplication.getNationalCode());
+
+
+        mQueue.add(HttpHelper.getParentPhoneInfo(model, new Response.Listener<GeneralResult>() {
+
+            @Override
+            public void onResponse(GeneralResult response) {
+
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }));
     }
 
     private boolean isValidateEmailInfo() {
