@@ -15,7 +15,7 @@ public class ParentLoginResult {
     @Element(name = "ResultCode")
     int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "ParentID", required = false)
@@ -24,7 +24,10 @@ public class ParentLoginResult {
     @Element(name = "Coin", required = false)
     String coin;
 
-    @ElementList(name = "Child", required = false)
+    @Element(name = "ParentName", required = false)
+    String name;
+
+    @ElementList(name = "Child", required = false, inline = true)
     List<Child> children;
 
     public int getResultCode() {
@@ -57,6 +60,14 @@ public class ParentLoginResult {
 
     public void setCoin(String coin) {
         this.coin = coin;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Child> getChildren() {

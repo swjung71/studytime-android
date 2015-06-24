@@ -43,8 +43,5 @@
                 android:textColorHint="@color/bgColorType02" />
 
         </LinearLayout>
-
-
     </ScrollView>
-
 </FrameLayout>

@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -12,16 +13,20 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
-import kr.co.digitalanchor.studytime.control.ControlChildActivity;
+import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.control.ListChildActivity;
+import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.SignUpActivity;
 import kr.co.digitalanchor.utils.StringValidator;
 
@@ -34,17 +39,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private final int REQUEST_LOGIN = 50001;
     private final int COMPLETE_LOGIN = 50002;
-    private final int REQUEST_FIND_PASSWORD = 50003;
+    private final int REQUEST_PARENT_INFO = 50003;
+    private final int REQUEST_FIND_PASSWORD = 50004;
 
     EditText mEditEmailAddr;
 
     EditText mEditPassword;
+
+    DBHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_parent_login);
+
+        initView();
+
+        mHelper = new DBHelper(getApplicationContext());
+
+    }
+
+    private void initView() {
 
         mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
 
@@ -71,6 +87,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case COMPLETE_LOGIN:
 
                 completeLogin();
+
+                break;
+
+            case REQUEST_PARENT_INFO:
+
+                requestPhoneInfo();
 
                 break;
 
@@ -176,7 +198,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestParentLogin() {
 
-        String tmp = null;
+        showLoading();
 
         ParentLogin model = new ParentLogin();
 
@@ -187,17 +209,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         SimpleXmlRequest request = HttpHelper.getParentLogin(model, new Response.Listener<ParentLoginResult>() {
 
             @Override
-            public void onResponse(ParentLoginResult response) {
+            public void onResponse(ParentLoginResult res) {
 
-                System.out.println("onResponse");
+                Logger.d(res.toString());
 
-                switch (response.getResultCode()) {
+                switch (res.getResultCode()) {
 
                     case SUCCESS:
 
+                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin());
+
+                        mHelper.insertChildren(res.getChildren());
+
+                        sendEmptyMessage(REQUEST_PARENT_INFO);
+
                         break;
 
+                    // TODO ERROR 처리
+
                     default:
+
+                        dismissLoading();
 
                         break;
                 }
@@ -206,7 +238,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                // TODO
+                dismissLoading();
+
+                Logger.d("requestParentLogin : error " + error.toString());
+
             }
         });
 
@@ -214,14 +249,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             mQueue.add(request);
 
+        } else {
+
+            dismissLoading();
         }
     }
 
     private void completeLogin() {
-
-        STApplication.putString("isParent", "parent");
-
-        STApplication.putString("id", "id");
 
         showMain();
 
@@ -231,33 +265,60 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         ParentPhoneInfo model = new ParentPhoneInfo();
 
+        Account account = mHelper.getAccountInfo();
+
         // ParentID
-        model.setParentID("");
+        model.setParentID(account.getID());
 
         model.setPhoneNumber(STApplication.getPhoneNumber());
 
         model.setAppVersion(STApplication.getAppVersionName());
 
         // GCM
-        model.setGcm("");
+        model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
 
         model.setNationCode(STApplication.getNationalCode());
 
+        SimpleXmlRequest request = HttpHelper.getParentPhoneInfo(model,
+                new Response.Listener<GeneralResult>() {
 
-        mQueue.add(HttpHelper.getParentPhoneInfo(model, new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
 
-            @Override
-            public void onResponse(GeneralResult response) {
+                        dismissLoading();
 
-            }
+                        switch (response.getResultCode()) {
 
-        }, new Response.ErrorListener() {
+                            case SUCCESS:
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                                sendEmptyMessage(COMPLETE_LOGIN);
 
-            }
-        }));
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        dismissLoading();
+
+                        Logger.e(error.toString());
+                    }
+                });
+
+        if (request != null) {
+
+            mQueue.add(request);
+
+        } else {
+
+            dismissLoading();
+        }
     }
 
     private boolean isValidateEmailInfo() {
@@ -300,6 +361,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestParentFindPwd() {
 
+
         Toast.makeText(getApplicationContext(), "개발중", Toast.LENGTH_SHORT).show();
     }
 
@@ -316,7 +378,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         Intent intent = new Intent();
 
-        intent.setClass(getApplicationContext(), ControlChildActivity.class);
+        intent.setClass(getApplicationContext(), ListChildActivity.class);
 
         startActivity(intent);
 

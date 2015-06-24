@@ -35,6 +35,7 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:inputType="textUri"
+                android:textSize="16dp"
                 android:textColorHint="@color/bgColorType01" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
@@ -50,6 +51,7 @@
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
                 android:inputType="textPassword"
+                android:textSize="16dp"
                 android:textColorHint="@color/bgColorType01" />
 
             <LinearLayout

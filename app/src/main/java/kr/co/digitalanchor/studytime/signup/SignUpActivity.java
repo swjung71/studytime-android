@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -229,6 +230,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onResponse(ParentRegResult response) {
 
+                Logger.d(response.toString());
+
                 switch (response.getResultCode()) {
 
                     case SUCCESS:
@@ -246,7 +249,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
+
+                Logger.d(error.toString());
             }
         }));
     }

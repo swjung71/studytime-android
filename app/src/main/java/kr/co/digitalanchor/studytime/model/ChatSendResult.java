@@ -10,9 +10,9 @@ import org.simpleframework.xml.Root;
 public class ChatSendResult {
 
     @Element(name = "ResultCode")
-    String resultCode;
+    int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "Is_fail", required = false)
@@ -24,11 +24,11 @@ public class ChatSendResult {
     @Element(name = "messagePK", required = false)
     String messagePK;
 
-    public String getResultCode() {
+    public int getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode(String resultCode) {
+    public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 

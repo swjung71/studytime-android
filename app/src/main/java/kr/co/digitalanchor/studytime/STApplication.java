@@ -7,9 +7,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+
+import com.orhanobut.logger.LogLevel;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,8 +23,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import static kr.co.digitalanchor.studytime.StaticValues.PREF;
 
@@ -47,6 +56,8 @@ public class STApplication extends Application {
         applicationContext = getApplicationContext();
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
+
+        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
     }
 
@@ -101,6 +112,7 @@ public class STApplication extends Application {
 
     public static String getNationalCode() {
 
+        /*
         String countryCode = null;
 
         try {
@@ -115,6 +127,17 @@ public class STApplication extends Application {
         }
 
         return TextUtils.isEmpty(countryCode) ? "" : countryCode;
+
+        */
+
+        return "kr";
+    }
+
+    public static String getLanguageCode() {
+
+        Locale locale = applicationContext.getResources().getConfiguration().locale;
+
+        return locale.getLanguage();
     }
 
     public static String getPhoneNumber() {
@@ -135,6 +158,46 @@ public class STApplication extends Application {
         }
 
         return TextUtils.isEmpty(number) ? "" : number;
+    }
+
+    public static String getDeviceNumber() {
+
+        UUID uuid = null;
+
+
+        final String androidId = Settings.Secure.getString(applicationContext.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        try {
+
+            if (!"9774d56d682e549c".equals(androidId)) {
+
+                uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
+
+            } else {
+
+                TelephonyManager manager = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+                final String deviceId = manager.getDeviceId();
+
+                uuid = deviceId != null ?
+                        UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")) : UUID.randomUUID();
+            }
+
+        } catch (UnsupportedEncodingException e) {
+
+            throw new RuntimeException(e);
+        }
+
+//        return uuid.toString().replaceAll("-", "");
+
+        return "123456";
+    }
+
+    public static String getMAC() {
+
+
+        return "";
     }
 
 
@@ -191,9 +254,52 @@ public class STApplication extends Application {
 
     public static String getString(String key) {
 
+        return getString(key, null);
+    }
+
+    public static String getString(String key, String defaultValue) {
+
         SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
 
-        return pref.getString(key, null);
+        return pref.getString(key, defaultValue);
+    }
+
+    public static void clear() {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.clear();
+
+        editor.commit();
+    }
+
+    public static String getAdpopcornDeviceId() {
+
+        String adpopcornDeviceId = "";
+        TelephonyManager tm = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (tm != null) {
+
+            adpopcornDeviceId = tm.getDeviceId();
+
+        } else {
+
+            // Wifi 전용 기기의 경우 Mac Address를 사용.
+            WifiManager wm = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
+
+            if (wm != null) {
+
+                WifiInfo wifiInfo = wm.getConnectionInfo();
+
+                adpopcornDeviceId = wifiInfo.getMacAddress();
+
+            }
+
+        }
+
+        return adpopcornDeviceId;
     }
 
     private boolean saveSharedPreferenceToFile(File dest) {

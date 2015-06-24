@@ -5,7 +5,17 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/com" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/studytime/STApplication.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/studytime/intro/IntroActivity.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/StringUtils.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/kr/co/digitalanchor/utils/AndroidUtils.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-ko-xxhdpi/block.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-ko-xxhdpi/guide_c.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/block.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/bubble_blue.9.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/bubble_gray.9.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/bubble_pink.9.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/chat.9.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/cs_icon1.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/guide_c.png" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/icon_noti.9.png" charset="x-windows-949" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

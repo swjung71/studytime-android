@@ -24,14 +24,29 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
     public interface OnClickMenuItemListener {
 
-        void onClickPoint();
+        /**
+         * 개인정보 변경
+         */
+        void onClickModify();
 
+        /**
+         * FAQ
+         */
         void onClickFAQ();
 
+        /**
+         * 1:1 문의
+         */
         void onClickInquiry();
 
+        /**
+         * 탈퇴
+         */
         void onClickWithdraw();
 
+        /**
+         * 로그아웃
+         */
         void onClickLogOut();
     }
 
@@ -39,14 +54,14 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
     private TextView mLabelName;
 
-    public MenuPopup(Context context, String name) {
+    public MenuPopup(Context context) {
 
         super(context);
 
         View view = LayoutInflater.from(context).inflate(R.layout.popup_main_menu, null);
 
         view.findViewById(R.id.menuFAQ).setOnClickListener(this);
-        view.findViewById(R.id.menuPoint).setOnClickListener(this);
+        view.findViewById(R.id.menuModify).setOnClickListener(this);
         view.findViewById(R.id.menuInquiry).setOnClickListener(this);
         view.findViewById(R.id.menuWithdraw).setOnClickListener(this);
         view.findViewById(R.id.buttonLogOut).setOnClickListener(this);
@@ -61,6 +76,12 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         setBackgroundDrawable(new ColorDrawable(
                 android.graphics.Color.TRANSPARENT));
 
+    }
+
+    public MenuPopup(Context context, String name) {
+
+        this(context);
+
         setName(name);
     }
 
@@ -71,11 +92,11 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
         switch (v.getId()) {
 
-            case R.id.menuPoint:
+            case R.id.menuModify:
 
                 if (mListener != null) {
 
-                    mListener.onClickPoint();
+                    mListener.onClickModify();
                 }
 
                 break;
@@ -122,7 +143,7 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         }
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
 
         if (!TextUtils.isEmpty(name) && mLabelName != null) {
 

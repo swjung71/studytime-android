@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/black"
+        android:background="#e2e2e2"
         android:minHeight="40dp"
         android:paddingBottom="6dp"
         android:paddingLeft="8dp"
@@ -51,6 +51,7 @@
             android:src="@drawable/button_send_selector" />
 
         <kr.co.digitalanchor.studytime.view.FontEditText
+            android:id="@+id/editMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -67,5 +68,34 @@
 
     </RelativeLayout>
 
+    <ListView
+        android:id="@+id/listChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom"
+        android:layout_below="@id/header"
+        android:overScrollMode="never" />
+
+    <FrameLayout
+        android:id="@+id/layoutGuide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/guide_c"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <kr.co.digitalanchor.studytime.view.FontButton
+            android:id="@+id/buttonClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/transparent"
+            android:text="X"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+    </FrameLayout>
 
 </RelativeLayout>

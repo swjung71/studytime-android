@@ -24,7 +24,7 @@ public class ChatRead {
 
     public ChatRead() {
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentRequstDataModel";
+        tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
     }
 
     public String getMessageID() {

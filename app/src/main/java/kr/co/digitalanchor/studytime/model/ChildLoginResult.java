@@ -8,19 +8,19 @@ import org.simpleframework.xml.Element;
 public class ChildLoginResult {
 
     @Element(name = "ResultCode")
-    String resultCode;
+    int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "ParentID")
     String parentID;
 
-    public String getResultCode() {
+    public int getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode(String resultCode) {
+    public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 

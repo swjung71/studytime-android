@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+
+    <kr.co.digitalanchor.studytime.view.FontTextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/bgColorType01"
+        android:gravity="center"
+        android:text="대화창"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#e2e2e2"
+        android:minHeight="40dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="6dp">
+
+        <ImageButton
+            android:id="@+id/buttonSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/button_send_selector" />
+
+        <kr.co.digitalanchor.studytime.view.FontEditText
+            android:id="@+id/editMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/buttonSend"
+            android:background="@drawable/edit_chat"
+            android:gravity="center_vertical"
+            android:hint="문자 입력"
+            android:maxLines="4"
+            android:minHeight="28dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:textSize="13dp" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom"
+        android:layout_below="@id/header"
+        android:overScrollMode="never">
+
+    </ListView>
+
+</RelativeLayout>

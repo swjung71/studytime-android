@@ -2,6 +2,10 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="red">#990000</color>
+    <color name="green">#009900</color>
+    <color name="blue">#000099</color>
+    <color name="orange">#FF9900</color>
 
     <color name="black_opacity_50">#7F000000</color>
 
@@ -13,6 +17,7 @@
 
     <color name="lineColorType01">#882B8B</color>
     <color name="lineColorType02">#0179B8</color>
+    <color name="lineColorType03">#00a8ff</color>
 
     <color name="textColorType01">#dfdfdf</color>
     <color name="textColorType02">#ff7800</color>

@@ -4,12 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
-import kr.co.digitalanchor.studytime.login.LoginActivity;
+import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
 
 /**
@@ -36,11 +35,12 @@ public class SplashChildActivity extends BaseActivity {
 
         SharedPreferences pref = STApplication.getPreference();
 
-        if (TextUtils.isEmpty(pref.getString("logid", null))) {
+        if (TextUtils.isEmpty(pref.getString("ParentID", null))) {
 
             // login 안했으면, 로그인
 
             getHandler().postDelayed(new Runnable() {
+
                 @Override
                 public void run() {
 
@@ -61,12 +61,13 @@ public class SplashChildActivity extends BaseActivity {
                 @Override
                 public void run() {
 
-//                    Intent intent = new Intent();
-//                    intent.setClass(getApplicationContext(), LoginActivity.class);
-//
-//                    startActivity(intent);
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), ChildChatActivity.class);
 
-                    Toast.makeText(getApplicationContext(), "GO MAIN SCREEN", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+
+                    finish();
+
                 }
             }, 1000);
         }

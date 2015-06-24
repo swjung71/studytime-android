@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.model;
 
 import android.os.Build;
 
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -9,7 +10,10 @@ import org.simpleframework.xml.Root;
  * Created by Thomas on 2015-06-17.
  */
 @Root(name = "ChildRegister")
-public class ChildRegister {
+public class ChildRegister implements Cloneable {
+
+    @Attribute(name = "xmlns")
+    String tag;
 
     @Element(name = "ParentID")
     String parentID;
@@ -55,9 +59,13 @@ public class ChildRegister {
 
     public ChildRegister() {
 
+        tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
+
         osVersion = Build.VERSION.RELEASE;
 
         devModel = Build.MODEL;
+
+        isAndroid = "1";
     }
 
     public String getParentID() {
@@ -138,5 +146,18 @@ public class ChildRegister {
 
     public void setMac(String mac) {
         this.mac = mac;
+    }
+
+    @Override
+    public ChildRegister clone() throws CloneNotSupportedException {
+
+        try {
+
+            return (ChildRegister) super.clone();
+
+        } catch (CloneNotSupportedException e) {
+
+            throw new AssertionError();
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -61,7 +62,7 @@ public class SimpleXmlRequest<T> extends Request<T> {
         this.params = params;
         this.listener = listener;
 
-        System.out.println(params.toString());
+        Logger.xml(params.get("xml"));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SimpleXmlRequest<T> extends Request<T> {
 
             String data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            System.out.println(data);
+            Logger.xml(data);
 
             return Response.success(serializer.read(clazz, data), HttpHeaderParser.parseCacheHeaders(response));
 

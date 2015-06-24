@@ -3,6 +3,7 @@ package kr.co.digitalanchor.studytime.model.api;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -11,6 +12,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 
+import kr.co.digitalanchor.studytime.model.ChatSend;
+import kr.co.digitalanchor.studytime.model.ChatSendResult;
+import kr.co.digitalanchor.studytime.model.ChildLoginResult;
+import kr.co.digitalanchor.studytime.model.ChildRegResult;
+import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
@@ -73,7 +79,8 @@ public class HttpHelper {
                                                   Listener<ParentLoginResult> listener,
                                                   ErrorListener errorListener) {
 
-        StringWriter writer = new StringWriter();;
+        StringWriter writer = new StringWriter();
+        ;
 
         try {
 
@@ -119,8 +126,8 @@ public class HttpHelper {
      * @return
      */
     public static SimpleXmlRequest getParentRegister(ParentRegister model,
-                                                    Listener<ParentRegResult> listener,
-                                                    ErrorListener errorListener) {
+                                                     Listener<ParentRegResult> listener,
+                                                     ErrorListener errorListener) {
 
         StringWriter writer = new StringWriter();
 
@@ -221,6 +228,8 @@ public class HttpHelper {
 
             writer = new StringWriter();
 
+            serializer.write(model, writer);
+
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
@@ -269,6 +278,8 @@ public class HttpHelper {
             Serializer serializer = new Persister();
 
             writer = new StringWriter();
+
+            serializer.write(model, writer);
 
             HashMap<String, String> map = new HashMap<>();
 
@@ -320,6 +331,8 @@ public class HttpHelper {
 
             writer = new StringWriter();
 
+            serializer.write(model, writer);
+
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
@@ -369,6 +382,8 @@ public class HttpHelper {
 
             writer = new StringWriter();
 
+            serializer.write(model, writer);
+
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
@@ -410,6 +425,8 @@ public class HttpHelper {
 
             writer = new StringWriter();
 
+            serializer.write(model, writer);
+
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
@@ -418,6 +435,149 @@ public class HttpHelper {
                     GeneralResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * Child
+     */
+
+
+    public static SimpleXmlRequest<ChildLoginResult> getChildLogin(ParentLogin model,
+                                                                   Listener<ChildLoginResult> listener,
+                                                                   ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChildLoginResult>(getURL() + "login",
+                    ChildLoginResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest<ChildRegResult> getChildRegister(ChildRegister model,
+                                                                    Listener<ChildRegResult> listener,
+                                                                    ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg",
+                    ChildRegResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * 채팅 메세지 보내기
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getSendChat(ChatSend model, Listener<ChatSendResult> listener,
+                                        ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChatSendResult>(getURL() + "chat",
+                    ChatSendResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
 
             return null;
 

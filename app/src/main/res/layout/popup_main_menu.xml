@@ -54,7 +54,7 @@
         </RelativeLayout>
 
         <FrameLayout
-            android:id="@+id/menuPoint"
+            android:id="@+id/menuModify"
             android:layout_width="match_parent"
             android:layout_height="36.67dp"
             android:background="@drawable/menu_item_bg"
@@ -65,7 +65,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:paddingLeft="45dp"
-                android:text="포인트 얻기"
+                android:text="개인정보변경"
                 android:textColor="#2A5E72" />
 
             <View

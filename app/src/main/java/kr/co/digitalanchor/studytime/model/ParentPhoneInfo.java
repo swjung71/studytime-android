@@ -2,6 +2,8 @@ package kr.co.digitalanchor.studytime.model;
 
 import android.os.Build;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
@@ -10,23 +12,36 @@ import org.simpleframework.xml.Root;
 @Root(name = "ParentPhoneInfo")
 public class ParentPhoneInfo {
 
+    @Attribute(name = "xmlns")
+    String tag;
+
+    @Element(name = "ParentID")
     String parentID;
 
+    @Element(name = "Phone_number")
     String phoneNumber;
 
+    @Element(name = "Nation_code")
     String nationCode;
 
+    @Element(name = "Is_Android")
     String isAndroid;
 
+    @Element(name = "GCM")
     String gcm;
 
+    @Element(name = "App_version")
     String appVersion;
 
+    @Element(name = "OS_version")
     String osVersion;
 
+    @Element(name = "Dev_model")
     String devModel;
 
     public ParentPhoneInfo() {
+
+        tag ="http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
 
         isAndroid = "1";
 

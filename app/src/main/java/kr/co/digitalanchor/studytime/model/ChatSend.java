@@ -11,28 +11,28 @@ import org.simpleframework.xml.Root;
 public class ChatSend {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
     @Element(name = "SenderID")
     String senderID;
 
     @Element(name = "Is_group")
-    String isGroup;
+    int isGroup;
 
     @Element(name = "Is_child_sender")
-    String isChildSender;
+    int isChildSender;
 
     @Element(name = "ReceiverID")
     String receiverID;
 
-    @Element(name = "Is_child_recevier")
-    String isChildReceiver;
+    @Element(name = "Is_child_receiver")
+    int isChildReceiver;
 
     @Element(name = "Message")
     String message;
 
     @Element(name = "Msg_type")
-    String msgType;
+    int msgType;
 
     @Element(name = "Time")
     String time;
@@ -41,11 +41,11 @@ public class ChatSend {
     String senderName;
 
     @Element(name = "MessagePK")
-    String messagePk;
+    long messagePk;
 
     public ChatSend() {
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentRequstDataModel";
+        tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
     }
 
     public String getSenderID() {
@@ -56,19 +56,19 @@ public class ChatSend {
         this.senderID = senderID;
     }
 
-    public String getIsGroup() {
+    public int getIsGroup() {
         return isGroup;
     }
 
-    public void setIsGroup(String isGroup) {
+    public void setIsGroup(int isGroup) {
         this.isGroup = isGroup;
     }
 
-    public String getIsChildSender() {
+    public int getIsChildSender() {
         return isChildSender;
     }
 
-    public void setIsChildSender(String isChildSender) {
+    public void setIsChildSender(int isChildSender) {
         this.isChildSender = isChildSender;
     }
 
@@ -80,11 +80,11 @@ public class ChatSend {
         this.receiverID = receiverID;
     }
 
-    public String getIsChildReceiver() {
+    public int getIsChildReceiver() {
         return isChildReceiver;
     }
 
-    public void setIsChildReceiver(String isChildReceiver) {
+    public void setIsChildReceiver(int isChildReceiver) {
         this.isChildReceiver = isChildReceiver;
     }
 
@@ -96,11 +96,11 @@ public class ChatSend {
         this.message = message;
     }
 
-    public String getMsgType() {
+    public int getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(String msgType) {
+    public void setMsgType(int msgType) {
         this.msgType = msgType;
     }
 
@@ -120,11 +120,11 @@ public class ChatSend {
         this.senderName = senderName;
     }
 
-    public String getMessagePk() {
+    public long getMessagePk() {
         return messagePk;
     }
 
-    public void setMessagePk(String messagePk) {
+    public void setMessagePk(long messagePk) {
         this.messagePk = messagePk;
     }
 }

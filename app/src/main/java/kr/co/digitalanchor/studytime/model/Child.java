@@ -9,11 +9,25 @@ import org.simpleframework.xml.Root;
 @Root(name = "Child")
 public class Child {
 
-    @Element(name = "ChildID")
+    @Element(name = "ChildID", required = false)
     String childID;
 
-    @Element(name = "Name")
+    @Element(name = "Name", required = false)
     String name;
+
+    @Element(name = "MsgCount", required = false)
+    String msgCount;
+
+    public Child() {
+
+    }
+
+    public Child(String childID, String name) {
+
+        this.childID = childID;
+
+        this.name = name;
+    }
 
     public String getChildID() {
         return childID;
@@ -29,5 +43,13 @@ public class Child {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMsgCount() {
+        return msgCount;
+    }
+
+    public void setMsgCount(String msgCount) {
+        this.msgCount = msgCount;
     }
 }

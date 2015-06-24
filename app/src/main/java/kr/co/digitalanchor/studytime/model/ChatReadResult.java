@@ -12,7 +12,7 @@ public class ChatReadResult {
     @Element(name = "ResultCode")
     String resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "Message", required = false)

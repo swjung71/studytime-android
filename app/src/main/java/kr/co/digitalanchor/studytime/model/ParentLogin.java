@@ -21,7 +21,7 @@ public class ParentLogin {
 
     public ParentLogin() {
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentResponseDataModel";
+        tag ="http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
     }
 
     public ParentLogin(String email, String password) {

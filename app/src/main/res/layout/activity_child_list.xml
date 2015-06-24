@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/bgColorType01">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="34.67dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:background="@drawable/img_point"
+            android:orientation="horizontal"
+            android:paddingRight="6dp">
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelPoint"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="26.33dp"
+                android:maxLength="3"
+                android:paddingLeft="6.67dp"
+                android:singleLine="true"
+                android:text="9934234"
+                android:textColor="@color/white"
+                android:textSize="18.33dp" />
+
+            <ImageButton
+                android:id="@+id/buttonPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/button_point" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/buttonMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            android:clickable="true"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_menu" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/transparent"
+        android:dividerHeight="11dp"
+        android:listSelector="@color/transparent"
+        android:overScrollMode="never" />
+
+    <LinearLayout
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:drawableLeft="@drawable/cs_icon1"
+            android:drawablePadding="12dp"
+            android:gravity="center"
+            android:text="관리할 자녀가 없습니다."
+            android:textColor="#4a4a4a"
+            android:textSize="16dp" />
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            android:text="자녀에게 앱 링크 전송 메뉴를 눌러 &apos;Study Time&apos; 자녀용을 설치해 주십시오."
+            android:textColor="#4a4a4a"
+            android:textSize="16dp" />
+
+        <include
+            android:id="@+id/buttonSendLink"
+            layout="@layout/layout_child_footer" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

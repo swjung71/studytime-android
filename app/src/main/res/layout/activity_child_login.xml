@@ -29,10 +29,12 @@
                 android:layout_marginTop="52.33dp"
                 android:background="@drawable/box_type_03_bg"
                 android:hint="부모님의 등록 이메일 주소"
+                android:inputType="textUri"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
-                android:textColorHint="@color/bgColorType02" />
+                android:textColorHint="@color/bgColorType02"
+                android:textSize="16dp" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPassword"
@@ -42,10 +44,12 @@
                 android:layout_marginTop="18.67dp"
                 android:background="@drawable/box_type_03_bg"
                 android:hint="부모님의 등록 비밀번호"
+                android:inputType="textPassword"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
-                android:textColorHint="@color/bgColorType02" />
+                android:textColorHint="@color/bgColorType02"
+                android:textSize="16dp" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editChildName"
@@ -58,7 +62,8 @@
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
-                android:textColorHint="@color/bgColorType02" />
+                android:textColorHint="@color/bgColorType02"
+                android:textSize="16dp" />
 
             <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonLogin"

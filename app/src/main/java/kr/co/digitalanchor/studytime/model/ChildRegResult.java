@@ -11,9 +11,9 @@ import org.simpleframework.xml.Root;
 public class ChildRegResult {
 
     @Element(name = "ResultCode")
-    String resultCode;
+    int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "ParentID", required = false)
@@ -22,11 +22,11 @@ public class ChildRegResult {
     @Element(name = "ChildID", required = false)
     String childID;
 
-    public String getResultCode() {
+    public int getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode(String resultCode) {
+    public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 

@@ -9,10 +9,10 @@ import org.simpleframework.xml.Root;
 @Root(name = "GeneralResult")
 public class GeneralResult {
 
-    @Element(name = "ResultCode")
+    @Element(name = "ResultCode", required = false)
     int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     public int getResultCode() {

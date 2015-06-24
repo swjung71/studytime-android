@@ -11,7 +11,7 @@ import org.simpleframework.xml.Root;
 public class ParentWithdraw {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
     @Element(name = "ParentID")
     String parentID;
