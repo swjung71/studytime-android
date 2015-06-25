@@ -18,6 +18,7 @@ import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.GetVersion;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
@@ -29,6 +30,7 @@ import kr.co.digitalanchor.studytime.model.ParentRegResult;
 import kr.co.digitalanchor.studytime.model.ParentRegister;
 import kr.co.digitalanchor.studytime.model.ParentWithdraw;
 import kr.co.digitalanchor.studytime.model.SetCoin;
+import kr.co.digitalanchor.studytime.model.db.VersionResult;
 
 /**
  * Created by Thomas on 2015-06-17.
@@ -593,6 +595,49 @@ public class HttpHelper {
 
                 } catch (IOException e) {
 
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getVersion(GetVersion model, Listener<VersionResult> listener,
+                                              ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<VersionResult>(getURL() + "getVersion",
+                    VersionResult.class, map, listener, errorListener);
+
+         } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
 
                 }
 

@@ -361,11 +361,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         Account account = mHelper.getAccountInfo();
 
-        String[] tos = {account.getEmail()};
+        String text = account.getEmail() + "이 보낸메일 \n";
 
         intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String [] {"support@digitalanchor.co.kr"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
 
         startActivity(intent);
     }

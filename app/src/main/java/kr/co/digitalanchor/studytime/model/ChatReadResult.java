@@ -15,14 +15,17 @@ public class ChatReadResult {
     @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
-    @Element(name = "Message", required = false)
+    @Element(name = "Message", required = false, data = true)
     String message;
+
+    @Element(name = "MessageID", required = false)
+    String messageId;
 
     /**
      * 0:message, 1:image
      */
     @Element(name = "Msg_type", required = false)
-    String msgType;
+    int msgType;
 
     @Element(name = "Counter", required = false)
     String counter;
@@ -32,7 +35,7 @@ public class ChatReadResult {
 
     public ChatReadResult() {
 
-        msgType = "0";
+        msgType = 0;
     }
 
     public String getResultCode() {
@@ -59,11 +62,11 @@ public class ChatReadResult {
         this.message = message;
     }
 
-    public String getMsgType() {
+    public int getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(String msgType) {
+    public void setMsgType(int msgType) {
         this.msgType = msgType;
     }
 
@@ -81,5 +84,13 @@ public class ChatReadResult {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

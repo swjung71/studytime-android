@@ -20,6 +20,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
+import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
@@ -132,16 +133,6 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         registerGCM();
 
-        /*
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), SplashParentActivity.class);
-
-        startActivity(intent);
-
-        finish();
-
-        */
     }
 
     private void showChildIntro() {
@@ -156,9 +147,27 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void showNextScreen(final int delayed) {
 
+        DBHelper helper = new DBHelper(getApplicationContext());
+        Account account = helper.getAccountInfo();
+
         final Intent intent = new Intent();
 
-        if (mLayoutParentIntro.getVisibility() == View.VISIBLE) {
+        if (!TextUtils.isEmpty(account.getID())) {
+
+            if (account.isChild() < 0) {
+
+                return;
+
+            } else if (account.isChild() == 1) {
+
+                intent.setClass(getApplicationContext(), ListChildActivity.class);
+
+            } else {
+
+                intent.setClass(getApplicationContext(), ChildChatActivity.class);
+            }
+
+        } else if (mLayoutParentIntro.getVisibility() == View.VISIBLE) {
 
 
             intent.setClass(getApplicationContext(), LoginActivity.class);

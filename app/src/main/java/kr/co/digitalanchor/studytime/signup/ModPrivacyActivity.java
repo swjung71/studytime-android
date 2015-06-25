@@ -15,6 +15,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
+import org.w3c.dom.Text;
+
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -164,18 +166,27 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
                 break;
             }
 
+            String temp2 = mEditPassword.getText().toString();
+
             temp = mEditPasswordA.getText().toString();
 
-            if (TextUtils.isEmpty(temp)) {
+            if (!TextUtils.isEmpty(temp2) && TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 비밀번호 재입력 안함";
+                msg = "경고 문구 : 새로운 비밀번호를 입력하세요.";
 
                 break;
             }
 
-            if (temp.compareTo(mEditPassword.getText().toString()) != 0) {
+            if (TextUtils.isEmpty(temp2) && TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 입력된 비밀번호 불일치";
+                msg = "경고 문구 : 현재 비밀번호를 입력하세요.";
+
+                break;
+            }
+
+            if (temp.compareTo(temp2) == 0) {
+
+                msg = "경고 문구 : 새로운 비밀번호가 이전 비밀번호와 같음";
 
                 break;
             }
@@ -274,7 +285,6 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
             model.setName(tmp);
         }
-
 
         switch (mCheckGender.getCheckedRadioButtonId()) {
 

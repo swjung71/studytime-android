@@ -46,7 +46,7 @@
                 android:layout_marginTop="23.33dp"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
-                android:hint="비밀번호 (영문, 숫자 조합 6자리 이상)"
+                android:hint="현재 비밀번호 입력"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
@@ -61,7 +61,7 @@
                 android:layout_marginTop="23.33dp"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
-                android:hint="비밀번호를 한번 더 입력하세요."
+                android:hint="변경할 비밀번호 입력"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"
@@ -164,7 +164,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/box_type_07_bg"
                 android:gravity="center"
-                android:text="회원가입"
+                android:text="확인"
                 android:textColor="@color/white"
                 android:textSize="16dp" />
         </LinearLayout>
