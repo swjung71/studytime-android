@@ -217,7 +217,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     case SUCCESS:
 
-                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin());
+                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
 
                         mHelper.insertChildren(res.getChildren());
 
@@ -229,7 +229,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     default:
 
-                        dismissLoading();
+                        handleResultCode(res.getResultCode(), res.getResultMessage());
 
                         break;
                 }
@@ -238,9 +238,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                dismissLoading();
-
-                Logger.d("requestParentLogin : error " + error.toString());
+                handleError(error);
 
             }
         });
@@ -296,6 +294,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 break;
 
                             default:
+
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
                                 break;
                         }
                     }
@@ -305,9 +306,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        dismissLoading();
-
-                        Logger.e(error.toString());
+                        handleError(error);
                     }
                 });
 

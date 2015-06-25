@@ -1,21 +1,43 @@
 package kr.co.digitalanchor.studytime.signup;
 
 import android.os.Bundle;
+import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.ParentInfoChange;
+import kr.co.digitalanchor.studytime.model.ParentPrivacyInfo;
+import kr.co.digitalanchor.studytime.model.ParentPrivacyInfoResult;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.utils.StringValidator;
+
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-06-19.
  */
 public class ModPrivacyActivity extends BaseActivity implements View.OnClickListener {
+
+    private final int REQUEST_GET_INFO = 50001;
+
+    private final int REQUEST_MODIFY_INFO = 50002;
+
+    private final int COMPLETE_MODIFY_INFO = 50003;
 
     TextView mLabelEmailAddr;
 
@@ -33,6 +55,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
     DBHelper mHelper;
 
+    ParentPrivacyInfoResult mResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +66,9 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         initView();
 
-        setData();
+        mHelper = new DBHelper(getApplicationContext());
+
+        sendEmptyMessage(REQUEST_GET_INFO);
     }
 
     private void initView() {
@@ -64,25 +89,243 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
+    protected void onHandleMessage(Message msg) {
+
+        switch (msg.what) {
+
+            case REQUEST_GET_INFO:
+
+                requestGetInfo();
+
+                break;
+
+            case REQUEST_MODIFY_INFO:
+
+                requestModifyInfo();
+
+                break;
+
+            case COMPLETE_MODIFY_INFO:
+
+                Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+
+                finish();
+
+                break;
+
+            default:
+
+                break;
+        }
+    }
+
+
+    @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
 
             case R.id.buttonConfirm:
 
+                if (isValidate()) {
+
+                    sendEmptyMessage(REQUEST_MODIFY_INFO);
+                }
+
                 break;
 
             default:
-                    break;
+                break;
         }
     }
 
-    private void setData() {
 
-        mHelper = new DBHelper(getApplicationContext());
+    public boolean isValidate() {
+
+        String temp = null;
+
+        String msg = null;
+
+        do {
+
+            temp = mEditPassword.getText().toString();
+
+            if (TextUtils.isEmpty(temp)) {
+
+                msg = "경고 문구 : 비밀번호 미 입력";
+
+                break;
+            }
+
+            if (!StringValidator.isPassword(temp)) {
+
+                msg = "경고 문구 : 비밀번호 형식 틀림";
+
+                break;
+            }
+
+            temp = mEditPasswordA.getText().toString();
+
+            if (TextUtils.isEmpty(temp)) {
+
+                msg = "경고 문구 : 비밀번호 재입력 안함";
+
+                break;
+            }
+
+            if (temp.compareTo(mEditPassword.getText().toString()) != 0) {
+
+                msg = "경고 문구 : 입력된 비밀번호 불일치";
+
+                break;
+            }
+
+            temp = mEditBirthDate.getText().toString();
+
+            if (!TextUtils.isEmpty(temp) && !StringValidator.isBirthDay(temp)) {
+
+                msg = "경고 문구 : 생년월일 형식 틀림";
+
+                break;
+            }
+
+
+        } while (false);
+
+        if (TextUtils.isEmpty(msg)) {
+
+            return true;
+
+        } else {
+
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+
+            return false;
+        }
+    }
+
+    public void setInfo(ParentPrivacyInfoResult info) {
+
+        mResult = info;
+
+        mLabelEmailAddr.setText(info.getEmail() + "(이메일 변경안됨)");
+    }
+
+    private void requestGetInfo() {
+
+        showLoading();
 
         Account account = mHelper.getAccountInfo();
 
+        ParentPrivacyInfo model = new ParentPrivacyInfo(account.getID());
 
+        SimpleXmlRequest request = HttpHelper.getParentInfo(model,
+                new Response.Listener<ParentPrivacyInfoResult>() {
+
+                    @Override
+                    public void onResponse(ParentPrivacyInfoResult response) {
+
+                        dismissLoading();
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                setInfo(response);
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void requestModifyInfo() {
+
+        String tmp = null;
+
+        Account account = mHelper.getAccountInfo();
+
+        ParentInfoChange model = new ParentInfoChange();
+
+        model.setParentID(account.getID());
+
+        tmp = mEditParentName.getText().toString();
+
+        if (TextUtils.isEmpty(tmp)) {
+
+            model.setName(mResult.getName());
+
+        } else {
+
+            model.setName(tmp);
+        }
+
+
+        switch (mCheckGender.getCheckedRadioButtonId()) {
+
+            case R.id.male:
+
+                model.setSex("0");
+
+                break;
+
+            case R.id.female:
+
+                model.setSex("1");
+
+                break;
+
+            default:
+
+                model.setSex(mResult.getSex());
+
+                break;
+        }
+
+        SimpleXmlRequest request = HttpHelper.getParentModifyInfo(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                sendEmptyMessage(COMPLETE_MODIFY_INFO);
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 }

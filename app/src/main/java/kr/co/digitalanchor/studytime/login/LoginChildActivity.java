@@ -251,6 +251,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                     default:
 
+                        handleResultCode(response.getResultCode(), response.getResultMessage());
+
                         break;
                 }
 
@@ -260,7 +262,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                // TODO
+                handleError(error);
             }
         });
 

@@ -9,10 +9,10 @@ import org.simpleframework.xml.Root;
 @Root(name = "PrivacyInfoResult")
 public class ParentPrivacyInfoResult {
 
-    @Element(name = "ResultCode")
+    @Element(name = "ResultCode", required = false)
     int resultCode;
 
-    @Element(name = "ResultMessage")
+    @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
     @Element(name = "ParentID", required = false)

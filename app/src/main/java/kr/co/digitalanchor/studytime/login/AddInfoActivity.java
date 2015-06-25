@@ -279,6 +279,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                             default:
 
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
                                 break;
                         }
                     }
@@ -286,7 +288,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Logger.e(error.toString());
+                        handleError(error);
                     }
                 });
 

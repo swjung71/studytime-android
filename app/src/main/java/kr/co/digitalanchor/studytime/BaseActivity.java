@@ -1,12 +1,19 @@
 package kr.co.digitalanchor.studytime;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.widget.Toast;
 
+import com.android.volley.NetworkError;
+import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
 
@@ -133,6 +140,7 @@ public class BaseActivity extends Activity {
         if (mLoading == null) {
 
             mLoading = new CustomProgressDialog(this);
+            mLoading.setCancelable(false);
         }
 
         mLoading.show("");
@@ -140,9 +148,63 @@ public class BaseActivity extends Activity {
 
     protected void dismissLoading() {
 
-        if (mLoading != null && mLoading.isShowing()) {
+        if (mLoading != null) {
 
             mLoading.dismiss("");
+        }
+    }
+
+    protected void addRequest(SimpleXmlRequest request) {
+
+        try {
+
+            mQueue.add(request);
+
+        } catch (Exception e) {
+
+            dismissLoading();
+        }
+    }
+
+    protected void handleResultCode(int code, String msg) {
+
+        dismissLoading();
+
+        switch (code) {
+
+            default:
+
+                Toast.makeText(getApplicationContext(),
+                        TextUtils.isEmpty(msg) ? "알수 없는 오유" : msg,
+                        Toast.LENGTH_SHORT).show();
+
+                break;
+        }
+    }
+
+    protected void handleError(VolleyError error) {
+
+        dismissLoading();
+
+        if (error instanceof ServerError) {
+
+            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof TimeoutError) {
+
+            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof ParseError) {
+
+            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof NetworkError) {
+
+            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 }

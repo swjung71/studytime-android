@@ -26,6 +26,7 @@ import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.monitor.MonitorService;
+import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -193,7 +194,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickModify() {
 
-        Toast.makeText(getApplicationContext(), "onClickModify", Toast.LENGTH_SHORT).show();
+        showModifyInfo();
     }
 
     @Override
@@ -205,7 +206,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickInquiry() {
 
-        Toast.makeText(getApplicationContext(), "onClickInquiry", Toast.LENGTH_SHORT).show();
+        sendEmail();
     }
 
     @Override
@@ -284,6 +285,15 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    private void showModifyInfo() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
+
+        startActivity(intent);
+    }
+
     private void testOnOff() {
 
         String i = STApplication.getString("service", "off");
@@ -315,29 +325,48 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         model.setChildID(mChild.getChildID());
         model.setIsOff("1");
 
-        HttpHelper.getParentOnOff(model, new Response.Listener<GeneralResult>() {
-            @Override
-            public void onResponse(GeneralResult response) {
+        HttpHelper.getParentOnOff(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
 
-                Logger.d(response.toString());
+                        Logger.d(response.toString());
 
-                switch (response.getResultCode()) {
+                        switch (response.getResultCode()) {
 
-                    case SUCCESS:
+                            case SUCCESS:
 
-                        break;
+                                break;
 
-                    default:
-                        break;
-                }
+                            default:
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
 
-                Logger.e(error.toString());
-            }
-        });
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+    }
+
+    private void sendEmail() {
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+
+        Account account = mHelper.getAccountInfo();
+
+        String[] tos = {account.getEmail()};
+
+        intent.setType("plain/text");
+        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
+
+        startActivity(intent);
     }
 }

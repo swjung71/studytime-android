@@ -242,6 +242,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
                     default:
 
+                        handleResultCode(response.getResultCode(), response.getResultMessage());
+
                         break;
                 }
             }
@@ -250,7 +252,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Logger.d(error.toString());
+                handleError(error);
             }
         }));
     }

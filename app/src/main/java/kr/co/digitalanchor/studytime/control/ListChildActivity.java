@@ -20,6 +20,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
 /**
@@ -150,7 +151,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClickModify() {
 
-        Toast.makeText(getApplicationContext(), "onClickModify", Toast.LENGTH_SHORT).show();
+        showModifyInfo();
     }
 
     @Override
@@ -162,7 +163,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClickInquiry() {
 
-        Toast.makeText(getApplicationContext(), "onClickInquiry", Toast.LENGTH_SHORT).show();
+        sendEmail();
     }
 
     @Override
@@ -241,6 +242,30 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         startActivity(intent);
 
+    }
+
+    private void showModifyInfo() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
+
+        startActivity(intent);
+    }
+
+    private void sendEmail() {
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+
+        Account account = mHelper.getAccountInfo();
+
+        String [] tos = {account.getEmail()};
+
+        intent.setType("plain/text");
+        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
+
+        startActivity(intent);
     }
 
     private void sendLink() {

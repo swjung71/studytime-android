@@ -65,14 +65,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".intro.SplashChildActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name=".intro.SplashParentActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
             android:name=".signup.ClauseViewActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
@@ -123,6 +115,12 @@
         <!-- 부모용 채팅 Activity -->
         <!-- 부모용 설정 Activity -->
         <!-- 자녀용 메인 (채팅창?) Activity -->
+
+        <activity
+            android:name=".signup.ModPrivacyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".chat.ChildChatActivity"
             android:screenOrientation="portrait"

@@ -264,6 +264,44 @@ public class STApplication extends Application {
         return pref.getString(key, defaultValue);
     }
 
+    public static int getInt(String key, int defaultValue) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        return pref.getInt(key, defaultValue);
+    }
+
+    public static boolean putInt(String key, int value) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putInt(key, value);
+
+        return editor.commit();
+    }
+
+    public static boolean putRegistrationId(String version) {
+
+        return putString(StaticValues.GCM_REG_ID, version);
+    }
+
+    public static String getRegistrationId() {
+
+        return getString(StaticValues.GCM_REG_ID, "");
+    }
+
+    public static boolean putRegisteredVersion(int version) {
+
+        return putInt("property_app_version", version);
+    }
+
+    public static int getRegisteredVersion() {
+
+        return getInt("property_app_version", Integer.MIN_VALUE);
+    }
+
     public static void clear() {
 
         SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);

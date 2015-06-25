@@ -342,6 +342,8 @@ public class HttpHelper {
 
         } catch (Exception e) {
 
+            Logger.e(e.toString());
+
             return null;
 
         } finally {

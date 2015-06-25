@@ -13,6 +13,7 @@ public class Account {
     private String name;
     private String password;
     private String coin;
+    private String email;
 
     public Account() {
 
@@ -25,6 +26,8 @@ public class Account {
         password = "";
 
         coin = "0";
+
+        email = "";
     }
 
 
@@ -67,5 +70,15 @@ public class Account {
 
     public void setCoin(String coin) {
         this.coin = coin;
+    }
+
+    public void setEmail(String email) {
+
+        this.email = email;
+    }
+
+    public String getEmail() {
+
+        return email;
     }
 }

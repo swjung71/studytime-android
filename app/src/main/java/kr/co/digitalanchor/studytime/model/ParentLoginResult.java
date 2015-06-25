@@ -27,6 +27,9 @@ public class ParentLoginResult {
     @Element(name = "ParentName", required = false)
     String name;
 
+    @Element(name = "Email", required = false)
+    String email;
+
     @ElementList(name = "Child", required = false, inline = true)
     List<Child> children;
 
@@ -76,5 +79,13 @@ public class ParentLoginResult {
 
     public void setChildren(List<Child> children) {
         this.children = children;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

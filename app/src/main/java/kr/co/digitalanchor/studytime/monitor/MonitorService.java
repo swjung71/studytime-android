@@ -5,8 +5,10 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.v7.app.NotificationCompat;
 
 import com.orhanobut.logger.Logger;
@@ -81,7 +83,10 @@ public class MonitorService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
 
-        builder.setSmallIcon(R.mipmap.ic_launcher).setContentTitle("스터디타임").setContentText("제어중");
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+
+        builder.setSmallIcon(R.drawable.icon_notificaiton).setContentTitle("스터디타임")
+                .setContentText("제어중").setLargeIcon(bm);
 
         Notification note = builder.build();
         note.flags  = Notification.FLAG_NO_CLEAR;

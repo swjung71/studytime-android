@@ -190,13 +190,10 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageIntro"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:scaleType="fitXY"
-        android:visibility="gone" />
+    <include
+        layout="@layout/activity_parent_splash"/>
+
+    <include
+        layout="@layout/activity_child_splash" />
 
 </FrameLayout>

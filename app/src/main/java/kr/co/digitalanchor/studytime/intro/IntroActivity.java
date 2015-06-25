@@ -1,10 +1,6 @@
 package kr.co.digitalanchor.studytime.intro;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,7 +19,10 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.login.LoginActivity;
+import kr.co.digitalanchor.studytime.login.LoginChildActivity;
 import kr.co.digitalanchor.studytime.model.db.Account;
 
 /**
@@ -32,6 +31,12 @@ import kr.co.digitalanchor.studytime.model.db.Account;
 public class IntroActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    View mLayoutParentIntro;
+
+    View mLayoutChildIntro;
+
+    View mLayoutSelectMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +50,17 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         initialize();
 
-        if (checkPlayServices()) {
-
-            registerInBackground();
-        }
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        selectIntro();
 
     }
 
     private void initialize() {
+
+        mLayoutParentIntro = findViewById(R.id.layoutParentIntro);
+
+        mLayoutChildIntro = findViewById(R.id.layoutChildIntro);
+
+        mLayoutSelectMode = findViewById(R.id.layoutSelectMode);
 
         findViewById(R.id.buttonModeKids).setOnClickListener(this);
 
@@ -83,10 +85,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.buttonModeParent:
 
-
                 showParentIntro();
-
-                // showOfferWall();
 
                 break;
 
@@ -102,10 +101,6 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         DBHelper helper = new DBHelper(getApplicationContext());
         Account account = helper.getAccountInfo();
-
-        String id = STApplication.getString("ParentID");
-
-        String isParent = STApplication.getString("isParent");
 
         if (TextUtils.isEmpty(account.getID())) {
 
@@ -131,6 +126,13 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void showParentIntro() {
 
+        mLayoutSelectMode.setVisibility(View.GONE);
+
+        mLayoutParentIntro.setVisibility(View.VISIBLE);
+
+        registerGCM();
+
+        /*
         Intent intent = new Intent();
 
         intent.setClass(getApplicationContext(), SplashParentActivity.class);
@@ -138,36 +140,116 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         startActivity(intent);
 
         finish();
+
+        */
     }
 
     private void showChildIntro() {
 
-        Intent intent = new Intent();
+        mLayoutSelectMode.setVisibility(View.GONE);
 
-        intent.setClass(getApplicationContext(), SplashChildActivity.class);
+        mLayoutChildIntro.setVisibility(View.VISIBLE);
 
-        startActivity(intent);
+        registerGCM();
 
-        finish();
     }
 
+    private void showNextScreen(final int delayed) {
+
+        final Intent intent = new Intent();
+
+        if (mLayoutParentIntro.getVisibility() == View.VISIBLE) {
+
+
+            intent.setClass(getApplicationContext(), LoginActivity.class);
+
+
+        } else if (mLayoutChildIntro.getVisibility() == View.VISIBLE) {
+
+            intent.setClass(getApplicationContext(), LoginChildActivity.class);
+        }
+
+        getHandler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+
+                startActivity(intent);
+
+                finish();
+
+            }
+        }, delayed);
+    }
+
+    private void registerGCM() {
+
+        if (checkPlayServices()) {
+
+            String id = getRegistrationId();
+
+            if (TextUtils.isEmpty(id)) {
+
+                registerInBackground();
+
+            } else {
+
+                showNextScreen(1000);
+            }
+        }
+    }
+
+    // new
     private boolean checkPlayServices() {
 
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
         if (resultCode != ConnectionResult.SUCCESS) {
+
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
+
             } else {
-                Logger.e("This device is not supported.");
+
+                Logger.i("This device is not supported.");
                 finish();
+
             }
+
             return false;
         }
+
         return true;
     }
 
+    private String getRegistrationId() {
+
+        String registrationId = STApplication.getRegistrationId();
+
+        if (TextUtils.isEmpty(registrationId)) {
+
+            Logger.i("Registration not found.");
+        }
+
+        int registeredVersion = STApplication.getRegisteredVersion();
+
+        int currentVersion = STApplication.getAppVersionCode();
+
+        if (registeredVersion != currentVersion) {
+
+            Logger.i("App version changed.");
+
+            return "";
+        }
+
+        return registrationId;
+    }
+
     private void registerInBackground() {
+
+        Logger.i("OK");
 
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -180,7 +262,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
                     /// Get Registration ID
                     String id = gcm.register(StaticValues.GCM_SENDER_ID);
 
-                    STApplication.putString(StaticValues.GCM_REG_ID, id);
+
+                    storeRegistrationId(id);
 
                     Logger.d("registration id " + id);
 
@@ -195,19 +278,24 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
             }
 
             @Override
-            protected void onPostExecute(String strResult) {
-                super.onPostExecute(strResult);
+            protected void onPostExecute(String result) {
 
-                if ("Succeed".equals(strResult)) {
+                super.onPostExecute(result);
 
-                    selectIntro();
+                if (result.compareTo("Succeed") == 0) {
 
-                } else {
-
-
+                    showNextScreen(300);
                 }
+
             }
         }.execute(null, null, null);
+    }
 
+    private void storeRegistrationId(String id) {
+
+        int version = STApplication.getAppVersionCode();
+
+        STApplication.putRegistrationId(id);
+        STApplication.putRegisteredVersion(version);
     }
 }

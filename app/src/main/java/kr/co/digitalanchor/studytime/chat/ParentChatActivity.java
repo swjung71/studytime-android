@@ -182,6 +182,8 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
                             default:
 
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
                                 break;
                         }
 
@@ -190,7 +192,7 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Logger.e(error.toString());
+                        handleError(error);
                     }
                 });
 

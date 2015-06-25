@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import kr.co.digitalanchor.studytime.database.DBHelper;
+
 public class AndroidUtils {
     // convert InputStream to String
     public static String inputStreamToString(InputStream is) {
@@ -112,6 +114,11 @@ public class AndroidUtils {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         return format.format(calendar.getTime());
+    }
+
+    public static void initializeApp(Context context) {
+
+        DBHelper helper = new DBHelper(context);
     }
 
 }

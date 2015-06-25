@@ -119,6 +119,8 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
 
                             default:
 
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
                                 break;
 
                         }
@@ -127,7 +129,7 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Logger.d(error.toString());
+                    handleError(error);
                     }
                 }));
 

@@ -43,6 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String IS_PARENT = "isParent"; // 0 child 1 parent 2 teacher
     private static final String PASSWORD = "password"; // 부모이면 부모 password, 자녀도 삭제를 위해서 부모 password
     private static final String COIN = "coin"; // 부모가 가진 코인 (하트)
+    private static final String EMAIL = "email"; // 부모의 Email
 
     //column for child table
     private static final String CHILDREN_ID = "childID"; // 부모이면 parentID, 자녀면 childID, 선생님이면 parentID
@@ -72,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO
                 + "(" + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ID
                 + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT NOT NULL, "
-                + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL )";
+                + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL )";
 
         //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
         String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
@@ -109,7 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * all CRUD(Create, Read, Update, Delete) Operations
      */
-    public void insertAccount(String id, int isChild, String name, String password, String coin) {
+    public void insertAccount(String id, int isChild, String name, String password, String coin, String email) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -119,11 +120,12 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
         values.put(PASSWORD, TextUtils.isEmpty(password) ? "" : password);
         values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
         //insert(table, nullColumnHack, values) : nullColumnHack은 만약 값이 없때 강제적으로 NULL문자를 넣을 column name
         db.insert(TABLE_ACCOUNT_INFO, null, values);
     }
 
-    public void insertAccount(String id, int isChild, String name, String coin) {
+    public void insertAccount(String id, int isChild, String name, String coin, String email) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -134,6 +136,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
         values.put(PASSWORD, "");
         values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
 
         db.insert(TABLE_ACCOUNT_INFO, null, values);
     }
@@ -143,7 +146,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Account account = new Account();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN};
+        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL};
 
         Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
@@ -159,6 +162,11 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor.getString(4) != null) {
 
                 account.setCoin(cursor.getString(4));
+            }
+
+            if (cursor.getString(5) != null) {
+
+                account.setEmail(cursor.getString(5));
             }
         }
         return account;
