@@ -12,6 +12,10 @@ import android.widget.Toast;
 
 import com.igaworks.IgawCommon;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
+import com.igaworks.adpopcorn.IgawAdpopcornExtension;
+import com.igaworks.interfaces.IgawRewardItem;
+import com.igaworks.interfaces.IgawRewardItemEventListener;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -20,6 +24,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
@@ -27,7 +32,7 @@ import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
  * Created by Thomas on 2015-06-19.
  */
 public class ListChildActivity extends BaseActivity implements View.OnClickListener,
-        MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener {
+        MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener, IgawRewardItemEventListener {
 
     TextView mLabelPoint;
 
@@ -58,6 +63,10 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         initView();
 
         mHelper = new DBHelper(getApplicationContext());
+
+        IgawCommon.setClientRewardEventListener(this);
+
+        IgawAdpopcornExtension.getClientPendingRewardItems(getApplicationContext());
     }
 
     public void initView() {
@@ -157,7 +166,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClickFAQ() {
 
-        Toast.makeText(getApplicationContext(), "onClickFAQ", Toast.LENGTH_SHORT).show();
+        showFAQ();
     }
 
     @Override
@@ -179,6 +188,12 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         mHelper.clearAll();
 
         Toast.makeText(getApplicationContext(), "Log out", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClickNotice() {
+
+        showNotice();
     }
 
     private void drawView() {
@@ -238,7 +253,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         intent.setClass(getApplicationContext(), ControlChildActivity.class);
 
         intent.putExtra("ChildID", child.getChildID());
-        intent.putExtra("Name",  child.getName());
+        intent.putExtra("Name", child.getName());
 
         startActivity(intent);
 
@@ -259,11 +274,34 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         Account account = mHelper.getAccountInfo();
 
-        String [] tos = {account.getEmail()};
+        String text = account.getEmail() + "이 보낸메일 \n";
 
         intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+
+        startActivity(intent);
+    }
+
+    private void showFAQ() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), BoardActivity.class);
+
+        intent.putExtra("option", 1);
+
+        startActivity(intent);
+    }
+
+    private void showNotice() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), BoardActivity.class);
+
+        intent.putExtra("option", 0);
 
         startActivity(intent);
     }
@@ -291,8 +329,30 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     private void getData() {
 
-        mChildren = mHelper.getChild();
+        mChildren = mHelper.getChildren();
 
         mList.setAdapter(makeAdapter());
+    }
+
+    @Override
+    public void onGetRewardInfo(boolean b, String s, IgawRewardItem[] igawRewardItems) {
+
+        int point = 0;
+
+        for(IgawRewardItem item : igawRewardItems) {
+
+            item.getRewardQuantity();
+
+            item.didGiveRewardItem();
+        }
+    }
+
+    @Override
+    public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
+
+        Toast.makeText(getApplicationContext(), "onDidGiveRewardItemResult " + b + " " + s + " " + s1, Toast.LENGTH_LONG).show();
+
+        Logger.d("onDidGiveRewardItemResult\n" + b + " " + s + "\n " + i + "\n " + s1);
+
     }
 }

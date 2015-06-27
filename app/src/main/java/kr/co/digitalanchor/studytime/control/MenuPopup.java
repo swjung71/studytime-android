@@ -48,6 +48,11 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
          * 로그아웃
          */
         void onClickLogOut();
+
+        /**
+         * 공지사항
+         */
+        void onClickNotice();
     }
 
     private OnClickMenuItemListener mListener;
@@ -61,6 +66,7 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         View view = LayoutInflater.from(context).inflate(R.layout.popup_main_menu, null);
 
         view.findViewById(R.id.menuFAQ).setOnClickListener(this);
+        view.findViewById(R.id.menuNotice).setOnClickListener(this);
         view.findViewById(R.id.menuModify).setOnClickListener(this);
         view.findViewById(R.id.menuInquiry).setOnClickListener(this);
         view.findViewById(R.id.menuWithdraw).setOnClickListener(this);
@@ -134,6 +140,16 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
                     mListener.onClickLogOut();
                 }
+
+                break;
+
+            case R.id.menuNotice:
+
+                if (mListener != null) {
+
+                    mListener.onClickNotice();
+                }
+
 
                 break;
 

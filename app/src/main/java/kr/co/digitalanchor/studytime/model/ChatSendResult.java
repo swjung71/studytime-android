@@ -18,7 +18,7 @@ public class ChatSendResult {
     @Element(name = "Is_fail", required = false)
     String isFail;
 
-    @Element(name = "messageID", required = false)
+    @Element(name = "MessageID", required = false)
     String messageID;
 
     @Element(name = "messagePK", required = false)

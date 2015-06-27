@@ -23,7 +23,7 @@ public class PrivacyPolicyFragment extends Fragment {
 
         WebView webView = (WebView) view.findViewById(R.id.webView);
 
-        webView.loadUrl("file:///android_asset/html/agreement.html");
+        webView.loadUrl("file:///android_asset/html/agreement2.html");
 
         return view;
     }

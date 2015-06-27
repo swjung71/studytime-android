@@ -50,15 +50,19 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
         name.setText(child.getName());
         name.setSelected(true);
 
-        int count = mHelper.getUnreadMessage(child.getChildID());
+        TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
+
+        int count = 0;
 
         if (count > 0) {
-
-            TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
 
             noti.setVisibility(View.VISIBLE);
 
             noti.setText(count > 10 ? "10+" : String.valueOf(count));
+
+        } else {
+
+            noti.setVisibility(View.GONE);
         }
 
         View profile = ViewHolder.get(convertView, R.id.imgProfile);

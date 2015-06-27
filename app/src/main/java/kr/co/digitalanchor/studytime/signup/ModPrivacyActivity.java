@@ -13,9 +13,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
-import com.orhanobut.logger.Logger;
-
-import org.w3c.dom.Text;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -88,6 +85,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
         mCheckGender = (RadioGroup) findViewById(R.id.radioGender);
 
         mButtonConfirm = (Button) findViewById(R.id.buttonConfirm);
+        mButtonConfirm.setOnClickListener(this);
     }
 
     @Override
@@ -150,25 +148,17 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         do {
 
-            temp = mEditPassword.getText().toString();
 
-            if (TextUtils.isEmpty(temp)) {
+            String temp2 = mEditPassword.getText().toString();
 
-                msg = "경고 문구 : 비밀번호 미 입력";
+            temp = mEditPasswordA.getText().toString();
 
-                break;
-            }
-
-            if (!StringValidator.isPassword(temp)) {
+            if (!TextUtils.isEmpty(temp) && !StringValidator.isPassword(temp)) {
 
                 msg = "경고 문구 : 비밀번호 형식 틀림";
 
                 break;
             }
-
-            String temp2 = mEditPassword.getText().toString();
-
-            temp = mEditPasswordA.getText().toString();
 
             if (!TextUtils.isEmpty(temp2) && TextUtils.isEmpty(temp)) {
 
@@ -177,14 +167,14 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
                 break;
             }
 
-            if (TextUtils.isEmpty(temp2) && TextUtils.isEmpty(temp)) {
+            if (TextUtils.isEmpty(temp2) && !TextUtils.isEmpty(temp)) {
 
                 msg = "경고 문구 : 현재 비밀번호를 입력하세요.";
 
                 break;
             }
 
-            if (temp.compareTo(temp2) == 0) {
+            if (!TextUtils.isEmpty(temp2) && !TextUtils.isEmpty(temp) && temp.compareTo(temp2) == 0) {
 
                 msg = "경고 문구 : 새로운 비밀번호가 이전 비밀번호와 같음";
 
@@ -267,11 +257,13 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
     private void requestModifyInfo() {
 
+        showLoading();
+
         String tmp = null;
 
-        Account account = mHelper.getAccountInfo();
+        final Account account = mHelper.getAccountInfo();
 
-        ParentInfoChange model = new ParentInfoChange();
+        final ParentInfoChange model = new ParentInfoChange();
 
         model.setParentID(account.getID());
 
@@ -284,6 +276,32 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
         } else {
 
             model.setName(tmp);
+        }
+
+        tmp = null;
+
+        tmp = mEditPassword.getText().toString();
+
+        if (TextUtils.isEmpty(tmp)) {
+
+            model.setOldPwd(null);
+
+        } else {
+
+            model.setOldPwd(tmp);
+        }
+
+        tmp = null;
+
+        tmp = mEditPasswordA.getText().toString();
+
+        if (TextUtils.isEmpty(tmp)) {
+
+            model.setNewPwd(null);
+
+        } else {
+
+            model.setNewPwd(tmp);
         }
 
         switch (mCheckGender.getCheckedRadioButtonId()) {
@@ -307,6 +325,8 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
                 break;
         }
 
+        model.setEmail(account.getEmail());
+
         SimpleXmlRequest request = HttpHelper.getParentModifyInfo(model,
                 new Response.Listener<GeneralResult>() {
                     @Override
@@ -315,6 +335,10 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
                         switch (response.getResultCode()) {
 
                             case SUCCESS:
+
+                                setModifiedInfo(model, account);
+
+                                mLoading.dismiss();
 
                                 sendEmptyMessage(COMPLETE_MODIFY_INFO);
 
@@ -337,5 +361,12 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
                 });
 
         addRequest(request);
+    }
+
+    private void setModifiedInfo(ParentInfoChange model, Account account) {
+
+        mHelper.updateAccount(account.getID(), 1,
+                TextUtils.isEmpty(model.getName()) ? account.getName() : model.getName(),
+                account.getCoin(), account.getEmail());
     }
 }

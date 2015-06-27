@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.chat;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -7,11 +8,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -20,17 +25,26 @@ import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.model.db.ChatMessage;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
 
 /**
  * Created by Thomas on 2015-06-19.
  */
-public class ParentChatActivity extends BaseActivity implements View.OnClickListener {
+public class ParentChatActivity extends BaseActivity implements View.OnClickListener,
+        MessageReceiver.OnMessageListener {
 
     private final int REQUEST_SEND_MESSAGE = 50001;
+
+    private final int REQUEST_NEW_MESSAGE = 50002;
+
+    private final int UPDATE_MESSAGE_LIST = 50003;
+
+    TextView mLabelTitle;
 
     EditText mEditMessage;
 
@@ -44,6 +58,12 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
     Account mAccount;
 
+    List<ChatMessage> mMessages;
+
+    ParentChatAdapter mAdapter;
+
+    MessageReceiver messageReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,16 +71,55 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
         setContentView(R.layout.activity_parent_chat);
 
-        initView();
-
-        getData();
-
         mHelper = new DBHelper(getApplicationContext());
 
         mAccount = mHelper.getAccountInfo();
+
+        getData();
+
+        initView();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (messageReceiver == null) {
+
+            messageReceiver = new MessageReceiver();
+            messageReceiver.setMessageListener(this);
+
+        }
+
+        IntentFilter intentFilter = new IntentFilter(NEW_MESSAGE_ARRIVED);
+
+        registerReceiver(messageReceiver, intentFilter);
+
+        sendEmptyMessage(UPDATE_MESSAGE_LIST);
+    }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+
+        if (messageReceiver != null) {
+
+            unregisterReceiver(messageReceiver);
+        }
+    }
+
+    @Override
+    public void onReceiveMessage() {
+
+        sendEmptyMessage(UPDATE_MESSAGE_LIST);
     }
 
     private void initView() {
+
+        mLabelTitle = (TextView) findViewById(R.id.header);
+        mLabelTitle.setText(mChild.getName());
 
         mEditMessage = (EditText) findViewById(R.id.editMessage);
 
@@ -68,6 +127,14 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
         mButtonSend.setOnClickListener(this);
 
         mListChat = (ListView) findViewById(R.id.listMessage);
+        mListChat.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        mListChat.setStackFromBottom(true);
+
+        mMessages = new ArrayList<>();
+        mAdapter = new ParentChatAdapter(getApplicationContext(), mMessages, mAccount.getID());
+
+        mListChat.setAdapter(mAdapter);
+
     }
 
     private void getData() {
@@ -101,7 +168,13 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
             case REQUEST_SEND_MESSAGE:
 
-                requestSendMessage();
+                insertSendMessage();
+
+                break;
+
+            case UPDATE_MESSAGE_LIST:
+
+                updateMessageList();
 
                 break;
 
@@ -130,7 +203,67 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private void requestSendMessage() {
+    private void insertSendMessage() {
+
+        String message = mEditMessage.getText().toString();
+
+        if (TextUtils.isEmpty(message)) {
+
+            return ;
+        }
+
+        long primaryKey = mHelper.insertMessageBeforeSend(mChild.getChildID(), mChild.getName(),
+                mAccount.getID(), message, AndroidUtils.getCurrentTime4Chat(), 1, 0, 0, 0);
+
+        if (primaryKey < 0) {
+
+            return;
+        }
+
+        sendEmptyMessage(UPDATE_MESSAGE_LIST);
+
+        requestSendMessage(primaryKey);
+    }
+
+    private void updateMessageList() {
+
+        Logger.d("updateMessageList guest " + mChild.getChildID());
+
+        List<ChatMessage> messages = null;
+
+        if (mMessages.size() <= 0) {
+
+            messages = mHelper.getMessages(mChild.getChildID());
+
+        } else {
+
+            String timeStamp = mMessages.get(mMessages.size() - 1).getTimeStamp();
+
+            messages = mHelper.getMessages(mChild.getChildID(), timeStamp);
+        }
+
+        if (messages == null) {
+
+            Logger.d("message" + (messages == null));
+
+            return;
+        }
+
+        Logger.d("message count " + messages.size());
+
+        for (ChatMessage message : messages) {
+
+            mMessages.add(message);
+
+        }
+
+        mAdapter.notifyDataSetChanged();
+
+        mListChat.setSelection(mMessages.size() - 1);
+
+    }
+
+    private void requestSendMessage(long pk) {
 
         String msg = mEditMessage.getText().toString();
 
@@ -156,15 +289,6 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
         model.setIsChildSender(0);
         model.setIsChildReceiver(1);
         model.setIsGroup(0);
-
-        long pk = mHelper.insertChat(model.getIsGroup(), model.getSenderID(), model.getReceiverID(), model.getSenderName(),
-                model.getMessage(), model.getTime(), 1, 0, model.getMsgType());
-
-        if (pk < 0) {
-
-            return;
-        }
-
         model.setMessagePk(pk);
 
         SimpleXmlRequest request = HttpHelper.getSendChat(model,
@@ -196,9 +320,6 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
                     }
                 });
 
-        if (request != null) {
-
-            mQueue.add(request);
-        }
+        addRequest(request);
     }
 }

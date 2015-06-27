@@ -11,7 +11,7 @@ import org.simpleframework.xml.Root;
 public class ParentOnOff {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
     @Element(name = "ParentID")
     String parentID;

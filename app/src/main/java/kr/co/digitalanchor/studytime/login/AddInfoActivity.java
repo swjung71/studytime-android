@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -19,9 +20,11 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.signup.ClauseViewActivity;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -89,13 +92,13 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.buttonServiceInfo:
 
-                Toast.makeText(getApplicationContext(), "서비스 이용약관", Toast.LENGTH_SHORT).show();
+                showClause(0);
 
                 break;
 
             case R.id.buttonPersonalInfo:
 
-                Toast.makeText(getApplicationContext(), "개인정보 취급방침", Toast.LENGTH_SHORT).show();
+                showClause(1);
 
                 break;
 
@@ -113,6 +116,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                 break;
         }
     }
+
 
     @Override
     protected void onHandleMessage(Message msg) {
@@ -202,6 +206,18 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    private void showClause(int opt) {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), ClauseViewActivity.class);
+
+        intent.putExtra("position", opt);
+        intent.putExtra("isParent", false);
+
+        startActivity(intent);
+    }
+
     private void requestSendAdditionalInfo() {
 
         ChildRegister model = null;
@@ -252,6 +268,9 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         // Birth date
         model.setBirthday(TextUtils.isEmpty(tmp) ? "" : tmp);
 
+        // 언어 설정
+        model.setLang(STApplication.getLanguageCode());
+
         // App Version
         model.setAppVersion(STApplication.getAppVersionName());
 
@@ -269,9 +288,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                             case SUCCESS:
 
-                                STApplication.putString("ParentID", response.getParentID());
-                                STApplication.putString("ChildID", response.getChildID());
-                                STApplication.putString("isParent", "child");
+                                completeRegister(response.getParentID(), response.getChildID());
 
                                 sendEmptyMessage(COMPLETE_ADD_INFO);
 
@@ -292,13 +309,16 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                     }
                 });
 
-        System.out.println("mQueue.add");
+        addRequest(request);
+    }
 
-        if (request != null) {
+    private void completeRegister(String parentId, String childId) {
 
-            System.out.println("mQueue.add 01");
+        Logger.i(parentId + " " + childId);
 
-            mQueue.add(request);
-        }
+        DBHelper helper = new DBHelper(getApplicationContext());
+
+        helper.insertAccount(childId, mModel.getName(), parentId);
+
     }
 }

@@ -48,7 +48,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
-            android:src="@drawable/button_send_selector" />
+            android:src="@drawable/button_child_send_selector" />
 
         <kr.co.digitalanchor.studytime.view.FontEditText
             android:id="@+id/editMessage"
@@ -74,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom"
         android:layout_below="@id/header"
+        android:divider="@null"
         android:overScrollMode="never" />
 
     <FrameLayout

@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 
@@ -162,6 +163,8 @@ public class BaseActivity extends Activity {
 
         } catch (Exception e) {
 
+            Logger.e(e.toString());
+
             dismissLoading();
         }
     }
@@ -175,7 +178,7 @@ public class BaseActivity extends Activity {
             default:
 
                 Toast.makeText(getApplicationContext(),
-                        TextUtils.isEmpty(msg) ? "알수 없는 오유" : msg,
+                        TextUtils.isEmpty(msg) ? "알수 없는 오류" : msg,
                         Toast.LENGTH_SHORT).show();
 
                 break;

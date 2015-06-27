@@ -14,6 +14,8 @@ public class Account {
     private String password;
     private String coin;
     private String email;
+    private String parentId;
+    private String parentName;
 
     public Account() {
 
@@ -28,6 +30,10 @@ public class Account {
         coin = "0";
 
         email = "";
+
+        parentId = "";
+
+        parentName = "";
     }
 
 
@@ -80,5 +86,25 @@ public class Account {
     public String getEmail() {
 
         return email;
+    }
+
+    public int getIsChild() {
+        return isChild;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }

@@ -39,6 +39,9 @@ public class ParentPhoneInfo {
     @Element(name = "Dev_model")
     String devModel;
 
+    @Element(name = "Lang")
+    String lang;
+
     public ParentPhoneInfo() {
 
         tag ="http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
@@ -99,4 +102,11 @@ public class ParentPhoneInfo {
         this.appVersion = appVersion;
     }
 
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
 }

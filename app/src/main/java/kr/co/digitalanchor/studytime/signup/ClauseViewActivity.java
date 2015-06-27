@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import it.neokree.materialtabs.MaterialTab;
 import it.neokree.materialtabs.MaterialTabHost;
@@ -13,6 +15,8 @@ import it.neokree.materialtabs.MaterialTabListener;
 import kr.co.digitalanchor.studytime.R;
 
 public class ClauseViewActivity extends FragmentActivity implements MaterialTabListener {
+
+    TextView mLabelTitle;
 
     MaterialTabHost tabHost;
 
@@ -27,12 +31,15 @@ public class ClauseViewActivity extends FragmentActivity implements MaterialTabL
 
         setContentView(R.layout.activity_clause_view);
 
+        mLabelTitle = (TextView) this.findViewById(R.id.labelTitle);
+
         tabHost = (MaterialTabHost) this.findViewById(R.id.tabHost);
         pager = (ViewPager) this.findViewById(R.id.pager);
 
         // init view pager
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);
+
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -50,11 +57,14 @@ public class ClauseViewActivity extends FragmentActivity implements MaterialTabL
                             .setTabListener(this)
             );
         }
+
+        getIntentData();
     }
 
     @Override
     public void onTabSelected(MaterialTab materialTab) {
 
+        pager.setCurrentItem(materialTab.getPosition(), true);
     }
 
     @Override
@@ -65,6 +75,27 @@ public class ClauseViewActivity extends FragmentActivity implements MaterialTabL
     @Override
     public void onTabUnselected(MaterialTab materialTab) {
 
+    }
+
+    private void getIntentData() {
+
+        Bundle data = getIntent().getExtras();
+
+        if (data == null) {
+
+            return;
+        }
+
+        boolean isParent = data.getBoolean("isParent", true);
+
+        if (!isParent) {
+
+            mLabelTitle.setBackgroundResource(R.color.bgColorType03);
+        }
+
+        int index = data.getInt("position", 0);
+
+        pager.setCurrentItem(index);
     }
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -91,7 +122,6 @@ public class ClauseViewActivity extends FragmentActivity implements MaterialTabL
                     return null;
 
             }
-
         }
 
         @Override

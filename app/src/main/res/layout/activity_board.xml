@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <kr.co.digitalanchor.studytime.view.FontTextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:background="@color/bgColorType01"
+        android:gravity="center"
+        android:text="Title"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:divider="@color/bgColorType01"
+        android:dividerHeight="1dp"/>
+
+</LinearLayout>

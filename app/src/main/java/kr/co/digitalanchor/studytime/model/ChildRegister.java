@@ -57,6 +57,9 @@ public class ChildRegister implements Cloneable {
     @Element(name = "MAC")
     String mac;
 
+    @Element(name = "Lang")
+    String lang;
+
     public ChildRegister() {
 
         tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
@@ -146,6 +149,14 @@ public class ChildRegister implements Cloneable {
 
     public void setMac(String mac) {
         this.mac = mac;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     @Override

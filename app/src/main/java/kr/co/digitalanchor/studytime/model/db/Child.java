@@ -10,6 +10,16 @@ public class Child {
     private String childID;
     private int isChild;
     private String name;
+    private int isOFF;
+    private int newMessageCount;
+
+    public Child() {
+        this.childID = "";
+        this.isChild = 0;
+        this.name = "";
+        this.isOFF = 0;
+        this.newMessageCount = 0;
+    }
 
     public String getChildID() {
         return childID;
@@ -33,5 +43,25 @@ public class Child {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getIsChild() {
+        return isChild;
+    }
+
+    public int getIsOFF() {
+        return isOFF;
+    }
+
+    public void setIsOFF(int isOFF) {
+        this.isOFF = isOFF;
+    }
+
+    public int getNewMessageCount() {
+        return newMessageCount;
+    }
+
+    public void setNewMessageCount(int newMessageCount) {
+        this.newMessageCount = newMessageCount;
     }
 }

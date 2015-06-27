@@ -11,35 +11,36 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="6월 2일(화) 오전 09:11"
         android:textColor="#8A8A8A"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        android:visibility="visible"/>
 
     <RelativeLayout
+        android:id="@+id/layoutHost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:visibility="gone">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
-            android:id="@+id/textMyMessage"
+            android:id="@+id/textHostMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@drawable/bubble_pink"
             android:maxEms="15"
-            android:text="최대 18 자리까지 텍스트 늘어나는냐 해보자오ㄴㅇㄹㅇㄴㄻㄹㄴㅇㄻㄴㅇㄹ공"
             android:textColor="@color/white"
             android:textSize="14dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="15dp"
-            android:layout_alignBottom="@id/textMyMessage"
+            android:layout_alignBottom="@id/textHostMsg"
             android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@id/textMyMessage"
+            android:layout_toLeftOf="@id/textHostMsg"
             android:background="@drawable/chat"
             android:orientation="horizontal"
             android:paddingLeft="7dp"
@@ -71,9 +72,9 @@
             android:id="@+id/textReadCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/textMyMessage"
+            android:layout_alignBottom="@id/textHostMsg"
             android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@id/textMyMessage"
+            android:layout_toLeftOf="@id/textHostMsg"
             android:text="1"
             android:textColor="#8A8A8A"
             android:textSize="8dp"
@@ -82,12 +83,14 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/layoutGuest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:visibility="gone">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:id="@+id/textGuestMessage"
@@ -96,7 +99,6 @@
             android:layout_alignParentLeft="true"
             android:background="@drawable/bubble_gray"
             android:maxEms="15"
-            android:text="최대 18 자리까지 텍스트 늘어나는냐 해보자오ㄴㅇㄹㅇㄴㄻㄹㄴㅇㄻㄴㅇㄹ공"
             android:textColor="#4A4A4A"
             android:textSize="14dp" />
 

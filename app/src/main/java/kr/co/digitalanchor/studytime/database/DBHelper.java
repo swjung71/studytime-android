@@ -8,11 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.model.db.Account;
-import kr.co.digitalanchor.studytime.model.db.ChatModel;
+import kr.co.digitalanchor.studytime.model.db.ChatMessage;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
@@ -28,8 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
     //table names
     private static final String TABLE_ACCOUNT_INFO = "account_table";
     private static final String TABLE_CHILD = "child_table"; //부모 studytime이면 자녀 table, 자녀 studytime이면 부모 table
-    private static final String TABLE_CHAT = "chat_table";
     private static final String TABLE_ON_OFF = "onOff_table";
+    private static final String TABLE_MESSAGE = "message_table";
 
     //Key value
     private static final String CHAT_KEY = "messagePK";
@@ -44,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String PASSWORD = "password"; // 부모이면 부모 password, 자녀도 삭제를 위해서 부모 password
     private static final String COIN = "coin"; // 부모가 가진 코인 (하트)
     private static final String EMAIL = "email"; // 부모의 Email
+    private static final String PARENT_ID = "parentID"; // 자식을 경우 부모아이디를 저장한다.
 
     //column for child table
     private static final String CHILDREN_ID = "childID"; // 부모이면 parentID, 자녀면 childID, 선생님이면 parentID
@@ -52,16 +55,20 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String MSG_ID = "messageID"; // 서버에 저장되는 message primary key
     private static final String IS_GROUP = "is_Group";
     private static final String SENDER_ID = "senderID";
-    private static final String RECEIVER_ID = "receiverID";
-    private static final String SENDER_NAME = "sender_name";
     private static final String MSG = "message";
     private static final String TIMESTAMP = "time";
-    private static final String COUNTER = "counter";
     private static final String IS_FAIL = "is_fail";
     private static final String FAIL_NAME = "fail_name";// ;로 구별됨
     private static final String MSG_TYPE = "msg_type";// 0이면 문자, 1이면 이미지
 
+    // column for chat 2
+    private static final String ROOM_ID = "roomID";
+    private static final String GUEST_ID = "guestID";
+    private static final String GUEST_NAME = "guestName";
+    private static final String UNREAD_COUNT = "unreadCount";
+
     private static final String IS_OFF = "isOff";// 0이면 on 1이면 off
+    private static final String NEW_MESSAGE_COUNT = "newMessageCount";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -72,29 +79,50 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO
                 + "(" + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ID
-                + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT NOT NULL, "
-                + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL )";
+                + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT, "
+                + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL, "
+                + PARENT_ID + " TEXT )";
 
         //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
         String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
                 + "(" + CHILD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CHILDREN_ID
-                + " INTEGER NOT NULL," + IS_PARENT + " INTEGER NOT NULL, " + NAME + " TEXT)";
+                + " INTEGER NOT NULL," + IS_PARENT + " INTEGER NOT NULL, " + NAME + " TEXT, "
+                + IS_OFF + " TEXT, " +  NEW_MESSAGE_COUNT + " INTEGER )";
 
-        //TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
+/*
+        TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
+
         String CREATE_TABLE_CHAT = "CREATE TABLE " + TABLE_CHAT
                 + "(" + CHAT_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT, " + MSG_ID
                 + " INTEGER , " + IS_GROUP + " INTEGER, " + SENDER_ID
                 + " INTEGER, " + RECEIVER_ID + " INTEGER," + SENDER_NAME + " TEXT, "
                 + MSG + " TEXT, " + TIMESTAMP + " TEXT, " + COUNTER + " INTEGER, " + MSG_TYPE
                 + " INTEGER, " + IS_FAIL + " INTEGER, " + FAIL_NAME + " TEXT )";
-
+*/
         String CREATE_TABLE_ONOFF = "CREATE TABLE " + TABLE_ON_OFF
                 + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT, " + IS_OFF
                 + " INTEGER NOT NULL )";
 
+        // TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
+        String CREATE_TABLE_MESSAGE = "CREATE TABLE " + TABLE_MESSAGE + " ( "
+                + CHAT_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ROOM_ID + " INTEGER, "
+                + MSG_ID + " INTEGER, "
+                + SENDER_ID + " INTEGER, "
+                + GUEST_ID + " INTEGER, "
+                + GUEST_NAME + " TEXT, "
+                + TIMESTAMP + " TEXT, "
+                + MSG + " TEST, "
+                + UNREAD_COUNT + " INTEGER, "
+                + IS_GROUP + " INTEGER, "
+                + IS_FAIL + " INTEGER, "
+                + MSG_TYPE + " INTEGER, "
+                + FAIL_NAME + " TEXT )";
+
         db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
         db.execSQL(CREATE_TABLE_CHILD);
-        db.execSQL(CREATE_TABLE_CHAT);
+        db.execSQL(CREATE_TABLE_MESSAGE);
+        db.execSQL(CREATE_TABLE_ONOFF);
     }
 
     @Override
@@ -103,28 +131,19 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.i("DBHelper", "Upgrading from version " + oldVersion + " to " + newVersion + "which will destory all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
         onCreate(db);
     }
 
     /**
-     * all CRUD(Create, Read, Update, Delete) Operations
+     * 부모용
+     * @param id
+     * @param isChild
+     * @param name
+     * @param coin
+     * @param email
      */
-    public void insertAccount(String id, int isChild, String name, String password, String coin, String email) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(ID, id);
-        values.put(IS_PARENT, isChild);
-        values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
-        values.put(PASSWORD, TextUtils.isEmpty(password) ? "" : password);
-        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
-        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
-        //insert(table, nullColumnHack, values) : nullColumnHack은 만약 값이 없때 강제적으로 NULL문자를 넣을 column name
-        db.insert(TABLE_ACCOUNT_INFO, null, values);
-    }
-
     public void insertAccount(String id, int isChild, String name, String coin, String email) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -132,7 +151,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(ID, id);
-        values.put(IS_PARENT, isChild);
+        values.put(IS_PARENT, 1);
         values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
         values.put(PASSWORD, "");
         values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
@@ -141,12 +160,62 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_ACCOUNT_INFO, null, values);
     }
 
+    /**
+     * 자녀용
+     *
+     * @param id
+     * @param name
+     * @param parentId
+     */
+    public void insertAccount(String id, String name, String parentId) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(ID, id);
+        values.put(IS_PARENT, 0);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
+        values.put(PARENT_ID, parentId);
+        values.put(PASSWORD, "");
+        values.put(COIN, "");
+        values.put(EMAIL, "");
+
+        db.insert(TABLE_ACCOUNT_INFO, null, values);
+    }
+
+    public void updateAccount(String id, int isChild, String name, String coin, String email) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(IS_PARENT, isChild);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
+        values.put(PASSWORD, "");
+        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
+
+        db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
+    }
+
+    public void updateCoin(String id, String coin) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+
+        db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
+    }
+
     public Account getAccountInfo() {
 
         Account account = new Account();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL};
+        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL, PARENT_ID};
 
         Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
@@ -167,6 +236,11 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor.getString(5) != null) {
 
                 account.setEmail(cursor.getString(5));
+            }
+
+            if (cursor.getString(6) != null) {
+
+                account.setParentId(cursor.getString(6));
             }
         }
         return account;
@@ -196,11 +270,12 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<Child> getChild() {
+
+    public ArrayList<Child> getChildren() {
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Child> children = new ArrayList<Child>();
-        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME};
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
 
         Cursor cursor = db.query(true, TABLE_CHILD, result_columns, null, null, null, null, null, null);
 
@@ -209,301 +284,272 @@ public class DBHelper extends SQLiteOpenHelper {
                 Child child = new Child();
                 child.setChildID(cursor.getString(0));
                 child.setIsChild(cursor.getInt(1));
+
                 if (cursor.getString(2) != null) {
                     child.setName(cursor.getString(2));
                 }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
                 children.add(child);
+
             } while (cursor.moveToNext());
         }
         return children;
 
     }
 
-    /**
-     * 처음 문자를 보냈을 때 사용
-     *
-     * @param isGroup    : group인지 표시, 현재버전은 0만
-     * @param senderID   : 보내는 사람의 ID
-     * @param receiverID : 받는 사람의 ID
-     * @param senderName : 보내는 사람의 이름
-     * @param msg        : 메시지
-     * @param time       : 보내는 시간 YYYY-MM-DD HH:MM:SS 형식
-     * @param counter    : 아직 문자를 읽지 않은 사람의 숫자
-     * @param isFail     : 처음 보낼 때는 0
-     * @param msgType
-     * @return messagePK (local DB의 chat primary key
-     */
-    public long insertChat(int isGroup, String senderID, String receiverID, String senderName,
-                           String msg, String time, int counter, int isFail, int msgType) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Child getChild(String childId) {
 
-        ContentValues values = new ContentValues();
+        Child child = null;
 
-        values.put(IS_GROUP, isGroup);
-        values.put(SENDER_ID, senderID);
-        values.put(RECEIVER_ID, receiverID);
-        values.put(SENDER_NAME, senderName);
-        values.put(MSG, msg);
-        values.put(TIMESTAMP, time);
-        values.put(COUNTER, counter);
-        values.put(IS_FAIL, isFail);
-        values.put(MSG_TYPE, msgType);
+        SQLiteDatabase db = this.getReadableDatabase();
 
-        return db.insert(TABLE_CHAT, null, values);
+        child = new Child();
+
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
+
+        Cursor cursor = db.query(true, TABLE_CHILD, result_columns, CHILDREN_ID + "=?",
+                new String[] {childId}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                child.setChildID(cursor.getString(0));
+
+                child.setIsChild(cursor.getInt(1));
+
+                if (cursor.getString(2) != null) {
+                    child.setName(cursor.getString(2));
+                }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
+            } while (cursor.moveToNext());
+        }
+
+        return child;
     }
 
     /**
-     * 문자를 보내고 결과를 넣은 함수
+     * 자녀의 상태를 업데이트 한다.
+     *  0 : on, 1 : off
      *
-     * @param messagePK : local db에 있는 message primary key 값
-     * @param messageID : 서버의 message primary key 값 보낼 때는 없음
-     * @param isFail    네트워크가 안좋아서 문자를 못보내거나, 전송은 하였으나 서버로부터 error를 받은 경우 1, 처음 보낼 때 0
-     * @param failName  문자를 못받은 사람의 리스트, ;로 구별 ex) 정승욱;남상미;정재욱;유정효
+     * @param childId
+     * @param isOff
      */
-    public void updateChat(String messagePK, String messageID, int isFail, String failName) {
+    public void updateChildToggle(String childId,int isOff) {
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(MSG_ID, messageID);
+
+        values.put(IS_OFF, isOff);
+
+        db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[] {childId});
+    }
+
+    /**
+     * 처음 메시지를 보내긴 전에
+     *
+     * @param guestId   : 상대방 ID
+     * @param guestName : 상대방 이름
+     * @param senderId  : 메시지 보낸 사람
+     * @param msg       : 메시지
+     * @param time      : 보내는 시간 YYYY-MM-DD HH:MM:SS 형식
+     * @param unreadCnt :안 읽은 사람 수 (현재는 1 부터)
+     * @param isFail    : 성공 여부 (처음은 0, 실패 시 1)
+     * @param msgType   : 메시지 타입 (현재는 0)
+     * @param isGroup   : 그룹 채팅방인지
+     * @return messagePK : (local DB의 chat primary key
+     */
+    public long insertMessageBeforeSend(String guestId, String guestName, String senderId,
+                                        String msg, String time, int unreadCnt, int isFail,
+                                        int msgType, int isGroup) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+
+            ContentValues values = new ContentValues();
+
+            values.put(IS_GROUP, isGroup);
+            values.put(ROOM_ID, guestId);
+            values.put(GUEST_ID, guestId);
+            values.put(GUEST_NAME, guestName);
+            values.put(SENDER_ID, senderId);
+            values.put(MSG, msg);
+            values.put(TIMESTAMP, time);
+            values.put(UNREAD_COUNT, unreadCnt);
+            values.put(IS_FAIL, isFail);
+            values.put(MSG_TYPE, msgType);
+
+            return db.insert(TABLE_MESSAGE, null, values);
+
+        } finally {
+
+            if (db != null) {
+
+                db.close();
+
+            }
+        }
+    }
+
+    /**
+     * 메시지 전송 요청 이후, 결과 업데이트
+     *
+     * @param messagePK : local db에 있는 message primary key 값
+     * @param messageID : 서버의 message primary key 값 보낼 때는 없음
+     * @param isFail    : 네트워크가 안좋아서 문자를 못보내거나, 전송은 하였으나 서버로부터 error를 받은 경우 1, 처음 보낼 때 0
+     * @param failName  : 문자를 못받은 사람의 리스트, ;로 구별 ex) 정승욱;남상미;정재욱;유정효
+     */
+    public void updateMessageAfterSend(String messagePK, String messageID, int isFail, String failName) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
         values.put(IS_FAIL, isFail);
-        if (failName != null) {
+
+        if (!TextUtils.isEmpty(messageID)) {
+
+            values.put(MSG_ID, messageID);
+
+        }
+
+        if (!TextUtils.isEmpty(failName)) {
+
             values.put(FAIL_NAME, failName);
         }
 
-        String where = CHAT_KEY + " = " + messagePK;
-        db.update(TABLE_CHAT, values, where, null);
+        db.update(TABLE_MESSAGE, values, CHAT_KEY + "=?", new String[]{messagePK});
     }
 
     /**
      * GCM message를 받고 DB에 초기값을 저장하는 함수
      *
-     * @param messageID
-     * @param senderName
-     * @param counter
-     * @param receiverID
-     * @param senderID
+     * @param messageId
+     * @param guestName
+     * @param unreadCount
+     * @param guestId
      * @param isGroup
      * @param isChild
-     * @return messagePK : local message primary key
+     * @return
      */
-    public long insertChatWithGCM(String messageID, String senderName, String counter, String receiverID, String senderID, int isGroup, int isChild) {
+    public long insertMessageFromGCM(String messageId, String roomId, String guestId, String guestName,
+                                     String unreadCount, int isGroup, int isChild, String msg , String time) {
+
+        Logger.d(messageId + " " + roomId + " " + guestId + " "  );
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(MSG_ID, messageID);
-        values.put(SENDER_NAME, senderName);
-        values.put(SENDER_ID, senderID);
-        values.put(RECEIVER_ID, receiverID);
-        values.put(COUNTER, counter);
+
+        values.put(MSG_ID, messageId);
+        values.put(ROOM_ID, roomId);
+        values.put(GUEST_NAME, guestName);
+        values.put(GUEST_ID, guestId);
+        values.put(SENDER_ID, guestId);
+        values.put(UNREAD_COUNT, unreadCount);
         values.put(IS_GROUP, isGroup);
-        values.put(IS_PARENT, isChild);
-
-        return db.insert(TABLE_CHAT, null, values);
-    }
-
-    /**
-     * 보낼 때 GCM을 받고 메시지를 서버에 요청하여 메시지를 얻어왔을 때 호출하는 함수
-     *
-     * @param messageID
-     * @param msg
-     * @param msgType
-     * @param counter
-     * @param time
-     */
-    public void updateChatWithMessage(String messageID, String msg, int msgType, int counter, String time) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
         values.put(MSG, msg);
-        values.put(MSG_TYPE, msgType);
-        values.put(COUNTER, counter);
         values.put(TIMESTAMP, time);
 
-        String where = MSG_ID + "=" + messageID;
-
-        db.update(TABLE_CHAT, values, where, null);
-    }
-
-    /**
-     * GCM으로 counter값을 보내온 경우 호출하는 함수
-     *
-     * @param messageID
-     * @param counter
-     */
-    public void updateChatWithGCMCounter(String messageID, int counter) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COUNTER, counter);
-
-        String where = MSG_ID + "=" + messageID;
-
-        db.update(TABLE_CHAT, values, where, null);
+        return db.insert(TABLE_MESSAGE, null, values);
     }
 
     //TODO read chat message
 
     /**
-     * 메시지를 읽어 오는 함수
+     * 메시지 가져온다, 최대 100개
      *
-     * @return 최근부터 100개 까지만 return함
+     * @return 메시지 리스트
      */
-    public ArrayList<ChatModel> getChat() {
-        ArrayList<ChatModel> chats = new ArrayList<ChatModel>();
+    public List<ChatMessage> getMessages(String roomID) {
 
-        String[] result_columns = new String[]{CHAT_KEY, MSG_ID, IS_GROUP, SENDER_ID, RECEIVER_ID, SENDER_NAME, MSG, TIMESTAMP, COUNTER, MSG_TYPE, IS_FAIL, FAIL_NAME};
+        List<ChatMessage> messages = new ArrayList<>();
+
+        String[] columns = new String[]{CHAT_KEY, ROOM_ID, MSG_ID, IS_GROUP, GUEST_ID, GUEST_NAME,
+                SENDER_ID, MSG, TIMESTAMP, UNREAD_COUNT, MSG_TYPE, IS_FAIL, FAIL_NAME};
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(true, TABLE_CHAT, result_columns, null, null, null, null, TIMESTAMP + " DESC", "100");
+        Cursor cursor = db.query(true, TABLE_MESSAGE, columns, ROOM_ID + "=?", new String[]{roomID},
+                null, null, TIMESTAMP + " ASC", "100");
+
         if (cursor.moveToFirst()) {
+
             do {
-                ChatModel model = new ChatModel();
-                model.setMessagePK(cursor.getString(0));
-                model.setMessageID(cursor.getString(1));
-                model.setIsGroup(cursor.getInt(2));
-                model.setSenderID(cursor.getString(3));
-                model.setReceiverID(cursor.getString(4));
-                model.setSenderName(cursor.getString(5));
-                model.setMsg(cursor.getString(6));
-                model.setTime(cursor.getString(7));
-                model.setCounter(cursor.getInt(8));
-                model.setMsgType(cursor.getInt(9));
-                model.setIsFail(cursor.getInt(10));
-                model.setFailName(cursor.getString(11));
-                chats.add(model);
+
+                ChatMessage msg = new ChatMessage();
+
+                msg.setMessagePK(cursor.getString(0));
+                msg.setRoomID(cursor.getString(1));
+                msg.setMessageID(cursor.getString(2));
+                msg.setIsGroup(cursor.getInt(3));
+                msg.setGuestID(cursor.getString(4));
+                msg.setGuestName(cursor.getString(5));
+                msg.setSenderID(cursor.getString(6));
+                msg.setMessage(cursor.getString(7));
+                msg.setTimeStamp(cursor.getString(8));
+                msg.setUnreadCount(cursor.getInt(9));
+                msg.setMsgType(cursor.getInt(10));
+                msg.setIsFail(cursor.getInt(11));
+                msg.setFailName(cursor.getString(12));
+
+                messages.add(msg);
+
             } while (cursor.moveToNext());
         }
-        return chats;
+
+        return messages;
     }
 
+    public List<ChatMessage> getMessages(String roomID, String timesStamp) {
 
-    /**
-     * messagePK로 요청한 message만 읽어옴
-     *
-     * @param messagePK 로컬 DB의 primary 값
-     * @return
-     */
-    public ChatModel getChat(String messagePK) {
+        List<ChatMessage> messages = new ArrayList<>();
 
-        String[] result_columns = new String[]{CHAT_KEY, MSG_ID, IS_GROUP, SENDER_ID, RECEIVER_ID, SENDER_NAME, MSG, TIMESTAMP, COUNTER, MSG_TYPE, IS_FAIL, FAIL_NAME};
+        String[] columns = new String[]{CHAT_KEY, ROOM_ID, MSG_ID, IS_GROUP, GUEST_ID, GUEST_NAME,
+                SENDER_ID, MSG, TIMESTAMP, UNREAD_COUNT, MSG_TYPE, IS_FAIL, FAIL_NAME};
 
-        String whereClause = CHAT_KEY + " = ? ";
-        String[] whereArgs = new String[]{messagePK};
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(true, TABLE_CHAT, result_columns, whereClause, whereArgs, null, null, null, null);
-        ChatModel model = new ChatModel();
-        if (cursor.moveToFirst()) {
+        Cursor cursor = db.query(true, TABLE_MESSAGE, columns, ROOM_ID + "=? AND " + TIMESTAMP + ">?",
+                new String[]{roomID, timesStamp}, null, null, TIMESTAMP + " ASC", "100");
 
-            model.setMessagePK(cursor.getString(0));
-            model.setMessageID(cursor.getString(1));
-            model.setIsGroup(cursor.getInt(2));
-            model.setSenderID(cursor.getString(3));
-            model.setReceiverID(cursor.getString(4));
-            model.setSenderName(cursor.getString(5));
-            model.setMsg(cursor.getString(6));
-            model.setTime(cursor.getString(7));
-            model.setCounter(cursor.getInt(8));
-            model.setMsgType(cursor.getInt(9));
-            model.setIsFail(cursor.getInt(10));
-            model.setFailName(cursor.getString(11));
+        if ( cursor.moveToFirst()) {
 
-        }
-        return model;
-    }
-
-    /**
-     * 서버에서 보내준 messageID를 가지고 해당 메시지를 읽는 함수
-     *
-     * @param messageID : 서버 DB의 message primary key값
-     * @return
-     */
-    public ChatModel getChatWithMessageID(String messageID) {
-
-        String[] result_columns = new String[]{CHAT_KEY, MSG_ID, IS_GROUP, SENDER_ID, RECEIVER_ID, SENDER_NAME, MSG, TIMESTAMP, COUNTER, MSG_TYPE, IS_FAIL, FAIL_NAME};
-
-        String whereClause = MSG_ID + " = ? ";
-        String[] whereArgs = new String[]{messageID};
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(true, TABLE_CHAT, result_columns, whereClause, whereArgs, null, null, null, null);
-        ChatModel model = new ChatModel();
-        if (cursor.moveToFirst()) {
-
-            model.setMessagePK(cursor.getString(0));
-            model.setMessageID(cursor.getString(1));
-            model.setIsGroup(cursor.getInt(2));
-            model.setSenderID(cursor.getString(3));
-            model.setReceiverID(cursor.getString(4));
-            model.setSenderName(cursor.getString(5));
-            model.setMsg(cursor.getString(6));
-            model.setTime(cursor.getString(7));
-            model.setCounter(cursor.getInt(8));
-            model.setMsgType(cursor.getInt(9));
-            model.setIsFail(cursor.getInt(10));
-            model.setFailName(cursor.getString(11));
-
-        }
-        return model;
-    }
-
-    /**
-     * messagePK 이전에 주고 받은 메시지를 받아오는 함수 100개까지만 return
-     *
-     * @param messagePK : localDB의 primary key 값
-     * @return
-     */
-    public ArrayList<ChatModel> getChatBefore(String messagePK) {
-
-        ArrayList<ChatModel> chats = new ArrayList<ChatModel>();
-        String[] result_columns = new String[]{CHAT_KEY, MSG_ID, IS_GROUP, SENDER_ID, RECEIVER_ID, SENDER_NAME, MSG, TIMESTAMP, COUNTER, MSG_TYPE, IS_FAIL, FAIL_NAME};
-
-        String whereClause = CHAT_KEY + " < ? ";
-        String[] whereArgs = new String[]{messagePK};
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(true, TABLE_CHAT, result_columns, whereClause, whereArgs, null, null, TIMESTAMP + " DESC", "100");
-
-        if (cursor.moveToFirst()) {
             do {
-                ChatModel model = new ChatModel();
-                model.setMessagePK(cursor.getString(0));
-                model.setMessageID(cursor.getString(1));
-                model.setIsGroup(cursor.getInt(2));
-                model.setSenderID(cursor.getString(3));
-                model.setReceiverID(cursor.getString(4));
-                model.setSenderName(cursor.getString(5));
-                model.setMsg(cursor.getString(6));
-                model.setTime(cursor.getString(7));
-                model.setCounter(cursor.getInt(8));
-                model.setMsgType(cursor.getInt(9));
-                model.setIsFail(cursor.getInt(10));
-                model.setFailName(cursor.getString(11));
-                chats.add(model);
+
+                ChatMessage msg = new ChatMessage();
+
+                msg.setMessagePK(cursor.getString(0));
+                msg.setRoomID(cursor.getString(1));
+                msg.setMessageID(cursor.getString(2));
+                msg.setIsGroup(cursor.getInt(3));
+                msg.setGuestID(cursor.getString(4));
+                msg.setGuestName(cursor.getString(5));
+                msg.setSenderID(cursor.getString(6));
+                msg.setMessage(cursor.getString(7));
+                msg.setTimeStamp(cursor.getString(8));
+                msg.setUnreadCount(cursor.getInt(9));
+                msg.setMsgType(cursor.getInt(10));
+                msg.setIsFail(cursor.getInt(11));
+                msg.setFailName(cursor.getString(12));
+
+                messages.add(msg);
+
             } while (cursor.moveToNext());
         }
-        return chats;
+
+        return messages;
     }
-
-    public int getUnreadMessage(String senderId) {
-
-        int count = 0;
-
-        String selectQuery = "SELECT messageID FROM " + TABLE_CHAT + " WHERE " + SENDER_ID +
-                " = '" + senderId + "' AND " + COUNTER + " > 0";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        count = cursor.getCount();
-
-        cursor.close();
-
-        return count;
-
-    }
-
 
     /**
      * 처음으로 onOFF 정보를 넣거나 update할 때 사용
@@ -515,6 +561,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String query = "INSERT OR REPLACE INTO " + TABLE_ON_OFF + "(" + ONOFF_KEY + ", " + IS_OFF + ") values ((SELECT " +
                 ONOFF_KEY + "FROM " + TABLE_ON_OFF + "), " + isOff + ")";
+
         db.rawQuery(query, null);
     }
 
@@ -528,9 +575,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+
         if (cursor.moveToFirst()) {
             return cursor.getInt(0);
         }
+
         return -1;
     }
 
@@ -540,7 +589,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
         onCreate(db);
     }
 }

@@ -268,6 +268,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         // ParentID
         model.setParentID(account.getID());
 
+        model.setLang(STApplication.getLanguageCode());
+
         model.setPhoneNumber(STApplication.getPhoneNumber());
 
         model.setAppVersion(STApplication.getAppVersionName());

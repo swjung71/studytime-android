@@ -1,8 +1,11 @@
 package kr.co.digitalanchor.utils;
 
 import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +14,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
 public class AndroidUtils {
@@ -49,7 +53,8 @@ public class AndroidUtils {
         String out = null;
         try {
             out = new String(s.getBytes("ISO-8859-1"), "UTF-8");
-        } catch (java.io.UnsupportedEncodingException e) {
+        } catch (Exception e) {
+
             return null;
         }
         return out;
@@ -119,6 +124,13 @@ public class AndroidUtils {
     public static void initializeApp(Context context) {
 
         DBHelper helper = new DBHelper(context);
+    }
+
+    public static void hideKeypad(EditText editText) {
+
+        InputMethodManager imm = (InputMethodManager) STApplication.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        imm.hideSoftInputFromInputMethod(editText.getWindowToken(), 0);
     }
 
 }

@@ -15,8 +15,10 @@ public class StaticValues {
 
     public static final String PREF = "studyTime";
 
-    public static final String  GCM_SENDER_ID = "245104271755";
+    public static final String GCM_SENDER_ID = "245104271755";
 
     public static final String GCM_REG_ID = "registration_id";
+
+    public static final String NEW_MESSAGE_ARRIVED = "NEW_MESSAGE_ARRIVED";
 
 }

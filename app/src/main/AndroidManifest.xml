@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.co.digitalanchor.studytime" >
+    package="kr.co.digitalanchor.studytime">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,7 +27,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -42,11 +42,19 @@
             android:name="igaworks_hash_key"
             android:value="0e161219e6a840a8" />
 
+        <meta-data
+            android:name="igaworks_reward_server_type"
+            android:value="client" />
+
         <!--
             IntroActivity (공통)
 
             스플래쉬과 부모용/자식용 선택
         -->
+        <activity
+            android:name=".signup.BoardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
             android:name=".monitor.MonitorService"
@@ -57,7 +65,7 @@
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -133,8 +141,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".block.BlockActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <!-- 애드 팝콘 (광고) Activities -->
@@ -154,7 +162,7 @@
 
         <receiver
             android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />

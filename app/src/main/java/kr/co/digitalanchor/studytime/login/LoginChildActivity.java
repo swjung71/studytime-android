@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -245,6 +246,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                         data.putString("Name", mEditChildName.getText().toString());
 
+                        Logger.d(data.toString());
+
                         sendMessage(REQUEST_ADD_INFO, data);
 
                         break;
@@ -266,10 +269,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             }
         });
 
-        if (request != null) {
-
-            mQueue.add(request);
-        }
+        addRequest(request);
     }
 
 }

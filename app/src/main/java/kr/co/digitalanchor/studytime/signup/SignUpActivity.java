@@ -134,13 +134,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             case R.id.buttonServiceInfo:
 
-                showClause();
+                showClause(0);
 
                 break;
 
             case R.id.buttonPersonalInfo:
 
-                showClause();
+                showClause(1);
 
                 break;
 
@@ -166,6 +166,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         String temp = null;
 
         ParentRegister model = new ParentRegister();
+
+        model.setLang(STApplication.getLanguageCode());
 
         model.setEmail(mEditEmailAddr.getText().toString());
 
@@ -361,11 +363,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private void showClause() {
+    private void showClause(int opt) {
 
         Intent intent = new Intent();
 
         intent.setClass(getApplicationContext(), ClauseViewActivity.class);
+
+        intent.putExtra("position", opt);
 
         startActivity(intent);
 

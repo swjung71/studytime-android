@@ -11,25 +11,28 @@ import org.simpleframework.xml.Root;
 public class ParentInfoChange {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
-    @Element(name = "ParentID")
+    @Element(name = "ParentID", required = false)
     String parentID;
 
-    @Element(name = "OldPass")
+    @Element(name = "OldPass", required = false)
     String oldPwd;
 
-    @Element(name = "NewPass")
+    @Element(name = "NewPass", required = false)
     String newPwd;
 
-    @Element(name = "Name")
+    @Element(name = "Name", required = false)
     String name;
 
-    @Element(name = "Sex")
+    @Element(name = "Sex", required = false)
     String sex;
 
-    @Element(name = "Birthday")
+    @Element(name = "Birthday", required = false)
     String birthday;
+
+    @Element(name = "Email")
+    String email;
 
     public ParentInfoChange() {
 
@@ -82,5 +85,13 @@ public class ParentInfoChange {
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

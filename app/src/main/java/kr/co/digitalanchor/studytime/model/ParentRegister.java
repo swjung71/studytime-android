@@ -54,6 +54,9 @@ public class ParentRegister {
     @Element(name = "Is_teacher", required = false)
     String isTeacher;
 
+    @Element(name = "Lang", required = false)
+    String lang;
+
     public ParentRegister() {
 
         xmlns = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
@@ -154,5 +157,13 @@ public class ParentRegister {
 
     public void setDevModel(String devModel) {
         this.devModel = devModel;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 }

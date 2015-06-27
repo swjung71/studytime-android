@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.control;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 import com.igaworks.IgawCommon;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
 import com.orhanobut.logger.Logger;
@@ -26,6 +28,7 @@ import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.monitor.MonitorService;
+import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
@@ -37,13 +40,13 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 public class ControlChildActivity extends BaseActivity implements View.OnClickListener,
         MenuPopup.OnClickMenuItemListener {
 
+    final int REQUEST_ON_OFF = 50001;
+
     TextView mLabelPoint;
 
     ImageButton mButtonPoint;
 
     ImageButton mButtonMenu;
-
-    CheckBox mButtonShutdown;
 
     ImageButton mButtonToggle;
 
@@ -68,11 +71,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         setContentView(R.layout.activity_control_child);
 
-        initView();
+        mHelper = new DBHelper(getApplicationContext());
 
         getData();
 
-        mHelper = new DBHelper(getApplicationContext());
+        initView();
+
     }
 
     private void initView() {
@@ -89,6 +93,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         mButtonToggle = (ImageButton) findViewById(R.id.buttonShutdown);
         mButtonToggle.setOnClickListener(this);
+
+        if (mChild.getIsOFF() == 0)
+            mButtonToggle.setImageResource(R.drawable.button_on_selector);
+
+        else
+            mButtonToggle.setImageResource(R.drawable.button_off_selector);
 
         mButtonChat = (ImageButton) findViewById(R.id.buttonChat);
         mButtonChat.setOnClickListener(this);
@@ -117,8 +127,6 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         Bundle data = getIntent().getExtras();
 
-        mChild = new Child();
-
         if (data == null) {
 
             finish();
@@ -130,12 +138,28 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         if (data.containsKey("ChildID")) {
 
-            mChild.setChildID(data.getString("ChildID"));
+            mChild = mHelper.getChild(data.getString("ChildID"));
+
+            if (mChild == null)
+                finish();
         }
+    }
 
-        if (data.containsKey("Name")) {
+    @Override
+    protected void onHandleMessage(Message msg) {
 
-            mChild.setName(data.getString("Name"));
+        switch (msg.what) {
+
+            case REQUEST_ON_OFF:
+
+                Logger.d("REQUEST_ON_OFF");
+
+                requestOnOff();
+
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -180,8 +204,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
             case R.id.buttonShutdown:
 
                 Logger.d("shutdown");
-
-                testOnOff();
+                sendEmptyMessage(REQUEST_ON_OFF);
 
                 break;
 
@@ -200,7 +223,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickFAQ() {
 
-        Toast.makeText(getApplicationContext(), "onClickFAQ", Toast.LENGTH_SHORT).show();
+        showFAQ();
     }
 
     @Override
@@ -222,6 +245,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         showWithDraw();
 
+    }
+
+    @Override
+    public void onClickNotice() {
+
+        showNotice();
     }
 
     private void drawView() {
@@ -294,6 +323,28 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         startActivity(intent);
     }
 
+    private void showFAQ() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), BoardActivity.class);
+
+        intent.putExtra("option", 1);
+
+        startActivity(intent);
+    }
+
+    private void showNotice() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), BoardActivity.class);
+
+        intent.putExtra("option", 0);
+
+        startActivity(intent);
+    }
+
     private void testOnOff() {
 
         String i = STApplication.getString("service", "off");
@@ -317,15 +368,17 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void requestOnOff() {
 
+        showLoading();
+
         Account account = mHelper.getAccountInfo();
 
         ParentOnOff model = new ParentOnOff();
 
         model.setParentID(account.getID());
         model.setChildID(mChild.getChildID());
-        model.setIsOff("1");
+        model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
 
-        HttpHelper.getParentOnOff(model,
+        SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
                 new Response.Listener<GeneralResult>() {
                     @Override
                     public void onResponse(GeneralResult response) {
@@ -335,6 +388,26 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
                         switch (response.getResultCode()) {
 
                             case SUCCESS:
+
+                                if (mChild.getIsOFF() == 0) {
+
+                                    mHelper.updateChildToggle(mChild.getChildID(), 1);
+
+                                    mChild.setIsOFF(1);
+
+                                    mButtonToggle.setImageResource(R.drawable.button_off_selector);
+
+                                } else {
+
+                                    mHelper.updateChildToggle(mChild.getChildID(), 0);
+
+                                    mChild.setIsOFF(0);
+
+                                    mButtonToggle.setImageResource(R.drawable.button_on_selector);
+
+                                }
+
+                                dismissLoading();
 
                                 break;
 
@@ -353,6 +426,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
                         handleError(error);
                     }
                 });
+
+        addRequest(request);
     }
 
     private void sendEmail() {
