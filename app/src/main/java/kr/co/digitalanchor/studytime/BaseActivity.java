@@ -49,6 +49,8 @@ public class BaseActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
+        STApplication.addActivity(this);
+
         mQueue = Volley.newRequestQueue(getApplicationContext());
     }
 
@@ -70,6 +72,8 @@ public class BaseActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+
+        STApplication.removeActivity(this);
 
         if (mLoading != null) {
 

@@ -12,6 +12,9 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -133,7 +136,7 @@
             android:name=".chat.ChildChatActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".chat.ParentChatActivity"
             android:screenOrientation="portrait"
@@ -169,6 +172,20 @@
 
                 <category android:name="kr.co.digitalanchor.studytime" />
             </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".devicepolicy.AdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+
+            <intent-filter>
+
+                <!-- This action is required -->
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
+            </intent-filter>
+
         </receiver>
 
         <!-- 그밖에 서비스/리시버 등등 -->

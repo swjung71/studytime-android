@@ -212,17 +212,34 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
             return ;
         }
 
+        ChatSend model = new ChatSend();
+
         long primaryKey = mHelper.insertMessageBeforeSend(mChild.getChildID(), mChild.getName(),
-                mAccount.getID(), message, AndroidUtils.getCurrentTime4Chat(), 1, 0, 0, 0);
+                mAccount.getID(), message, System.currentTimeMillis(), 1, 0, 0, 0);
+
+        Logger.d(AndroidUtils.convertCurrentTime4Chat(System.currentTimeMillis()));
 
         if (primaryKey < 0) {
 
             return;
         }
 
+        model.setSenderID(mAccount.getID());
+        model.setSenderName(mAccount.getName());
+
+        model.setReceiverID(mChild.getChildID());
+        model.setMessage(message);
+        model.setTime(System.currentTimeMillis());
+
+        model.setMsgType(0);
+        model.setIsChildSender(0);
+        model.setIsChildReceiver(1);
+        model.setIsGroup(0);
+        model.setMessagePk(primaryKey);
+
         sendEmptyMessage(UPDATE_MESSAGE_LIST);
 
-        requestSendMessage(primaryKey);
+        requestSendMessage(model);
     }
 
     private void updateMessageList() {
@@ -237,7 +254,7 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
         } else {
 
-            String timeStamp = mMessages.get(mMessages.size() - 1).getTimeStamp();
+            long timeStamp = mMessages.get(mMessages.size() - 1).getTimeStamp();
 
             messages = mHelper.getMessages(mChild.getChildID(), timeStamp);
         }
@@ -263,7 +280,7 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
     }
 
-    private void requestSendMessage(long pk) {
+    private void requestSendMessage(ChatSend model) {
 
         String msg = mEditMessage.getText().toString();
 
@@ -275,21 +292,6 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
         }
 
         mEditMessage.setText("");
-
-        ChatSend model = new ChatSend();
-
-        model.setSenderID(mAccount.getID());
-        model.setSenderName(mAccount.getName());
-
-        model.setReceiverID(mChild.getChildID());
-        model.setMessage(msg);
-        model.setTime(AndroidUtils.getCurrentTime4Chat());
-
-        model.setMsgType(0);
-        model.setIsChildSender(0);
-        model.setIsChildReceiver(1);
-        model.setIsGroup(0);
-        model.setMessagePk(pk);
 
         SimpleXmlRequest request = HttpHelper.getSendChat(model,
                 new Response.Listener<ChatSendResult>() {

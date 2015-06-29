@@ -13,6 +13,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 import kr.co.digitalanchor.studytime.model.Board;
+import kr.co.digitalanchor.studytime.model.ChatRead;
+import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
@@ -21,6 +23,7 @@ import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
+import kr.co.digitalanchor.studytime.model.NewPassword;
 import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
@@ -272,7 +275,7 @@ public class HttpHelper {
      * @param errorListener
      * @return
      */
-    public static SimpleXmlRequest getManageCoin(SetCoin model,
+    public static SimpleXmlRequest getUpdateCoin(SetCoin model,
                                                  Listener<GeneralResult> listener,
                                                  ErrorListener errorListener) {
 
@@ -608,6 +611,48 @@ public class HttpHelper {
         }
     }
 
+    public static SimpleXmlRequest getReadChat(ChatRead model, Listener<ChatReadResult> listener,
+                                               ErrorListener errorListener) {
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChatReadResult>(getURL() + "readChat",
+                    ChatReadResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.getMessage());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
     public static SimpleXmlRequest getVersion(GetVersion model, Listener<VersionResult> listener,
                                               ErrorListener errorListener) {
 
@@ -695,7 +740,7 @@ public class HttpHelper {
     }
 
     public static SimpleXmlRequest getFAQ(Board model, Listener<FAQResult> listener,
-                                             ErrorListener errorListener) {
+                                          ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -713,6 +758,50 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<FAQResult>(getURL() + "parent/getFAQ",
                     FAQResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getTemporaryPassword(NewPassword model,
+                                                        Listener<GeneralResult> listener,
+                                                        ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/getNewPass",
+                    GeneralResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

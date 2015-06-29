@@ -28,16 +28,16 @@ public class ChatSend {
     @Element(name = "Is_child_receiver")
     int isChildReceiver;
 
-    @Element(name = "Message")
+    @Element(name = "Message", data = true)
     String message;
 
     @Element(name = "Msg_type")
     int msgType;
 
     @Element(name = "Time")
-    String time;
+    long time;
 
-    @Element(name = "Sender_name")
+    @Element(name = "Sender_name", data = true)
     String senderName;
 
     @Element(name = "MessagePK")
@@ -104,11 +104,11 @@ public class ChatSend {
         this.msgType = msgType;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

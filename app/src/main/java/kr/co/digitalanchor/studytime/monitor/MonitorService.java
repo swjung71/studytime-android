@@ -44,21 +44,29 @@ public class MonitorService extends Service {
         showNotification();
 
         /// Running Timer Task as Daemon
-        timerDaemon = new Timer(true);
-
-        /// Create Tasks
-        taskBlocking    = new TimerTaskWork(this);
-
-        timerDaemon.scheduleAtFixedRate(taskBlocking, 0,    (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
+//        timerDaemon = new Timer(true);
+//
+//        /// Create Tasks
+//        taskBlocking    = new TimerTaskWork(this);
+//
+//        timerDaemon.scheduleAtFixedRate(taskBlocking, 0,    (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
 
     }
 
+    /**
+     * onDestroy
+     * 1. 단말 감시하는 스레드를 종료
+     * 2. 노피티피케이션을 삭제
+     */
     @Override
     public void onDestroy() {
 
         Logger.d("Destroy MonitorService");
 
-        timerDaemon.cancel();
+        if (timerDaemon != null) {
+
+            timerDaemon.cancel();
+        }
 
         dismissNotification();
 

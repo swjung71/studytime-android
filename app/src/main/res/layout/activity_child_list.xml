@@ -67,7 +67,8 @@
         android:divider="@color/transparent"
         android:dividerHeight="11dp"
         android:listSelector="@color/transparent"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@android:id/empty"
@@ -103,8 +104,6 @@
             android:id="@+id/buttonSendLink"
             layout="@layout/layout_child_footer" />
 
-
     </LinearLayout>
-
 
 </LinearLayout>

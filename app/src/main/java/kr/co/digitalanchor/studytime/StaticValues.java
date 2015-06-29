@@ -21,4 +21,8 @@ public class StaticValues {
 
     public static final String NEW_MESSAGE_ARRIVED = "NEW_MESSAGE_ARRIVED";
 
+    public static final String REGISTER_CHILD = "REGISTER_CHILD";
+
+    public static final String IS_SHOW_GUIDE = "isShowGuide";
+
 }

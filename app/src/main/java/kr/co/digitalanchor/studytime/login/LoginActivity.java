@@ -1,6 +1,5 @@
 package kr.co.digitalanchor.studytime.login;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -22,6 +21,7 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.NewPassword;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
@@ -362,8 +362,43 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestParentFindPwd() {
 
+        showLoading();
 
-        Toast.makeText(getApplicationContext(), "개발중", Toast.LENGTH_SHORT).show();
+        NewPassword model = new NewPassword();
+
+        model.setEmail(mEditEmailAddr.getText().toString());
+
+        SimpleXmlRequest request = HttpHelper.getTemporaryPassword(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                // TODO show message dialog
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+
+                    }
+                });
+
+        addRequest(request);
     }
 
     private void showSignUp() {

@@ -1,5 +1,7 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -21,6 +23,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.devicepolicy.AdminReceiver;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -36,6 +39,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private final int REQUEST_ADD_INFO = 50001;
     private final int COMPLETE_ADD_INFO = 50002;
+    private final int ACTIVATION_REQUEST = 50002;
 
     EditText mEditBirthDate;
 
@@ -52,6 +56,10 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
     Button mButtonConfirm;
 
     ChildRegister mModel;
+
+    private String mParentID;
+
+    private String mChildID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +149,28 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             default:
 
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+
+            case ACTIVATION_REQUEST:
+
+                if (resultCode == RESULT_OK) {
+
+                    completeRegister(mParentID, mChildID);
+
+                    sendEmptyMessage(COMPLETE_ADD_INFO);
+
+                } else {
+
+                    STApplication.resetApplication();
+                }
         }
     }
 
@@ -288,7 +318,12 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                             case SUCCESS:
 
-                                completeRegister(response.getParentID(), response.getChildID());
+                                mParentID = response.getParentID();
+                                mChildID = response.getChildID();
+
+//                                showAdmin();
+
+                                completeRegister(mParentID, mChildID);
 
                                 sendEmptyMessage(COMPLETE_ADD_INFO);
 
@@ -320,5 +355,15 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         helper.insertAccount(childId, mModel.getName(), parentId);
 
+    }
+
+    private void showAdmin() {
+
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+                new ComponentName(this, AdminReceiver.class));
+
+        startActivityForResult(intent, ACTIVATION_REQUEST);
     }
 }

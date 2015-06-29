@@ -1,6 +1,8 @@
 package kr.co.digitalanchor.utils;
 
 import android.content.Context;
+import android.hardware.input.InputManager;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -13,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -33,7 +36,9 @@ public class AndroidUtils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+
+            return null;
+
         } finally {
             if (br != null) {
                 try {
@@ -121,16 +126,58 @@ public class AndroidUtils {
         return format.format(calendar.getTime());
     }
 
+    public static String convertCurrentTime4Chat(long time) {
+
+        Date date = new Date(time);
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        return format.format(date);
+    }
+
     public static void initializeApp(Context context) {
 
         DBHelper helper = new DBHelper(context);
     }
 
-    public static void hideKeypad(EditText editText) {
+    public static void showKeyboard(View view) {
 
-        InputMethodManager imm = (InputMethodManager) STApplication.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (view == null) {
 
-        imm.hideSoftInputFromInputMethod(editText.getWindowToken(), 0);
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    public static boolean isKeyboardShowed(View view) {
+
+        if (view == null) {
+
+            return false;
+        }
+
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        return imm.isActive();
+    }
+
+    public static void hideKeyboard(View view) {
+
+        if (view == null) {
+
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (!imm.isActive()) {
+
+            return;
+        }
+
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

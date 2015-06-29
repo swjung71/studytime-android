@@ -45,7 +45,7 @@ public class CustomProgressDialog extends Dialog {
 //			TextView txt = (TextView)dialog.findViewById(R.id.message);
 //			txt.setText(message);
 //		}
-        dialog.setCancelable(true);
+        dialog.setCancelable(false);
         //dialog.setOnCancelListener(cancelListener);
         dialog.getWindow().getAttributes().gravity = Gravity.CENTER;
         WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();

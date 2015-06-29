@@ -13,6 +13,7 @@ import java.util.List;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
 import kr.co.digitalanchor.studytime.view.ViewHolder;
+import kr.co.digitalanchor.utils.AndroidUtils;
 
 /**
  * Created by Thomas on 2015-06-27.
@@ -84,7 +85,7 @@ public class ChildChatAdapter extends BaseAdapter {
 
         TextView textReadCountGuest = ViewHolder.get(v, R.id.textReadCountGuest);
 
-        textDate.setText(model.getTimeStamp());
+        textDate.setText(AndroidUtils.convertCurrentTime4Chat(model.getTimeStamp()));
 
         if (model.isMine()) {
 

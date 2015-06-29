@@ -20,6 +20,8 @@ import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
@@ -75,6 +77,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         mAccount = mHelper.getAccountInfo();
 
         initView();
+
+        firstVisit();
     }
 
     @Override
@@ -161,7 +165,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.buttonSetting:
 
-                AndroidUtils.hideKeypad(mEditMessage);
+                AndroidUtils.hideKeyboard(mEditMessage);
 
                 showGuide(true);
 
@@ -214,7 +218,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         }
 
         long primaryKey = mHelper.insertMessageBeforeSend(mAccount.getParentId(), mAccount.getParentName(),
-                mAccount.getID(), message, AndroidUtils.getCurrentTime4Chat(), 1, 0, 0, 0);
+                mAccount.getID(), message, System.currentTimeMillis(), 1, 0, 0, 0);
 
         if (primaryKey < 0) {
 
@@ -238,7 +242,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
         } else {
 
-            String timeStamp = mMessages.get(mMessages.size() - 1).getTimeStamp();
+            long timeStamp = mMessages.get(mMessages.size() - 1).getTimeStamp();
 
             messages = mHelper.getMessages(mAccount.getParentId(), timeStamp);
         }
@@ -279,12 +283,12 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         ChatSend model = new ChatSend();
 
         model.setSenderID(mAccount.getID());
-        model.setSenderName(mAccount.getName());
+        model.setSenderName(AndroidUtils.convertToUTF8(mAccount.getName()));
 
         model.setReceiverID(mAccount.getParentId());
 
         model.setMessage(msg);
-        model.setTime(AndroidUtils.getCurrentTime4Chat());
+        model.setTime(System.currentTimeMillis());
 
         model.setMsgType(0);
         model.setIsChildSender(1);
@@ -323,5 +327,19 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
                 });
 
         addRequest(request);
+    }
+
+    private void firstVisit() {
+
+        boolean isFirst = STApplication.getBoolean(StaticValues.IS_SHOW_GUIDE, true);
+
+        if (isFirst) {
+
+            AndroidUtils.showKeyboard(mEditMessage);
+
+            STApplication.putBoolean(StaticValues.IS_SHOW_GUIDE, false);
+
+            mLayoutGuide.setVisibility(View.VISIBLE);
+        }
     }
 }

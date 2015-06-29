@@ -21,6 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
             android:textColor="#4a4a4a"
             android:text="관리할 자녀를 선택하세요."
             android:textSize="16dp" />

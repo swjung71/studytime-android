@@ -12,7 +12,7 @@ public class Child {
     @Element(name = "ChildID", required = false)
     String childID;
 
-    @Element(name = "Name", required = false)
+    @Element(name = "Name", required = false, data = true)
     String name;
 
     @Element(name = "MsgCount", required = false)

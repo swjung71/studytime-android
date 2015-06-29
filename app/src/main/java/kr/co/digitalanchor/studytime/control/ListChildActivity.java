@@ -1,7 +1,11 @@
 package kr.co.digitalanchor.studytime.control;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 import com.igaworks.IgawCommon;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
 import com.igaworks.adpopcorn.IgawAdpopcornExtension;
@@ -21,18 +28,28 @@ import java.util.ArrayList;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.SetCoin;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
+import static kr.co.digitalanchor.studytime.StaticValues.REGISTER_CHILD;
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+
 /**
  * Created by Thomas on 2015-06-19.
  */
 public class ListChildActivity extends BaseActivity implements View.OnClickListener,
         MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener, IgawRewardItemEventListener {
+
+    private final int REQUEST_UPDATE_COIN = 50001;
 
     TextView mLabelPoint;
 
@@ -54,6 +71,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     DBHelper mHelper;
 
+    RegisterChildReceiver registerChildReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +86,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         IgawCommon.setClientRewardEventListener(this);
 
         IgawAdpopcornExtension.getClientPendingRewardItems(getApplicationContext());
+
     }
 
     public void initView() {
@@ -102,15 +122,34 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+
     @Override
     protected void onStart() {
-
         super.onStart();
+
+        Logger.d("onStart");
 
         drawView();
 
         getData();
+
+        if (registerChildReceiver == null) {
+
+            registerChildReceiver = new RegisterChildReceiver();
+        }
+
+        IntentFilter intentFilter = new IntentFilter(REGISTER_CHILD);
+
+        registerReceiver(registerChildReceiver, intentFilter);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(registerChildReceiver);
+    }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -158,6 +197,24 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onHandleMessage(Message msg) {
+
+        switch (msg.what) {
+
+            case REQUEST_UPDATE_COIN:
+
+                break;
+
+            default:
+
+                Toast.makeText(getApplicationContext(), "onHandleMessage default", Toast.LENGTH_SHORT).show();
+
+                break;
+        }
+
+    }
+
+    @Override
     public void onClickModify() {
 
         showModifyInfo();
@@ -185,9 +242,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClickLogOut() {
 
-        mHelper.clearAll();
+        STApplication.resetApplication();
 
-        Toast.makeText(getApplicationContext(), "Log out", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -207,7 +263,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         if (mLabelPoint != null) {
 
-            mLabelPoint.setText(account.getCoin());
+            mLabelPoint.setText(String.valueOf(account.getCoin()));
         }
     }
 
@@ -339,20 +395,81 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         int point = 0;
 
-        for(IgawRewardItem item : igawRewardItems) {
+        for (IgawRewardItem item : igawRewardItems) {
 
-            item.getRewardQuantity();
+            point += item.getRewardQuantity();
+
+            Logger.d("Reward " + point);
 
             item.didGiveRewardItem();
         }
+
+        requestUpdatePoint(point);
     }
 
     @Override
     public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
 
-        Toast.makeText(getApplicationContext(), "onDidGiveRewardItemResult " + b + " " + s + " " + s1, Toast.LENGTH_LONG).show();
 
-        Logger.d("onDidGiveRewardItemResult\n" + b + " " + s + "\n " + i + "\n " + s1);
+    }
 
+    private void requestUpdatePoint(int point) {
+
+        final Account account = mHelper.getAccountInfo();
+
+        final SetCoin model = new SetCoin();
+
+        model.setParentID(account.getID());
+        model.setCoin(account.getCoin() + point);
+
+        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
+                new Response.Listener<GeneralResult>() {
+
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                mHelper.updateCoin(account.getID(), model.getCoin());
+
+                                drawView();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    class RegisterChildReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Logger.d(intent.toString());
+
+            if (intent.getAction().equals(StaticValues.REGISTER_CHILD)) {
+
+                getData();
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -24,10 +25,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.intro.IntroActivity;
 
 import static kr.co.digitalanchor.studytime.StaticValues.PREF;
 
@@ -45,6 +51,8 @@ public class STApplication extends Application {
     public static volatile Handler applicationHandler;
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
+
+    private static final List<BaseActivity> activities = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -282,6 +290,25 @@ public class STApplication extends Application {
         return editor.commit();
     }
 
+
+    public static boolean getBoolean(String key, boolean defaultValue) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        return pref.getBoolean(key, defaultValue);
+    }
+
+    public static boolean putBoolean(String key, boolean value) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putBoolean(key, value);
+
+        return editor.commit();
+    }
+
     public static boolean putRegistrationId(String version) {
 
         return putString(StaticValues.GCM_REG_ID, version);
@@ -451,6 +478,36 @@ public class STApplication extends Application {
         }
 
         return res;
+    }
+
+    public static void addActivity(BaseActivity acitivity) {
+
+        activities.add(acitivity);
+    }
+
+    public static void removeActivity(BaseActivity activity) {
+
+        activities.remove(activity);
+
+    }
+
+    public static void resetApplication() {
+
+        DBHelper helper = new DBHelper(applicationContext);
+
+        helper.clearAll();
+
+        clear();
+
+        for (BaseActivity activity : activities) {
+
+            activity.finish();
+        }
+
+        Intent intent = new Intent(applicationContext, IntroActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        applicationContext.startActivity(intent);
     }
 
 }

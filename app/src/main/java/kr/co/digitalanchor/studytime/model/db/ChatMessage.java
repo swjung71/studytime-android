@@ -19,7 +19,7 @@ public class ChatMessage {
 
     private String message;
 
-    private String timeStamp;
+    private long timeStamp;
 
     private int unreadCount;
 
@@ -38,7 +38,7 @@ public class ChatMessage {
         this.messageID = "";
         this.guestID = "";
         this.guestName = "";
-        this.timeStamp = "";
+        this.timeStamp = 0L;
         this.unreadCount = -1;
         this.isGroup = -1;
         this.msgType = -1;
@@ -94,11 +94,11 @@ public class ChatMessage {
         this.guestName = guestName;
     }
 
-    public String getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
 

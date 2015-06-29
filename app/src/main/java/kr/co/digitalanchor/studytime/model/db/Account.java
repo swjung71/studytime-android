@@ -12,7 +12,7 @@ public class Account {
     private int isChild;
     private String name;
     private String password;
-    private String coin;
+    private int coin;
     private String email;
     private String parentId;
     private String parentName;
@@ -27,7 +27,7 @@ public class Account {
 
         password = "";
 
-        coin = "0";
+        coin = 0;
 
         email = "";
 
@@ -70,11 +70,11 @@ public class Account {
         this.password = password;
     }
 
-    public String getCoin() {
+    public int getCoin() {
         return coin;
     }
 
-    public void setCoin(String coin) {
+    public void setCoin(int coin) {
         this.coin = coin;
     }
 

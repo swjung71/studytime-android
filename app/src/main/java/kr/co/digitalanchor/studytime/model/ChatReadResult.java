@@ -10,7 +10,7 @@ import org.simpleframework.xml.Root;
 public class ChatReadResult {
 
     @Element(name = "ResultCode")
-    String resultCode;
+    int resultCode;
 
     @Element(name = "ResultMessage", required = false)
     String resultMessage;
@@ -31,18 +31,18 @@ public class ChatReadResult {
     String counter;
 
     @Element(name = "Time", required = false)
-    String time;
+    long time;
 
     public ChatReadResult() {
 
         msgType = 0;
     }
 
-    public String getResultCode() {
+    public int getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode(String resultCode) {
+    public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 
@@ -78,11 +78,11 @@ public class ChatReadResult {
         this.counter = counter;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

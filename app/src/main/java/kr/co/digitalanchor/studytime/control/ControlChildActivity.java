@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,14 +19,15 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
+import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
-import kr.co.digitalanchor.studytime.monitor.MonitorService;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
@@ -41,6 +41,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         MenuPopup.OnClickMenuItemListener {
 
     final int REQUEST_ON_OFF = 50001;
+    final int REQUEST_UPDATE_COIN = 50002;
 
     TextView mLabelPoint;
 
@@ -77,6 +78,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         initView();
 
+        firstVisit();
     }
 
     private void initView() {
@@ -120,6 +122,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     protected void onStart() {
         super.onStart();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         drawView();
     }
 
@@ -152,9 +160,22 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
             case REQUEST_ON_OFF:
 
-                Logger.d("REQUEST_ON_OFF");
-
                 requestOnOff();
+
+                break;
+
+            case REQUEST_UPDATE_COIN:
+
+                Account account = mHelper.getAccountInfo();
+
+                if (account.getCoin() > 0) {
+
+                    requestUpdatePoint();
+
+                } else {
+
+                    Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
 
@@ -203,8 +224,14 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
             case R.id.buttonShutdown:
 
-                Logger.d("shutdown");
-                sendEmptyMessage(REQUEST_ON_OFF);
+                if (mChild.getIsOFF() == 0 ) {
+
+                    sendEmptyMessage(REQUEST_UPDATE_COIN);
+
+                } else {
+
+                    sendEmptyMessage(REQUEST_ON_OFF);
+                }
 
                 break;
 
@@ -235,9 +262,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickLogOut() {
 
-        mHelper.clearAll();
-
-        Toast.makeText(getApplicationContext(), "Log out", Toast.LENGTH_SHORT).show();
+        STApplication.resetApplication();
     }
 
     @Override
@@ -264,7 +289,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         if (mLabelPoint != null) {
 
-            mLabelPoint.setText(account.getCoin());
+            mLabelPoint.setText(String.valueOf(account.getCoin()));
         }
     }
 
@@ -345,30 +370,55 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         startActivity(intent);
     }
 
-    private void testOnOff() {
+    private void requestUpdatePoint() {
 
-        String i = STApplication.getString("service", "off");
+        showLoading();
 
-        Logger.d("testOnOff() " + i);
+        final Account account = mHelper.getAccountInfo();
 
-        if (i.equals("off")) {
+        final SetCoin model = new SetCoin();
 
-            STApplication.putString("service", "on");
+        model.setParentID(account.getID());
+        model.setCoin(account.getCoin() - 1);
 
-            startService(new Intent(getApplicationContext(), MonitorService.class));
+        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
+                new Response.Listener<GeneralResult>() {
 
-        } else {
+                    @Override
+                    public void onResponse(GeneralResult response) {
 
-            STApplication.putString("service", "off");
+                        switch (response.getResultCode()) {
 
-            stopService(new Intent(getApplicationContext(), MonitorService.class));
-        }
+                            case SUCCESS:
 
+                                mHelper.updateCoin(account.getID(), model.getCoin());
+
+                                sendEmptyMessage(REQUEST_ON_OFF);
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 
     private void requestOnOff() {
-
-        showLoading();
 
         Account account = mHelper.getAccountInfo();
 
@@ -377,6 +427,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         model.setParentID(account.getID());
         model.setChildID(mChild.getChildID());
         model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
+        model.setName(account.getName());
 
         SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
                 new Response.Listener<GeneralResult>() {
@@ -439,10 +490,22 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         String text = account.getEmail() + "이 보낸메일 \n";
 
         intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String [] {"support@digitalanchor.co.kr"});
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
         intent.putExtra(Intent.EXTRA_TEXT, text);
 
         startActivity(intent);
+    }
+
+    private void firstVisit() {
+
+        boolean isFirst = STApplication.getBoolean(StaticValues.IS_SHOW_GUIDE, true);
+
+        if (isFirst) {
+
+            STApplication.putBoolean(StaticValues.IS_SHOW_GUIDE, false);
+
+            mImgGuide.setVisibility(View.VISIBLE);
+        }
     }
 }

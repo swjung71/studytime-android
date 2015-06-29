@@ -11,7 +11,7 @@ import org.simpleframework.xml.Root;
 public class ChatRead {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
     @Element(name = "MessageID")
     String messageID;
@@ -24,7 +24,7 @@ public class ChatRead {
 
     public ChatRead() {
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
+        tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
     }
 
     public String getMessageID() {

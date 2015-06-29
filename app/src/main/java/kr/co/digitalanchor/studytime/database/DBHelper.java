@@ -36,7 +36,6 @@ public class DBHelper extends SQLiteOpenHelper {
     //Key value
     private static final String CHAT_KEY = "messagePK";
     private static final String ACCOUNT_ID = "accountPK";
-    private static final String CHILD_ID = "childPK";
     private static final String ONOFF_KEY = "onOffPK";
 
     //column for account
@@ -85,9 +84,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
         String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
-                + "(" + CHILD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CHILDREN_ID
-                + " INTEGER NOT NULL," + IS_PARENT + " INTEGER NOT NULL, " + NAME + " TEXT, "
-                + IS_OFF + " TEXT, " +  NEW_MESSAGE_COUNT + " INTEGER )";
+                + "(" + CHILDREN_ID + " INTEGER PRIMARY KEY," + IS_PARENT +
+                " INTEGER NOT NULL, " + NAME + " TEXT, " + IS_OFF + " TEXT, "
+                + NEW_MESSAGE_COUNT + " INTEGER )";
 
 /*
         TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
@@ -111,7 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + SENDER_ID + " INTEGER, "
                 + GUEST_ID + " INTEGER, "
                 + GUEST_NAME + " TEXT, "
-                + TIMESTAMP + " TEXT, "
+                + TIMESTAMP + " INTEGER, "
                 + MSG + " TEST, "
                 + UNREAD_COUNT + " INTEGER, "
                 + IS_GROUP + " INTEGER, "
@@ -123,6 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CHILD);
         db.execSQL(CREATE_TABLE_MESSAGE);
         db.execSQL(CREATE_TABLE_ONOFF);
+
     }
 
     @Override
@@ -138,6 +138,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 부모용
+     *
      * @param id
      * @param isChild
      * @param name
@@ -184,7 +185,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_ACCOUNT_INFO, null, values);
     }
 
-    public void updateAccount(String id, int isChild, String name, String coin, String email) {
+    public void updateAccount(String id, int isChild, String name, int coin, String email) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -193,19 +194,19 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_PARENT, isChild);
         values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
         values.put(PASSWORD, "");
-        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(COIN, coin);
         values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
 
         db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
     }
 
-    public void updateCoin(String id, String coin) {
+    public void updateCoin(String id, int coin) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
-        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(COIN, coin);
 
         db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
     }
@@ -218,6 +219,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL, PARENT_ID};
 
         Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null, null, null);
+
         if (cursor.moveToFirst()) {
 
             account.setID(cursor.getString(0));
@@ -228,10 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 account.setPassword(cursor.getString(3));
             }
 
-            if (cursor.getString(4) != null) {
-
-                account.setCoin(cursor.getString(4));
-            }
+            account.setCoin(cursor.getInt(4));
 
             if (cursor.getString(5) != null) {
 
@@ -243,7 +242,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 account.setParentId(cursor.getString(6));
             }
         }
+
+        cursor.close();
+
         return account;
+    }
+
+    public void insertChild(String id,  String name) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(CHILDREN_ID, id);
+        values.put(IS_PARENT, 0);
+
+        if (name != null) {
+            values.put(NAME, name);
+        }
+
+        db.replace(TABLE_CHILD, null, values);
+
     }
 
     public void insertChild(String id, int isChild, String name) {
@@ -259,7 +278,8 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(NAME, AndroidUtils.convertFromUTF8(name));
         }
 
-        db.insert(TABLE_CHILD, null, values);
+        db.replace(TABLE_CHILD, null, values);
+
     }
 
     public void insertChildren(List<kr.co.digitalanchor.studytime.model.Child> children) {
@@ -269,7 +289,6 @@ public class DBHelper extends SQLiteOpenHelper {
             insertChild(child.getChildID(), 0, child.getName());
         }
     }
-
 
     public ArrayList<Child> getChildren() {
 
@@ -297,6 +316,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
+
         return children;
 
     }
@@ -312,7 +334,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
 
         Cursor cursor = db.query(true, TABLE_CHILD, result_columns, CHILDREN_ID + "=?",
-                new String[] {childId}, null, null, null, null);
+                new String[]{childId}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
@@ -333,17 +355,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+
         return child;
     }
 
     /**
      * 자녀의 상태를 업데이트 한다.
-     *  0 : on, 1 : off
+     * 0 : on, 1 : off
      *
      * @param childId
      * @param isOff
      */
-    public void updateChildToggle(String childId,int isOff) {
+    public void updateChildToggle(String childId, int isOff) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -351,7 +375,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         values.put(IS_OFF, isOff);
 
-        db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[] {childId});
+        db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[]{childId});
     }
 
     /**
@@ -369,7 +393,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return messagePK : (local DB의 chat primary key
      */
     public long insertMessageBeforeSend(String guestId, String guestName, String senderId,
-                                        String msg, String time, int unreadCnt, int isFail,
+                                        String msg, long time, int unreadCnt, int isFail,
                                         int msgType, int isGroup) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -443,9 +467,9 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return
      */
     public long insertMessageFromGCM(String messageId, String roomId, String guestId, String guestName,
-                                     String unreadCount, int isGroup, int isChild, String msg , String time) {
+                                     String unreadCount, int isGroup, int isChild, String msg, long time, int msgType) {
 
-        Logger.d(messageId + " " + roomId + " " + guestId + " "  );
+        Logger.d(messageId + " " + roomId + " " + guestId + " ");
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -460,6 +484,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_GROUP, isGroup);
         values.put(MSG, msg);
         values.put(TIMESTAMP, time);
+        values.put(MSG_TYPE, msgType);
 
         return db.insert(TABLE_MESSAGE, null, values);
     }
@@ -497,7 +522,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 msg.setGuestName(cursor.getString(5));
                 msg.setSenderID(cursor.getString(6));
                 msg.setMessage(cursor.getString(7));
-                msg.setTimeStamp(cursor.getString(8));
+                msg.setTimeStamp(cursor.getLong(8));
                 msg.setUnreadCount(cursor.getInt(9));
                 msg.setMsgType(cursor.getInt(10));
                 msg.setIsFail(cursor.getInt(11));
@@ -508,10 +533,12 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+
         return messages;
     }
 
-    public List<ChatMessage> getMessages(String roomID, String timesStamp) {
+    public List<ChatMessage> getMessages(String roomID, long timesStamp) {
 
         List<ChatMessage> messages = new ArrayList<>();
 
@@ -521,9 +548,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(true, TABLE_MESSAGE, columns, ROOM_ID + "=? AND " + TIMESTAMP + ">?",
-                new String[]{roomID, timesStamp}, null, null, TIMESTAMP + " ASC", "100");
+                new String[]{roomID, String.valueOf(timesStamp)}, null, null, TIMESTAMP + " ASC", "100");
 
-        if ( cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
 
             do {
 
@@ -537,7 +564,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 msg.setGuestName(cursor.getString(5));
                 msg.setSenderID(cursor.getString(6));
                 msg.setMessage(cursor.getString(7));
-                msg.setTimeStamp(cursor.getString(8));
+                msg.setTimeStamp(cursor.getLong(8));
                 msg.setUnreadCount(cursor.getInt(9));
                 msg.setMsgType(cursor.getInt(10));
                 msg.setIsFail(cursor.getInt(11));
@@ -547,6 +574,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
 
         return messages;
     }
@@ -571,16 +600,30 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return if 0, then on, if 1, then off, if -1, no date
      */
     public int getOnOff() {
-        String selectQuery = "SELECT " + IS_OFF + " FROM " + TABLE_ON_OFF;
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = null;
 
-        if (cursor.moveToFirst()) {
-            return cursor.getInt(0);
+        try {
+
+            String selectQuery = "SELECT " + IS_OFF + " FROM " + TABLE_ON_OFF;
+
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+
+            return -1;
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
         }
-
-        return -1;
     }
 
     public void clearAll() {
@@ -591,6 +634,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
+
         onCreate(db);
     }
 }

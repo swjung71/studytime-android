@@ -22,7 +22,7 @@ public class ParentInfoChange {
     @Element(name = "NewPass", required = false)
     String newPwd;
 
-    @Element(name = "Name", required = false)
+    @Element(name = "Name", required = false, data = true)
     String name;
 
     @Element(name = "Sex", required = false)
@@ -31,7 +31,7 @@ public class ParentInfoChange {
     @Element(name = "Birthday", required = false)
     String birthday;
 
-    @Element(name = "Email")
+    @Element(name = "Email", data = true)
     String email;
 
     public ParentInfoChange() {

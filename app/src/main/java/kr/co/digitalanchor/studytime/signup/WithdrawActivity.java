@@ -14,6 +14,7 @@ import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.ParentWithdraw;
@@ -28,6 +29,8 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 public class WithdrawActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int REQUEST_WITHDRAW = 50001;
+
+    private static final int COMPLETE_WITHDRAW = 50002;
 
     EditText mEditPassword;
 
@@ -86,6 +89,10 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
 
                 break;
 
+            case COMPLETE_WITHDRAW:
+
+                STApplication.resetApplication();
+
             default:
 
                 break;
@@ -113,7 +120,7 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
 
                             case SUCCESS:
 
-                                Toast.makeText(getApplicationContext(), "회원 탈퇴", Toast.LENGTH_SHORT).show();
+                                sendEmptyMessage(COMPLETE_WITHDRAW);
 
                                 break;
 

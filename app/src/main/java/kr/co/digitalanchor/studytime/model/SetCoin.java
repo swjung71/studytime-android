@@ -11,20 +11,20 @@ import org.simpleframework.xml.Root;
 public class SetCoin {
 
     @Attribute(name = "xmlns")
-    final String tag;
+    String tag;
 
     @Element(name = "ParentID")
     String parentID;
 
     @Element(name = "Coin")
-    String coin;
+    int coin;
 
     public SetCoin() {
 
         tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
     }
 
-    public SetCoin(String parentID, String coin) {
+    public SetCoin(String parentID, int coin) {
 
         this();
 
@@ -41,12 +41,12 @@ public class SetCoin {
         this.parentID = parentID;
     }
 
-    public String getCoin() {
+    public int getCoin() {
 
         return coin;
     }
 
-    public void setCoin(String coin) {
+    public void setCoin(int coin) {
         this.coin = coin;
     }
 }

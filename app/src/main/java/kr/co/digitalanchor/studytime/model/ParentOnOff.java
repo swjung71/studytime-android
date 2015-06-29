@@ -19,6 +19,9 @@ public class ParentOnOff {
     @Element(name = "ChildID")
     String childID;
 
+    @Element(name = "Name")
+    String name;
+
     /**
      * 1 : teacher, 0 : parent
      */
@@ -68,5 +71,13 @@ public class ParentOnOff {
 
     public void setIsOff(String isOff) {
         this.isOff = isOff;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
