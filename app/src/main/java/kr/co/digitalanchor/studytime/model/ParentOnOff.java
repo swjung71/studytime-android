@@ -34,6 +34,12 @@ public class ParentOnOff {
     @Element(name = "Is_OFF")
     String isOff;
 
+    @Element(name = "Password", required = false)
+    String password;
+
+    @Element(name = "Coin", required = false)
+    int coin;
+
     public ParentOnOff() {
 
         tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
@@ -79,5 +85,21 @@ public class ParentOnOff {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getCoin() {
+        return coin;
+    }
+
+    public void setCoin(int coin) {
+        this.coin = coin;
     }
 }

@@ -73,6 +73,8 @@ public class ChildChatAdapter extends BaseAdapter {
 
         TextView textHostMsg = ViewHolder.get(v, R.id.textHostMsg);
 
+        TextView textHostTime = ViewHolder.get(v, R.id.textHostTime);
+
         ImageButton buttonRetry = ViewHolder.get(v, R.id.buttonRetry);
 
         ImageButton buttonDelete = ViewHolder.get(v, R.id.buttonDelete);
@@ -82,6 +84,8 @@ public class ChildChatAdapter extends BaseAdapter {
         View layoutGuest = ViewHolder.get(v, R.id.layoutGuest);
 
         TextView textGuestMsg = ViewHolder.get(v, R.id.textGuestMessage);
+
+        TextView textGuestTime = ViewHolder.get(v, R.id.textGuestTime);
 
         TextView textReadCountGuest = ViewHolder.get(v, R.id.textReadCountGuest);
 
@@ -94,12 +98,16 @@ public class ChildChatAdapter extends BaseAdapter {
 
             textHostMsg.setText(model.getMessage());
 
+            textHostTime.setText(AndroidUtils.convertTimeStamp4Chat(model.getTimeStamp()));
+
         } else {
 
             layoutHost.setVisibility(View.GONE);
             layoutGuest.setVisibility(View.VISIBLE);
 
             textGuestMsg.setText(model.getMessage());
+
+            textGuestTime.setText(AndroidUtils.convertTimeStamp4Chat(model.getTimeStamp()));
         }
 
         return v;

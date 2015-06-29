@@ -24,15 +24,6 @@ public class SetCoin {
         tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
     }
 
-    public SetCoin(String parentID, int coin) {
-
-        this();
-
-        this.parentID = parentID;
-
-        this.coin = coin;
-    }
-
     public String getParentID() {
         return parentID;
     }

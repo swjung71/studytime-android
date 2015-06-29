@@ -37,11 +37,12 @@ public class TimerTaskWork extends TimerTask {
     public void run() {
 
         String currentPackage = null;
+        String currentActivity = null;
 
         // monitor
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            currentPackage = checkRunningPackage();
+            checkRunningPackage(currentPackage, currentActivity);
 
         } else {
 
@@ -55,27 +56,30 @@ public class TimerTaskWork extends TimerTask {
 
                     currentPackage = info.topActivity.getPackageName();
 
+                    currentActivity = info.topActivity.getClassName();
+
                     break;
                 }
             }
         }
 
-        Logger.d("get " + currentPackage);
-
         // kill
-        if (TextUtils.isEmpty(currentPackage)) {
+        if (TextUtils.isEmpty(currentPackage)
+                || currentPackage.contains(".launcher")
+                || currentPackage.contains(".mms")
+                || currentPackage.contains(".contacts")) {
 
             // not work
 
         } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") != 0) {
 
-            Logger.d("kill " + currentPackage);
+            Logger.d("pk [" + currentPackage + "]  ac [" + currentActivity + "] version = " + Build.VERSION.SDK_INT);
 
             killApplication(currentPackage);
         }
     }
 
-    private String checkRunningPackage() {
+    private void checkRunningPackage(String packageName, String activityName) {
 
         final int START_TASK_TO_FRONT = 2;
 
@@ -117,10 +121,17 @@ public class TimerTaskWork extends TimerTask {
             }
         }
 
-        if (currentInfo != null) // avoid null err b/c of some unknow reason
-            return currentInfo.pkgList[0];
-        else {
-            return null;
+        if (currentInfo != null) {// avoid null err b/c of some unknow reason
+
+            packageName = currentInfo.pkgList[0];
+
+            activityName = null;
+
+        } else {
+
+            packageName = null;
+
+            activityName = null;
         }
     }
 

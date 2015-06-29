@@ -589,9 +589,14 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String query = "INSERT OR REPLACE INTO " + TABLE_ON_OFF + "(" + ONOFF_KEY + ", " + IS_OFF + ") values ((SELECT " +
-                ONOFF_KEY + "FROM " + TABLE_ON_OFF + "), " + isOff + ")";
+                ONOFF_KEY + " FROM " + TABLE_ON_OFF + "), " + isOff + ")";
 
         db.rawQuery(query, null);
+    }
+
+    public void updateChildMessageCount(String childId, int count) {
+
+
     }
 
     /**

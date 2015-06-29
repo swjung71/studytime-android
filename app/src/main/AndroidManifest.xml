@@ -160,6 +160,12 @@
             android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
+        <activity
+            android:name=".control.InputPwdActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateAlwaysVisible" />
+
         <!-- GCM -->
         <service android:name=".gcm.GCMIntentService" />
 
@@ -175,12 +181,24 @@
         </receiver>
 
         <receiver
+            android:name=".monitor.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".monitor.AllIntentReceiver" />
+
+        <receiver
             android:name=".devicepolicy.AdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
 
             <meta-data
                 android:name="android.app.device_admin"
-                android:resource="@xml/device_admin"/>
+                android:resource="@xml/device_admin" />
 
             <intent-filter>
 
@@ -191,8 +209,6 @@
             </intent-filter>
 
         </receiver>
-
-        <!-- 그밖에 서비스/리시버 등등 -->
 
     </application>
 

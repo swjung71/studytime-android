@@ -31,6 +31,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -423,10 +424,10 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         model.setCoin(account.getCoin() + point);
 
         SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
-                new Response.Listener<GeneralResult>() {
+                new Response.Listener<CoinResult>() {
 
                     @Override
-                    public void onResponse(GeneralResult response) {
+                    public void onResponse(CoinResult response) {
 
                         switch (response.getResultCode()) {
 

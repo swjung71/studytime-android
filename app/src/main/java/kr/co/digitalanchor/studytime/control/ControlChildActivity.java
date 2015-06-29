@@ -22,9 +22,8 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
-import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
@@ -41,7 +40,6 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         MenuPopup.OnClickMenuItemListener {
 
     final int REQUEST_ON_OFF = 50001;
-    final int REQUEST_UPDATE_COIN = 50002;
 
     TextView mLabelPoint;
 
@@ -65,6 +63,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     Child mChild;
 
+    String mChildID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -81,6 +81,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         firstVisit();
     }
 
+
     private void initView() {
 
         mLabelPoint = (TextView) findViewById(R.id.labelPoint);
@@ -95,12 +96,6 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         mButtonToggle = (ImageButton) findViewById(R.id.buttonShutdown);
         mButtonToggle.setOnClickListener(this);
-
-        if (mChild.getIsOFF() == 0)
-            mButtonToggle.setImageResource(R.drawable.button_on_selector);
-
-        else
-            mButtonToggle.setImageResource(R.drawable.button_off_selector);
 
         mButtonChat = (ImageButton) findViewById(R.id.buttonChat);
         mButtonChat.setOnClickListener(this);
@@ -119,16 +114,14 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
+        getChildModel(mChildID);
+
         drawView();
+
+        toggleOnOff();
     }
 
     private void getData() {
@@ -144,13 +137,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
             return;
         }
 
-        if (data.containsKey("ChildID")) {
+        mChildID = data.getString("ChildID");
+    }
 
-            mChild = mHelper.getChild(data.getString("ChildID"));
+    private void getChildModel(String childId) {
 
-            if (mChild == null)
-                finish();
-        }
+        mChild =  mHelper.getChild(childId);
     }
 
     @Override
@@ -160,22 +152,32 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
             case REQUEST_ON_OFF:
 
-                requestOnOff();
-
-                break;
-
-            case REQUEST_UPDATE_COIN:
-
                 Account account = mHelper.getAccountInfo();
 
-                if (account.getCoin() > 0) {
 
-                    requestUpdatePoint();
 
-                } else {
+                    if (mChild.getIsOFF() == 0) {
 
-                    Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
-                }
+                        if (account.getCoin() > 0) {
+
+                            requestOnOff();
+
+                        } else {
+
+                            Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } else {
+
+                        Intent intent = new Intent();
+                        intent.setClass(getApplicationContext(), InputPwdActivity.class);
+
+                        intent.putExtra("ChildID", mChild.getChildID());
+                        intent.putExtra("Name", mChild.getName());
+
+                            startActivity(intent);
+                    }
 
                 break;
 
@@ -224,14 +226,9 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
             case R.id.buttonShutdown:
 
-                if (mChild.getIsOFF() == 0 ) {
 
-                    sendEmptyMessage(REQUEST_UPDATE_COIN);
+                sendEmptyMessage(REQUEST_ON_OFF);
 
-                } else {
-
-                    sendEmptyMessage(REQUEST_ON_OFF);
-                }
 
                 break;
 
@@ -370,57 +367,11 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         startActivity(intent);
     }
 
-    private void requestUpdatePoint() {
+    private void requestOnOff() {
 
         showLoading();
 
         final Account account = mHelper.getAccountInfo();
-
-        final SetCoin model = new SetCoin();
-
-        model.setParentID(account.getID());
-        model.setCoin(account.getCoin() - 1);
-
-        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
-                new Response.Listener<GeneralResult>() {
-
-                    @Override
-                    public void onResponse(GeneralResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                mHelper.updateCoin(account.getID(), model.getCoin());
-
-                                sendEmptyMessage(REQUEST_ON_OFF);
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
-
-                                break;
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
-    }
-
-    private void requestOnOff() {
-
-        Account account = mHelper.getAccountInfo();
 
         ParentOnOff model = new ParentOnOff();
 
@@ -428,11 +379,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         model.setChildID(mChild.getChildID());
         model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
         model.setName(account.getName());
+        model.setCoin(account.getCoin() - 1);
 
         SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
-                new Response.Listener<GeneralResult>() {
+                new Response.Listener<CoinResult>() {
                     @Override
-                    public void onResponse(GeneralResult response) {
+                    public void onResponse(CoinResult response) {
 
                         Logger.d(response.toString());
 
@@ -444,9 +396,9 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                                     mHelper.updateChildToggle(mChild.getChildID(), 1);
 
-                                    mChild.setIsOFF(1);
+                                    mHelper.updateCoin(account.getID(), response.getCoin());
 
-                                    mButtonToggle.setImageResource(R.drawable.button_off_selector);
+                                    mChild.setIsOFF(1);
 
                                 } else {
 
@@ -454,9 +406,11 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                                     mChild.setIsOFF(0);
 
-                                    mButtonToggle.setImageResource(R.drawable.button_on_selector);
-
                                 }
+
+                                drawView();
+
+                                toggleOnOff();
 
                                 dismissLoading();
 
@@ -506,6 +460,28 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
             STApplication.putBoolean(StaticValues.IS_SHOW_GUIDE, false);
 
             mImgGuide.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void toggleOnOff() {
+
+        switch (mChild.getIsOFF()) {
+
+            case 0:
+
+                mButtonToggle.setImageResource(R.drawable.button_on_selector);
+
+                break;
+
+            case 1:
+
+                mButtonToggle.setImageResource(R.drawable.button_off_selector);
+
+                break;
+
+            default:
+
+                break;
         }
     }
 }

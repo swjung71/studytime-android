@@ -321,11 +321,11 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                                 mParentID = response.getParentID();
                                 mChildID = response.getChildID();
 
-//                                showAdmin();
+                                showAdmin();
 
-                                completeRegister(mParentID, mChildID);
+//                                completeRegister(mParentID, mChildID);
 
-                                sendEmptyMessage(COMPLETE_ADD_INFO);
+//                                sendEmptyMessage(COMPLETE_ADD_INFO);
 
                                 break;
 

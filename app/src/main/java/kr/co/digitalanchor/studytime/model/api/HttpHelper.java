@@ -20,6 +20,7 @@ import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
+import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
@@ -276,7 +277,7 @@ public class HttpHelper {
      * @return
      */
     public static SimpleXmlRequest getUpdateCoin(SetCoin model,
-                                                 Listener<GeneralResult> listener,
+                                                 Listener<CoinResult> listener,
                                                  ErrorListener errorListener) {
 
         StringWriter writer = null;
@@ -293,8 +294,8 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/setCoin",
-                    GeneralResult.class, map, listener, errorListener);
+            return new SimpleXmlRequest<CoinResult>(getURL() + "parent/setCoin",
+                    CoinResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 
@@ -423,9 +424,9 @@ public class HttpHelper {
         }
     }
 
-    public static SimpleXmlRequest<GeneralResult> getParentOnOff(ParentOnOff model,
-                                                                 Listener<GeneralResult> listener,
-                                                                 ErrorListener errorListener) {
+    public static SimpleXmlRequest<CoinResult> getParentOnOff(ParentOnOff model,
+                                                              Listener<CoinResult> listener,
+                                                              ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -441,8 +442,8 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/onOff",
-                    GeneralResult.class, map, listener, errorListener);
+            return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff",
+                    CoinResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

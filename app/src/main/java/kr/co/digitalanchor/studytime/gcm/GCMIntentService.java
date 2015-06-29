@@ -18,8 +18,6 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.orhanobut.logger.Logger;
 
-import java.util.List;
-
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -27,7 +25,6 @@ import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
-import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.monitor.MonitorService;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
@@ -90,12 +87,20 @@ public class GCMIntentService extends IntentService {
 
         String code = bundle.getString("code");
 
+        if (TextUtils.isEmpty(code)) {
+
+            return;
+        }
+
         switch (code) {
 
             case "RE_REG":
             case "REG_CHILD":
 
                 updateChildrenInfo(bundle);
+
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), null);
 
                 break;
 
@@ -131,7 +136,7 @@ public class GCMIntentService extends IntentService {
 
                 int isOff = Integer.parseInt(bundle.getString("isOff"));
 
-//                mHelper.insertOnOff(isOff);
+                mHelper.insertOnOff(isOff);
 
                 if (isOff == 0) {
 
@@ -153,6 +158,7 @@ public class GCMIntentService extends IntentService {
                 time : 메시지 보내는 시간
                  */
 
+
                 break;
 
             default:
@@ -165,9 +171,12 @@ public class GCMIntentService extends IntentService {
 
     private void updateChildrenInfo(Bundle data) {
 
-        mHelper.insertChild(data.getString("senderID"),  data.getString("name"));
+        mHelper.insertChild(data.getString("senderID"), data.getString("name"));
 
         sendBroadcast(new Intent(StaticValues.REGISTER_CHILD));
+
+//        AndroidUtils.showNotification(STApplication.applicationContext,
+//                (int) Long.parseLong(data.getString("from")), null, data.getString("msg"), null);
 
     }
 
@@ -201,6 +210,9 @@ public class GCMIntentService extends IntentService {
                                         senderName, response.getCounter(), 0, 0,
                                         AndroidUtils.convertFromUTF8(response.getMessage()),
                                         response.getTime(), response.getMsgType());
+
+                                // 자녀 목록에 업데이트
+
 
                                 sendBroadcast(new Intent(StaticValues.NEW_MESSAGE_ARRIVED));
 

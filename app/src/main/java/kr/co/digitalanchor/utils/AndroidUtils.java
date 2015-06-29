@@ -1,7 +1,12 @@
 package kr.co.digitalanchor.utils;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.input.InputManager;
+import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -17,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
@@ -126,6 +132,15 @@ public class AndroidUtils {
         return format.format(calendar.getTime());
     }
 
+    public static String convertTimeStamp4Chat(long time) {
+
+        Date date = new Date(time);
+
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+
+        return format.format(date);
+    }
+
     public static String convertCurrentTime4Chat(long time) {
 
         Date date = new Date(time);
@@ -179,5 +194,36 @@ public class AndroidUtils {
         }
 
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void showNotification(Context context, String title, String text, Intent intent) {
+
+        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+
+        if (!TextUtils.isEmpty(title)) {
+
+            builder.setContentTitle(title);
+
+        } else {
+
+            builder.setContentTitle(context.getString(R.string.app_name));
+        }
+
+        if (!TextUtils.isEmpty(text)) {
+
+            builder.setContentText(text);
+        }
+
+        if (intent != null) {
+
+            PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            builder.setContentIntent(pIntent);
+        }
+
+        nm.notify(NotificationID.getID(), builder.build());
     }
 }
