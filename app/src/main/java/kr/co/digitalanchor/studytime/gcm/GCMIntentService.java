@@ -106,22 +106,6 @@ public class GCMIntentService extends IntentService {
 
             case "CHAT":
 
-
-//                mHelper.insertChat(0, bundle.getString("senderID"),
-//                        bundle.getString("receiverID"), bundle.getString("name"),
-//                        bundle.getString("msg"), bundle.getString("time"), 1, 0, 0);
-
-//                (String messageId, String roomId, String guestId, String guestName,
-//                    String senderId, String unreadCount, int isGroup, int isChild) {
-
-//                Bundle[{
-//                          code=CHAT,
-//                          senderID=6
-//                          name=유정효,
-//                          messageID=204,
-//                          recieverID=11,
-//                          time=2015-06-28 14:34:33, from=245104271755, msg=간나다어온,  collapse_key=collapseKey1435469673912,  isGroup=0,  isChild=1}]
-
                 requestNewMessage(bundle.getString("messageID"), bundle.getString("senderID"), bundle.getString("name"));
 
                 break;
@@ -145,6 +129,9 @@ public class GCMIntentService extends IntentService {
                 } else {
 
                     startService(new Intent(STApplication.applicationContext, MonitorService.class));
+
+                    AndroidUtils.showNotification(STApplication.applicationContext, null,
+                            bundle.getString("msg"), null);
                 }
 
                 break;
@@ -157,7 +144,8 @@ public class GCMIntentService extends IntentService {
                 isGroup : 1
                 time : 메시지 보내는 시간
                  */
-
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), null);
 
                 break;
 

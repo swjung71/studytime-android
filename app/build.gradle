@@ -34,4 +34,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.orhanobut:logger:1.10'
     compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.robbypond:material-dialogs:1.0.0'
 }

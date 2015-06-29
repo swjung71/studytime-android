@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -225,8 +226,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                         break;
 
-                    // TODO ERROR 처리
-
                     default:
 
                         handleResultCode(res.getResultCode(), res.getResultMessage());
@@ -377,7 +376,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                             case SUCCESS:
 
-                                // TODO show message dialog
+                                dismissLoading();
+
+                                MaterialDialog.Builder buidler = new MaterialDialog.Builder(LoginActivity.this);
+
+                                buidler.title("비밀번호 찾기")
+                                        .content("회원가입하신 이메일 주소로 임시 비밀번호를 전송해 드립니다.")
+                                        .positiveText("확인").build().show();
 
                                 break;
 
