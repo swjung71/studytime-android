@@ -333,7 +333,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 이메일 미 입력";
+                msg = "이메일을 입력하세요.";
 
                 break;
 
@@ -341,7 +341,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             if (!StringValidator.isEmail(temp)) {
 
-                msg = "경고 문구 : 이메일 형식 틀림";
+                msg = "이메일 형식에 맞지 않습니다.";
 
                 break;
             }

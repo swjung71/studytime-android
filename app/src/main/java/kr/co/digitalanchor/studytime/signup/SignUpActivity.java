@@ -261,7 +261,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private void completeRegister() {
 
-        Toast.makeText(getApplicationContext(), "성공: 회원가입", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "회원가입 성공하였습니다.", Toast.LENGTH_SHORT).show();
 
         finish();
     }
@@ -280,14 +280,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 이메일 미 입력";
+                msg = "이메일을 입력하세요.";
 
                 break;
             }
 
             if (!StringValidator.isEmail(temp)) {
 
-                msg = "경고 문구 : 이메일 형식 틀림";
+                msg = " 이메일 형식에 맞지 않습니다.";
 
                 break;
             }
@@ -296,14 +296,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 비밀번호 미 입력";
+                msg = "비밀번호를 입력하세요.";
 
                 break;
             }
 
             if (!StringValidator.isPassword(temp)) {
 
-                msg = "경고 문구 : 비밀번호 형식 틀림";
+                msg = "비밀번호 형식에 맞지 않습니다.";
 
                 break;
             }
@@ -312,28 +312,28 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 비밀번호 재입력 안함";
+                msg = "비밀번호를 재입력하세요.";
 
                 break;
             }
 
             if (temp.compareTo(mEditPassword.getText().toString()) != 0) {
 
-                msg = "경고 문구 : 입력된 비밀번호 불일치";
+                msg = "비밀번호가 일치하지 않습니다.";
 
                 break;
             }
 
             if (!mCheckServiceInfo.isChecked()) {
 
-                msg = "경고 문구 : 서비스 이용약관에 미 동의";
+                msg = "서비스 이용약관을 동의하세요.";
 
                 break;
             }
 
             if (!mCheckPersonalInfo.isChecked()) {
 
-                msg = "경고 문구 : 개인정보 취급방침에 미 동의";
+                msg = "개인정보 취급방침에 동의하세요.";
 
                 break;
             }
@@ -344,7 +344,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             if (!TextUtils.isEmpty(temp) && !StringValidator.isBirthDay(temp)) {
 
-                msg = "경고 문구 : 생년월일 형식 틀림";
+                msg = "생년월일 형식에 맞지 않습니다.";
 
                 break;
             }

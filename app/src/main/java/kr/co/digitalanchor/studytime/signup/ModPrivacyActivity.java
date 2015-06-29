@@ -155,28 +155,28 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
             if (!TextUtils.isEmpty(temp) && !StringValidator.isPassword(temp)) {
 
-                msg = "경고 문구 : 비밀번호 형식 틀림";
+                msg = "비밀번호 형시에 맞지 않습니다.";
 
                 break;
             }
 
             if (!TextUtils.isEmpty(temp2) && TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 새로운 비밀번호를 입력하세요.";
+                msg = "새로운 비밀번호를 입력하세요.";
 
                 break;
             }
 
             if (TextUtils.isEmpty(temp2) && !TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 현재 비밀번호를 입력하세요.";
+                msg = "현재 비밀번호를 입력하세요.";
 
                 break;
             }
 
             if (!TextUtils.isEmpty(temp2) && !TextUtils.isEmpty(temp) && temp.compareTo(temp2) == 0) {
 
-                msg = "경고 문구 : 새로운 비밀번호가 이전 비밀번호와 같음";
+                msg = "새로운 비밀번호가 이전 비밀번호와 같습니다.";
 
                 break;
             }
@@ -185,7 +185,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
             if (!TextUtils.isEmpty(temp) && !StringValidator.isBirthDay(temp)) {
 
-                msg = "경고 문구 : 생년월일 형식 틀림";
+                msg = "생년월일 형식에 맞지 않습니다.";
 
                 break;
             }

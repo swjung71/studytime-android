@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -177,16 +176,8 @@ public class BaseActivity extends Activity {
 
         dismissLoading();
 
-        switch (code) {
-
-            default:
-
-                Toast.makeText(getApplicationContext(),
-                        TextUtils.isEmpty(msg) ? "알수 없는 오류" : msg,
-                        Toast.LENGTH_SHORT).show();
-
-                break;
-        }
+        Toast.makeText(getApplicationContext(),
+                "오류 : " + msg, Toast.LENGTH_SHORT).show();
     }
 
     protected void handleError(VolleyError error) {

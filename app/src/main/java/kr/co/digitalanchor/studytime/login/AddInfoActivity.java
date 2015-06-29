@@ -185,21 +185,21 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             if (!TextUtils.isEmpty(tmp) && !StringValidator.isBirthDay(tmp)) {
 
-                msg = "경고 : 생년월일 포멧 틀림";
+                msg = "생년월일 형식에 맞지 않습니다.";
 
                 break;
             }
 
             if (!mCheckServiceInfo.isChecked()) {
 
-                msg = "경고 : 미 체크";
+                msg = "서비스 이용약관을 동의하세요.";
 
                 break;
             }
 
             if (!mCheckPersonalInfo.isChecked()) {
 
-                msg = "경고 : 미 체크";
+                msg = "개인정보 취급방침에 동의하세요.";
 
                 break;
             }

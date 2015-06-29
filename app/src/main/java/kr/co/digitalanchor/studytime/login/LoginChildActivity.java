@@ -165,14 +165,14 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             if (TextUtils.isEmpty(tmp)) {
 
-                msg = "경고 : 메일 미입력";
+                msg = "이메일을 입력하세요.";
 
                 break;
             }
 
             if (!StringValidator.isEmail(tmp)) {
 
-                msg = "경고: 메일 형식 불일치";
+                msg = " 이메일 형식에 맞지 않습니다.";
 
                 break;
             }
@@ -183,14 +183,14 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             if (TextUtils.isEmpty(tmp)) {
 
-                msg = "경고 : 비밀번호 미입력";
+                msg = "비밀번호를 입력하세요.";
 
                 break;
             }
 
             if (!StringValidator.isPassword(tmp)) {
 
-                msg = "경고 : 비밀번호 형식 불일치";
+                msg = "비밀번호 형식에 맞지 않습니다.";
 
                 break;
             }
@@ -201,7 +201,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             if (TextUtils.isEmpty(tmp)) {
 
-                msg = "경고 : 이름 미입력";
+                msg = "이름을 입력하세요.";
 
                 break;
             }

@@ -67,7 +67,7 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
 
                 } else {
 
-                    Toast.makeText(getApplicationContext(), "경고 : 비밀번호 미 입력", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
