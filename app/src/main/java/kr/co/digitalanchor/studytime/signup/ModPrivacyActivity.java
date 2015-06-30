@@ -209,7 +209,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         mResult = info;
 
-        mLabelEmailAddr.setText(info.getEmail() + "(이메일 변경안됨)");
+        mLabelEmailAddr.setText(info.getEmail());
     }
 
     private void requestGetInfo() {
