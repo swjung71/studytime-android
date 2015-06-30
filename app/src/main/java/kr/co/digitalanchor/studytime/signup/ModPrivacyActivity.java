@@ -277,7 +277,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         } else {
 
-            model.setName(tmp);
+            model.setName(mResult.getName());
         }
 
         tmp = null;
