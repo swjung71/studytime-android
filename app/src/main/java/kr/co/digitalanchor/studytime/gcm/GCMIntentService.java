@@ -108,6 +108,9 @@ public class GCMIntentService extends IntentService {
 
                 requestNewMessage(bundle.getString("messageID"), bundle.getString("senderID"), bundle.getString("name"));
 
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), null);
+
                 break;
 
             case "CHAT_READ":
@@ -130,9 +133,10 @@ public class GCMIntentService extends IntentService {
 
                     startService(new Intent(STApplication.applicationContext, MonitorService.class));
 
-                    AndroidUtils.showNotification(STApplication.applicationContext, null,
-                            bundle.getString("msg"), null);
                 }
+
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), null);
 
                 break;
 

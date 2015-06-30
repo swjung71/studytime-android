@@ -21,7 +21,7 @@ public class ChildRegister implements Cloneable {
     @Element(name = "Phone_number", required = false)
     String phoneNumber;
 
-    @Element(name = "Name", required = false)
+    @Element(name = "Name", required = false, data = true)
     String name;
 
     @Element(name = "National_Code", required = false)

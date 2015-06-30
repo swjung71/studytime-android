@@ -284,6 +284,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertChildren(List<kr.co.digitalanchor.studytime.model.Child> children) {
 
+        if (children == null)
+            return;
+
         for (kr.co.digitalanchor.studytime.model.Child child : children) {
 
             insertChild(child.getChildID(), 0, child.getName());

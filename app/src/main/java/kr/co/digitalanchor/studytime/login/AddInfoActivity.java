@@ -250,6 +250,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private void requestSendAdditionalInfo() {
 
+        showLoading();
+
         ChildRegister model = null;
 
         String tmp = null;
@@ -317,6 +319,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                         switch (response.getResultCode()) {
 
                             case SUCCESS:
+
+                                dismissLoading();
 
                                 mParentID = response.getParentID();
                                 mChildID = response.getChildID();

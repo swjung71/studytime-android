@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -370,7 +372,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             Intent intent = new Intent(Intent.ACTION_VIEW);
 
             intent.putExtra("addres", "");
-            intent.putExtra("sms_body", "https://play.google.com/store/apps/details?id=kr.co.studytime");
+            intent.putExtra("sms_body", "https://play.google.com/store/apps/details?id="
+                    + this.getPackageName());
             intent.setType("vnd.android-dir/mms-sms");
 
             startActivity(intent);

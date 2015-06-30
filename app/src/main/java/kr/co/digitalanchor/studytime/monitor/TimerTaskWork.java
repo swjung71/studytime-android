@@ -42,7 +42,7 @@ public class TimerTaskWork extends TimerTask {
         // monitor
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            checkRunningPackage(currentPackage, currentActivity);
+            currentPackage = checkRunningPackage();
 
         } else {
 
@@ -63,6 +63,8 @@ public class TimerTaskWork extends TimerTask {
             }
         }
 
+        Logger.d("pk [" + currentPackage + "]  ac [" + currentActivity + "] version = " + Build.VERSION.SDK_INT);
+
         // kill
         if (TextUtils.isEmpty(currentPackage)
                 || currentPackage.contains(".launcher")
@@ -79,7 +81,7 @@ public class TimerTaskWork extends TimerTask {
         }
     }
 
-    private void checkRunningPackage(String packageName, String activityName) {
+    private String checkRunningPackage() {
 
         final int START_TASK_TO_FRONT = 2;
 
@@ -123,15 +125,14 @@ public class TimerTaskWork extends TimerTask {
 
         if (currentInfo != null) {// avoid null err b/c of some unknow reason
 
-            packageName = currentInfo.pkgList[0];
+            return currentInfo.pkgList[0];
 
-            activityName = null;
+
 
         } else {
 
-            packageName = null;
+            return null;
 
-            activityName = null;
         }
     }
 

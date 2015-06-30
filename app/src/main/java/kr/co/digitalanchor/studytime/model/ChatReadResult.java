@@ -33,6 +33,9 @@ public class ChatReadResult {
     @Element(name = "Time", required = false)
     long time;
 
+    @Element(name = "SenderID", required =  false)
+    String senderId;
+
     public ChatReadResult() {
 
         msgType = 0;
@@ -92,5 +95,13 @@ public class ChatReadResult {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 }

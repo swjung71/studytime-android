@@ -51,6 +51,13 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         initView();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        dismissLoading();
+    }
+
     private void initView() {
 
         mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
@@ -222,6 +229,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
     private void requestLogin() {
 
+        showLoading();
+
         String tmp = null;
 
         ParentLogin model = new ParentLogin();
@@ -239,6 +248,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 switch (response.getResultCode()) {
 
                     case SUCCESS:
+
+                        dismissLoading();
 
                         data = new Bundle();
 
