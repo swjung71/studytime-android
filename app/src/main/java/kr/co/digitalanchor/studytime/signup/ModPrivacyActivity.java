@@ -343,7 +343,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
                                 setModifiedInfo(model, account);
 
-                                mLoading.dismiss();
+                                dismissLoading();
 
                                 sendEmptyMessage(COMPLETE_MODIFY_INFO);
 
