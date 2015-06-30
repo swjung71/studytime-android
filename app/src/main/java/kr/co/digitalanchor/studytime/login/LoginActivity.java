@@ -382,7 +382,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                                 buidler.title("비밀번호 찾기")
                                         .content("회원가입하신 이메일 주소로 임시 비밀번호를 전송해 드립니다.")
-                                        .positiveText("확인").build().show();
+                                        .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog materialDialog) {
+                                                
+                                                materialDialog.dismiss();
+                                                        
+                                            }
+                                        }).build().show();
 
                                 break;
 

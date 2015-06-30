@@ -234,6 +234,8 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
                                 setInfo(response);
 
+                                dismissLoading();
+
                                 break;
 
                             default:
