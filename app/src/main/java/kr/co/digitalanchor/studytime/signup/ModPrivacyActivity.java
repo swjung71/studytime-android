@@ -23,6 +23,7 @@ import kr.co.digitalanchor.studytime.model.ParentPrivacyInfo;
 import kr.co.digitalanchor.studytime.model.ParentPrivacyInfoResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.utils.AndroidUtils;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -209,6 +210,8 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         mResult = info;
 
+        mResult.setName(AndroidUtils.convertFromUTF8(info.getName()));
+
         mLabelEmailAddr.setText(info.getEmail());
     }
 
@@ -277,7 +280,7 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         } else {
 
-            model.setName(mResult.getName());
+            model.setName(tmp);
         }
 
         tmp = null;
