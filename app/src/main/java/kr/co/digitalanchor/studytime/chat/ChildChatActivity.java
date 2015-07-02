@@ -81,6 +81,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         initView();
 
         firstVisit();
+
+        startMonitorService();
     }
 
     @Override
@@ -110,6 +112,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             unregisterReceiver(messageReceiver);
         }
+
+        finish();
     }
 
     private void initView() {

@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -204,5 +205,10 @@ public class BaseActivity extends Activity {
 
             Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    protected void startMonitorService() {
+
+        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
     }
 }

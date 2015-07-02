@@ -22,6 +22,7 @@ import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.monitor.MonitorService;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -129,6 +130,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         if (requestCode == ACTIVITY_ADDITIONAL_INFO) {
 
             if (resultCode == RESULT_OK) {
+
+                startService(new Intent(STApplication.applicationContext, MonitorService.class));
 
                 sendEmptyMessage(COMPLETE_CHILD_LOGIN);
             }

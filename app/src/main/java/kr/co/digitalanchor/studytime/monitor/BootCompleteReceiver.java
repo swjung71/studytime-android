@@ -29,7 +29,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
             Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
 
-            if (account.getIsChild() == 0 && helper.getOnOff() == 1) {
+            if (account.getIsChild() == 0) {
 
                 context.startService(new Intent(context, MonitorService.class));
             }

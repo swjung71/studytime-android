@@ -25,4 +25,9 @@ public class BlockActivity extends BaseActivity {
 
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }

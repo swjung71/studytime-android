@@ -129,15 +129,7 @@ public class GCMIntentService extends IntentService {
 
                 mHelper.updateOnOff(isOff);
 
-                if (isOff == 0) {
-
-                    stopService(new Intent(STApplication.applicationContext, MonitorService.class));
-
-                } else {
-
-                    startService(new Intent(STApplication.applicationContext, MonitorService.class));
-
-                }
+                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), null);

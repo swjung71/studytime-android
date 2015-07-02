@@ -67,6 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String UNREAD_COUNT = "unreadCount";
 
     private static final String IS_OFF = "isOff";// 0이면 on 1이면 off
+    private static final String IS_ALLOW = "isAllow";//  0이면 삭제 허락, 1이면 삭제 못함
     private static final String ONOFF_PK = "1234";
     private static final String NEW_MESSAGE_COUNT = "newMessageCount";
 
@@ -101,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
 */
         String CREATE_TABLE_ONOFF = "CREATE TABLE " + TABLE_ON_OFF
                 + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY, " + IS_OFF
-                + " INTEGER NOT NULL )";
+                + " INTEGER DEFAULT 0, " + IS_ALLOW + " INTEGER DEFAULT 1)";
 
         // TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
         String CREATE_TABLE_MESSAGE = "CREATE TABLE " + TABLE_MESSAGE + " ( "
@@ -124,12 +125,18 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MESSAGE);
         db.execSQL(CREATE_TABLE_ONOFF);
 
+        ContentValues values = new ContentValues();
+        values.put(ONOFF_KEY, ONOFF_PK);
+
+        db.replace(TABLE_ON_OFF, null, values);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Log.i("DBHelper", "Upgrading from version " + oldVersion + " to " + newVersion + "which will destory all old data");
+        Logger.i("DBHelper", "Upgrading from version " + oldVersion + " to " + newVersion + "which will destory all old data");
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
@@ -249,7 +256,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return account;
     }
 
-    public void insertChild(String id,  String name) {
+    public void insertChild(String id, String name) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -596,6 +603,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
         values.put(IS_OFF, isOff);
+        values.put(IS_ALLOW, "1");
 
         db.replace(TABLE_ON_OFF, null, values);
     }
@@ -619,6 +627,51 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
 
             String[] columns = new String[]{IS_OFF};
+
+            cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
+                    new String[]{ONOFF_PK}, null, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+
+            return 0;
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
+        }
+    }
+
+    public void updateAllow(int isAllow) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ONOFF_KEY, ONOFF_PK);
+        values.put(IS_OFF, getOnOff());
+        values.put(IS_ALLOW, isAllow);
+
+        db.replace(TABLE_ON_OFF, null, values);
+    }
+
+    /**
+     * 삭제 가능한지
+     *
+     * @return 0 삭제 가능, 1 삭제 불가
+     */
+    public int isAllow() {
+
+        Cursor cursor = null;
+
+        try {
+
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String[] columns = new String[]{IS_ALLOW};
 
             cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
                     new String[]{ONOFF_PK}, null, null, null, null);

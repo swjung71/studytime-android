@@ -65,6 +65,7 @@
             android:enabled="true"
             android:exported="false" />
 
+
         <activity
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
@@ -142,11 +143,21 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".block.BlockActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:screenOrientation="portrait"
+            android:taskAffinity="kr.co.digitalanchor.studytime.block"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".block.BlockPasswordActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
             android:taskAffinity="kr.co.digitalanchor.studytime.block"
             android:theme="@android:style/Theme.NoTitleBar" />
 
@@ -191,7 +202,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".monitor.AllIntentReceiver" />
+        <receiver android:name=".monitor.AllIntentReceiver">
+            <intent-filter>
+                <action android:name="kr.co.digitalanchor.action.SERVICE_START" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".devicepolicy.AdminReceiver"

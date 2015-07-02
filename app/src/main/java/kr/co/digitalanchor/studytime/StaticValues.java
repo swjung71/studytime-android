@@ -25,4 +25,6 @@ public class StaticValues {
 
     public static final String IS_SHOW_GUIDE = "isShowGuide";
 
+    public static final String ACTION_SERVICE_START = "kr.co.digitalanchor.action.SERVICE_START";
+
 }

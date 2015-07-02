@@ -16,10 +16,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.database.DBHelper;
 
 public class MonitorService extends Service {
 
-    private final int notificationId;
+    private final int notificationId = Integer.MAX_VALUE;
 
     /// 1 Second = 1000 Milli Seconds
     private final double ONE_SEC = 1000.0f;
@@ -29,10 +30,7 @@ public class MonitorService extends Service {
     /// Timer Tasks
     TimerTask taskBlocking;     /// Block App
 
-    public MonitorService() {
-
-        notificationId = MonitorService.class.hashCode();
-    }
+    TimerTask taskPreventAdmin; // Block device admin
 
     @Override
     public void onCreate() {
@@ -47,9 +45,10 @@ public class MonitorService extends Service {
 
         /// Create Tasks
         taskBlocking = new TimerTaskWork(this);
+        taskPreventAdmin = new TimerTaskPreventUncheckDeviceAdmin(this);
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
-
+        timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
     }
 
     /**
@@ -67,8 +66,6 @@ public class MonitorService extends Service {
             timerDaemon.cancel();
         }
 
-        dismissNotification();
-
         super.onDestroy();
     }
 
@@ -76,6 +73,8 @@ public class MonitorService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Logger.d("onStartCommand");
+
+        startForeground(notificationId, showNotification());
 
         return START_STICKY;
     }
@@ -86,29 +85,27 @@ public class MonitorService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private void showNotification() {
-
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    private Notification showNotification() {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
+        DBHelper helper = new DBHelper(getApplicationContext());
+
+        if (helper.getOnOff() != 1) {
+
+            builder.setContentText("제어하지 않음");
+
+        } else {
+
+            builder.setContentText("제어중");
+
+        }
+
         builder.setSmallIcon(R.drawable.icon_notificaiton).setContentTitle("스터디타임")
-                .setContentText("제어중").setLargeIcon(bm);
+                .setLargeIcon(bm);
 
-        Notification note = builder.build();
-        note.flags = Notification.FLAG_NO_CLEAR;
-        note.defaults |= Notification.DEFAULT_VIBRATE;
-        note.defaults |= Notification.DEFAULT_SOUND;
-
-        manager.notify(notificationId, note);
-    }
-
-    private void dismissNotification() {
-
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        manager.cancel(notificationId);
+        return builder.build();
     }
 }

@@ -16,14 +16,13 @@ public class AllIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
         DBHelper helper = new DBHelper(STApplication.applicationContext);
 
         Account account = helper.getAccountInfo();
 
-        if (account.getIsChild() == 0 && helper.getOnOff() == 1) {
+        if (account.getIsChild() == 0) {
 
-            context.stopService(new Intent(STApplication.applicationContext, MonitorService.class));
+            context.startService(new Intent(STApplication.applicationContext, MonitorService.class));
         }
     }
 }
