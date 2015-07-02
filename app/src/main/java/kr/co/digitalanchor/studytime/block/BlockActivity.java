@@ -18,4 +18,11 @@ public class BlockActivity extends BaseActivity {
         setContentView(R.layout.activity_block);
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        finish();
+    }
 }

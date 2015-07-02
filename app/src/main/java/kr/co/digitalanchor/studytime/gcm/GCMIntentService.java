@@ -102,6 +102,8 @@ public class GCMIntentService extends IntentService {
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), null);
 
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+
                 break;
 
             case "CHAT":
@@ -110,6 +112,8 @@ public class GCMIntentService extends IntentService {
 
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), null);
+
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
                 break;
 
@@ -123,7 +127,7 @@ public class GCMIntentService extends IntentService {
 
                 int isOff = Integer.parseInt(bundle.getString("isOff"));
 
-                mHelper.insertOnOff(isOff);
+                mHelper.updateOnOff(isOff);
 
                 if (isOff == 0) {
 
@@ -138,6 +142,8 @@ public class GCMIntentService extends IntentService {
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), null);
 
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+
                 break;
 
             case "NOTICE":
@@ -150,6 +156,8 @@ public class GCMIntentService extends IntentService {
                  */
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), null);
+
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
                 break;
 

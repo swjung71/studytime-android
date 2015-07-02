@@ -41,6 +41,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
     private final int COMPLETE_ADD_INFO = 50002;
     private final int ACTIVATION_REQUEST = 50002;
 
+    EditText mEditName;
+
     EditText mEditBirthDate;
 
     RadioGroup mCheckGender;
@@ -61,15 +63,17 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private String mChildID;
 
+    private boolean isModify;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_add_info);
 
-        initView();
-
         getIntentData();
+
+        initView();
     }
 
     private void initView() {
@@ -90,6 +94,10 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         mButtonConfirm = (Button) findViewById(R.id.buttonConfirm);
         mButtonConfirm.setOnClickListener(this);
+
+        mEditName = (EditText) findViewById(R.id.editName);
+
+        mEditName.setVisibility(isModify ? View.VISIBLE : View.GONE);
 
     }
 
@@ -144,7 +152,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                 finish();
 
                 break;
-
 
             default:
 
@@ -234,6 +241,16 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             mModel.setName(data.getString("Name"));
         }
+
+        if (data.containsKey("Modify")) {
+
+            isModify = data.getBoolean("Modify", false);
+
+
+        } else {
+
+            isModify = false;
+        }
     }
 
     private void showClause(int opt) {
@@ -311,6 +328,22 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         model.setMac(STApplication.getMAC());
 
+        if (isModify) {
+
+            if (TextUtils.isEmpty(mEditName.getText().toString())) {
+
+                model.setName(mModel.getName());
+
+            } else {
+
+                model.setName(mEditName.getText().toString());
+            }
+
+        } else {
+
+            model.setName(mModel.getName());
+        }
+
         SimpleXmlRequest request = HttpHelper.getChildRegister(model,
                 new Response.Listener<ChildRegResult>() {
                     @Override
@@ -325,7 +358,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                                 mParentID = response.getParentID();
                                 mChildID = response.getChildID();
 
-                                showAdmin();
+                                if (!isModify)
+                                    showAdmin();
 
 //                                completeRegister(mParentID, mChildID);
 

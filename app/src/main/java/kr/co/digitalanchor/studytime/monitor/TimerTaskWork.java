@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.TimerTask;
 
 import kr.co.digitalanchor.studytime.block.BlockActivity;
+import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.db.Account;
 
 /**
  * Created by Thomas on 2015-06-24.
@@ -25,16 +27,25 @@ public class TimerTaskWork extends TimerTask {
 
     private ActivityManager mActivityManager;
 
+    private DBHelper mHelper;
+
 
     public TimerTaskWork(Context context) {
 
         mContext = context;
 
         mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+        mHelper = new DBHelper(mContext);
     }
 
     @Override
     public void run() {
+
+        if (mHelper.getOnOff() != 1) {
+
+            return ;
+        }
 
         String currentPackage = null;
         String currentActivity = null;
@@ -127,8 +138,6 @@ public class TimerTaskWork extends TimerTask {
 
             return currentInfo.pkgList[0];
 
-
-
         } else {
 
             return null;
@@ -155,7 +164,7 @@ public class TimerTaskWork extends TimerTask {
 
         final AlarmManager alarm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, intent);
+        alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
 
     }
 }

@@ -4,15 +4,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.input.InputManager;
+import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-
-import com.android.volley.toolbox.SimpleXmlRequest;
-import com.orhanobut.logger.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import kr.co.digitalanchor.studytime.R;
-import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
 public class AndroidUtils {
@@ -225,5 +220,26 @@ public class AndroidUtils {
         }
 
         nm.notify(NotificationID.getID(), builder.build());
+    }
+
+    /**
+     * 잠자는 스크린을 깨운다.
+     *
+     * @param context
+     */
+    public static void acquireCpuWakeLock(Context context) {
+
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+        PowerManager.WakeLock cpuWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK |
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                context.getPackageName());
+
+        if (cpuWakeLock == null) {
+
+            return;
+        }
+
+        cpuWakeLock.acquire(10000);
     }
 }

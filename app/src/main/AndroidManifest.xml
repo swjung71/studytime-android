@@ -144,8 +144,10 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".block.BlockActivity"
+            android:excludeFromRecents="true"
             android:noHistory="true"
             android:screenOrientation="portrait"
+            android:taskAffinity="kr.co.digitalanchor.studytime.block"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <!-- 애드 팝콘 (광고) Activities -->
@@ -183,10 +185,9 @@
         <receiver
             android:name=".monitor.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 

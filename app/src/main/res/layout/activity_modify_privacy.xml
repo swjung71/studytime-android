@@ -105,7 +105,7 @@
                 android:layout_marginTop="23.33dp"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
-                android:hint="생년월일 ('-' 없이 입력해 주세요.)"
+                android:hint="생년월일 (YYYYMMDD)"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"
                 android:singleLine="true"

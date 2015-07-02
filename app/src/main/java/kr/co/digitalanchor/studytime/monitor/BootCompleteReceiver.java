@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 
@@ -18,15 +21,17 @@ public class BootCompleteReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 
-            DBHelper helper = new DBHelper(STApplication.applicationContext);
+            DBHelper helper = new DBHelper(context);
 
             Account account = helper.getAccountInfo();
 
+            Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
+
             if (account.getIsChild() == 0 && helper.getOnOff() == 1) {
 
-                context.stopService(new Intent(STApplication.applicationContext, MonitorService.class));
+                context.startService(new Intent(context, MonitorService.class));
             }
         }
     }

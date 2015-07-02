@@ -29,12 +29,27 @@
             android:paddingTop="23.33dp">
 
             <kr.co.digitalanchor.studytime.view.FontEditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_height="38.33dp"
+                android:background="@drawable/box_type_13_bg"
+                android:layout_marginBottom="14dp"
+                android:gravity="center_vertical"
+                android:hint="자녀 이름"
+                android:paddingLeft="33.33dp"
+                android:paddingRight="33.33dp"
+                android:singleLine="true"
+                android:textColorHint="#A3A3A3"
+                android:textSize="16dp"
+                android:visibility="gone"/>
+
+            <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editBirthDate"
                 android:layout_width="match_parent"
                 android:layout_height="38.33dp"
                 android:background="@drawable/box_type_13_bg"
                 android:gravity="center_vertical"
-                android:hint="자녀 생년월일 ('-' 없이 입력해 주세요.)"
+                android:hint="자녀 생년월일 (YYYYMMDD)"
                 android:inputType="number"
                 android:paddingLeft="33.33dp"
                 android:paddingRight="33.33dp"

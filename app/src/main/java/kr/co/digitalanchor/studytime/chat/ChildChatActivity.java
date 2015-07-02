@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.chat;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
@@ -23,6 +24,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -167,7 +169,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
                 AndroidUtils.hideKeyboard(mEditMessage);
 
-                showGuide(true);
+                showAdditionalInfo();
 
                 break;
 
@@ -341,5 +343,20 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             mLayoutGuide.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void showAdditionalInfo() {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), AddInfoActivity.class);
+
+        Account account = mHelper.getAccountInfo();
+
+        intent.putExtra("ParentID", account.getParentId());
+        intent.putExtra("Name", account.getName());
+        intent.putExtra("Modify", true);
+
+        startActivity(intent);
     }
 }

@@ -67,6 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String UNREAD_COUNT = "unreadCount";
 
     private static final String IS_OFF = "isOff";// 0이면 on 1이면 off
+    private static final String ONOFF_PK = "1234";
     private static final String NEW_MESSAGE_COUNT = "newMessageCount";
 
     public DBHelper(Context context) {
@@ -99,7 +100,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " INTEGER, " + IS_FAIL + " INTEGER, " + FAIL_NAME + " TEXT )";
 */
         String CREATE_TABLE_ONOFF = "CREATE TABLE " + TABLE_ON_OFF
-                + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT, " + IS_OFF
+                + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY, " + IS_OFF
                 + " INTEGER NOT NULL )";
 
         // TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
@@ -588,13 +589,15 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      * @param isOff
      */
-    public void insertOnOff(int isOff) {
+    public void updateOnOff(int isOff) {
+
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String query = "INSERT OR REPLACE INTO " + TABLE_ON_OFF + "(" + ONOFF_KEY + ", " + IS_OFF + ") values ((SELECT " +
-                ONOFF_KEY + " FROM " + TABLE_ON_OFF + "), " + isOff + ")";
+        ContentValues values = new ContentValues();
+        values.put(ONOFF_KEY, ONOFF_PK);
+        values.put(IS_OFF, isOff);
 
-        db.rawQuery(query, null);
+        db.replace(TABLE_ON_OFF, null, values);
     }
 
     public void updateChildMessageCount(String childId, int count) {
@@ -613,11 +616,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         try {
 
-            String selectQuery = "SELECT " + IS_OFF + " FROM " + TABLE_ON_OFF;
-
             SQLiteDatabase db = this.getReadableDatabase();
 
-            cursor = db.rawQuery(selectQuery, null);
+            String[] columns = new String[]{IS_OFF};
+
+            cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
+                    new String[]{ONOFF_PK}, null, null, null, null);
 
             if (cursor.moveToFirst()) {
                 return cursor.getInt(0);
