@@ -72,7 +72,7 @@ public class AdminReceiver extends DeviceAdminReceiver {
     @Override
     public CharSequence onDisableRequested(Context context, Intent intent) {
 
-        return  super.onDisableRequested(context, intent);
+        return  "스타트 타임을 사용할 수 없게 됩니다.";
     }
 
 }

@@ -1,9 +1,7 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -95,11 +93,11 @@ public class MonitorService extends Service {
 
         if (helper.getOnOff() != 1) {
 
-            builder.setContentText("제어하지 않음");
+            builder.setContentText("스마트폰 잠금 해제");
 
         } else {
 
-            builder.setContentText("제어중");
+            builder.setContentText("스마트폰 잠금");
 
         }
 
