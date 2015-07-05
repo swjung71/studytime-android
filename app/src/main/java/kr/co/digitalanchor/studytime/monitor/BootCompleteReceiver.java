@@ -33,6 +33,10 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
                 context.startService(new Intent(context, MonitorService.class));
             }
+
+        } else {
+
+            Logger.d(intent.toString());
         }
     }
 }

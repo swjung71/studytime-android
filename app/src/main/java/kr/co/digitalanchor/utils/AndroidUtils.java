@@ -215,7 +215,7 @@ public class AndroidUtils {
 
         if (intent != null) {
 
-            PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             builder.setContentIntent(pIntent);
         }
 

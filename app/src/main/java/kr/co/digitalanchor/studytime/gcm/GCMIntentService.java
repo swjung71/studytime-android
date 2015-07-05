@@ -14,6 +14,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.orhanobut.logger.Logger;
@@ -21,6 +22,7 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.intro.IntroActivity;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -92,6 +94,8 @@ public class GCMIntentService extends IntentService {
             return;
         }
 
+        Intent execActivityIntent = null;
+
         switch (code) {
 
             case "RE_REG":
@@ -99,8 +103,10 @@ public class GCMIntentService extends IntentService {
 
                 updateChildrenInfo(bundle);
 
+                execActivityIntent = new Intent(STApplication.applicationContext, IntroActivity.class);
+
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), null);
+                        bundle.getString("msg"), execActivityIntent);
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
@@ -110,8 +116,10 @@ public class GCMIntentService extends IntentService {
 
                 requestNewMessage(bundle.getString("messageID"), bundle.getString("senderID"), bundle.getString("name"));
 
+                execActivityIntent = new Intent(STApplication.applicationContext, IntroActivity.class);
+
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), null);
+                        bundle.getString("msg"), execActivityIntent);
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
@@ -131,14 +139,18 @@ public class GCMIntentService extends IntentService {
 
                 sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
+                execActivityIntent = new Intent(STApplication.applicationContext, IntroActivity.class);
+
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), null);
+                        bundle.getString("msg"), execActivityIntent);
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
                 break;
 
             case "NOTICE":
+
+                execActivityIntent = new Intent(STApplication.applicationContext, IntroActivity.class);
 
                 /*
                 name : 보내는 사람 이름
@@ -153,6 +165,24 @@ public class GCMIntentService extends IntentService {
 
                 break;
 
+            /**
+             * 삭제 시도 (비번 틀림)
+             */
+            case "DELETE_TRY":
+
+                // TODO : 어떻게 알려줄 것인가?
+
+                break;
+
+            /**
+             * 삭제 성공
+             */
+            case "DELETE":
+
+                // TODO : 어떻게 알려줄 것인가?
+
+                break;
+
             default:
 
                 break;
@@ -163,12 +193,12 @@ public class GCMIntentService extends IntentService {
 
     private void updateChildrenInfo(Bundle data) {
 
-        mHelper.insertChild(data.getString("senderID"), data.getString("name"));
+        if (data != null) {
+
+            mHelper.insertChild(data.getString("senderID"), data.getString("name"));
+        }
 
         sendBroadcast(new Intent(StaticValues.REGISTER_CHILD));
-
-//        AndroidUtils.showNotification(STApplication.applicationContext,
-//                (int) Long.parseLong(data.getString("from")), null, data.getString("msg"), null);
 
     }
 
@@ -203,8 +233,6 @@ public class GCMIntentService extends IntentService {
                                         AndroidUtils.convertFromUTF8(response.getMessage()),
                                         response.getTime(), response.getMsgType());
 
-                                // 자녀 목록에 업데이트
-
 
                                 sendBroadcast(new Intent(StaticValues.NEW_MESSAGE_ARRIVED));
 
@@ -217,7 +245,6 @@ public class GCMIntentService extends IntentService {
 
                                 break;
                         }
-
                     }
                 }, new Response.ErrorListener() {
                     @Override

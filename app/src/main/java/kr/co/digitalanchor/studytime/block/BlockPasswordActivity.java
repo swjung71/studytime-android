@@ -11,12 +11,23 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.Delete;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.model.db.Account;
+
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-06-11.
@@ -55,7 +66,10 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
             case R.id.buttonConfirm:
 
-                sendEmptyMessage(REQUEST_CONFIRM);
+                if (isValidate()) {
+
+                    sendEmptyMessage(REQUEST_CONFIRM);
+                }
 
                 break;
 
@@ -73,7 +87,7 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
             case REQUEST_CONFIRM:
 
-                    requestConfirm();
+                requestConfirm();
 
                 break;
 
@@ -85,11 +99,52 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
     private void requestConfirm() {
 
-        DBHelper helper = new DBHelper(this);
+        showLoading();
 
-        helper.updateAllow(0);
+        final DBHelper helper = new DBHelper(this);
+        Account account = helper.getAccountInfo();
 
-        finish();
+        Delete model = new Delete();
+
+        model.setParantId(account.getParentId());
+        model.setName(account.getName());
+        model.setPassword(mEditPassword.getText().toString());
+
+        SimpleXmlRequest request = HttpHelper.getAllowDelete(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                dismissLoading();
+
+                                helper.updateAllow(0);
+
+                                finish();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 
     @Override
@@ -119,7 +174,7 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
             ActivityManager.RunningTaskInfo info = (ActivityManager.RunningTaskInfo) localList.get(i);
 
             if (info.topActivity.getPackageName().contains("setting")
-                    || info.topActivity.getPackageName().contains("Setting") ) {
+                    || info.topActivity.getPackageName().contains("Setting")) {
 
                 packageName = info.topActivity.getPackageName();
 
@@ -143,5 +198,21 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
         final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 300, intent);
+    }
+
+    public boolean isValidate() {
+
+        String tmp = null;
+
+        tmp = mEditPassword.getText().toString();
+
+        if (TextUtils.isEmpty(tmp)) {
+
+            Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+
+            return false;
+        }
+
+        return true;
     }
 }

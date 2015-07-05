@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.model.api;
 
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -21,6 +22,7 @@ import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.CoinResult;
+import kr.co.digitalanchor.studytime.model.Delete;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
@@ -802,6 +804,49 @@ public class HttpHelper {
             map.put("xml", writer.toString());
 
             return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/getNewPass",
+                    GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getAllowDelete(Delete model, Listener listener,
+                                                  ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "delete",
                     GeneralResult.class, map, listener, errorListener);
 
         } catch (Exception e) {

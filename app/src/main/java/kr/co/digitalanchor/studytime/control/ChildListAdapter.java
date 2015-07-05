@@ -52,7 +52,7 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
 
         TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
 
-        int count = 0;
+        int count = child.getNewMessageCount();
 
         if (count > 0) {
 

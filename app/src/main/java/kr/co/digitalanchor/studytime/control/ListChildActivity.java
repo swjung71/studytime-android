@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -34,7 +32,6 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CoinResult;
-import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -43,6 +40,7 @@ import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
+import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
 import static kr.co.digitalanchor.studytime.StaticValues.REGISTER_CHILD;
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -141,7 +139,10 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             registerChildReceiver = new RegisterChildReceiver();
         }
 
-        IntentFilter intentFilter = new IntentFilter(REGISTER_CHILD);
+        IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction(NEW_MESSAGE_ARRIVED);
+        intentFilter.addAction(REGISTER_CHILD);
 
         registerReceiver(registerChildReceiver, intentFilter);
     }
@@ -470,9 +471,14 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
             Logger.d(intent.toString());
 
-            if (intent.getAction().equals(StaticValues.REGISTER_CHILD)) {
+            switch (intent.getAction()) {
 
-                getData();
+                case StaticValues.REGISTER_CHILD:
+                case StaticValues.NEW_MESSAGE_ARRIVED:
+
+                    getData();
+
+                    break;
             }
         }
     }

@@ -246,6 +246,8 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
 
         Logger.d("updateMessageList guest " + mChild.getChildID());
 
+        mHelper.initMessageCount(mChild.getChildID());
+
         List<ChatMessage> messages = null;
 
         if (mMessages.size() <= 0) {

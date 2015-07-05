@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 
@@ -32,6 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_CHILD = "child_table"; //부모 studytime이면 자녀 table, 자녀 studytime이면 부모 table
     private static final String TABLE_ON_OFF = "onOff_table";
     private static final String TABLE_MESSAGE = "message_table";
+    private static final String TRIGGER_NEW_MESSAGE = "new_message_trigger";
 
     //Key value
     private static final String CHAT_KEY = "messagePK";
@@ -88,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
                 + "(" + CHILDREN_ID + " INTEGER PRIMARY KEY," + IS_PARENT +
                 " INTEGER NOT NULL, " + NAME + " TEXT, " + IS_OFF + " TEXT, "
-                + NEW_MESSAGE_COUNT + " INTEGER )";
+                + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0)";
 
 /*
         TIMESTAMP 는 YYYY-MM-DD HH:MM:SS 형태로 저장
@@ -120,10 +120,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 + MSG_TYPE + " INTEGER, "
                 + FAIL_NAME + " TEXT )";
 
+        String CREATE_TRIGGER_MESSAGE = "CREATE TRIGGER " + TRIGGER_NEW_MESSAGE
+                + " AFTER INSERT ON " + TABLE_MESSAGE
+                + " BEGIN UPDATE " + TABLE_CHILD
+                + " SET " + NEW_MESSAGE_COUNT + " = " + NEW_MESSAGE_COUNT + " + 1 "
+                + " WHERE " + CHILDREN_ID + " = new." + SENDER_ID + "; END";
+
         db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
         db.execSQL(CREATE_TABLE_CHILD);
         db.execSQL(CREATE_TABLE_MESSAGE);
         db.execSQL(CREATE_TABLE_ONOFF);
+        db.execSQL(CREATE_TRIGGER_MESSAGE);
 
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
@@ -135,8 +142,9 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Logger.i("DBHelper", "Upgrading from version " + oldVersion + " to " + newVersion + "which will destory all old data");
+        Logger.d("DBHelper", "Upgrading from version " + oldVersion + " to " + newVersion + "which will destory all old data");
 
+        db.execSQL("DROP TRIGGER IF EXISTS " + TRIGGER_NEW_MESSAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
@@ -323,6 +331,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 child.setNewMessageCount(cursor.getInt(4));
 
+                Logger.d("child " + child.getName() + " " + child.getChildID()
+                        + " " + child.getNewMessageCount());
+
                 children.add(child);
 
             } while (cursor.moveToNext());
@@ -372,7 +383,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 자녀의 상태를 업데이트 한다.
+     * 자녀의 on/off 상태를 업데이트 한다.
      * 0 : on, 1 : off
      *
      * @param childId
@@ -385,6 +396,22 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(IS_OFF, isOff);
+
+        db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[]{childId});
+    }
+
+    /**
+     * 자녀에게서 온 새메시지 갯수를 0 으로 초기화한다.
+     *
+     */
+    public void initMessageCount(String childId) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(CHILDREN_ID, childId);
+        values.put(NEW_MESSAGE_COUNT, 0);
 
         db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[]{childId});
     }
