@@ -16,10 +16,13 @@ public class Delete {
     @Element(name = "ParentID")
     String parantId;
 
-    @Element(name = "Name")
+    @Element(name = "ChildID")
+    String childId;
+
+    @Element(name = "Name", data = true)
     String name;
 
-    @Element(name = "Password")
+    @Element(name = "Password", data = true)
     String password;
 
     public Delete() {
@@ -51,5 +54,13 @@ public class Delete {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
     }
 }

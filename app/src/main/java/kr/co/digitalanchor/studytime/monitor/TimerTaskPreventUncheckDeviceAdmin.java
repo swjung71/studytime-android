@@ -43,7 +43,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         String topActivity = manager.getRunningTasks(1).get(0).topActivity.getClassName();
 
-        Logger.d(topActivity);
+//        Logger.d(topActivity);
 
         if (topActivity.equals("com.android.settings.DeviceAdminAdd")) {
 

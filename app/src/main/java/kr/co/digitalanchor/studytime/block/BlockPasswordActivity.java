@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import kr.co.digitalanchor.studytime.model.Delete;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -106,9 +108,14 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
         Delete model = new Delete();
 
+        Logger.d(account.getName());
+
+        Logger.d(AndroidUtils.convertToUTF8(account.getName()));
+
         model.setParantId(account.getParentId());
-        model.setName(account.getName());
+        model.setName(AndroidUtils.convertToUTF8(account.getName()));
         model.setPassword(mEditPassword.getText().toString());
+        model.setChildId(account.getID());
 
         SimpleXmlRequest request = HttpHelper.getAllowDelete(model,
                 new Response.Listener<GeneralResult>() {

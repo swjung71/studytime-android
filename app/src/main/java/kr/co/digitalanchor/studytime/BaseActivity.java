@@ -177,8 +177,82 @@ public class BaseActivity extends Activity {
 
         dismissLoading();
 
-        Toast.makeText(getApplicationContext(),
-                "오류 : " + msg, Toast.LENGTH_SHORT).show();
+        switch (code) {
+
+            case 1000:
+
+                msg = "서버 오류입니다. (1000)";
+
+                break;
+
+            case 1001:
+
+                msg = "서버 오류입니다. (1001)";
+
+                break;
+
+            case 1002:
+
+                msg = "서버 오류입니다. (1002)";
+
+                break;
+
+            case 1003:
+
+                msg = "이메일 전송에 실패하였습니다. (1003)";
+
+                break;
+
+            case 1004:
+
+                msg = "이메일 전송에 실패하였습니다. (1004)";
+
+                break;
+
+            case 1005:
+
+                msg = "이메일이나 비밀번호를 정확히 입력하십시오. (1005)";
+
+                break;
+
+            case 1006:
+
+                msg = "이메일을 입력하십시오. (1006)";
+
+                break;
+
+            case 1007:
+
+                msg = "중복 이메일이니 다른 이메일을 이용하십시오. (1007)";
+
+                break;
+
+            case 1008:
+
+                msg = "비밀번호가 잘못되었습니다. (1008)";
+
+                break;
+
+            case 1009:
+
+                msg = "서버 오류입니다. (1009)";
+
+                break;
+
+            case 1010:
+
+                msg = "서버 오류입니다. (1010)";
+
+                break;
+
+            default:
+
+                msg = "알수없는 오류입니다.";
+
+                break;
+        }
+
+        Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT).show();
     }
 
     protected void handleError(VolleyError error) {

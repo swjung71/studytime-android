@@ -192,7 +192,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         values.put(ID, id);
         values.put(IS_PARENT, 0);
-        values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
         values.put(PARENT_ID, parentId);
         values.put(PASSWORD, "");
         values.put(COIN, "");

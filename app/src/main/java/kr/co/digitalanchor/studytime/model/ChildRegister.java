@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.model;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
@@ -88,7 +89,7 @@ public class ChildRegister implements Cloneable {
     }
 
     public String getName() {
-        return name;
+        return TextUtils.isEmpty(name) ? " " : name;
     }
 
     public void setName(String name) {

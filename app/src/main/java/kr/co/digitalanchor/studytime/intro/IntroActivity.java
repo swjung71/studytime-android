@@ -280,7 +280,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                 } catch (IOException ex) {
 
-                    Toast.makeText(getApplicationContext(), ex.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Logger.e(ex.toString());
 
                     return "Failed";
                 }

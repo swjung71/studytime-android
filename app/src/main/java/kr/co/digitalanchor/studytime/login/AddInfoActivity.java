@@ -358,12 +358,10 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                                 mParentID = response.getParentID();
                                 mChildID = response.getChildID();
 
+                                Logger.d(mModel.getName());
+
                                 if (!isModify)
                                     showAdmin();
-
-//                                completeRegister(mParentID, mChildID);
-
-//                                sendEmptyMessage(COMPLETE_ADD_INFO);
 
                                 break;
 
@@ -387,7 +385,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private void completeRegister(String parentId, String childId) {
 
-        Logger.i(parentId + " " + childId);
+        Logger.i(parentId + " " + childId +  "  " + mModel.getName());
 
         DBHelper helper = new DBHelper(getApplicationContext());
 

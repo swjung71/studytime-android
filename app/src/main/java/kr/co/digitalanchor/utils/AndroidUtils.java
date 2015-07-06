@@ -191,13 +191,15 @@ public class AndroidUtils {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static void showNotification(Context context, String title, String text, Intent intent) {
+    public static void showNotification(Context context, String title, String text, PendingIntent intent) {
 
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
         builder.setSmallIcon(R.mipmap.ic_launcher);
+
+        builder.setAutoCancel(true);
 
         if (!TextUtils.isEmpty(title)) {
 
@@ -215,8 +217,7 @@ public class AndroidUtils {
 
         if (intent != null) {
 
-            PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-            builder.setContentIntent(pIntent);
+            builder.setContentIntent(intent);
         }
 
         nm.notify(NotificationID.getID(), builder.build());
