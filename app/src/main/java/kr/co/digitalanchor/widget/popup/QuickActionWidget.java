@@ -1,4 +1,4 @@
-package kr.co.digitalanchor.widget;
+package kr.co.digitalanchor.widget.popup;
 
 import android.content.Context;
 import android.graphics.Point;

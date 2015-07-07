@@ -1,4 +1,4 @@
-package kr.co.digitalanchor.widget;
+package kr.co.digitalanchor.widget.popup;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;

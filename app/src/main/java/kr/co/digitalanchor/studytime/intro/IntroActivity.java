@@ -105,6 +105,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         if (TextUtils.isEmpty(account.getID())) {
 
+            startActivity(new Intent(getApplicationContext(), GuideActivity.class));
+
             return;
 
         } else if (account.isChild() < 0) {
@@ -176,6 +178,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         } else if (mLayoutChildIntro.getVisibility() == View.VISIBLE) {
 
             intent.setClass(getApplicationContext(), LoginChildActivity.class);
+
         }
 
         getHandler().postDelayed(new Runnable() {

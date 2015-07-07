@@ -14,8 +14,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.R;
-import kr.co.digitalanchor.widget.QuickAction;
-import kr.co.digitalanchor.widget.QuickActionWidget;
+import kr.co.digitalanchor.widget.popup.QuickAction;
+import kr.co.digitalanchor.widget.popup.QuickActionWidget;
 
 /**
  * Created by Thomas on 2015-06-12.

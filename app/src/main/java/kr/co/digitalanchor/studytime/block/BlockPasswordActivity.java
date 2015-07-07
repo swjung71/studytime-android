@@ -215,7 +215,7 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
         if (TextUtils.isEmpty(tmp)) {
 
-            Toast.makeText(getApplicationContext(), "ºñ¹Ð¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "ë¹„ë°€ë²ˆí˜¸ë¥¼ ìž…ë ¥í•˜ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 
             return false;
         }

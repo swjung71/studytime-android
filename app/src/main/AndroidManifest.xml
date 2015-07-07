@@ -157,9 +157,9 @@
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
             android:taskAffinity="kr.co.digitalanchor.studytime.block"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- 애드 팝콘 (광고) Activities -->
         <activity
@@ -172,6 +172,11 @@
         <activity
             android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".intro.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name=".control.InputPwdActivity"

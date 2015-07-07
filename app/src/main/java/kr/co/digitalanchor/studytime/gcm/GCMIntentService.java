@@ -170,7 +170,7 @@ public class GCMIntentService extends IntentService {
             case "DELETE_TRY":
 
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        "", getNormalStart(account.getIsChild(), null));
+                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
@@ -184,7 +184,7 @@ public class GCMIntentService extends IntentService {
                 // TODO : 어떻게 알려줄 것인가?
 
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        "", getNormalStart(account.getIsChild(), null));
+                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
