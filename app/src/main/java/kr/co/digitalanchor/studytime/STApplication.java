@@ -172,13 +172,19 @@ public class STApplication extends Application {
 
         TelephonyManager tm = (TelephonyManager) applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
 
-        return tm.getDeviceId();
+        String id = tm.getDeviceId();
+
+        if (TextUtils.isEmpty(id)) {
+
+            id = getDeviceID();
+        }
+
+        return id;
     }
 
     public static String getDeviceID() {
 
         UUID uuid = null;
-
 
         final String androidId = Settings.Secure.getString(applicationContext.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -209,7 +215,6 @@ public class STApplication extends Application {
     }
 
     public static String getMAC() {
-
 
         return "";
     }
