@@ -11,6 +11,13 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="intro_info_01">스마트폰에 설치할 유형을\n선택 하세요.</string>
+    <string name="intro_info_02">* 자녀폰을 관리하시려면 부모님폰과\n자녀 폰에 각각 앱을 설치하셔야 합니다.</string>
+    <string name="intro_parent_button_title">부모용</string>
+    <string name="intro_parent_button_content">부모님 폰이라면\n부모용을!!</string>
+    <string name="intro_child_button_title">자녀용</string>
+    <string name="intro_child_button_content">내 자녀 폰에는\n자녀용을!!</string>
 
-
+    <string name="edit_email_hint">이메일 주소</string>
+    <string name="edit_password_hint">Password</string>
 </resources>
