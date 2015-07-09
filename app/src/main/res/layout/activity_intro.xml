@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
-                    android:text="스마트폰에 설치할 유형을\n선택하세요."
+                    android:text="@string/intro_info_01"
                     android:textColor="@color/white"
                     android:textSize="@dimen/intro_title_info_01_text_size" />
 
@@ -62,7 +62,7 @@
                 android:background="@drawable/box_type_01_bg"
                 android:gravity="center"
                 android:textSize="@dimen/intro_title_info_02_text"
-                android:text="* 자녀폰을 관리하시려면 부모님폰과\n자녀폰에 각각 앱을 설치하셔야 합니다." />
+                android:text="@string/intro_info_02" />
 
         </LinearLayout>
 
@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
-                    android:text="부모용"
+                    android:text="@string/intro_parent_button_title"
                     android:textColor="@color/textColorType02"
                     android:textSize="@dimen/intro_mode_select_text_size_large" />
 
@@ -119,7 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
-                    android:text="부모님 폰이라면\n부모용을!!"
+                    android:text="@string/intro_parent_button_content"
                     android:textColor="@color/textColorType03"
                     android:textSize="@dimen/intro_mode_select_text_size_small" />
 
@@ -171,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
-                    android:text="자녀용"
+                    android:text="@string/intro_child_button_title"
                     android:textColor="@color/textColorType02"
                     android:textSize="@dimen/intro_mode_select_text_size_large" />
 
@@ -180,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
-                    android:text="내 자녀 폰에는\n자녀용을!!"
+                    android:text="@string/intro_child_button_content"
                     android:textColor="@color/textColorType03"
                     android:textSize="@dimen/intro_mode_select_text_size_small" />
 
