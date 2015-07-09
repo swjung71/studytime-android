@@ -8,12 +8,12 @@
     <TextView
         android:id="@+id/labelTitle"
         android:layout_width="match_parent"
-        android:layout_height="53.33dp"
+        android:layout_height="@dimen/activity_title_bar_height"
         android:background="@color/bgColorType01"
         android:gravity="center"
         android:text="개인정보 변경"
         android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:textSize="@dimen/activity_title_text" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,101 +31,101 @@
             <kr.co.digitalanchor.studytime.view.FontTextView
                 android:id="@+id/labelEmailAddr"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
+                android:layout_height="@dimen/signup_content_height"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:paddingLeft="@dimen/signup_content_edit_padding"
+                android:paddingRight="@dimen/signup_content_edit_padding"
                 android:singleLine="true"
-                android:textSize="16dp" />
+                android:textSize="@dimen/signup_content_edit_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPassword"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
-                android:layout_marginTop="23.33dp"
+                android:layout_height="@dimen/signup_content_height"
+                android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
                 android:hint="현재 비밀번호 입력"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/signup_content_edit_padding"
+                android:paddingRight="@dimen/signup_content_edit_padding"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp"
-                android:inputType="textPassword"/>
+                android:textSize="@dimen/signup_content_edit_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPasswordAgain"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
-                android:layout_marginTop="23.33dp"
+                android:layout_height="@dimen/signup_content_height"
+                android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
                 android:hint="변경할 비밀번호 입력"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/signup_content_edit_padding"
+                android:paddingRight="@dimen/signup_content_edit_padding"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp"
-                android:inputType="textPassword"/>
+                android:textSize="@dimen/signup_content_edit_text_size" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
-                android:layout_marginTop="23.33dp"
+                android:layout_height="@dimen/modify_privacy_divider_height"
+                android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                 android:background="@color/bgColorType01" />
 
             <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/modify_privacy_divider_text_margin_top"
                 android:text="추가 정보입력 (필수 입력사항은 아닙니다.)"
                 android:textColor="@color/textColorType04"
-                android:textSize="16dp" />
+                android:textSize="@dimen/modify_privacy_divider_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
-                android:layout_marginTop="14dp"
+                android:layout_height="@dimen/signup_content_height"
+                android:layout_marginTop="@dimen/modify_privacy_divider_text_margin_top"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
                 android:hint="부모님 이름"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:inputType="text"
+                android:paddingLeft="@dimen/signup_content_edit_padding"
+                android:paddingRight="@dimen/signup_content_edit_padding"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp"
-                android:inputType="text"/>
+                android:textSize="@dimen/modify_privacy_divider_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editBirthDate"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
-                android:layout_marginTop="23.33dp"
+                android:layout_height="@dimen/signup_content_height"
+                android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                 android:background="@drawable/box_type_05_bg"
                 android:gravity="center_vertical"
                 android:hint="생년월일 (YYYYMMDD)"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:inputType="date"
+                android:paddingLeft="@dimen/signup_content_edit_padding"
+                android:paddingRight="@dimen/signup_content_edit_padding"
                 android:singleLine="true"
                 android:textColorHint="#A3A3A3"
-                android:textSize="16dp"
-                android:inputType="date"/>
+                android:textSize="@dimen/signup_content_edit_text_size" />
 
 
             <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8.67dp"
+                android:layout_marginTop="@dimen/modify_privacy_divider_text2_margin_top"
                 android:text="성별"
-                android:textSize="16dp" />
+                android:textSize="@dimen/signup_content_edit_text_size" />
 
             <RadioGroup
                 android:id="@+id/radioGender"
                 android:layout_width="match_parent"
-                android:layout_height="38.33dp"
-                android:layout_marginTop="8.67dp"
+                android:layout_height="@dimen/signup_content_height"
+                android:layout_marginTop="@dimen/modify_privacy_divider_text2_margin_top"
                 android:orientation="horizontal">
 
                 <kr.co.digitalanchor.studytime.view.FontRadioButton
@@ -139,13 +139,13 @@
                     android:gravity="center"
                     android:text="남성"
                     android:textColor="@color/text_01_selector"
-                    android:textSize="16dp" />
+                    android:textSize="@dimen/modify_privacy_divider_text_size" />
 
                 <kr.co.digitalanchor.studytime.view.FontRadioButton
                     android:id="@+id/female"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="11dp"
+                    android:layout_marginLeft="@dimen/modify_privacy_radio_margin"
                     android:layout_weight="1"
                     android:background="@drawable/box_type_06_bg"
                     android:button="@null"
@@ -153,20 +153,20 @@
                     android:gravity="center"
                     android:text="여성"
                     android:textColor="@color/text_01_selector"
-                    android:textSize="16dp" />
+                    android:textSize="@dimen/modify_privacy_divider_text_size" />
 
             </RadioGroup>
 
             <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonConfirm"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="@dimen/button_action"
+                android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                 android:background="@drawable/box_type_07_bg"
                 android:gravity="center"
                 android:text="확인"
                 android:textColor="@color/white"
-                android:textSize="16dp" />
+                android:textSize="@dimen/button_action_text" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

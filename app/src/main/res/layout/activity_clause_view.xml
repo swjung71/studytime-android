@@ -8,12 +8,12 @@
     <TextView
         android:id="@+id/labelTitle"
         android:layout_width="match_parent"
-        android:layout_height="53.33dp"
+        android:layout_height="@dimen/activity_title_text"
         android:background="@color/bgColorType01"
         android:gravity="center"
         android:text="서비스 약관"
         android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:textSize="@dimen/activity_title_text" />
 
     <it.neokree.materialtabs.MaterialTabHost
         android:id="@+id/tabHost"

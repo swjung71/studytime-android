@@ -2,22 +2,23 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="@dimen/child_item_layout_height">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="@dimen/child_item_layout_height"
+        android:layout_marginLeft="@dimen/child_item_layout_margin"
+        android:layout_marginRight="@dimen/child_item_layout_margin"
         android:background="@drawable/box_type_02_bg"
-        android:padding="0.33dp">
+        android:padding="@dimen/child_item_layout_padding">
 
-        <View
+        <ImageView
             android:id="@+id/imgProfile"
-            android:layout_width="91.33dp"
+            android:layout_width="@dimen/child_item_profile_img_width"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/profile_img" />
+            android:scaleType="fitStart"
+            android:src="@drawable/profile_img" />
 
         <TextView
             android:id="@+id/labelNotiCount"
@@ -25,12 +26,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="14.33dp"
+            android:layout_marginRight="@dimen/child_item_noti_text_margin_right"
             android:background="@drawable/icon_noti"
             android:gravity="center"
             android:text="10+"
             android:textColor="#ff7f00"
-            android:textSize="12dp"
+            android:textSize="@dimen/child_item_noti_text_size"
             android:visibility="gone"/>
 
         <TextView
@@ -38,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12.33dp"
-            android:layout_marginRight="12.33dp"
+            android:layout_marginLeft="@dimen/child_item_name_text_margin"
+            android:layout_marginRight="@dimen/child_item_name_text_margin"
             android:layout_toLeftOf="@id/labelNotiCount"
             android:layout_toRightOf="@id/imgProfile"
             android:ellipsize="marquee"
@@ -47,7 +48,7 @@
             android:focusable="false"
             android:singleLine="true"
             android:textColor="#4a4a4a"
-            android:textSize="18dp" />
+            android:textSize="@dimen/child_item_name_text_size" />
 
     </RelativeLayout>
 </LinearLayout>

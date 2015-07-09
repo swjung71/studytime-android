@@ -200,7 +200,7 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
         main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent intent = PendingIntent.getActivity(getApplicationContext(),
-                0, main, PendingIntent.FLAG_ONE_SHOT);
+                0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
         final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 

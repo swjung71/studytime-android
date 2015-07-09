@@ -70,6 +70,8 @@ public class ChildRegister implements Cloneable {
         devModel = Build.MODEL;
 
         isAndroid = "1";
+
+        devNum = "";
     }
 
     public String getParentID() {

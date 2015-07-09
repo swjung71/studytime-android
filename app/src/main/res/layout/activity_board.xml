@@ -8,12 +8,12 @@
     <kr.co.digitalanchor.studytime.view.FontTextView
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="53.33dp"
+        android:layout_height="@dimen/activity_title_bar_height"
         android:background="@color/bgColorType01"
         android:gravity="center"
         android:text="Title"
         android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:textSize="@dimen/activity_title_text" />
 
     <ListView
         android:id="@+id/list"

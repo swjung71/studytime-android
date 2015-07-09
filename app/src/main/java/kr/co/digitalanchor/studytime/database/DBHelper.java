@@ -46,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COIN = "coin"; // 부모가 가진 코인 (하트)
     private static final String EMAIL = "email"; // 부모의 Email
     private static final String PARENT_ID = "parentID"; // 자식을 경우 부모아이디를 저장한다.
+    private static final String NEW_NOTICE = "notice"; // 새로운 공지
 
     //column for child table
     private static final String CHILDREN_ID = "childID"; // 부모이면 parentID, 자녀면 childID, 선생님이면 parentID
@@ -82,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "(" + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ID
                 + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT, "
                 + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL, "
-                + PARENT_ID + " TEXT )";
+                + PARENT_ID + " TEXT, " + NEW_NOTICE + " INTEGER DEFAULT 0 )";
 
         //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
         String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
@@ -149,6 +150,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
+
         onCreate(db);
     }
 
@@ -227,12 +229,35 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
     }
 
+    public void addNoticeCount() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(NEW_NOTICE, 1);
+
+        db.update(TABLE_ACCOUNT_INFO, values, null, null);
+    }
+
+    public void initNoticeCount() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(NEW_NOTICE, 0);
+
+        db.update(TABLE_ACCOUNT_INFO, values, null, null);
+    }
+
     public Account getAccountInfo() {
 
         Account account = new Account();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL, PARENT_ID};
+        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
+                PARENT_ID, NEW_NOTICE};
 
         Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null, null, null);
 
@@ -257,6 +282,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 account.setParentId(cursor.getString(6));
             }
+
+            account.setNotice(cursor.getInt(7));
         }
 
         cursor.close();
@@ -402,7 +429,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 자녀에게서 온 새메시지 갯수를 0 으로 초기화한다.
-     *
      */
     public void initMessageCount(String childId) {
 

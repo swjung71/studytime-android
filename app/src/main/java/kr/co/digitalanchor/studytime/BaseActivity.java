@@ -2,9 +2,11 @@ package kr.co.digitalanchor.studytime;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -15,10 +17,16 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.igaworks.IgawCommon;
+import com.igaworks.adbrix.IgawAdbrix;
+import com.igaworks.adpopcorn.IgawAdpopcorn;
+import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 import com.orhanobut.logger.Logger;
 
+import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
+import kr.co.digitalanchor.studytime.model.db.Account;
 
 
 /**
@@ -245,6 +253,12 @@ public class BaseActivity extends Activity {
 
                 break;
 
+            case 1020:
+
+                msg = "등록할 수 있는 자녀의 수를 초과하였습니다. (1020)";
+
+                break;
+
             default:
 
                 msg = "알수없는 오류입니다.";
@@ -284,5 +298,46 @@ public class BaseActivity extends Activity {
     protected void startMonitorService() {
 
         sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+    }
+
+    protected void showOfferWall() {
+
+        String id = STApplication.getString(StaticValues.AD_ID);
+
+        if (TextUtils.isEmpty(id)) {
+
+            return;
+        }
+
+        IgawCommon.setUserId(id);
+
+        Logger.d("ad id" + id);
+
+//        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
+//        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
+//        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
+//        AdPOPcornStyler.offerwall.Title = "하트얻기";
+
+        IgawAdpopcorn.openOfferWall(this);
+
+    }
+
+    protected void sendEmail() {
+
+        IgawAdbrix.retention("oneToOne");
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+
+        DBHelper helper = new DBHelper(getApplicationContext());
+        Account account = helper.getAccountInfo();
+
+        String text = "이름:\n전화번호:\n" + account.getEmail() + "이 보낸메일 \n";
+
+        intent.setType("plain/text");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+
+        startActivity(intent);
     }
 }

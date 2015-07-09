@@ -14,7 +14,8 @@ public class GuideAdapter extends FragmentPagerAdapter implements IconPagerAdapt
 
     private static final int[] CONTENT = new int[]{
 
-            R.drawable.img_intro1, R.drawable.img_intro2, R.drawable.img_intro3
+            R.drawable.img_intro1, R.drawable.img_intro2, R.drawable.img_intro3,
+            R.drawable.img_intro4
     };
 
     private int mCount = CONTENT.length;
@@ -32,7 +33,7 @@ public class GuideAdapter extends FragmentPagerAdapter implements IconPagerAdapt
 
     @Override
     public int getIconResId(int index) {
-        return R.drawable.img_point;
+        return R.drawable.indicator_guide;
     }
 
     @Override

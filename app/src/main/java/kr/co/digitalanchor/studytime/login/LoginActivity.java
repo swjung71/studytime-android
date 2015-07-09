@@ -218,7 +218,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     case SUCCESS:
 
-                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), /*res.getCoin()*/"200", res.getEmail());
+                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
 
                         mHelper.insertChildren(res.getChildren());
 

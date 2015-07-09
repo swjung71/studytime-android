@@ -22,7 +22,6 @@
 
     <dimen name="intro_title_info_02_width">275dp</dimen>
     <dimen name="intro_title_info_02_height">51.67dp</dimen>
-    <dimen name="intro_title_info_02_text">16dp</dimen>
     <dimen name="intro_title_info_02_top_margin">17dp</dimen>
 
     <dimen name="intro_mode_select_layout_height">100dp</dimen>
@@ -242,31 +241,6 @@
 
     <!-- activity_guide -->
     <dimen name="guide_indicator_margin_top">470dp</dimen>
-
-    <!-- popup_main_menu -->
-    <dimen name="menu_popup_width">236dp</dimen>
-    <dimen name="menu_popup_margin_top">10dp</dimen>
-    <dimen name="menu_popup_margin_padding">0.33dp</dimen>
-
-    <dimen name="menu_popup_title_height">36.67dp</dimen>
-    <dimen name="menu_popup_title_image_margin_left">18dp</dimen>
-    <dimen name="menu_popup_logout_button_margin_right">18dp</dimen>
-
-    <dimen name="menu_popup_user_name_margin_left">8.67dp</dimen>
-    <dimen name="menu_popup_user_name_margin_right">10dp</dimen>
-    <dimen name="menu_popup_user_name_text_size">16dp</dimen>
-
-    <dimen name="menu_popup_item_height">36.67dp</dimen>
-    <dimen name="menu_popup_item_text_padding_left">45dp</dimen>
-    <dimen name="menu_popup_item_text_size">16dp</dimen>
-
-    <dimen name="menu_popup_divider_height">0.33dp</dimen>
-    <dimen name="menu_popup_divider_margin_side">18dp</dimen>
-
-    <dimen name="menu_popup_arrow_width">18dp</dimen>
-    <dimen name="menu_popup_arrow_height">10.56dp</dimen>
-    <dimen name="menu_popup_arrow_margin_right">18dp</dimen>
-
 
 
 </resources>

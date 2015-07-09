@@ -16,6 +16,7 @@ public class Account {
     private String email;
     private String parentId;
     private String parentName;
+    private int notice;
 
     public Account() {
 
@@ -34,6 +35,8 @@ public class Account {
         parentId = "";
 
         parentName = "";
+
+        notice = 0;
     }
 
 
@@ -106,5 +109,13 @@ public class Account {
 
     public void setParentName(String parentName) {
         this.parentName = parentName;
+    }
+
+    public int getNotice() {
+        return notice;
+    }
+
+    public void setNotice(int notice) {
+        this.notice = notice;
     }
 }

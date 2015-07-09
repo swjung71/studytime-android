@@ -15,22 +15,22 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="288.33dp"
+            android:layout_height="@dimen/intro_top_height"
             android:background="@color/bgColorType01"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/intro_title_img_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="23.33dp"
+                android:layout_marginTop="@dimen/intro_title_img_top_margin"
                 android:scaleType="fitCenter"
                 android:src="@drawable/logo" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp">
+                android:layout_marginTop="@dimen/intro_title_info_01_top_margin">
 
                 <kr.co.digitalanchor.studytime.view.FontTextView
                     android:id="@+id/labelModeSelect"
@@ -40,28 +40,28 @@
                     android:gravity="center"
                     android:text="스마트폰에 설치할 유형을\n선택하세요."
                     android:textColor="@color/white"
-                    android:textSize="20dp" />
+                    android:textSize="@dimen/intro_title_info_01_text_size" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/labelModeSelect"
-                    android:layout_marginRight="12.67dp"
+                    android:layout_marginRight="@dimen/intro_title_info_01_img_right_margin"
                     android:layout_toLeftOf="@id/labelModeSelect"
                     android:scaleType="fitCenter"
                     android:src="@drawable/icon_down" />
 
             </RelativeLayout>
 
-
             <kr.co.digitalanchor.studytime.view.FontTextView
                 android:id="@+id/labelUseInfo"
-                android:layout_width="275dp"
-                android:layout_height="51.67dp"
+                android:layout_width="@dimen/intro_title_info_02_width"
+                android:layout_height="@dimen/intro_title_info_02_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="17.33dp"
+                android:layout_marginTop="@dimen/intro_title_info_02_top_margin"
                 android:background="@drawable/box_type_01_bg"
                 android:gravity="center"
+                android:textSize="@dimen/intro_title_info_02_text"
                 android:text="* 자녀폰을 관리하시려면 부모님폰과\n자녀폰에 각각 앱을 설치하셔야 합니다." />
 
         </LinearLayout>
@@ -69,21 +69,21 @@
         <RelativeLayout
             android:id="@+id/buttonModeParent"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="18dp"
-            android:layout_marginTop="33.33dp"
+            android:layout_height="@dimen/intro_mode_select_layout_height"
+            android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
+            android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
+            android:layout_marginTop="@dimen/intro_mode_select_layout_p_margin_top"
             android:background="@drawable/box_type_02_bg"
             android:clickable="true"
-            android:padding="0.33dp">
+            android:padding="@dimen/intro_mode_select_layout_padding">
 
             <ImageView
                 android:id="@+id/imageRightArrow01"
-                android:layout_width="16dp"
-                android:layout_height="32dp"
+                android:layout_width="@dimen/intro_mode_select_arrow_width"
+                android:layout_height="@dimen/intro_mode_select_arrow_height"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="12.67dp"
+                android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_right_selector" />
 
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="27.33dp"
+                android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
                 android:layout_toLeftOf="@id/imageRightArrow01"
                 android:orientation="vertical">
 
@@ -112,7 +112,7 @@
                     android:duplicateParentState="true"
                     android:text="부모용"
                     android:textColor="@color/textColorType02"
-                    android:textSize="22dp" />
+                    android:textSize="@dimen/intro_mode_select_text_size_large" />
 
                 <kr.co.digitalanchor.studytime.view.FontTextView
                     android:id="@+id/labelParentInfo"
@@ -121,7 +121,7 @@
                     android:duplicateParentState="true"
                     android:text="부모님 폰이라면\n부모용을!!"
                     android:textColor="@color/textColorType03"
-                    android:textSize="16dp" />
+                    android:textSize="@dimen/intro_mode_select_text_size_small" />
 
             </LinearLayout>
 
@@ -130,21 +130,21 @@
         <RelativeLayout
             android:id="@+id/buttonModeKids"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="18dp"
-            android:layout_marginTop="18.33dp"
+            android:layout_height="@dimen/intro_mode_select_layout_height"
+            android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
+            android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
+            android:layout_marginTop="@dimen/intro_mode_select_layout_c_margin_top"
             android:background="@drawable/box_type_02_bg"
             android:clickable="true"
             android:padding="0.33dp">
 
             <ImageView
                 android:id="@+id/imageRightArrow02"
-                android:layout_width="16dp"
-                android:layout_height="32dp"
+                android:layout_width="@dimen/intro_mode_select_arrow_width"
+                android:layout_height="@dimen/intro_mode_select_arrow_height"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="12.67dp"
+                android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_right_selector" />
 
@@ -162,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="27.33dp"
+                android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
                 android:layout_toLeftOf="@id/imageRightArrow02"
                 android:orientation="vertical">
 
@@ -173,7 +173,7 @@
                     android:duplicateParentState="true"
                     android:text="자녀용"
                     android:textColor="@color/textColorType02"
-                    android:textSize="22dp" />
+                    android:textSize="@dimen/intro_mode_select_text_size_large" />
 
                 <kr.co.digitalanchor.studytime.view.FontTextView
                     android:id="@+id/labelKidInfo"
@@ -182,7 +182,7 @@
                     android:duplicateParentState="true"
                     android:text="내 자녀 폰에는\n자녀용을!!"
                     android:textColor="@color/textColorType03"
-                    android:textSize="16dp" />
+                    android:textSize="@dimen/intro_mode_select_text_size_small" />
 
             </LinearLayout>
 
@@ -190,10 +190,8 @@
 
     </LinearLayout>
 
-    <include
-        layout="@layout/activity_parent_splash"/>
+    <include layout="@layout/activity_parent_splash" />
 
-    <include
-        layout="@layout/activity_child_splash" />
+    <include layout="@layout/activity_child_splash" />
 
 </FrameLayout>

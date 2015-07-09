@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.control;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -13,7 +14,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.igaworks.IgawCommon;
+import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
+import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
@@ -226,7 +229,6 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
             case R.id.buttonShutdown:
 
-
                 sendEmptyMessage(REQUEST_ON_OFF);
 
 
@@ -282,6 +284,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         if (mMenu != null) {
 
             mMenu.setName(account.getName());
+
+            mMenu.addNewNotice((account.getNotice() > 0) ? true : false);
         }
 
         if (mLabelPoint != null) {
@@ -290,20 +294,9 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    private void showOfferWall() {
-
-        Account account = mHelper.getAccountInfo();
-
-        IgawCommon.setUserId(account.getID());
-
-//        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
-
-        IgawAdpopcorn.openOfferWall(ControlChildActivity.this);
-    }
-
     private void showWithDraw() {
+
+        IgawAdbrix.retention("withdraw");
 
         Intent intent = new Intent();
 
@@ -313,6 +306,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void showChat() {
+
+        IgawAdbrix.retention("chatRoom");
 
         Intent intent = new Intent();
 
@@ -338,6 +333,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void showModifyInfo() {
 
+        IgawAdbrix.retention("personalInfo");
+
         Intent intent = new Intent();
 
         intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
@@ -346,6 +343,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void showFAQ() {
+
+        IgawAdbrix.retention("faq");
 
         Intent intent = new Intent();
 
@@ -357,6 +356,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void showNotice() {
+
+        IgawAdbrix.retention("notices");
 
         Intent intent = new Intent();
 
@@ -370,6 +371,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     private void requestOnOff() {
 
         showLoading();
+
+        IgawAdbrix.retention("onOff");
 
         final Account account = mHelper.getAccountInfo();
 
@@ -433,22 +436,6 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
                 });
 
         addRequest(request);
-    }
-
-    private void sendEmail() {
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-
-        Account account = mHelper.getAccountInfo();
-
-        String text = account.getEmail() + "이 보낸메일 \n";
-
-        intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-
-        startActivity(intent);
     }
 
     private void firstVisit() {

@@ -5,16 +5,16 @@
     android:background="@color/transparent">
 
     <LinearLayout
-        android:layout_width="236dp"
+        android:layout_width="@dimen/menu_popup_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10.0dp"
+        android:layout_marginTop="@dimen/menu_popup_margin_top"
         android:background="@drawable/popup_menu_bg"
         android:orientation="vertical"
-        android:padding="0.33dp">
+        android:padding="@dimen/menu_popup_margin_padding">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_title_height"
             android:background="@color/bgColorType01">
 
             <ImageView
@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_title_image_margin_left"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_user" />
 
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="18dp"
+                android:layout_marginRight="@dimen/menu_popup_logout_button_margin_right"
                 android:background="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/button_logout" />
@@ -42,21 +42,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="8.67dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginLeft="@dimen/menu_popup_user_name_margin_left"
+                android:layout_marginRight="@dimen/menu_popup_user_name_margin_right"
                 android:layout_toLeftOf="@id/buttonLogOut"
                 android:layout_toRightOf="@id/imageProfile"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="name"
                 android:textColor="@color/white"
-                android:textSize="16dp" />
+                android:textSize="@dimen/menu_popup_user_name_text_size" />
         </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/menuModify"
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 
@@ -64,23 +64,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingLeft="45dp"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
                 android:text="개인정보변경"
-                android:textColor="#2A5E72" />
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
+                android:layout_height="@dimen/menu_popup_divider_height"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
                 android:background="#f2f2f2" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/menuFAQ"
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 
@@ -88,23 +89,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingLeft="45dp"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
                 android:text="FAQ"
-                android:textColor="#2A5E72" />
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
+                android:layout_height="@dimen/menu_popup_divider_height"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
                 android:background="#f2f2f2" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/menuInquiry"
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 
@@ -112,47 +114,62 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingLeft="45dp"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
                 android:text="1:1문의"
-                android:textColor="#2A5E72" />
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
+                android:layout_height="@dimen/menu_popup_divider_height"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
                 android:background="#f2f2f2" />
         </FrameLayout>
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/menuNotice"
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingLeft="45dp"
+                android:id="@+id/labelNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
                 android:text="공지사항"
-                android:textColor="#2A5E72" />
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
+
+            <ImageView
+                android:id="@+id/badgeNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/labelNotice"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/labelNotice"
+                android:layout_toRightOf="@+id/labelNotice"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_badge"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
+                android:layout_height="@dimen/menu_popup_divider_height"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
                 android:background="#f2f2f2" />
-        </FrameLayout>
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/menuWithdraw"
             android:layout_width="match_parent"
-            android:layout_height="36.67dp"
+            android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true">
 
@@ -160,25 +177,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingLeft="45dp"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
                 android:text="탈퇴하기"
-                android:textColor="#2A5E72" />
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.33dp"
+                android:layout_height="@dimen/menu_popup_divider_height"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
                 android:background="#f2f2f2" />
         </FrameLayout>
     </LinearLayout>
 
     <ImageView
-        android:layout_width="18dp"
-        android:layout_height="10.66dp"
+        android:layout_width="@dimen/menu_popup_arrow_width"
+        android:layout_height="@dimen/menu_popup_arrow_height"
         android:layout_gravity="right"
-        android:layout_marginRight="18dp"
+        android:layout_marginRight="@dimen/menu_popup_arrow_margin_right"
         android:scaleType="fitXY"
-        android:src="@drawable/menu_point" />
+        android:src="@drawable/menu_point"
+        android:visibility="invisible"/>
 </FrameLayout>

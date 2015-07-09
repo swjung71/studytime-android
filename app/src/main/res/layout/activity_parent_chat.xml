@@ -8,12 +8,12 @@
     <kr.co.digitalanchor.studytime.view.FontTextView
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="53.33dp"
+        android:layout_height="@dimen/activity_title_bar_height"
         android:background="@color/bgColorType01"
         android:gravity="center"
         android:text="대화창"
         android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:textSize="@dimen/activity_title_text" />
 
 
     <RelativeLayout
@@ -42,16 +42,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="@dimen/parent_chat_edit_margin_right"
             android:layout_toLeftOf="@id/buttonSend"
             android:background="@drawable/edit_chat"
             android:gravity="center_vertical"
             android:hint="문자 입력"
             android:maxLines="4"
-            android:minHeight="28dp"
-            android:paddingLeft="9dp"
-            android:paddingRight="9dp"
-            android:textSize="13dp" />
+            android:minHeight="@dimen/parent_chat_edit_min_height"
+            android:paddingLeft="@dimen/parent_chat_edit_padding"
+            android:paddingRight="@dimen/parent_chat_edit_padding"
+            android:textSize="@dimen/parent_chat_edit_text_size" />
 
     </RelativeLayout>
 

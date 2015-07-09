@@ -9,21 +9,21 @@
         android:id="@+id/textDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/pchat_item_date_margin_top"
         android:gravity="center"
         android:textColor="#8A8A8A"
-        android:textSize="10dp"
+        android:textSize="@dimen/pchat_item_date_text_size"
         android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/layoutHost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
-        android:paddingTop="8dp"
-        android:visibility="visible">
+        android:paddingBottom="@dimen/pchat_item_date_padding_updown"
+        android:paddingLeft="@dimen/pchat_item_date_padding_side"
+        android:paddingRight="@dimen/pchat_item_date_padding_side"
+        android:paddingTop="@dimen/pchat_item_date_padding_updown"
+        android:visibility="gone">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:id="@+id/textHostMsg"
@@ -33,27 +33,27 @@
             android:background="@drawable/bubble_pink"
             android:maxEms="15"
             android:textColor="@color/white"
-            android:textSize="14dp" />
+            android:textSize="@dimen/pchat_item_host_msg_text_size" />
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:id="@+id/textHostTime"
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="@dimen/pchat_item_host_time_height"
             android:layout_alignBottom="@id/textHostMsg"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="@dimen/pchat_item_host_time_margin"
             android:layout_toLeftOf="@id/textHostMsg"
             android:background="@drawable/chat"
             android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
+            android:paddingLeft="@dimen/pchat_item_host_time_padding"
+            android:paddingRight="@dimen/pchat_item_host_time_padding"
             android:textColor="@color/white"
-            android:textSize="8dp" />
+            android:textSize="@dimen/pchat_item_host_time_text_size" />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="@dimen/pchat_item_host_time_height"
             android:layout_alignBottom="@id/textHostMsg"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="@dimen/pchat_item_host_time_margin"
             android:layout_toLeftOf="@id/textHostMsg"
             android:background="@drawable/chat"
             android:orientation="horizontal"
@@ -91,7 +91,7 @@
             android:layout_toLeftOf="@id/textHostMsg"
             android:text="1"
             android:textColor="#8A8A8A"
-            android:textSize="8dp"
+            android:textSize="@dimen/pchat_item_host_time_text_size"
             android:visibility="gone" />
 
     </RelativeLayout>
@@ -100,10 +100,10 @@
         android:id="@+id/layoutGuest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
-        android:paddingTop="8dp"
+        android:paddingBottom="@dimen/pchat_item_date_padding_updown"
+        android:paddingLeft="@dimen/pchat_item_date_padding_side"
+        android:paddingRight="@dimen/pchat_item_date_padding_side"
+        android:paddingTop="@dimen/pchat_item_date_padding_updown"
         android:visibility="gone">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
@@ -114,12 +114,12 @@
             android:background="@drawable/bubble_gray"
             android:maxEms="15"
             android:textColor="#4A4A4A"
-            android:textSize="14dp" />
+            android:textSize="@dimen/pchat_item_host_msg_text_size" />
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:id="@+id/textGuestTime"
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="@dimen/pchat_item_host_time_height"
             android:layout_alignBottom="@id/textGuestMessage"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@id/textGuestMessage"
@@ -129,8 +129,7 @@
             android:paddingRight="5dp"
             android:text="12:12"
             android:textColor="@color/white"
-            android:textSize="8dp" />
-
+            android:textSize="@dimen/pchat_item_host_time_text_size" />
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:id="@+id/textReadCountGuest"
@@ -141,7 +140,7 @@
             android:layout_toRightOf="@id/textGuestMessage"
             android:text="1"
             android:textColor="#8A8A8A"
-            android:textSize="8dp"
+            android:textSize="@dimen/pchat_item_host_time_text_size"
             android:visibility="gone" />
 
     </RelativeLayout>

@@ -18,7 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.igaworks.IgawCommon;
-import com.igaworks.adpopcorn.IgawAdpopcorn;
+import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcornExtension;
 import com.igaworks.interfaces.IgawRewardItem;
 import com.igaworks.interfaces.IgawRewardItemEventListener;
@@ -48,7 +48,8 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-06-19.
  */
 public class ListChildActivity extends BaseActivity implements View.OnClickListener,
-        MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener, IgawRewardItemEventListener {
+        MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener,
+        IgawRewardItemEventListener {
 
     private final int REQUEST_UPDATE_COIN = 50001;
 
@@ -158,6 +159,11 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        if (position < 1) {
+
+            return;
+        }
+
         Child child = mChildren.get(position - 1);
 
         showChildDetail(child);
@@ -263,6 +269,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         if (mMenu != null) {
 
             mMenu.setName(account.getName());
+
+            mMenu.addNewNotice((account.getNotice() > 0) ? true : false);
         }
 
         if (mLabelPoint != null) {
@@ -285,6 +293,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     private void showWithDraw() {
 
+        IgawAdbrix.retention("withdraw");
+
         Intent intent = new Intent();
 
         intent.setClass(getApplicationContext(), WithdrawActivity.class);
@@ -292,21 +302,9 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void showOfferWall() {
-
-        Account account = mHelper.getAccountInfo();
-
-        IgawCommon.setUserId(account.getID());
-
-//        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
-
-        IgawAdpopcorn.openOfferWall(ListChildActivity.this);
-
-    }
-
     private void showChildDetail(Child child) {
+
+        IgawAdbrix.retention("child");
 
         Intent intent = new Intent();
 
@@ -321,6 +319,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     private void showModifyInfo() {
 
+        IgawAdbrix.retention("personalInfo");
+
         Intent intent = new Intent();
 
         intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
@@ -328,23 +328,9 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void sendEmail() {
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-
-        Account account = mHelper.getAccountInfo();
-
-        String text = account.getEmail() + "이 보낸메일 \n";
-
-        intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-
-        startActivity(intent);
-    }
-
     private void showFAQ() {
+
+        IgawAdbrix.retention("faq");
 
         Intent intent = new Intent();
 
@@ -356,6 +342,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showNotice() {
+
+        IgawAdbrix.retention("notices");
 
         Intent intent = new Intent();
 
@@ -400,14 +388,19 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         int point = 0;
 
+        if (!b) {
+
+            return;
+        }
+
         for (IgawRewardItem item : igawRewardItems) {
 
             point += item.getRewardQuantity();
 
-            Logger.d("Reward " + point);
-
             item.didGiveRewardItem();
         }
+
+        Logger.d("Reward " + point + "\n igawRewardItems count " + igawRewardItems.length);
 
         requestUpdatePoint(point);
     }
@@ -415,7 +408,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
 
-
+        Logger.d(" b : " + b + " s : " + s + " s1 : " + s1);
     }
 
     private void requestUpdatePoint(int point) {

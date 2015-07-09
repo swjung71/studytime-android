@@ -27,7 +27,6 @@ import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.control.ControlChildActivity;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.intro.IntroActivity;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -101,6 +100,11 @@ public class GCMIntentService extends IntentService {
 
         Account account = mHelper.getAccountInfo();
 
+        if (TextUtils.isEmpty(account.getID())) {
+
+            return;
+        }
+
         switch (code) {
 
             case "RE_REG":
@@ -157,8 +161,13 @@ public class GCMIntentService extends IntentService {
                 isGroup : 1
                 time : 메시지 보내는 시간
                  */
+
+                mHelper.addNoticeCount();
+
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), getIntentNotice(account.getIsChild()));
+
+                sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
@@ -214,7 +223,7 @@ public class GCMIntentService extends IntentService {
 
         Intent intent = null;
 
-        switch(isChild) {
+        switch (isChild) {
 
             case 0: // child
 
@@ -226,7 +235,7 @@ public class GCMIntentService extends IntentService {
                 }
 
                 pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
-                        intent, PendingIntent.FLAG_ONE_SHOT);
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 return pIntent;
 
@@ -240,7 +249,7 @@ public class GCMIntentService extends IntentService {
                 }
 
                 pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
-                        intent, PendingIntent.FLAG_ONE_SHOT);
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 return pIntent;
 
@@ -265,7 +274,7 @@ public class GCMIntentService extends IntentService {
                 Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
 
                 PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
-                        0, intent, PendingIntent.FLAG_ONE_SHOT);
+                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 return pIntent;
 
@@ -280,7 +289,7 @@ public class GCMIntentService extends IntentService {
                 stackBuilder.addNextIntent(childrenList);
                 stackBuilder.addNextIntent(notice);
 
-                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 
@@ -299,7 +308,7 @@ public class GCMIntentService extends IntentService {
                 Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
 
                 PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
-                        0, intent, PendingIntent.FLAG_ONE_SHOT);
+                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 return pIntent;
 
@@ -399,9 +408,9 @@ public class GCMIntentService extends IntentService {
 
             default:
 
-                Toast.makeText(getApplicationContext(),
-                        TextUtils.isEmpty(msg) ? "알수 없는 오류" : msg,
-                        Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(msg)) {
+                    Logger.e(msg);
+                }
 
                 break;
         }
@@ -411,26 +420,6 @@ public class GCMIntentService extends IntentService {
 
         Logger.e(error.toString());
 
-        if (error instanceof ServerError) {
-
-            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-
-        } else if (error instanceof TimeoutError) {
-
-            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-
-        } else if (error instanceof ParseError) {
-
-            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-
-        } else if (error instanceof NetworkError) {
-
-            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-
-        } else {
-
-            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-        }
     }
 
 }

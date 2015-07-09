@@ -13,7 +13,7 @@ public class ChildLoginResult {
     @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
-    @Element(name = "ParentID")
+    @Element(name = "ParentID", required = false)
     String parentID;
 
     public int getResultCode() {

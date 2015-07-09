@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="@dimen/parent_password_logo_margin_top"
         android:scaleType="fitCenter"
         android:src="@drawable/icon_key" />
 
@@ -22,30 +22,30 @@
 
         <kr.co.digitalanchor.studytime.view.FontEditText
             android:id="@+id/editPassword"
-            android:layout_width="220dp"
-            android:layout_height="46.67dp"
+            android:layout_width="@dimen/parent_password_edit_width"
+            android:layout_height="@dimen/parent_password_edit_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="52.33dp"
+            android:layout_marginTop="@dimen/parent_password_edit_margin"
             android:background="@drawable/box_type_03_bg"
             android:gravity="center_vertical"
             android:hint="비밀번호 입력"
             android:inputType="textPassword"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="@dimen/parent_password_edit_padding"
+            android:paddingRight="@dimen/parent_password_edit_padding"
             android:singleLine="true"
             android:textColorHint="@color/bgColorType01"
-            android:textSize="16dp" />
+            android:textSize="@dimen/parent_password_edit_text_size" />
 
         <kr.co.digitalanchor.studytime.view.FontButton
             android:id="@+id/buttonConfirm"
-            android:layout_width="60dp"
-            android:layout_height="46.67dp"
+            android:layout_width="@dimen/parent_password_button_width"
+            android:layout_height="@dimen/parent_password_button_height"
             android:layout_marginLeft="7dp"
             android:background="@drawable/box_type_04_bg"
             android:gravity="center"
             android:text="확인"
             android:textColor="@color/white"
-            android:textSize="16dp" />
+            android:textSize="@dimen/parent_password_edit_text_size" />
 
     </LinearLayout>
 

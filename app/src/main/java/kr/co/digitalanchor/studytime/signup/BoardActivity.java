@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.signup;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -133,18 +134,24 @@ public class BoardActivity extends BaseActivity implements AdapterView.OnItemCli
 
     private void getIntentData() {
 
-        Bundle data = getIntent().getExtras();
+        try {
 
-        if (data == null) {
+            Bundle data = getIntent().getExtras();
 
-            finish();
+            Type = data.getInt("option", 0);
+
+        } catch (NullPointerException e) {
+
+            Type = 0;
         }
-
-        Type = data.getInt("option", 0);
 
         if (Type == 0 ) {
 
             mLabelTitle.setText("공지사항");
+
+            DBHelper helper = new DBHelper(getApplicationContext());
+
+            helper.initNoticeCount();
 
         } else if (Type == 1) {
 

@@ -15,67 +15,67 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/child_login_logo_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="92dp"
+                android:layout_marginTop="@dimen/child_login_logo_margin_top"
                 android:scaleType="fitCenter"
                 android:src="@drawable/login_logo" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editEmailAddr"
-                android:layout_width="270dp"
-                android:layout_height="46.67dp"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="52.33dp"
+                android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
                 android:background="@drawable/box_type_03_bg"
                 android:hint="부모님의 등록 이메일 주소"
                 android:inputType="textUri"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                android:paddingRight="@dimen/login_parent_edit_box_padding"
                 android:singleLine="true"
                 android:textColorHint="@color/bgColorType02"
-                android:textSize="16dp" />
+                android:textSize="@dimen/login_parent_content_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editPassword"
-                android:layout_width="270dp"
-                android:layout_height="46.67dp"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="18.67dp"
+                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
                 android:background="@drawable/box_type_03_bg"
                 android:hint="부모님의 등록 비밀번호"
                 android:inputType="textPassword"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                android:paddingRight="@dimen/login_parent_edit_box_padding"
                 android:singleLine="true"
                 android:textColorHint="@color/bgColorType02"
-                android:textSize="16dp" />
+                android:textSize="@dimen/login_parent_content_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editChildName"
-                android:layout_width="270dp"
-                android:layout_height="46.67dp"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="18.67dp"
+                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
                 android:background="@drawable/box_type_03_bg"
                 android:hint="자녀 이름"
-                android:paddingLeft="33.33dp"
-                android:paddingRight="33.33dp"
+                android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                android:paddingRight="@dimen/login_parent_edit_box_padding"
                 android:singleLine="true"
                 android:textColorHint="@color/bgColorType02"
-                android:textSize="16dp" />
+                android:textSize="@dimen/login_parent_content_text_size" />
 
             <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonLogin"
-                android:layout_width="270dp"
-                android:layout_height="46.67dp"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="18.67dp"
+                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
                 android:background="@drawable/box_type_08_bg"
                 android:gravity="center"
                 android:text="로그인"
                 android:textColor="@color/white"
-                android:textSize="16dp" />
+                android:textSize="@dimen/login_parent_content_text_size" />
 
         </LinearLayout>
 

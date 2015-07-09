@@ -7,38 +7,37 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="53.33dp"
+        android:layout_height="@dimen/activity_title_bar_height"
+        android:paddingLeft="@dimen/children_list_title_bar_padding"
         android:background="@color/bgColorType01">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="34.67dp"
+            android:layout_height="@dimen/children_list_point_box_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="18dp"
             android:background="@drawable/img_point"
             android:orientation="horizontal"
-            android:paddingRight="6dp">
+            android:paddingRight="@dimen/children_list_point_box_padding">
 
             <kr.co.digitalanchor.studytime.view.FontTextView
                 android:id="@+id/labelPoint"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/children_list_point_label_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="26.33dp"
+                android:layout_marginLeft="@dimen/children_list_point_label_margin_left"
                 android:maxLength="3"
-                android:paddingLeft="6.67dp"
+                android:paddingLeft="@dimen/children_list_point_label_padding_left"
                 android:singleLine="true"
-                android:text="9934234"
                 android:textColor="@color/white"
-                android:textSize="18.33dp" />
+                android:textSize="@dimen/children_list_point_label_text_size" />
 
             <ImageButton
                 android:id="@+id/buttonPoint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="@dimen/children_list_point_button_margin_left"
                 android:background="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/button_point" />
@@ -47,14 +46,14 @@
 
         <ImageButton
             android:id="@+id/buttonMenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/children_list_menu_button_width"
+            android:layout_height="@dimen/children_list_menu_button_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="@dimen/children_list_menu_button_margin_right"
             android:background="@null"
             android:clickable="true"
-            android:padding="10dp"
+            android:padding="@dimen/children_list_menu_button_padding"
             android:scaleType="fitCenter"
             android:src="@drawable/button_menu" />
 
@@ -65,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/transparent"
-        android:dividerHeight="11dp"
+        android:dividerHeight="@dimen/children_list_divider_height"
         android:listSelector="@color/transparent"
         android:overScrollMode="never"
         android:visibility="visible" />
@@ -75,20 +74,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingLeft="@dimen/children_list_empty_layout_padding"
+        android:paddingRight="@dimen/children_list_empty_layout_padding">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/children_list_empty_text_margin_top"
             android:drawableLeft="@drawable/cs_icon1"
-            android:drawablePadding="12dp"
+            android:drawablePadding="@dimen/children_list_empty_text_padding"
             android:gravity="center"
             android:text="관리할 자녀가 없습니다."
             android:textColor="#4a4a4a"
-            android:textSize="16dp" />
+            android:textSize="@dimen/children_list_empty_text_size" />
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:layout_width="match_parent"
@@ -98,7 +97,7 @@
             android:gravity="center"
             android:text="자녀에게 앱 링크 전송 메뉴를 눌러 &apos;Study Time&apos; 자녀용을 설치해 주십시오."
             android:textColor="#4a4a4a"
-            android:textSize="16dp" />
+            android:textSize="@dimen/children_list_empty_text_size" />
 
         <include
             android:id="@+id/buttonSendLink"

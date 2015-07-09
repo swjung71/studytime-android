@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -59,6 +60,8 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
     private TextView mLabelName;
 
+    private ImageView mNewNotice;
+
     public MenuPopup(Context context) {
 
         super(context);
@@ -73,6 +76,8 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         view.findViewById(R.id.buttonLogOut).setOnClickListener(this);
 
         mLabelName = (TextView) view.findViewById(R.id.labelName);
+
+        mNewNotice = (ImageView) view.findViewById(R.id.badgeNotice);
 
         setContentView(view);
 
@@ -164,6 +169,18 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         if (!TextUtils.isEmpty(name) && mLabelName != null) {
 
             mLabelName.setText(name);
+        }
+    }
+
+    public void addNewNotice(boolean isExit) {
+
+        if (isExit) {
+
+            mNewNotice.setVisibility(View.VISIBLE);
+
+        } else {
+
+            mNewNotice.setVisibility(View.GONE);
         }
     }
 

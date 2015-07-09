@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -268,6 +269,22 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
             protected String doInBackground(Void... params) {
 
                 try {
+
+                    try {
+
+                        AdvertisingIdClient.Info adInfo =
+                                AdvertisingIdClient.getAdvertisingIdInfo(getApplicationContext());
+
+                        STApplication.putString(StaticValues.AD_ID, adInfo.getId());
+
+                        Logger.d("ad id " + adInfo.getId());
+
+                    } catch (Exception e) {
+
+                        Logger.e(e.toString());
+
+                    }
+
                     /// Validation
                     GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
 
