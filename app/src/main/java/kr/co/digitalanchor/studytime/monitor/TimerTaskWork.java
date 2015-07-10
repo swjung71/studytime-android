@@ -48,7 +48,6 @@ public class TimerTaskWork extends TimerTask {
         }
 
         String currentPackage = null;
-        String currentActivity = null;
 
         // monitor
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,8 +66,6 @@ public class TimerTaskWork extends TimerTask {
 
                     currentPackage = info.topActivity.getPackageName();
 
-                    currentActivity = info.topActivity.getClassName();
-
                     break;
                 }
             }
@@ -86,7 +83,7 @@ public class TimerTaskWork extends TimerTask {
 
         } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") != 0) {
 
-            Logger.d("pk [" + currentPackage + "]  ac [" + currentActivity + "] version = " + Build.VERSION.SDK_INT);
+            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
             killApplication(currentPackage);
         }
@@ -167,4 +164,7 @@ public class TimerTaskWork extends TimerTask {
         alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
 
     }
+
+
+
 }

@@ -113,7 +113,7 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
         Logger.d(AndroidUtils.convertToUTF8(account.getName()));
 
         model.setParantId(account.getParentId());
-        model.setName(AndroidUtils.convertToUTF8(account.getName()));
+        model.setName(account.getName());
         model.setPassword(mEditPassword.getText().toString());
         model.setChildId(account.getID());
 

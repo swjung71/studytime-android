@@ -289,7 +289,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         ChatSend model = new ChatSend();
 
         model.setSenderID(mAccount.getID());
-        model.setSenderName(AndroidUtils.convertToUTF8(mAccount.getName()));
+        model.setSenderName(mAccount.getName());
 
         model.setReceiverID(mAccount.getParentId());
 
