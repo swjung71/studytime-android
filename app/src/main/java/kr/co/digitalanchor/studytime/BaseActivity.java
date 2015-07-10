@@ -297,7 +297,14 @@ public class BaseActivity extends Activity {
 
     protected void startMonitorService() {
 
-        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+            }
+        }, 1000);
+
     }
 
     protected void showOfferWall() {
@@ -313,10 +320,10 @@ public class BaseActivity extends Activity {
 
         Logger.d("ad id" + id);
 
-//        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
-//        AdPOPcornStyler.offerwall.Title = "하트얻기";
+        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
+        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
+        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
+        AdPOPcornStyler.offerwall.Title = "하트얻기";
 
         IgawAdpopcorn.openOfferWall(this);
 

@@ -131,8 +131,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             if (resultCode == RESULT_OK) {
 
-                startService(new Intent(STApplication.applicationContext, MonitorService.class));
-
                 sendEmptyMessage(COMPLETE_CHILD_LOGIN);
             }
         }
