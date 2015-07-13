@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -50,7 +51,7 @@ public class BoardActivity extends BaseActivity implements AdapterView.OnItemCli
 
     private  BoardAdapter mAdapter;
 
-
+private boolean flag = true;
 
     /**
      * 게시판 종류
@@ -269,6 +270,8 @@ public class BoardActivity extends BaseActivity implements AdapterView.OnItemCli
 
             content.category = AndroidUtils.convertFromUTF8(item.getCategory());
 
+            content.content = content.content.replaceAll("\\\\n", System.getProperty("line.separator"));
+
             mContents.add(content);
         }
 
@@ -295,6 +298,8 @@ public class BoardActivity extends BaseActivity implements AdapterView.OnItemCli
             content.content = AndroidUtils.convertFromUTF8(item.getContent());
 
             content.date = AndroidUtils.convertFromUTF8(item.getDate());
+
+            content.content = content.content.replaceAll("\\\\n", System.getProperty("line.separator"));
 
             mContents.add(content);
         }
