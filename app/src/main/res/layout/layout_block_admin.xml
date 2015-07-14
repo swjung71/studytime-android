@@ -30,38 +30,34 @@
                 android:src="@drawable/icon_key" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layoutAdminButton"
+                android:layout_width="@dimen/block_password_edit_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/block_password_edit_layout_margin"
-                android:orientation="horizontal"
-                android:visibility="visible">
-
-                <kr.co.digitalanchor.studytime.view.FontEditText
-                    android:id="@+id/editPassword"
-                    android:layout_width="@dimen/block_password_edit_width"
-                    android:layout_height="@dimen/block_password_edit_height"
-                    android:background="@drawable/box_type_03_bg"
-                    android:hint="비밀번호 입력"
-                    android:inputType="textPassword"
-                    android:paddingLeft="@dimen/block_password_icon_padding"
-                    android:paddingRight="@dimen/block_password_icon_padding"
-                    android:singleLine="true"
-                    android:textColorHint="@color/bgColorType02" />
+                android:orientation="vertical">
 
                 <kr.co.digitalanchor.studytime.view.FontButton
-                    android:id="@+id/buttonConfirm"
-                    android:layout_width="@dimen/block_password_button_width"
-                    android:layout_height="@dimen/block_password_button_height"
-                    android:layout_marginLeft="@dimen/block_password_button_margin"
+                    android:id="@+id/buttonAdmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/block_password_edit_height"
                     android:background="@drawable/box_type_08_bg"
                     android:gravity="center"
-                    android:text="확인"
+                    android:text="보안 설정"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/block_password_button_text_size" />
+
+                <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/buttonInputPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/block_password_edit_height"
+                    android:background="@drawable/box_type_08_bg"
+                    android:gravity="center"
+                    android:text="비밀번호 입력"
                     android:textColor="@color/white"
                     android:textSize="@dimen/block_password_button_text_size" />
 
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

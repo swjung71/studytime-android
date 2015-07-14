@@ -7,7 +7,10 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
+import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
+import kr.co.digitalanchor.studytime.database.DBHelper;
 
 /**
  * Created by Thomas on 2015-06-24.
@@ -21,52 +24,18 @@ public class AdminReceiver extends DeviceAdminReceiver {
 
         super.onEnabled(context, intent);
 
-    }
+        STApplication.putBoolean(StaticValues.SHOW_ADMIN, false);
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-    }
+        DBHelper helper = new DBHelper(context);
+        helper.updateAllow(1);
 
-    @Override
-    public void onLockTaskModeEntering(Context context, Intent intent, String pkg) {
-        super.onLockTaskModeEntering(context, intent, pkg);
-    }
-
-    @Override
-    public void onPasswordChanged(Context context, Intent intent) {
-        super.onPasswordChanged(context, intent);
-    }
-
-    @Override
-    public void onPasswordFailed(Context context, Intent intent) {
-        super.onPasswordFailed(context, intent);
     }
 
     @Override
     public void onDisabled(Context context, Intent intent) {
         super.onDisabled(context, intent);
-    }
 
-    @Override
-    public void onPasswordExpiring(Context context, Intent intent) {
-        super.onPasswordExpiring(context, intent);
-    }
-
-    @Override
-    public void onLockTaskModeExiting(Context context, Intent intent) {
-        super.onLockTaskModeExiting(context, intent);
-    }
-
-    @Override
-    public void onPasswordSucceeded(Context context, Intent intent) {
-        super.onPasswordSucceeded(context, intent);
-    }
-
-    @Override
-    public void onProfileProvisioningComplete(Context context, Intent intent) {
-        super.onProfileProvisioningComplete(context, intent);
-
+        STApplication.putBoolean(StaticValues.SHOW_ADMIN, true);
     }
 
     @Override

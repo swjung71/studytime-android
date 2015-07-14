@@ -9,7 +9,6 @@
         android:smallScreens="false"
         android:xlargeScreens="true" />
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -25,6 +24,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -41,7 +41,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -55,7 +54,6 @@
         <meta-data
             android:name="igaworks_hash_key"
             android:value="0e161219e6a840a8" />
-
         <meta-data
             android:name="igaworks_reward_server_type"
             android:value="client" />
@@ -75,7 +73,6 @@
             android:enabled="true"
             android:exported="false" />
 
-
         <activity
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
@@ -83,6 +80,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -153,7 +151,6 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".block.BlockActivity"
             android:excludeFromRecents="true"
@@ -161,7 +158,6 @@
             android:screenOrientation="portrait"
             android:taskAffinity="kr.co.digitalanchor.studytime.block"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name=".block.BlockPasswordActivity"
             android:excludeFromRecents="true"
@@ -195,7 +191,6 @@
             android:name=".intro.GuideActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name=".control.InputPwdActivity"
             android:screenOrientation="portrait"
@@ -215,7 +210,6 @@
                 <category android:name="kr.co.digitalanchor.studytime" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".monitor.BootCompleteReceiver"
             android:enabled="true"
@@ -224,7 +218,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".monitor.AllIntentReceiver">
             <intent-filter>
                 <action android:name="kr.co.digitalanchor.action.SERVICE_START" />
@@ -241,11 +234,9 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".devicepolicy.AdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
-
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
@@ -257,9 +248,11 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
             </intent-filter>
-
         </receiver>
 
+        <activity
+            android:name=".devicepolicy.DummyActivity"
+            android:label="@string/title_activity_dummy"></activity>
     </application>
 
 </manifest>

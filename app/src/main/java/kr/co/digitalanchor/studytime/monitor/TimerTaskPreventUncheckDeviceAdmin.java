@@ -5,19 +5,27 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 
 import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TimerTask;
 import java.util.TreeMap;
 
+import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockPasswordActivity;
+import kr.co.digitalanchor.studytime.block.BlockPasswordLayout;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 
@@ -30,7 +38,15 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
     ActivityManager mActivityManager;
 
+    WindowManager windowManager;
+
+    WindowManager.LayoutParams layoutParams;
+
     DBHelper helper;
+
+    Object object;
+
+    View blockView = null;
 
     public TimerTaskPreventUncheckDeviceAdmin(Context context) {
 
@@ -40,107 +56,96 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         helper = new DBHelper(context);
 
+        // additional
+        object = new Object();
+
+        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        layoutParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+
     }
 
     @Override
     public void run() {
 
 
-        if (helper.isAllow() != 1) {
+        if (helper.isAllow() == 1
+                && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                && isblocking()) {
 
-            return;
-        }
-
-        String topActivity = null;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            topActivity = checkRunningSettings();
-
-            if (TextUtils.isEmpty(topActivity)) {
-
-                topActivity = null;
-
-            } else if (!topActivity.equals("com.android.settings.DeviceAdminAdd")) {
-
-                topActivity = null;
-            }
+                showBlockView();
 
         } else {
 
-            topActivity = mActivityManager.getRunningTasks(1).get(0).topActivity.getClassName();
-
-            if (!topActivity.equals("com.android.settings.DeviceAdminAdd")) {
-
-                topActivity = null;
-            }
-        }
-
-        if (!TextUtils.isEmpty(topActivity)) {
-
-            Logger.d(topActivity);
-
-            Intent intent = new Intent(context, BlockPasswordActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            context.startActivity(intent);
+            hideBlockView();
         }
     }
 
-    private String checkRunningSettings() {
+    private void hideBlockView() {
 
-        final int START_TASK_TO_FRONT = 2;
 
-        ActivityManager.RunningAppProcessInfo currentInfo = null;
 
-        Field field = null;
+        synchronized (object) {
 
-        try {
+            STApplication.applicationHandler.post(new Runnable() {
+                @Override
+                public void run() {
 
-            field = ActivityManager.RunningAppProcessInfo.class.getDeclaredField("processState");
+                    if (blockView == null) {
 
-        } catch (NoSuchFieldException e) {
+                        return;
+                    }
 
-            Logger.e(e.getMessage());
+                    windowManager.removeView(blockView);
+
+                    blockView = null;
+                }
+            });
         }
 
-        List<ActivityManager.RunningAppProcessInfo> appList = mActivityManager.getRunningAppProcesses();
 
-        for (ActivityManager.RunningAppProcessInfo app : appList) {
+    }
 
-            if (app.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+    private void showBlockView() {
 
-                Integer state = null;
+        synchronized (object) {
 
-                try {
+            STApplication.applicationHandler.post(new Runnable() {
+                @Override
+                public void run() {
 
-                    state = field.getInt(app);
+                    if (blockView != null) {
 
-                } catch (Exception ex) {
+                        return;
+                    }
 
-                    ex.printStackTrace();
+                    blockView = new BlockPasswordLayout(context);
+
+                    windowManager.addView(blockView, layoutParams);
                 }
-
-                if (state != null && state == START_TASK_TO_FRONT) {
-
-                    currentInfo = app;
-
-                    break;
-                }
-            }
-        }
-
-        if (currentInfo != null) {// avoid null err b/c of some unknow reason
-
-            return currentInfo.pkgList[0].contains("SSettings") ? currentInfo.pkgList[0] : null;
-
-        } else {
-
-            return null;
-
+            });
         }
     }
 
 
+    private boolean isblocking() {
 
+        String packageName = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            packageName = mActivityManager.getRunningAppProcesses().get(0).processName;
+
+        } else {
+
+            packageName = mActivityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
+        }
+
+        return !context.getPackageName().equals(packageName);
+    }
 }
