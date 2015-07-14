@@ -65,6 +65,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private boolean isModify;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,12 +174,30 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                     completeRegister(mParentID, mChildID);
 
-                    sendEmptyMessage(COMPLETE_ADD_INFO);
+                    sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+
+                    sendEmptyMessage(COMPLETE_ADD_INFO, 300);
 
                 } else {
 
                     STApplication.resetApplication();
                 }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        if (isModify) {
+
+            STApplication.stopAllActivity();
         }
     }
 
@@ -355,13 +375,20 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                                 dismissLoading();
 
+                                Logger.d("gfd " + response.getParentID() + " " + response.getChildID());
+
                                 mParentID = response.getParentID();
                                 mChildID = response.getChildID();
 
-                                Logger.d(mModel.getName());
+                                if (!isModify) {
 
-                                if (!isModify)
                                     showAdmin();
+
+                                } else {
+
+                                    sendEmptyMessage(COMPLETE_ADD_INFO);
+                                }
+
 
                                 break;
 
@@ -388,6 +415,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         Logger.i(parentId + " " + childId +  "  " + mModel.getName());
 
         DBHelper helper = new DBHelper(getApplicationContext());
+
+        helper.clearAll();
 
         helper.insertAccount(childId, mModel.getName(), parentId);
 

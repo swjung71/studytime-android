@@ -46,21 +46,21 @@ import kr.co.digitalanchor.studytime.model.db.VersionResult;
  */
 public class HttpHelper {
 
-    public static boolean isDev = true;
+    public static boolean isDev = false;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
      */
 
-    public static final String DOMAIN = "www.dastudytime.kr";
+    public static final String PROTOCOL = "http://";
 
-    public static final String PROTOCOL = "https://";
+    public static final String DOMAIN = "www.dastudytime.kr/";
 
     public static final String PATH = "studytime-server/";
 
-    public static final String DOMAIN_DEV = "14.63.225.89/";
-
     public static final String PROTOCOL_DEV = "http://";
+
+    public static final String DOMAIN_DEV = "14.63.225.89/";
 
     public static final String PATH_DEV = "studytime-server/";
 
@@ -91,7 +91,6 @@ public class HttpHelper {
                                                   ErrorListener errorListener) {
 
         StringWriter writer = new StringWriter();
-        ;
 
         try {
 
@@ -102,6 +101,8 @@ public class HttpHelper {
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
+
+            Logger.e(getURL());
 
             return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login",
                     ParentLoginResult.class, map, listener, errorListener);

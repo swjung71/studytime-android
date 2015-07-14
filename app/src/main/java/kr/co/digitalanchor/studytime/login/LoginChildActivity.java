@@ -142,7 +142,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         intent.setClass(getApplicationContext(), AddInfoActivity.class);
 
-        // TODO name
+        Logger.d(parentId + " " + name);
 
         intent.putExtra("ParentID", parentId);
         intent.putExtra("Name", name);

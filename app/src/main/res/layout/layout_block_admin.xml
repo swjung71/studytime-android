@@ -21,43 +21,39 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/login_logo" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/block_password_icon_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/block_password_icon_margin_top"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_key" />
-
-            <LinearLayout
-                android:id="@+id/layoutAdminButton"
-                android:layout_width="@dimen/block_password_edit_width"
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="@dimen/login_parent_content_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/block_password_edit_layout_margin"
-                android:orientation="vertical">
+                android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
+                android:textSize="@dimen/block_password_button_text_size"
+                android:textColor="@color/bgColorType02"
+                android:text="※ 비밀번호 입력 시 부모님께 알림이 갑니다. 삭제를 원하지 않으시면 취소를 눌러주세요."/>
 
-                <kr.co.digitalanchor.studytime.view.FontButton
-                    android:id="@+id/buttonAdmin"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/block_password_edit_height"
-                    android:background="@drawable/box_type_08_bg"
-                    android:gravity="center"
-                    android:text="보안 설정"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/block_password_button_text_size" />
 
-                <kr.co.digitalanchor.studytime.view.FontButton
-                    android:id="@+id/buttonInputPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/block_password_edit_height"
-                    android:background="@drawable/box_type_08_bg"
-                    android:gravity="center"
-                    android:text="비밀번호 입력"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/block_password_button_text_size" />
+            <kr.co.digitalanchor.studytime.view.FontButton
+                android:id="@+id/buttonInputPassword"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                android:background="@drawable/box_type_08_bg"
+                android:text="비밀번호 입력"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_action_text" />
 
-            </LinearLayout>
+
+            <kr.co.digitalanchor.studytime.view.FontButton
+                android:id="@+id/buttonAdmin"
+                android:layout_width="@dimen/login_parent_content_width"
+                android:layout_height="@dimen/login_parent_content_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                android:background="@drawable/box_type_08_bg"
+                android:text="취소"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_action_text" />
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

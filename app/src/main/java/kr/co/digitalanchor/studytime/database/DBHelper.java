@@ -308,7 +308,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertChild(String id, int isChild, String name) {
+    public void insertChild(String id, int isChild, String name, String isOff) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -319,6 +319,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (name != null) {
             values.put(NAME, AndroidUtils.convertFromUTF8(name));
+        }
+
+        if (TextUtils.isEmpty(isOff)) {
+
+            values.put(IS_OFF, "0");
+
+        } else {
+
+            values.put(IS_OFF, isOff);
         }
 
         db.replace(TABLE_CHILD, null, values);
@@ -332,7 +341,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         for (kr.co.digitalanchor.studytime.model.Child child : children) {
 
-            insertChild(child.getChildID(), 0, child.getName());
+            insertChild(child.getChildID(), 0, child.getName(), child.getIsOff());
         }
     }
 

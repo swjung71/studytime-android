@@ -113,6 +113,14 @@ public class BaseActivity extends Activity {
         }
     }
 
+    public void sendEmptyMessage(int what, long delay) {
+
+        if (mHandler != null) {
+
+            mHandler.sendEmptyMessageDelayed(what, delay);
+        }
+    }
+
     public void sendMessage(int what, Bundle data) {
 
         if (mHandler != null && data != null) {
@@ -266,12 +274,16 @@ public class BaseActivity extends Activity {
                 break;
         }
 
+        Logger.e(msg);
+
         Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT).show();
     }
 
     protected void handleError(VolleyError error) {
 
         dismissLoading();
+
+        Logger.e(error.toString());
 
         if (error instanceof ServerError) {
 
@@ -297,13 +309,8 @@ public class BaseActivity extends Activity {
 
     protected void startMonitorService() {
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
 
-                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
-            }
-        }, 1000);
+        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
     }
 

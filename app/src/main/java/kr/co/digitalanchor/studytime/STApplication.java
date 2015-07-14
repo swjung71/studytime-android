@@ -502,6 +502,14 @@ public class STApplication extends Application {
 
     }
 
+    public static void stopAllActivity() {
+
+        for (BaseActivity activity : activities) {
+
+            activity.finish();
+        }
+    }
+
     public static void resetApplication() {
 
         DBHelper helper = new DBHelper(applicationContext);

@@ -112,8 +112,13 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             unregisterReceiver(messageReceiver);
         }
+    }
 
-        finish();
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        STApplication.stopAllActivity();
     }
 
     private void initView() {
@@ -360,6 +365,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         intent.putExtra("ParentID", account.getParentId());
         intent.putExtra("Name", account.getName());
         intent.putExtra("Modify", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 
         startActivity(intent);
     }

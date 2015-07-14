@@ -3,6 +3,7 @@ package kr.co.digitalanchor.studytime.monitor;
 import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -76,7 +77,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         if (helper.isAllow() == 1
                 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
-                && isblocking()) {
+                && isblock()) {
 
                 showBlockView();
 
@@ -87,8 +88,6 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
     }
 
     private void hideBlockView() {
-
-
 
         synchronized (object) {
 
@@ -133,19 +132,27 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
     }
 
 
-    private boolean isblocking() {
+    private boolean isblock() {
 
         String packageName = null;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        boolean isAdmin = false;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
 
             packageName = mActivityManager.getRunningAppProcesses().get(0).processName;
 
         } else {
 
-            packageName = mActivityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
+            ComponentName info = mActivityManager.getRunningTasks(1).get(0).topActivity;
+
+            packageName = info.getPackageName();
+
+            Logger.d(info.getClassName());
+
+            isAdmin = info.getClassName().equalsIgnoreCase("com.android.settings.DeviceAdminAdd");
         }
 
-        return !context.getPackageName().equals(packageName);
+        return !(context.getPackageName().equals(packageName) || isAdmin);
     }
 }

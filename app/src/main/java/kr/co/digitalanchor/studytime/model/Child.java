@@ -15,6 +15,9 @@ public class Child {
     @Element(name = "Name", required = false, data = true)
     String name;
 
+    @Element(name="Is_off", required = false)
+    String isOff;
+
     @Element(name = "MsgCount", required = false)
     String msgCount;
 
@@ -27,6 +30,8 @@ public class Child {
         this.childID = childID;
 
         this.name = name;
+
+        this.isOff = "0";
     }
 
     public String getChildID() {
@@ -51,5 +56,13 @@ public class Child {
 
     public void setMsgCount(String msgCount) {
         this.msgCount = msgCount;
+    }
+
+    public String getIsOff() {
+        return isOff;
+    }
+
+    public void setIsOff(String isOff) {
+        this.isOff = isOff;
     }
 }
