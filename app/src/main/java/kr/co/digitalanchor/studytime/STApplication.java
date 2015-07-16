@@ -65,7 +65,10 @@ public class STApplication extends Application {
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
-        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
+        /**
+         * Log setting
+         * */
+        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
 
     }
 

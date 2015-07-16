@@ -52,7 +52,7 @@ public class HttpHelper {
      * Dev Server url http://14.63.225.89/studytime-server
      */
 
-    public static final String PROTOCOL = "http://";
+    public static final String PROTOCOL = "https://";
 
     public static final String DOMAIN = "www.dastudytime.kr/";
 
