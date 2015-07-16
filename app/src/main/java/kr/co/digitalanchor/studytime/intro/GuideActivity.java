@@ -4,16 +4,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 
+import com.orhanobut.logger.Logger;
+
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.view.ViewPagerEX;
 import kr.co.digitalanchor.widget.pagerindicator.IconPageIndicator;
 
 /**
  * Created by Thomas on 2015-07-06.
  */
-public class GuideActivity extends FragmentActivity {
+public class GuideActivity extends FragmentActivity implements ViewPagerEX.OnSwipeOutListener {
 
     GuideAdapter mAdapter;
-    ViewPager mPager;
+    ViewPagerEX mPager;
 
     IconPageIndicator mIndicator;
 
@@ -26,11 +29,18 @@ public class GuideActivity extends FragmentActivity {
 
         mAdapter = new GuideAdapter(getSupportFragmentManager());
 
-        mPager = (ViewPager) findViewById(R.id.pager);
-
+        mPager = (ViewPagerEX) findViewById(R.id.pager);
+        mPager.setOnSwipeOutListener(this);
         mPager.setAdapter(mAdapter);
 
         mIndicator = (IconPageIndicator) findViewById(R.id.indicator);
         mIndicator.setViewPager(mPager);
+
+    }
+
+    @Override
+    public void onSwipeOutAtEnd() {
+
+        finish();
     }
 }

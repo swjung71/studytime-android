@@ -46,5 +46,4 @@ public class GuideAdapter extends FragmentPagerAdapter implements IconPagerAdapt
         return "";
     }
 
-
 }

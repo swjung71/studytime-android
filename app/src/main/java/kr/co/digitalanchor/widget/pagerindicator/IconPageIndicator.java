@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
+
 import kr.co.digitalanchor.studytime.R;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -148,7 +150,9 @@ public class IconPageIndicator extends HorizontalScrollView implements PageIndic
         if (mSelectedIndex > count) {
             mSelectedIndex = count - 1;
         }
+
         setCurrentItem(mSelectedIndex);
+
         requestLayout();
     }
 
@@ -160,17 +164,24 @@ public class IconPageIndicator extends HorizontalScrollView implements PageIndic
 
     @Override
     public void setCurrentItem(int item) {
+
         if (mViewPager == null) {
             throw new IllegalStateException("ViewPager has not been bound.");
         }
+
         mSelectedIndex = item;
         mViewPager.setCurrentItem(item);
 
         int tabCount = mIconsLayout.getChildCount();
+
         for (int i = 0; i < tabCount; i++) {
+
             View child = mIconsLayout.getChildAt(i);
+
             boolean isSelected = (i == item);
+
             child.setSelected(isSelected);
+
             if (isSelected) {
                 animateToIcon(item);
             }
