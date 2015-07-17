@@ -68,7 +68,7 @@ public class STApplication extends Application {
         /**
          * Log setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
 
     }
 
@@ -130,7 +130,7 @@ public class STApplication extends Application {
             PackageInfo info = applicationContext.getPackageManager()
                     .getPackageInfo(applicationContext.getPackageName(), 0);
 
-            String [] appVersionTokens =  "0.0.6".split("\\.");//info.versionName.split(".");
+            String [] appVersionTokens =  info.versionName.split("\\.");
 
             String [] curVersionTokens = currentVersionName.split("\\.");
 
