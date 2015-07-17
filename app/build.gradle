@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
     }
     buildTypes {
         release {

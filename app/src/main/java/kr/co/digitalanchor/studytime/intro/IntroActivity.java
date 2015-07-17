@@ -1,12 +1,17 @@
 package kr.co.digitalanchor.studytime.intro;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -25,7 +30,12 @@ import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
+import kr.co.digitalanchor.studytime.model.GetVersion;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.model.db.VersionResult;
+
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-06-10.
@@ -134,7 +144,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         mLayoutParentIntro.setVisibility(View.VISIBLE);
 
-        registerGCM();
+        getAvailableUpdate();
 
     }
 
@@ -144,7 +154,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         mLayoutChildIntro.setVisibility(View.VISIBLE);
 
-        registerGCM();
+        getAvailableUpdate();
 
     }
 
@@ -226,7 +236,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             } else {
 
-                Logger.i("This device is not supported.");
+                Logger.d("This device is not supported.");
                 finish();
 
             }
@@ -243,7 +253,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         if (TextUtils.isEmpty(registrationId)) {
 
-            Logger.i("Registration not found.");
+            Logger.d("Registration not found.");
         }
 
         int registeredVersion = STApplication.getRegisteredVersion();
@@ -252,7 +262,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         if (registeredVersion != currentVersion) {
 
-            Logger.i("App version changed.");
+            Logger.d("App version changed.");
 
             return "";
         }
@@ -262,7 +272,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void registerInBackground() {
 
-        Logger.i("OK");
+        Logger.d("OK");
 
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -313,9 +323,10 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                 if (result.compareTo("Succeed") == 0) {
 
-                    showNextScreen(300);
-                }
+                    getAvailableUpdate();
 
+                    //showNextScreen(300);
+                }
             }
         }.execute(null, null, null);
     }
@@ -326,5 +337,78 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         STApplication.putRegistrationId(id);
         STApplication.putRegisteredVersion(version);
+    }
+
+    private void getAvailableUpdate() {
+
+        DBHelper helper = new DBHelper(getApplicationContext());
+        Account account = helper.getAccountInfo();
+
+        if (account == null) {
+
+            account = new Account();
+            account.setIsChild(1);
+        }
+
+        GetVersion model = new GetVersion();
+
+        model.setIsChild(account.isChild());
+
+        SimpleXmlRequest request = HttpHelper.getVersion(model, new Response.Listener<VersionResult>() {
+            @Override
+            public void onResponse(VersionResult response) {
+
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        if (STApplication.isUpdate(response.getVersion())) {
+
+                            MaterialDialog.Builder buidler = new MaterialDialog.Builder(IntroActivity.this);
+
+                            buidler.title("업데이트")
+                                    .content("새로운 버전이 출시되었습니다.\n업데이트 해주세요.")
+                                    .positiveText("확인").negativeText("취소").cancelable(false).callback(new MaterialDialog.Callback() {
+                                @Override
+                                public void onPositive(MaterialDialog materialDialog) {
+
+                                    materialDialog.dismiss();
+
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+
+                                    finish();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog materialDialog) {
+
+                                    registerGCM();
+
+                                }
+                            }).build().show();
+
+                        } else {
+
+                            registerGCM();
+                        }
+
+                        break;
+
+                    default:
+
+                        handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                        break;
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                handleError(error);
+            }
+        });
+
+        addRequest(request);
     }
 }

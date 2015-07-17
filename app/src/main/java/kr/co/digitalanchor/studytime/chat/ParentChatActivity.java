@@ -148,16 +148,19 @@ public class ParentChatActivity extends BaseActivity implements View.OnClickList
             return;
         }
 
-        mChild = new Child();
+        String id = null;
+
+        mChild = null;
 
         if (data.containsKey("ChildID")) {
 
-            mChild.setChildID(data.getString("ChildID"));
-        }
+            id = data.getString("ChildID");
 
-        if (data.containsKey("Name")) {
+            mChild = mHelper.getChild(id);
 
-            mChild.setName(data.getString("Name"));
+        } else {
+
+
         }
     }
 

@@ -68,7 +68,7 @@ public class STApplication extends Application {
         /**
          * Log setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
     }
 
@@ -119,6 +119,40 @@ public class STApplication extends Application {
 
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isUpdate(String currentVersionName) {
+
+        boolean isUpdate = false;
+
+        try {
+
+            PackageInfo info = applicationContext.getPackageManager()
+                    .getPackageInfo(applicationContext.getPackageName(), 0);
+
+            String [] appVersionTokens =  "0.0.6".split("\\.");//info.versionName.split(".");
+
+            String [] curVersionTokens = currentVersionName.split("\\.");
+
+            for (int i = 0; appVersionTokens.length > i; i++) {
+
+                int result = appVersionTokens[i].compareTo(curVersionTokens[i]);
+
+                if (result < 0) {
+
+                    isUpdate = true;
+
+                    break;
+
+                }
+            }
+
+        } catch (Exception e) {
+
+            isUpdate = false;
+        }
+
+        return isUpdate;
     }
 
     public static String getNationalCode() {

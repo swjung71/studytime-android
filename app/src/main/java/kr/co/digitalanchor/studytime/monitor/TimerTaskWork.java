@@ -5,18 +5,21 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.model.db.Account;
 
 /**
  * Created by Thomas on 2015-06-24.
@@ -44,7 +47,7 @@ public class TimerTaskWork extends TimerTask {
 
         if (mHelper.getOnOff() != 1) {
 
-            return ;
+            return;
         }
 
         String currentPackage = null;
@@ -71,11 +74,11 @@ public class TimerTaskWork extends TimerTask {
             }
         }
 
-//        Logger.d("pk [" + currentPackage + "]  ac [" + currentActivity + "] version = " + Build.VERSION.SDK_INT);
+        Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
         // kill
         if (TextUtils.isEmpty(currentPackage)
-                || currentPackage.contains(".launcher")
+                || isLauncher(currentPackage)
                 || currentPackage.contains(".mms")
                 || currentPackage.contains(".contacts")) {
 
@@ -165,6 +168,42 @@ public class TimerTaskWork extends TimerTask {
 
     }
 
+    private boolean isLauncher(String packageName) {
 
+        ArrayList<String> names = getLauncherNames();
+
+        for (int i = 0; ; i++) {
+
+            if (i >= names.size()) {
+
+                return false;
+            }
+
+            if (packageName.equalsIgnoreCase((String) names.get(i))) {
+
+                return true;
+            }
+        }
+    }
+
+    private ArrayList<String> getLauncherNames() {
+
+        ArrayList<String> names = new ArrayList<>();
+
+        PackageManager manager = mContext.getPackageManager();
+
+        Intent intent = new Intent("android.intent.action.MAIN", null);
+
+        intent.addCategory("android.intent.category.HOME");
+
+        Iterator iterator = manager.queryIntentActivities(intent, Intent.FLAG_ACTIVITY_NO_ANIMATION).iterator();
+
+        while (iterator.hasNext()) {
+
+            names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
+        }
+
+        return names;
+    }
 
 }

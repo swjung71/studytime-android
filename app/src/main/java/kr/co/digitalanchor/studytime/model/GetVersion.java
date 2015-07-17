@@ -22,6 +22,8 @@ public class GetVersion {
     public GetVersion() {
 
         tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
+
+        isAndroid = 1;
     }
 
     public int getIsAndroid() {

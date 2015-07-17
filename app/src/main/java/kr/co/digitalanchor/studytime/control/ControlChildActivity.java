@@ -179,7 +179,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
                         intent.putExtra("ChildID", mChild.getChildID());
                         intent.putExtra("Name", mChild.getName());
 
-                            startActivity(intent);
+                        startActivity(intent);
                     }
 
                 break;
