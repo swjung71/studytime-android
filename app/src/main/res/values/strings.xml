@@ -21,4 +21,33 @@
     <string name="edit_email_hint">이메일 주소</string>
     <string name="edit_password_hint">Password</string>
     <string name="title_activity_dummy">DummyActivity</string>
+
+    <!-- activity_add_info -->
+    <string name="addInputInfoTitle">추가 정보입력</string>
+    <string name="childNameHint">자녀 이름</string>
+    <string name="childBirthDateHint">자녀 생년월일 (YYYYMMDD)</string>
+    <string name="childGender">자녀 성별</string>
+
+    <!-- activity_block_password -->
+    <string name="inputPasswordHint">비밀번호 입력</string>
+
+    <!-- activity_child_chat -->
+    <string name="chatTitle">대화창</string>
+    <string name="chatInputHint">문자 입력</string>
+
+    <!-- activity_child_list -->
+    <string name="emptyChildren">관리할 자녀가 없습니다.</string>
+    <string name="labelInstall">자녀에게 앱 링크 전송 메뉴를 눌러 &apos;Study Time&apos; 자녀용을 설치해 주십시오.</string>
+
+    <!-- activity_child_login -->
+    <string name="inputParentEmailHint">부모님의 등록 이메일 주소</string>
+    <string name="inputParentPasswordHint">부모님의 등록 비밀번호</string>
+
+    <!-- common -->
+    <string name="male">남성</string>
+    <string name="female">여성</string>
+    <string name="viewTermsAndConditions">약관보기</string>
+    <string name="agreeTerms1">서비스 이용약관에 동의합니다.</string>
+    <string name="agreeTerms2">개인정보 취급방침에 동의합니다.</string>
+    <string name="confirmOk">확인</string>
 </resources>
