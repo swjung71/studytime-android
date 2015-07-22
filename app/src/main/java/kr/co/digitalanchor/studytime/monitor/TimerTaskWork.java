@@ -80,7 +80,8 @@ public class TimerTaskWork extends TimerTask {
         if (TextUtils.isEmpty(currentPackage)
                 || isLauncher(currentPackage)
                 || currentPackage.contains(".mms")
-                || currentPackage.contains(".contacts")) {
+                || currentPackage.contains(".contacts")
+                || currentPackage.contains("com.android.phone")) {
 
             // not work
 

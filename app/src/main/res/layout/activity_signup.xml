@@ -82,7 +82,7 @@
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/signup_content_text_margin_top"
-                  android:text="추가 정보입력 (필수 입력사항은 아닙니다.)"
+                  android:text="선택 정보입력 (필수 입력사항은 아닙니다.)"
                   android:textColor="@color/textColorType04"
                   android:textSize="@dimen/signup_content_edit_text_size" />
 
