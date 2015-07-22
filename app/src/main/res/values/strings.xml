@@ -37,7 +37,7 @@
 
     <!-- activity_child_list -->
     <string name="emptyChildren">관리할 자녀가 없습니다.</string>
-    <string name="labelInstall">자녀에게 앱 링크 전송 메뉴를 눌러 &apos;Study Time&apos; 자녀용을 설치해 주십시오.</string>
+    <string name="labelInstall">자녀에게 앱 링크 전송 메뉴를 눌러 \'Study Time\' 자녀용을 설치해 주십시오.</string>
 
     <!-- activity_child_login -->
     <string name="inputParentEmailHint">부모님의 등록 이메일 주소</string>
