@@ -8,7 +8,7 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 8
+        versionCode 9
         versionName "1.0.7"
     }
     buildTypes {
@@ -21,6 +21,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile files('libs/IgawCommon_v4.0.4a.jar')
     compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
@@ -30,7 +31,6 @@ dependencies {
     compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/simple-xml-2.7.1.jar')
     compile 'it.neokree:MaterialTabs:0.11'
-    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.robbypond:material-dialogs:1.0.0'
     compile 'com.orhanobut:logger:1.10'

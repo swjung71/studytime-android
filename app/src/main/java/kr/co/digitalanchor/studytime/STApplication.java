@@ -65,6 +65,10 @@ public class STApplication extends Application {
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
+        // TODO Google analystics initialize
+
+
+
         /**
          * Log setting
          * */

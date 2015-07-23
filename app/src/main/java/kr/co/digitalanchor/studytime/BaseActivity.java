@@ -17,7 +17,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
@@ -63,6 +62,13 @@ public class BaseActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+
+    @Override
     protected void onResume() {
 
         super.onResume();
@@ -76,6 +82,12 @@ public class BaseActivity extends Activity {
         super.onPause();
 
         IgawCommon.endSession();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override
