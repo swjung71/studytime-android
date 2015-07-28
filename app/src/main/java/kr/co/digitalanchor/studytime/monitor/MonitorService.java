@@ -30,6 +30,8 @@ public class MonitorService extends Service {
 
     TimerTask taskPreventAdmin; // Block device admin
 
+    TimerTask taskSyncData;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,9 +46,12 @@ public class MonitorService extends Service {
         /// Create Tasks
         taskBlocking = new TimerTaskWork(this);
         taskPreventAdmin = new TimerTaskPreventUncheckDeviceAdmin(this);
+        taskSyncData = new TimerTaskSyncData(this);
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskSyncData, 0, (long) (double) (600.0f * ONE_SEC));
+
     }
 
     /**

@@ -18,6 +18,7 @@ import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
+import kr.co.digitalanchor.studytime.model.CheckPackageResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
@@ -26,6 +27,7 @@ import kr.co.digitalanchor.studytime.model.Delete;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
+import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.NewPassword;
 import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
@@ -46,7 +48,7 @@ import kr.co.digitalanchor.studytime.model.db.VersionResult;
  */
 public class HttpHelper {
 
-    public static boolean isDev = false;
+    public static boolean isDev = true;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
@@ -831,7 +833,7 @@ public class HttpHelper {
     }
 
     public static SimpleXmlRequest getAllowDelete(Delete model, Listener listener,
-                                                  ErrorListener errorListener) {
+                                                   ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -849,6 +851,49 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<GeneralResult>(getURL() + "delete",
                     GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getSyncChildData(LoginModel model, Listener listener,
+                                                  ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync",
+                    CheckPackageResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

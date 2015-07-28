@@ -339,6 +339,11 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         STApplication.putRegisteredVersion(version);
     }
 
+    private void getUpdateGCM() {
+
+
+    }
+
     private void getAvailableUpdate() {
 
         DBHelper helper = new DBHelper(getApplicationContext());
