@@ -81,7 +81,8 @@ public class TimerTaskWork extends TimerTask {
                 || isLauncher(currentPackage)
                 || currentPackage.contains(".mms")
                 || currentPackage.contains(".contacts")
-                || currentPackage.contains("com.android.phone")) {
+                || currentPackage.contains("com.android.phone")
+                || currentPackage.contains("com.android.settings")) {
 
             // not work
 

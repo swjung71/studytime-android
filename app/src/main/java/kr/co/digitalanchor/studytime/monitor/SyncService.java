@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CheckPackageResult;
 import kr.co.digitalanchor.studytime.model.LoginModel;
@@ -73,6 +74,8 @@ public class SyncService extends Service {
                         int isOff = response.getIsOff();
 
                         dbHelper.updateOnOff(isOff);
+
+                        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
                     default:
 

@@ -49,7 +49,7 @@ import kr.co.digitalanchor.studytime.model.db.VersionResult;
  */
 public class HttpHelper {
 
-    public static boolean isDev = true;
+    public static boolean isDev = false;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
