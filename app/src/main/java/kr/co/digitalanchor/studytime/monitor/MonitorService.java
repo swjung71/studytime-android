@@ -50,7 +50,7 @@ public class MonitorService extends Service {
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskSyncData, 0, (long) (double) (600.0f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskSyncData, 0, (long) (double) (60.0f * ONE_SEC));
 
     }
 

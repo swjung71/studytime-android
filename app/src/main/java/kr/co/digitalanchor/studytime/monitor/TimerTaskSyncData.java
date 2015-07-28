@@ -3,6 +3,8 @@ package kr.co.digitalanchor.studytime.monitor;
 import android.content.Context;
 import android.content.Intent;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.TimerTask;
 
 /**
@@ -19,6 +21,8 @@ public class TimerTaskSyncData extends TimerTask {
 
     @Override
     public void run() {
+
+        Logger.d("TimerTaskSyncData");
 
         context.startService(new Intent(context, SyncService.class));
 

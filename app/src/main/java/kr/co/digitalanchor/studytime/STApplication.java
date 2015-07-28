@@ -72,7 +72,7 @@ public class STApplication extends Application {
         /**
          * Log setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
     }
 

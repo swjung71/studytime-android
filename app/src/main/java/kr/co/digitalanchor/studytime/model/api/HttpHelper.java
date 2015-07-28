@@ -1,6 +1,5 @@
 package kr.co.digitalanchor.studytime.model.api;
 
-import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -25,6 +24,7 @@ import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.Delete;
 import kr.co.digitalanchor.studytime.model.FAQResult;
+import kr.co.digitalanchor.studytime.model.GCMUpdate;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
 import kr.co.digitalanchor.studytime.model.LoginModel;
@@ -33,6 +33,7 @@ import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
 import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
 import kr.co.digitalanchor.studytime.model.ParentPrivacyInfo;
@@ -103,8 +104,6 @@ public class HttpHelper {
             HashMap<String, String> map = new HashMap<>();
 
             map.put("xml", writer.toString());
-
-            Logger.e(getURL());
 
             return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login",
                     ParentLoginResult.class, map, listener, errorListener);
@@ -833,7 +832,7 @@ public class HttpHelper {
     }
 
     public static SimpleXmlRequest getAllowDelete(Delete model, Listener listener,
-                                                   ErrorListener errorListener) {
+                                                  ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -876,7 +875,7 @@ public class HttpHelper {
     }
 
     public static SimpleXmlRequest getSyncChildData(LoginModel model, Listener listener,
-                                                  ErrorListener errorListener) {
+                                                    ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -894,6 +893,92 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync",
                     CheckPackageResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getSyncParentData(ParentModel model, Listener listener,
+                                                     ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync",
+                    ParentLoginResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getUpdate(GCMUpdate model, Listener listener,
+                                             ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "updateGCM",
+                    GeneralResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

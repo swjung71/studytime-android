@@ -30,6 +30,8 @@ import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
+import kr.co.digitalanchor.studytime.model.GCMUpdate;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -144,7 +146,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         mLayoutParentIntro.setVisibility(View.VISIBLE);
 
-        getAvailableUpdate();
+        registerGCM();
 
     }
 
@@ -154,7 +156,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         mLayoutChildIntro.setVisibility(View.VISIBLE);
 
-        getAvailableUpdate();
+        registerGCM();
 
     }
 
@@ -209,16 +211,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         if (checkPlayServices()) {
 
-            String id = getRegistrationId();
+            registerInBackground();
 
-            if (TextUtils.isEmpty(id)) {
-
-                registerInBackground();
-
-            } else {
-
-                showNextScreen(1000);
-            }
         }
     }
 
@@ -262,7 +256,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         if (registeredVersion != currentVersion) {
 
-            Logger.d("App version changed.");
+            Logger.d("Registration App version changed.");
 
             return "";
         }
@@ -323,7 +317,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                 if (result.compareTo("Succeed") == 0) {
 
-                    getAvailableUpdate();
+                    getUpdateGCM();
 
                     //showNextScreen(300);
                 }
@@ -341,7 +335,30 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void getUpdateGCM() {
 
+        DBHelper helper = new DBHelper(getApplicationContext());
+        Account account = helper.getAccountInfo();
 
+        GCMUpdate model = new GCMUpdate();
+
+        model.setGCM(STApplication.getRegistrationId());
+        model.setId(account.getID());
+        model.setIsChild(account.getIsChild());
+
+        SimpleXmlRequest request = HttpHelper.getUpdate(model, new Response.Listener<GeneralResult>() {
+            @Override
+            public void onResponse(GeneralResult response) {
+
+                getAvailableUpdate();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                getAvailableUpdate();
+            }
+        });
+
+        addRequest(request);
     }
 
     private void getAvailableUpdate() {
@@ -387,14 +404,14 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
                                 @Override
                                 public void onNegative(MaterialDialog materialDialog) {
 
-                                    registerGCM();
+                                    showNextScreen(10);
 
                                 }
                             }).build().show();
 
                         } else {
 
-                            registerGCM();
+                            showNextScreen(10);
                         }
 
                         break;

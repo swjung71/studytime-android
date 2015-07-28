@@ -32,6 +32,8 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CoinResult;
+import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -52,6 +54,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         IgawRewardItemEventListener {
 
     private final int REQUEST_UPDATE_COIN = 50001;
+
+    private final int REQUEST_UPDATE_DATA = 50002;
 
     TextView mLabelPoint;
 
@@ -131,10 +135,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         Logger.d("onStart");
 
-        drawView();
-
-        getData();
-
         if (registerChildReceiver == null) {
 
             registerChildReceiver = new RegisterChildReceiver();
@@ -146,6 +146,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         intentFilter.addAction(REGISTER_CHILD);
 
         registerReceiver(registerChildReceiver, intentFilter);
+
+        requestSyncData();
     }
 
     @Override
@@ -212,6 +214,14 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         switch (msg.what) {
 
             case REQUEST_UPDATE_COIN:
+
+                break;
+
+            case REQUEST_UPDATE_DATA:
+
+                drawView();
+
+                getData();
 
                 break;
 
@@ -430,7 +440,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                             case SUCCESS:
 
-                                mHelper.updateCoin(account.getID(), model.getCoin());
+                                mHelper.updateCoin(account.getID(), response.getCoin());
 
                                 drawView();
 
@@ -453,6 +463,53 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
                         handleError(error);
                     }
                 });
+
+        addRequest(request);
+    }
+
+    private void requestSyncData() {
+
+        showLoading();
+
+        final Account account = mHelper.getAccountInfo();
+
+        ParentModel model = new ParentModel();
+        model.setParentId(account.getID());
+
+        SimpleXmlRequest request = HttpHelper.getSyncParentData(model, new Response.Listener<ParentLoginResult>() {
+
+            @Override
+            public void onResponse(ParentLoginResult response) {
+
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        mHelper.updateAccount(response.getParentID(), 1, response.getName(),
+                                Integer.parseInt(response.getCoin()), response.getEmail());
+
+                        mHelper.insertChildren(response.getChildren());
+
+                    default:
+
+                        sendEmptyMessage(REQUEST_UPDATE_DATA);
+
+                        dismissLoading();
+
+                        break;
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                sendEmptyMessage(REQUEST_UPDATE_DATA);
+
+                dismissLoading();
+            }
+        });
 
         addRequest(request);
     }

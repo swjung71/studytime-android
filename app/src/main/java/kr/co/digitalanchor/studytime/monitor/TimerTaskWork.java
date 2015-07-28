@@ -87,7 +87,7 @@ public class TimerTaskWork extends TimerTask {
 
         } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") != 0) {
 
-            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+//            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
             killApplication(currentPackage);
         }

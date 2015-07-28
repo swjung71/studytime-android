@@ -15,7 +15,7 @@ public class Child {
     @Element(name = "Name", required = false, data = true)
     String name;
 
-    @Element(name="Is_off", required = false)
+    @Element(name = "Is_off", required = false)
     String isOff;
 
     @Element(name = "MsgCount", required = false)

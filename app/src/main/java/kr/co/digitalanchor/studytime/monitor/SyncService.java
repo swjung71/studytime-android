@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -27,6 +30,8 @@ public class SyncService extends Service {
 
         super.onCreate();
 
+        Logger.d("onCreate");
+
         dbHelper = new DBHelper(STApplication.applicationContext);
 
         requestSync();
@@ -45,6 +50,8 @@ public class SyncService extends Service {
 
     private void requestSync() {
 
+        Logger.d("requestSync");
+
         LoginModel model = new LoginModel();
 
         Account account = dbHelper.getAccountInfo();
@@ -56,6 +63,8 @@ public class SyncService extends Service {
 
             @Override
             public void onResponse(CheckPackageResult response) {
+
+                Logger.d(response.toString());
 
                 switch (response.getResultCode()) {
 
@@ -77,9 +86,17 @@ public class SyncService extends Service {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                Logger.e(error.toString());
+
                 stopSelf();
             }
         });
 
+        if (request != null) {
+
+            RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
+
+            queue.add(request);
+        }
     }
 }
