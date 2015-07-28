@@ -21,6 +21,9 @@ public class Child {
     @Element(name = "MsgCount", required = false)
     String msgCount;
 
+    @Element(name = "IsChanged", required = false)
+    String IsChanged;
+
     public Child() {
 
     }
@@ -64,5 +67,13 @@ public class Child {
 
     public void setIsOff(String isOff) {
         this.isOff = isOff;
+    }
+
+    public String getIsChanged() {
+        return IsChanged;
+    }
+
+    public void setIsChanged(String isChanged) {
+        IsChanged = isChanged;
     }
 }

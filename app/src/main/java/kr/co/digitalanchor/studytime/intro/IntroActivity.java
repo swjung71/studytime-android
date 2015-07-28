@@ -342,7 +342,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         model.setGCM(STApplication.getRegistrationId());
         model.setId(account.getID());
-        model.setIsChild(account.getIsChild());
+        model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
 
         SimpleXmlRequest request = HttpHelper.getUpdate(model, new Response.Listener<GeneralResult>() {
             @Override
@@ -374,7 +374,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
         GetVersion model = new GetVersion();
 
-        model.setIsChild(account.isChild());
+        model.setIsChild((account.isChild() == 0) ? 1 : 0);
 
         SimpleXmlRequest request = HttpHelper.getVersion(model, new Response.Listener<VersionResult>() {
             @Override
@@ -386,9 +386,9 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                         if (STApplication.isUpdate(response.getVersion())) {
 
-                            MaterialDialog.Builder buidler = new MaterialDialog.Builder(IntroActivity.this);
+                            MaterialDialog.Builder builder = new MaterialDialog.Builder(IntroActivity.this);
 
-                            buidler.title("업데이트")
+                            builder.title("업데이트")
                                     .content("새로운 버전이 출시되었습니다.\n업데이트 해주세요.")
                                     .positiveText("확인").negativeText("취소").cancelable(false).callback(new MaterialDialog.Callback() {
                                 @Override

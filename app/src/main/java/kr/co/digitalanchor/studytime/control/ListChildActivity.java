@@ -492,6 +492,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                     default:
 
+                        Logger.d(response.toString());
+
                         sendEmptyMessage(REQUEST_UPDATE_DATA);
 
                         dismissLoading();
@@ -504,6 +506,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                Logger.e(error.toString());
 
                 sendEmptyMessage(REQUEST_UPDATE_DATA);
 

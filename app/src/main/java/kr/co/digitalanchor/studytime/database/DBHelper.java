@@ -205,6 +205,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateAccount(String id, int isChild, String name, int coin, String email) {
 
+        Logger.d(name + " " + coin);
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
