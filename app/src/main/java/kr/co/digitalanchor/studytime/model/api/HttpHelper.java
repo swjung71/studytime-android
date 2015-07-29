@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 
+import kr.co.digitalanchor.studytime.model.AllPackage;
+import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.Board;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
@@ -979,6 +981,112 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<GeneralResult>(getURL() + "updateGCM",
                     GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * package 목록 보내기
+     * 최초 앱을 깔았을 때 보내는 것
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getAddAppList(AllPackage model, Listener listener,
+                                                 ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<AllPackageResult>(getURL() + "addAppList",
+                    AllPackageResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * package 목록 업데이트하기
+     * <p>
+     * 앱을 추가로 설치하거나, 삭제하거나, 업데이트할 때, 그리고 local db의 앱목록과
+     * 설치된 앱목록을 비교하여 cleaning 할 때 보낼 필요가 있으면 보냄
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getUpdateAppList(AllPackage model, Listener listener,
+                                                    ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<AllPackageResult>(getURL() + "addAppList",
+                    AllPackageResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

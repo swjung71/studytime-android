@@ -84,7 +84,8 @@ public class TimerTaskWork extends TimerTask {
                 || currentPackage.contains(".mms")
                 || currentPackage.contains(".contacts")
                 || currentPackage.contains("com.android.phone")
-                || currentPackage.contains("com.android.settings")) {
+                || currentPackage.contains("com.android.settings")
+                || currentPackage.contains("com.android.dialer")) {
 
             // not work
         } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
