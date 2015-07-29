@@ -19,7 +19,7 @@ public class PackageModel {
     String labelName;
 
     /**
-     * »èÁ¦ ¶Ç´Â ¾÷µ¥ÀÌÆ® ½Ã¿¡¸¸ ÀÖÀ½
+     * ì‚­ì œ ë˜ëŠ” ì—…ë°ì´íŠ¸ ì‹œì—ë§Œ ìˆìŒ
      */
     @Element(name = "PackageID", required = false)
     int packageId;
@@ -46,7 +46,7 @@ public class PackageModel {
     String iconHash;
 
     /**
-     * Ãß°¡ ½Ã 0, »èÁ¦ ½Ã 1, ¾÷µ¥ÀÌÆ® ½Ã 2
+     * add 0, delete 1, update 2
      */
     @Element(name = "State", required = false)
     int state;
