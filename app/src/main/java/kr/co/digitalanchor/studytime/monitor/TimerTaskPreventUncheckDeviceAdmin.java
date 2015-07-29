@@ -151,6 +151,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
             Logger.d(info.getClassName());
 
             isAdmin = info.getClassName().equalsIgnoreCase("com.android.settings.DeviceAdminAdd");
+
         }
 
         return !(context.getPackageName().equals(packageName) || isAdmin);

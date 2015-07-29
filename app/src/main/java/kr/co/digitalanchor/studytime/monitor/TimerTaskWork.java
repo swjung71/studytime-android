@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
+import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
@@ -83,6 +85,10 @@ public class TimerTaskWork extends TimerTask {
                 || currentPackage.contains(".contacts")
                 || currentPackage.contains("com.android.phone")
                 || currentPackage.contains("com.android.settings")) {
+
+            // not work
+        } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                && currentPackage.contains("com.android.packageinstaller")) {
 
             // not work
 
