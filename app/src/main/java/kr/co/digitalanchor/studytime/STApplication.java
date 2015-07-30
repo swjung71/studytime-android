@@ -15,6 +15,8 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -54,6 +56,9 @@ public class STApplication extends Application {
 
     private static final List<BaseActivity> activities = new ArrayList<>();
 
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
+
     @Override
     public void onCreate() {
 
@@ -67,7 +72,15 @@ public class STApplication extends Application {
 
         // TODO Google analystics initialize
 
+        analytics = GoogleAnalytics.getInstance(this);
+        analytics.setLocalDispatchPeriod(1800);
 
+        tracker = analytics.newTracker("UA-63663050-2");
+        tracker.setAppName("Studytime");
+        tracker.setAppVersion("1.0.9");
+        tracker.enableExceptionReporting(true);
+        tracker.enableAdvertisingIdCollection(true);
+        tracker.enableAutoActivityTracking(true);
 
         /**
          * Log setting
