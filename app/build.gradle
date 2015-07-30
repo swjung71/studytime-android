@@ -35,4 +35,6 @@ dependencies {
     compile 'com.robbypond:material-dialogs:1.0.0'
     compile 'com.orhanobut:logger:1.10'
     compile files('libs/IgawAdbrix_v4.0.3a.jar')
+    compile files('libs/nineoldandroids-2.4.0.jar')
+    compile 'com.android.support:recyclerview-v7:22.2.0'
 }

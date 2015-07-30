@@ -485,7 +485,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                     case SUCCESS:
 
-                        mHelper.updateAccount(response.getParentID(), 1, response.getName(),
+                        mHelper.updateAccount(response.getParentID(), 1, account.getName(),
                                 Integer.parseInt(response.getCoin()), response.getEmail());
 
                         mHelper.insertChildren(response.getChildren());
