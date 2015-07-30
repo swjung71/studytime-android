@@ -170,18 +170,15 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             case ACTIVATION_REQUEST:
 
-                if (resultCode == RESULT_OK) {
+                STApplication.putBoolean(StaticValues.SHOW_ADMIN, resultCode != RESULT_OK);
 
-                    completeRegister(mParentID, mChildID);
+                completeRegister(mParentID, mChildID);
 
-                    sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-                    sendEmptyMessage(COMPLETE_ADD_INFO, 300);
+                sendEmptyMessage(COMPLETE_ADD_INFO, 300);
 
-                } else {
-
-                    STApplication.resetApplication();
-                }
+                break;
         }
     }
 
@@ -412,11 +409,9 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private void completeRegister(String parentId, String childId) {
 
-        Logger.i(parentId + " " + childId +  "  " + mModel.getName());
+        Logger.i(parentId + " " + childId + "  " + mModel.getName());
 
         DBHelper helper = new DBHelper(getApplicationContext());
-
-        helper.clearAll();
 
         helper.insertAccount(childId, mModel.getName(), parentId);
 
