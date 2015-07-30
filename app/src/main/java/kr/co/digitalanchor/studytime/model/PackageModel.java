@@ -22,7 +22,7 @@ public class PackageModel {
      * 삭제 또는 업데이트 시에만 있음
      */
     @Element(name = "PackageID", required = false)
-    int packageId;
+    String packageId;
 
     @Element(name = "PackageVersion", required = false)
     String packageVersion;
@@ -45,11 +45,30 @@ public class PackageModel {
     @Element(name = "IconHash", required = false)
     String iconHash;
 
+    int changed;
+
     /**
      * add 0, delete 1, update 2
      */
     @Element(name = "State", required = false)
     int state;
+
+    public PackageModel() {
+
+        this.hash = null;
+        this.packageName = null;
+        this.labelName = null;
+        this.packageId = null;
+        this.packageVersion = null;
+        this.timestamp = null;
+        this.isExceptionApp = -1;
+        this.isDefaultApp = -1;
+        this.hasIcon = -1;
+        this.hasIconDB = -1;
+        this.iconHash = null;
+        this.state = -1;
+        this.changed = -1;
+    }
 
     public String getHash() {
         return hash;
@@ -115,11 +134,11 @@ public class PackageModel {
         this.hasIcon = hasIcon;
     }
 
-    public int getPackageId() {
+    public String getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(int packageId) {
+    public void setPackageId(String packageId) {
         this.packageId = packageId;
     }
 
@@ -145,5 +164,13 @@ public class PackageModel {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int getChanged() {
+        return changed;
+    }
+
+    public void setChanged(int changed) {
+        this.changed = changed;
     }
 }

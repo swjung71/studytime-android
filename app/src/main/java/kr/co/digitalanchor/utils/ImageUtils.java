@@ -14,6 +14,15 @@ import java.io.IOException;
  */
 public class ImageUtils {
 
+    private static String makeIconName(String packageName, String packageVersion) {
+
+        String name = null;
+
+        name = MD5.getHash(packageName + packageVersion);
+
+        return name;
+    }
+
     private static boolean saveBitmap(Context context, String fileName, Drawable drawable) {
 
         Bitmap bitmap;

@@ -338,6 +338,13 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         DBHelper helper = new DBHelper(getApplicationContext());
         Account account = helper.getAccountInfo();
 
+        if (TextUtils.isEmpty(account.getID())) {
+
+            getAvailableUpdate();
+
+            return;
+        }
+
         GCMUpdate model = new GCMUpdate();
 
         model.setGCM(STApplication.getRegistrationId());

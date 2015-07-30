@@ -21,7 +21,7 @@ public class ParentPhoneInfo {
     @Element(name = "Phone_number")
     String phoneNumber;
 
-    @Element(name = "Nation_code")
+    @Element(name = "National_code")
     String nationCode;
 
     @Element(name = "Is_Android")
