@@ -69,6 +69,11 @@
             android:name="igaworks_reward_server_type"
             android:value="client" />
 
+        <!-- google analytics configuration -->
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker" />
+
         <!--
             IntroActivity (공통)
 
@@ -264,6 +269,14 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
             </intent-filter>
         </receiver>
+
+        <!-- google analytics compaignTracking -->
+        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="om.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
         <activity
             android:name=".devicepolicy.DummyActivity"

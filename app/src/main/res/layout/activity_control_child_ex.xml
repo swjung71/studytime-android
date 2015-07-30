@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/buttonShutdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:src="@drawable/button_on_selector" />
+
+        <ImageButton
+            android:id="@+id/buttonChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/child_control_chat_margin_top"
+            android:background="@null"
+            android:src="@drawable/button_chat" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/buttonUse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="@dimen/child_control_info_button_margin_bottom"
+        android:layout_marginRight="@dimen/child_control_info_button_margin_right"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/button_use" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_title_bar_height"
+        android:background="@color/black_opacity_50">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="34.67dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:background="@drawable/img_point"
+            android:orientation="horizontal"
+            android:paddingRight="@dimen/children_list_point_box_padding">
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelPoint"
+                android:layout_width="@dimen/children_list_point_label_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/children_list_point_label_margin_left"
+                android:maxLength="3"
+                android:paddingLeft="@dimen/children_list_point_label_padding_left"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/children_list_point_label_text_size" />
+
+            <ImageButton
+                android:id="@+id/buttonPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/children_list_point_button_margin_left"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/button_point" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/buttonMenu"
+            android:layout_width="@dimen/children_list_menu_button_width"
+            android:layout_height="@dimen/children_list_menu_button_height"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            android:clickable="true"
+            android:padding="@dimen/children_list_menu_button_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_menu" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/imgGuide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_opacity_50"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <kr.co.digitalanchor.studytime.view.FontButton
+            android:id="@+id/buttonClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/child_control_guide_close_margin"
+            android:layout_marginTop="@dimen/child_control_guide_close_margin"
+            android:background="@color/transparent"
+            android:text="X"
+            android:textColor="@color/white"
+            android:textSize="@dimen/child_control_guide_close_text_size" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/child_control_info_guide_01_margin_left"
+            android:layout_marginTop="@dimen/child_control_info_guide_01_margin_top"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/child_control_info_guide_02_margin_left"
+            android:layout_marginTop="@dimen/child_control_info_guide_02_margin_top"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text2" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/child_control_info_guide_03_margin_left"
+            android:layout_marginTop="@dimen/child_control_info_guide_03_margin_top"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text3" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/child_control_info_guide_04_margin_left"
+            android:layout_marginTop="@dimen/child_control_info_guide_04_margin_top"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text4" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/child_control_info_guide_05_margin_bottom"
+            android:layout_marginRight="@dimen/child_control_info_guide_05_margin_right"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text5" />
+
+    </FrameLayout>
+
+</FrameLayout>
