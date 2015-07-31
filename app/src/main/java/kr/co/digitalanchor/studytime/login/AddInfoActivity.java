@@ -3,6 +3,10 @@ package kr.co.digitalanchor.studytime.login;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -18,16 +22,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.devicepolicy.AdminReceiver;
+import kr.co.digitalanchor.studytime.model.AllPackage;
+import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
+import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.ClauseViewActivity;
+import kr.co.digitalanchor.utils.AndroidUtils;
+import kr.co.digitalanchor.utils.MD5;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -38,8 +51,10 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 public class AddInfoActivity extends BaseActivity implements View.OnClickListener {
 
     private final int REQUEST_ADD_INFO = 50001;
-    private final int COMPLETE_ADD_INFO = 50002;
-    private final int ACTIVATION_REQUEST = 50002;
+    private final int REQUEST_UPLOAD_PACKAGES = 50002;
+    private final int COMPLETE_ADD_INFO = 50003;
+
+    private final int ACTIVATION_REQUEST = 40003;
 
     EditText mEditName;
 
@@ -65,6 +80,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private boolean isModify;
 
+    private DBHelper mHelper;
 
 
     @Override
@@ -76,6 +92,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         getIntentData();
 
         initView();
+
+        mHelper = new DBHelper(getApplicationContext());
     }
 
     private void initView() {
@@ -144,6 +162,11 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             case REQUEST_ADD_INFO:
 
                 requestSendAdditionalInfo();
+
+                break;
+
+            case REQUEST_UPLOAD_PACKAGES:
+
 
                 break;
 
@@ -411,9 +434,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         Logger.i(parentId + " " + childId + "  " + mModel.getName());
 
-        DBHelper helper = new DBHelper(getApplicationContext());
-
-        helper.insertAccount(childId, mModel.getName(), parentId);
+        mHelper.insertAccount(childId, mModel.getName(), parentId);
 
     }
 
@@ -424,6 +445,129 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
                 new ComponentName(this, AdminReceiver.class));
 
-        startActivityForResult(intent, ACTIVATION_REQUEST);
+       startActivityForResult(intent, ACTIVATION_REQUEST);
+
+//        startActivityForResult(intent, REQUEST_UPLOAD_PACKAGES);
+    }
+
+    /**
+     * Package 목록 보내기
+     */
+    private void requestAddApps() {
+
+        showLoading();
+
+        Account account = mHelper.getAccountInfo();
+
+        List<PackageModel> packages = getAppListFromDevice();
+
+        mHelper.addApplications(packages);
+
+        AllPackage model = new AllPackage();
+
+        model.setPackages(packages);
+        model.setChildId(account.getID());
+        model.setParentId(account.getParentId());
+
+        SimpleXmlRequest request = HttpHelper.getAddAppList(model,
+                new Response.Listener<AllPackageResult>() {
+                    @Override
+                    public void onResponse(AllPackageResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case HttpHelper.SUCCESS:
+
+                                // TODO local db update
+                                updateLocalDB(response.getPackages());
+
+                            default:
+
+                                dismissLoading();
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void updateLocalDB(List<PackageModel> packages) {
+
+        for (PackageModel model : packages) {
+
+            mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
+                    model.getHasIconDB());
+        }
+    }
+
+    /**
+     * 처음 한번 호출
+     *
+     * @return
+     */
+    private List<PackageModel> getAppListFromDevice() {
+
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+
+        intent.addCategory(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+
+        List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
+
+        List<PackageModel> packageModels = new ArrayList<>();
+
+        for (ResolveInfo r : apps) {
+
+            PackageInfo packageInfo = null;
+
+            try {
+
+                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
+
+            } catch (PackageManager.NameNotFoundException e) {
+
+                continue;
+            }
+
+            if (packageInfo == null) {
+
+                continue;
+            }
+
+            PackageModel model = new PackageModel();
+
+            model.setPackageName(packageInfo.packageName);
+            model.setHash(MD5.getHash(packageInfo.packageName));
+            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
+            model.setPackageVersion(packageInfo.versionName);
+            model.setIsExceptionApp(0);
+            model.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
+
+            model.setTimestamp(AndroidUtils.convertTimeStamp4Chat(packageInfo.firstInstallTime));
+
+            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+
+                model.setIsDefaultApp(1);
+
+            } else {
+
+                model.setIsDefaultApp(0);
+            }
+
+            packageModels.add(model);
+        }
+
+        return packageModels;
     }
 }

@@ -1071,6 +1071,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPLICATION_FOR_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);

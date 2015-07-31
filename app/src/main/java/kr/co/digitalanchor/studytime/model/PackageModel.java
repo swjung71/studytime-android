@@ -12,10 +12,10 @@ public class PackageModel {
     @Element(name = "Hash", required = false)
     String hash;
 
-    @Element(name = "PackageName", required = false)
+    @Element(name = "PackageName", required = false, data = true)
     String packageName;
 
-    @Element(name = "LabelName", required = false)
+    @Element(name = "LabelName", required = false, data = true)
     String labelName;
 
     /**

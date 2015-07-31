@@ -2,13 +2,10 @@ package kr.co.digitalanchor.studytime.app;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -54,14 +51,8 @@ public class AppManageService extends Service {
 
         List<PackageModel> packageList;
 
-        if (isFirst) {
 
-            packageList = getAppListFromDevice();
-
-        } else {
-
-            packageList = getAbsenceAppList();
-        }
+        packageList = getAbsenceAppList();
 
         dbHelper.addApplications(packageList);
 
@@ -91,68 +82,6 @@ public class AppManageService extends Service {
         return null;
     }
 
-
-    /**
-     * 처음 한번 호출
-     *
-     * @return
-     */
-    private List<PackageModel> getAppListFromDevice() {
-
-        PackageManager manager = getPackageManager();
-
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-
-        intent.addCategory(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-
-        List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
-
-        List<PackageModel> packageModels = new ArrayList<>();
-
-        for (ResolveInfo r : apps) {
-
-            PackageInfo packageInfo = null;
-
-            try {
-
-                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
-
-            } catch (PackageManager.NameNotFoundException e) {
-
-                continue;
-            }
-
-            if (packageInfo == null) {
-
-                continue;
-            }
-
-            PackageModel model = new PackageModel();
-
-            model.setPackageName(packageInfo.packageName);
-            model.setHash(MD5.getHash(packageInfo.packageName));
-            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
-            model.setPackageVersion(packageInfo.versionName);
-            model.setIsExceptionApp(0);
-            model.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
-
-            model.setTimestamp(AndroidUtils.convertTimeStamp4Chat(packageInfo.firstInstallTime));
-
-            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
-
-                model.setIsDefaultApp(1);
-
-            } else {
-
-                model.setIsDefaultApp(0);
-            }
-
-            packageModels.add(model);
-        }
-
-        return packageModels;
-    }
 
     /**
      * 업데이트 내용
@@ -238,56 +167,7 @@ public class AppManageService extends Service {
         return packageModels;
     }
 
-    /**
-     * Package 목록 보내기
-     */
-    private void requestAddApps() {
 
-        Account account = dbHelper.getAccountInfo();
-
-        List<PackageModel> packages = dbHelper.getPackageList();
-
-        AllPackage model = new AllPackage();
-
-        model.setPackages(packages);
-        model.setChildId(account.getID());
-        model.setParentId(account.getParentId());
-
-        SimpleXmlRequest request = HttpHelper.getAddAppList(model,
-                new Response.Listener<AllPackageResult>() {
-                    @Override
-                    public void onResponse(AllPackageResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case HttpHelper.SUCCESS:
-
-                                // TODO local db update
-                                updateLocalDB(response.getPackages());
-
-                                break;
-
-                            default:
-
-                                Logger.e(response.getResultMessage());
-
-                                break;
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Logger.e(error.toString());
-                    }
-                });
-
-        if (request != null) {
-
-            requestQueue.add(request);
-        }
-    }
 
     private void requestUpdateApps() {
 
