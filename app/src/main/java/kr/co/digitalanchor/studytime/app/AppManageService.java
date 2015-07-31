@@ -79,11 +79,7 @@ public class AppManageService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Logger.d(AppManageService.class.getSimpleName() + "" + intent.getAction());
 
-        mHandler = new Handler();
-
-        mHandler.post(new ToastRunnable(intent.getAction()));
 
         switch (intent.getAction()) {
 
