@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -18,10 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.PackageModel;
+import kr.co.digitalanchor.studytime.model.PackageResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.utils.AndroidUtils;
@@ -38,6 +42,8 @@ public class AppManageService extends Service {
 
     boolean isFirst;
 
+    private Handler mHandler;
+
     @Override
     public void onCreate() {
 
@@ -47,14 +53,6 @@ public class AppManageService extends Service {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        isFirst = (dbHelper.getPackageListSize() < 1);
-
-        List<PackageModel> packageList;
-
-
-        packageList = getAbsenceAppList();
-
-        dbHelper.addApplications(packageList);
 
     }
 
@@ -65,10 +63,49 @@ public class AppManageService extends Service {
 
     }
 
+    private class ToastRunnable implements Runnable {
+        String mText;
+
+        public ToastRunnable(String text) {
+            mText = text;
+        }
+
+        @Override
+        public void run(){
+            Toast.makeText(getApplicationContext(), mText, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Logger.d(AppManageService.class.getSimpleName() + "" + intent.getAction());
+
+        mHandler = new Handler();
+
+        mHandler.post(new ToastRunnable(intent.getAction()));
+
         switch (intent.getAction()) {
+
+            case StaticValues.ACTION_PACKAGE_SYNC:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_ADDED:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_REPLACED:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_REMOVED:
+
+
+                break;
 
             default:
                 break;
@@ -168,7 +205,6 @@ public class AppManageService extends Service {
     }
 
 
-
     private void requestUpdateApps() {
 
         Account account = dbHelper.getAccountInfo();
@@ -215,12 +251,12 @@ public class AppManageService extends Service {
         }
     }
 
-    private void updateLocalDB(List<PackageModel> packages) {
+    private void updateLocalDB(List<PackageResult> packages) {
 
-        for (PackageModel model : packages) {
+        for (PackageResult model : packages) {
 
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getHasIconDB());
+                    model.getDoExistInDB());
         }
     }
 }

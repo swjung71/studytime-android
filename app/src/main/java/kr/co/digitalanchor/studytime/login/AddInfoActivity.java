@@ -31,11 +31,14 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.devicepolicy.AdminReceiver;
+import kr.co.digitalanchor.studytime.model.AddPackageElement;
+import kr.co.digitalanchor.studytime.model.AddPackageModel;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.PackageModel;
+import kr.co.digitalanchor.studytime.model.PackageResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.ClauseViewActivity;
@@ -167,6 +170,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             case REQUEST_UPLOAD_PACKAGES:
 
+                requestAddApps();
 
                 break;
 
@@ -195,11 +199,13 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                 STApplication.putBoolean(StaticValues.SHOW_ADMIN, resultCode != RESULT_OK);
 
-                completeRegister(mParentID, mChildID);
+//                completeRegister(mParentID, mChildID);
 
-                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+//                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-                sendEmptyMessage(COMPLETE_ADD_INFO, 300);
+//                sendEmptyMessage(COMPLETE_ADD_INFO, 300);
+
+                sendEmptyMessage(REQUEST_UPLOAD_PACKAGES);
 
                 break;
         }
@@ -445,7 +451,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
                 new ComponentName(this, AdminReceiver.class));
 
-       startActivityForResult(intent, ACTIVATION_REQUEST);
+        startActivityForResult(intent, ACTIVATION_REQUEST);
 
 //        startActivityForResult(intent, REQUEST_UPLOAD_PACKAGES);
     }
@@ -459,15 +465,15 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         Account account = mHelper.getAccountInfo();
 
-        List<PackageModel> packages = getAppListFromDevice();
+        List<AddPackageElement> packages = getAppListFromDevice();
 
-        mHelper.addApplications(packages);
+        mHelper.addAppList(packages);
 
-        AllPackage model = new AllPackage();
+        AddPackageModel model = new AddPackageModel();
 
         model.setPackages(packages);
-        model.setChildId(account.getID());
-        model.setParentId(account.getParentId());
+        model.setChildId(mChildID);
+        model.setParentId(mParentID);
 
         SimpleXmlRequest request = HttpHelper.getAddAppList(model,
                 new Response.Listener<AllPackageResult>() {
@@ -481,9 +487,25 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                                 // TODO local db update
                                 updateLocalDB(response.getPackages());
 
-                            default:
+                                completeRegister(mParentID, mChildID);
+
+                                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+
+                                sendEmptyMessage(COMPLETE_ADD_INFO);
+
+                                // test
+//                                mHelper.clearAll();
+
+                                // test
+                                STApplication.clear();
 
                                 dismissLoading();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
 
                                 break;
                         }
@@ -500,12 +522,17 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         addRequest(request);
     }
 
-    private void updateLocalDB(List<PackageModel> packages) {
+    private void updateLocalDB(List<PackageResult> packages) {
 
-        for (PackageModel model : packages) {
+        if (packages == null) {
+
+            return;
+        }
+
+        for (PackageResult model : packages) {
 
             mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getHasIconDB());
+                    model.getDoExistInDB());
         }
     }
 
@@ -514,18 +541,17 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
      *
      * @return
      */
-    private List<PackageModel> getAppListFromDevice() {
+    private List<AddPackageElement> getAppListFromDevice() {
 
         PackageManager manager = getPackageManager();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
 
-        intent.addCategory(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
 
-        List<PackageModel> packageModels = new ArrayList<>();
+        List<AddPackageElement> packageModels = new ArrayList<>();
 
         for (ResolveInfo r : apps) {
 
@@ -545,16 +571,16 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                 continue;
             }
 
-            PackageModel model = new PackageModel();
+            AddPackageElement model = new AddPackageElement();
 
             model.setPackageName(packageInfo.packageName);
             model.setHash(MD5.getHash(packageInfo.packageName));
             model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
             model.setPackageVersion(packageInfo.versionName);
             model.setIsExceptionApp(0);
-            model.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
+            model.setHasIcon(1);
 
-            model.setTimestamp(AndroidUtils.convertTimeStamp4Chat(packageInfo.firstInstallTime));
+            model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
 
             if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
 

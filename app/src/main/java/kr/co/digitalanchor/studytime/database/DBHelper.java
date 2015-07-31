@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
@@ -103,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + STATE + " INTEGER DEFAULT 0, "
             + HAS_ICON + " INTEGER DEFAULT 1, "
             + HAS_ICON_IN_DB + " INTEGER DEFAULT 0, "
-            + ICON_HASH + " TEXT NOT NULL, "
+            + ICON_HASH + " TEXT , "
             + CHANGED + " INTEGER DEFAULT 0 ) ";
 
     public DBHelper(Context context) {
@@ -184,6 +185,52 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_TABLE_APP_FOR_CHILD);
 
         }
+    }
+
+    /**
+     *
+     * @param packages
+     */
+    public void addAppList(List<AddPackageElement> packages) {
+
+        for (AddPackageElement element : packages) {
+
+            addApp(element);
+        }
+
+    }
+
+    public void addApp(AddPackageElement model) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        if (!TextUtils.isEmpty(model.getHash()))
+            values.put(PACKAGE_HASH, model.getHash());
+
+        if (!TextUtils.isEmpty(model.getPackageName()))
+            values.put(PACKAGE_NAME, model.getPackageName());
+
+        if (!TextUtils.isEmpty(model.getLabelName()))
+            values.put(LABEL_NAME, model.getLabelName());
+
+        if (!TextUtils.isEmpty(model.getPackageVersion()))
+            values.put(PACKAGE_VERSION, model.getPackageVersion());
+
+        if (!TextUtils.isEmpty(model.getTimestamp()))
+            values.put(TIMESTAMP, model.getTimestamp());
+
+        if (model.getIsDefaultApp() > -1)
+            values.put(IS_DEFAULT, model.getIsDefaultApp());
+
+        if (model.getIsExceptionApp() > -1)
+            values.put(IS_DEFAULT, model.getIsExceptionApp());
+
+        if (model.getIsDefaultApp() > -1)
+            values.put(IS_DEFAULT, model.getIsDefaultApp());
+
+        db.replace(TABLE_APPLICATION_FOR_CHILD, null, values);
     }
 
     /**
@@ -384,6 +431,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, null,
                 null, null, null, LABEL_NAME + " ASC", null);
+
+        Logger.d(cursor.getCount() + "count");
 
         if (cursor.moveToFirst()) {
 
@@ -1079,4 +1128,5 @@ public class DBHelper extends SQLiteOpenHelper {
 
         onCreate(db);
     }
+
 }

@@ -25,7 +25,7 @@ public class AllPackageResult {
     String childId;
 
     @ElementList(name = "Package", required = false, inline = true)
-    List<PackageModel> packages;
+    List<PackageResult> packages;
 
     public int getResultCode() {
         return resultCode;
@@ -59,11 +59,11 @@ public class AllPackageResult {
         this.childId = childId;
     }
 
-    public List<PackageModel> getPackages() {
+    public List<PackageResult> getPackages() {
         return packages;
     }
 
-    public void setPackages(List<PackageModel> packages) {
+    public void setPackages(List<PackageResult> packages) {
         this.packages = packages;
     }
 }
