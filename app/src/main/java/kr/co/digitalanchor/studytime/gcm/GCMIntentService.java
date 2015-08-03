@@ -317,6 +317,7 @@ public class GCMIntentService extends IntentService {
                 Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
 
                 Intent controlChild = new Intent(STApplication.applicationContext, ControlChildActivity.class);
+
                 controlChild.putExtra("ChildID", senderId);
 
                 Intent chat = new Intent(STApplication.applicationContext, ParentChatActivity.class);

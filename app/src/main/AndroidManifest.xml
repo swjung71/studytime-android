@@ -117,6 +117,12 @@
             android:name=".control.ControlChildActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".control.ControlChildExActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
         <activity
             android:name=".signup.WithdrawActivity"
             android:screenOrientation="portrait"
@@ -277,7 +283,7 @@
             android:name=".devicepolicy.DummyActivity"
             android:label="@string/title_activity_dummy"></activity>
 
-        <service android:name=".app.AppManageService"/>
+        <service android:name=".app.AppManageService" />
 
         <receiver android:name=".app.PackageReceiver">
 

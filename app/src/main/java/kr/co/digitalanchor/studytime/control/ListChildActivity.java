@@ -319,7 +319,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         Intent intent = new Intent();
 
-        intent.setClass(getApplicationContext(), ControlChildActivity.class);
+//        intent.setClass(getApplicationContext(), ControlChildActivity.class);
+         intent.setClass(getApplicationContext(), ControlChildExActivity.class);
 
         intent.putExtra("ChildID", child.getChildID());
         intent.putExtra("Name", child.getName());
