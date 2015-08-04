@@ -1,34 +1,21 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.ActivityManager;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.orhanobut.logger.Logger;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Objects;
-import java.util.SortedMap;
 import java.util.TimerTask;
-import java.util.TreeMap;
 
-import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.studytime.block.BlockPasswordActivity;
 import kr.co.digitalanchor.studytime.block.BlockPasswordLayout;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.model.db.Account;
 
 /**
  * Created by Thomas on 2015-07-01.
@@ -156,4 +143,5 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         return !(context.getPackageName().equals(packageName) || isAdmin);
     }
+
 }

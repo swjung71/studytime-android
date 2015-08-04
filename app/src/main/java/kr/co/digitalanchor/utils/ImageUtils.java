@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class ImageUtils {
 
-    private static String makeIconName(String packageName, String packageVersion) {
+    public static String makeIconName(String packageName, String packageVersion) {
 
         String name = null;
 
@@ -23,7 +23,7 @@ public class ImageUtils {
         return name;
     }
 
-    private static boolean saveBitmap(Context context, String fileName, Drawable drawable) {
+    public static String saveBitmap(Context context, String fileName, Drawable drawable) {
 
         Bitmap bitmap;
 
@@ -47,11 +47,18 @@ public class ImageUtils {
 
             boolean result = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
 
-            return result;
+            if (result) {
+
+                return context.getFileStreamPath(fileName).getPath();
+
+            } else {
+
+                return null;
+            }
 
         } catch (FileNotFoundException e) {
 
-            return false;
+            return null;
 
         } finally {
 

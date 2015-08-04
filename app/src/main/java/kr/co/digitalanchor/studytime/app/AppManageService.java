@@ -40,8 +40,6 @@ public class AppManageService extends Service {
 
     RequestQueue requestQueue;
 
-    boolean isFirst;
-
     private Handler mHandler;
 
     @Override
@@ -53,7 +51,6 @@ public class AppManageService extends Service {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-
     }
 
     @Override
@@ -63,23 +60,8 @@ public class AppManageService extends Service {
 
     }
 
-    private class ToastRunnable implements Runnable {
-        String mText;
-
-        public ToastRunnable(String text) {
-            mText = text;
-        }
-
-        @Override
-        public void run(){
-            Toast.makeText(getApplicationContext(), mText, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-
 
         switch (intent.getAction()) {
 
@@ -115,7 +97,6 @@ public class AppManageService extends Service {
         return null;
     }
 
-
     /**
      * 업데이트 내용
      *
@@ -150,6 +131,16 @@ public class AppManageService extends Service {
             }
 
             if (packageInfo == null) {
+
+                continue;
+
+            } else if (packageInfo.packageName.equals(getApplicationContext().getPackageName())
+                    || packageInfo.packageName.contains(".mms")
+                    || packageInfo.packageName.contains(".contacts")
+                    || packageInfo.packageName.contains("com.android.phone")
+                    || packageInfo.packageName.contains("com.android.settings")
+                    || packageInfo.packageName.contains("com.android.dialer")) {
+
 
                 continue;
             }

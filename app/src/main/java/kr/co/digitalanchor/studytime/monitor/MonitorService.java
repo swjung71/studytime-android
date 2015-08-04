@@ -32,6 +32,8 @@ public class MonitorService extends Service {
 
     TimerTask taskSyncData;
 
+    TimerTask taskUpdatePackageList;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -47,10 +49,12 @@ public class MonitorService extends Service {
         taskBlocking = new TimerTaskWork(this);
         taskPreventAdmin = new TimerTaskPreventUncheckDeviceAdmin(this);
         taskSyncData = new TimerTaskSyncData(this);
+        taskUpdatePackageList = new TimerTaskUpdatePackageList(this);
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskSyncData, 0, (long) (double) (600.0f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskSyncData, (long) (double) (300.0f * ONE_SEC), (long) (double) (600.0f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, (long) (double) (400.0f * ONE_SEC), (long) (double) (600.0f * ONE_SEC));
 
     }
 

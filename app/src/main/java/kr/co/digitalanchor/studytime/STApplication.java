@@ -7,14 +7,17 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.orhanobut.logger.LogLevel;
@@ -42,12 +45,11 @@ import static kr.co.digitalanchor.studytime.StaticValues.PREF;
 /**
  * Created by Thomas on 2015-06-10.
  */
-public class STApplication extends Application {
+public class STApplication extends MultiDexApplication {
 
     /**
      * xxh-dpi 으로 제작됨
      */
-
     public static volatile Context applicationContext;
 
     public static volatile Handler applicationHandler;
@@ -58,6 +60,11 @@ public class STApplication extends Application {
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
+
+    private static final int DEFAULT_CACHE_SIZE = 10485760;
+    private static final long DEFAULT_MAX_AGE = 60L;
+
+    private static ImageLoader imageLoader;
 
     @Override
     public void onCreate() {
@@ -82,8 +89,6 @@ public class STApplication extends Application {
         tracker.enableExceptionReporting(true);
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
-
-
 
         /**
          * Log setting
@@ -585,5 +590,6 @@ public class STApplication extends Application {
 
         applicationContext.startActivity(intent);
     }
+
 
 }

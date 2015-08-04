@@ -10,6 +10,13 @@ android {
         targetSdkVersion 22
         versionCode 11
         versionName "1.0.9"
+        multiDexEnabled = true
+    }
+
+    packagingOptions{
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
     }
     buildTypes {
         release {
@@ -21,14 +28,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
     compile files('libs/IgawCommon_v4.0.4a.jar')
     compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
     compile files('libs/apache-mime4j-core-0.7.2.jar')
-    compile files('libs/httpclient-4.3.3.jar')
-    compile files('libs/httpcore-4.3.2.jar')
-    compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/simple-xml-2.7.1.jar')
     compile 'it.neokree:MaterialTabs:0.11'
     compile 'com.android.support:support-v4:22.2.0'
@@ -37,4 +41,10 @@ dependencies {
     compile files('libs/IgawAdbrix_v4.0.3a.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.jakewharton:disklrucache:2.0.2'
+    compile('org.apache.httpcomponents:httpmime:4.3.6') {
+
+        exclude module: 'httpclient'
+    }
+    compile files('libs/httpclient-android-4.3.5.jar')
 }

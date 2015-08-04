@@ -2,20 +2,22 @@ package kr.co.digitalanchor.studytime.model.api;
 
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+import com.android.volley.toolbox.MultipartRequest;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 
-import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AddPackageModel;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
+import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.Board;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
@@ -27,10 +29,12 @@ import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.Delete;
+import kr.co.digitalanchor.studytime.model.ExceptionApp;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetVersion;
+import kr.co.digitalanchor.studytime.model.IconModel;
 import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.NewPassword;
 import kr.co.digitalanchor.studytime.model.NoticesResult;
@@ -82,6 +86,18 @@ public class HttpHelper {
         } else {
 
             return PROTOCOL + DOMAIN + PATH;
+        }
+    }
+
+    public static String getImageURL(String path) {
+
+        if (isDev) {
+
+            return PROTOCOL_DEV + DOMAIN_DEV + path;
+
+        } else {
+
+            return PROTOCOL + DOMAIN + path;
         }
     }
 
@@ -1089,6 +1105,151 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<AllPackageResult>(getURL() + "addAppList",
                     AllPackageResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * 부모용 자식 앱의 설치된 앱 목록 받아오기
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getPackageForParent(LoginModel model, Listener listener,
+                                                       ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<AllPackageResultForParent>(getURL() + "parent/getAllPackage",
+                    AllPackageResultForParent.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * 부모용 자녀 폰의 예외 앱 설정
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getSettingExceptioenApp(ExceptionApp model, Listener listener,
+                                                           ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/setExceptionApp",
+                    GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static MultipartRequest getUploadIcon(IconModel model, File file, Listener listener,
+                                                 ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new MultipartRequest<GeneralResult>(getURL() + "updateIcon",
+                    GeneralResult.class, file, map, listener, errorListener);
 
         } catch (Exception e) {
 

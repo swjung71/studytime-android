@@ -351,16 +351,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mParallaxOffset == -1) {
             mParallaxOffset = (int) (DEFAULT_PARALAX_OFFSET * density);
         }
+
         // If the shadow height is zero, don't show the shadow
-        if (mShadowHeight > 0) {
-            if (mIsSlidingUp) {
-                mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
-            } else {
-                mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
-            }
-        } else {
-            mShadowDrawable = null;
-        }
+//        if (mShadowHeight > 0) {
+//            if (mIsSlidingUp) {
+//                mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
+//            } else {
+//                mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
+//            }
+//        } else {
+//            mShadowDrawable = null;
+//        }
+
+        mShadowDrawable = null;
 
         setWillNotDraw(false);
 
@@ -942,6 +945,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
+
         final int action = MotionEventCompat.getActionMasked(ev);
 
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {

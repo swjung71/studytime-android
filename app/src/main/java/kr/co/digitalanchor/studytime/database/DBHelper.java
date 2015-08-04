@@ -35,6 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_ON_OFF = "onOff_table";
     private static final String TABLE_MESSAGE = "message_table";
     private static final String TABLE_APPLICATION_FOR_CHILD = "application_table_for_child";
+    private static final String TABLE_APPLICATION_FOR_PARENT = "application_table_for_parent";
     private static final String TRIGGER_NEW_MESSAGE = "new_message_trigger";
 
 
@@ -188,12 +189,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
      * @param packages
      */
     public void addAppList(List<AddPackageElement> packages) {
 
         for (AddPackageElement element : packages) {
+
+            Logger.d(element.getPackageName() + " " + element.getLabelName());
 
             addApp(element);
         }
@@ -355,21 +357,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String[] result_columns = new String[]{EXCEPTED};
 
-        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
-                new String[]{packageName}, null, null, null, null);
+        Cursor cursor = null;
 
-        if (cursor.moveToFirst()) {
+        try {
 
-            do {
+            cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
+                    new String[]{packageName}, null, null, null, null);
 
-                result = (cursor.getInt(0) == 0) ? false : true;
+            if (cursor.moveToFirst()) {
 
-            } while (cursor.moveToNext());
+                do {
+
+                    result = (cursor.getInt(0) == 0) ? false : true;
+
+                } while (cursor.moveToNext());
+            }
+
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (cursor != null)
+                cursor.close();
+
+            cursor = null;
         }
-
-        cursor.close();
-
-        cursor = null;
 
         return result;
     }
@@ -412,6 +425,59 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         return hash;
+    }
+
+    public List<AddPackageElement> getAddPackageList() {
+
+        List<AddPackageElement> list = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] result_columns = new String[]{PACKAGE_NAME, PACKAGE_HASH,
+                LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP,
+                HAS_ICON};
+
+        Cursor cursor = null;
+
+        try {
+
+            cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, null,
+                    null, null, null, LABEL_NAME + " ASC", null);
+
+            if (cursor.moveToFirst()) {
+
+                do {
+
+                    AddPackageElement model = new AddPackageElement();
+
+                    model.setPackageName(cursor.getString(0));
+                    model.setHash(cursor.getString(1));
+                    model.setLabelName(cursor.getString(2));
+                    model.setPackageVersion(cursor.getString(3));
+                    model.setIsExceptionApp(cursor.getInt(4));
+                    model.setIsDefaultApp(cursor.getInt(5));
+                    model.setTimestamp(cursor.getString(6));
+                    model.setHasIcon(cursor.getInt(7));
+
+                    list.add(model);
+
+                } while (cursor.moveToNext());
+
+            }
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
+
+            cursor = null;
+        }
+
+        return list;
     }
 
     /**
@@ -486,7 +552,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] columns = new String[]{PACKAGE_NAME, PACKAGE_HASH, ICON_HASH,
                 PACKAGE_VERSION, CHANGED};
 
-        String [] params = new String [] { "0", "1" };
+        String[] params = new String[]{"0", "1"};
 
         Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns,
                 HAS_ICON_IN_DB + "=? OR " + CHANGED + "=?", params,

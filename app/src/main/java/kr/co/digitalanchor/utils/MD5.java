@@ -12,7 +12,7 @@ public class MD5 {
 
     private static final String ALGORITHM_MD5 = "MD5";
 
-    public static final String getHash(String planeText) {
+    public static final String getHash(String planedText) {
 
         String encodedText = "";
 
@@ -20,9 +20,39 @@ public class MD5 {
 
             MessageDigest md = MessageDigest.getInstance(ALGORITHM_MD5);
 
-            md.update(planeText.getBytes());
+            md.update(planedText.getBytes());
 
-            byte [] data = md.digest();
+            byte[] data = md.digest();
+
+            StringBuffer sb = new StringBuffer();
+
+            for (int i = 0; i < data.length; i++) {
+
+                sb.append(Integer.toString((data[i] & 0xff) + 0x100, 16).substring(1));
+
+            }
+
+            encodedText = sb.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+
+            encodedText = EMPTY_MD5_RESULT;
+        }
+
+        return encodedText;
+    }
+
+    public static final String getHash(byte[] plainedData) {
+
+        String encodedText = "";
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance(ALGORITHM_MD5);
+
+            md.update(plainedData);
+
+            byte[] data = md.digest();
 
             StringBuffer sb = new StringBuffer();
 
