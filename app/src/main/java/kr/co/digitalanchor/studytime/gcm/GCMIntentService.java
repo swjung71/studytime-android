@@ -6,19 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
-import android.widget.Toast;
 
-import com.android.volley.NetworkError;
-import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.orhanobut.logger.Logger;
+
+import java.util.HashMap;
+import java.util.List;
 
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
@@ -29,6 +27,10 @@ import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
+import kr.co.digitalanchor.studytime.model.ExceptionAppResult;
+import kr.co.digitalanchor.studytime.model.LoginModel;
+import kr.co.digitalanchor.studytime.model.PackageIDs;
+import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
@@ -199,6 +201,17 @@ public class GCMIntentService extends IntentService {
 
                 break;
 
+            case "BLOCK_APP_CHANGE":
+
+                requestUpdateApp(bundle.getString("senderID"), bundle.getString("receiverID"));
+
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+
+                break;
+
             default:
 
                 break;
@@ -334,6 +347,72 @@ public class GCMIntentService extends IntentService {
         }
     }
 
+    private void requestUpdateApp(String parentId, String childId) {
+
+        LoginModel model = new LoginModel();
+
+        model.setParentId(parentId);
+        model.setChildId(childId);
+
+        SimpleXmlRequest request = HttpHelper.getExceptionApp(model,
+                new Response.Listener<ExceptionAppResult>() {
+                    @Override
+                    public void onResponse(ExceptionAppResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                List<PackageIDs> list = response.getPackages();
+
+                                if (list == null && list.size() == 0) {
+
+                                    return;
+                                }
+
+                                HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+                                for (PackageIDs key : list) {
+
+                                    map.put(key.getPackageId(), 1);
+                                }
+
+                                List<PackageModel> packages = mHelper.getPackageListExcept();
+
+                                for (PackageModel model : packages) {
+
+                                    if (map.containsKey(model.getPackageId())) {
+
+                                        model.setIsExceptionApp(1);
+
+                                    } else {
+
+                                        model.setIsExceptionApp(0);
+                                    }
+                                }
+
+                                mHelper.setExceptPackages(packages);
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+                    }
+
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
 
     private void requestNewMessage(String messageId, final String senderId, final String senderName) {
 
@@ -422,5 +501,4 @@ public class GCMIntentService extends IntentService {
         Logger.e(error.toString());
 
     }
-
 }

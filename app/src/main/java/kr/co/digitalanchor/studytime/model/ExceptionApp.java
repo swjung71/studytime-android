@@ -27,6 +27,7 @@ public class ExceptionApp {
 
     public ExceptionApp() {
         this.tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
+
     }
 
     public String getParentId() {

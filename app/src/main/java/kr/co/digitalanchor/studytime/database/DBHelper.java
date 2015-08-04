@@ -364,6 +364,8 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
                     new String[]{packageName}, null, null, null, null);
 
+            Logger.d(cursor.getCount() + " " + packageName);
+
             if (cursor.moveToFirst()) {
 
                 do {
@@ -382,6 +384,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 cursor.close();
 
             cursor = null;
+
+            if (db != null) {
+
+                db.close();
+                db = null;
+            }
         }
 
         return result;
@@ -475,6 +483,13 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             cursor = null;
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
         }
 
         return list;
@@ -541,6 +556,58 @@ public class DBHelper extends SQLiteOpenHelper {
         size = cursor.getCount();
 
         return size;
+    }
+
+    public void setExceptPackages(List<PackageModel> packages) {
+
+        for (PackageModel model : packages) {
+
+            setExceptPackage(model);
+        }
+    }
+
+    public void setExceptPackage(PackageModel packageModel) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(EXCEPTED, packageModel.getIsExceptionApp());
+
+        db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?",
+                new String[] {packageModel.getPackageName()});
+
+    }
+
+    public List<PackageModel> getPackageListExcept() {
+
+        List<PackageModel> packages = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columns = new String[]{PACKAGE_NAME, PACKAGE_ID, EXCEPTED};
+
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns,
+                null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                PackageModel model = new PackageModel();
+
+                model.setPackageName(cursor.getString(0));
+                model.setPackageId(cursor.getString(1));
+                model.setIsExceptionApp(cursor.getInt(2));
+
+                packages.add(model);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return packages;
     }
 
     public List<PackageModel> getPackageListNoIcon() {

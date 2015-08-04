@@ -737,7 +737,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         model.setPackages(list);
 
-        SimpleXmlRequest request = HttpHelper.getSettingExceptioenApp(model,
+        SimpleXmlRequest request = HttpHelper.getSettingExceptionApp(model,
                 new Response.Listener<GeneralResult>() {
                     @Override
                     public void onResponse(GeneralResult response) {

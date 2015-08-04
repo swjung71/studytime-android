@@ -41,6 +41,8 @@ public class AppIconUploader extends Service {
 
     Handler mHandler;
 
+    File file;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -119,7 +121,7 @@ public class AppIconUploader extends Service {
             return;
         }
 
-        File file = new File(path);
+        file = new File(path);
 
         if (!file.exists()) {
 
@@ -135,11 +137,28 @@ public class AppIconUploader extends Service {
 
                 mHandler.sendEmptyMessage(REQUEST_UPLOAD_IMAGE);
 
+                if (file != null) {
+
+                    file.delete();
+
+                    file = null;
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                list.remove(packageModel);
+
+                mHandler.sendEmptyMessage(REQUEST_UPLOAD_IMAGE);
+
+                if (file != null) {
+
+                    file.delete();
+
+                    file = null;
+                }
             }
         });
 
