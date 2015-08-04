@@ -36,9 +36,17 @@ import kr.co.digitalanchor.utils.MD5;
  */
 public class AppManageService extends Service {
 
+    private static int CODE_LOCAL_SYNC = 60001;
+    private static int CODE_REMOTE_SYNC = 60002;
+    private static int CODE_LOCAL_UPDATE = 60003;
+    private static int CODE_LOCAL_DELETE = 60003;
+    private static int CODE_LOCAL_INSTALL= 60004;
+
     DBHelper dbHelper;
 
     RequestQueue requestQueue;
+
+    PackageManager packageManager;
 
     private Handler mHandler;
 
@@ -50,6 +58,8 @@ public class AppManageService extends Service {
         dbHelper = new DBHelper(getApplicationContext());
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        packageManager = getPackageManager();
 
     }
 
@@ -63,6 +73,8 @@ public class AppManageService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        String packageName = null;
+
         switch (intent.getAction()) {
 
             case StaticValues.ACTION_PACKAGE_SYNC:
@@ -72,16 +84,34 @@ public class AppManageService extends Service {
 
             case StaticValues.ACTION_PACKAGE_ADDED:
 
+                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                PackageModel model = getPackageInfo(packageName);
+
+
+//        public void addApplication(String packageName, String hash, String label, String version,
+//                String timestamp, int excepted, int isDefault, String iconHash,
+//        int state, int changed) {
+
+                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+                        model.getIsDefaultApp(), model.getIconHash(), 0, 0);
+
+                List<PackageModel> list = new ArrayList<>();
+
+                requestUpdateApps(list);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_REPLACED:
 
+                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_REMOVED:
 
+                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
 
                 break;
 
@@ -192,11 +222,9 @@ public class AppManageService extends Service {
     }
 
 
-    private void requestUpdateApps() {
+    private void requestUpdateApps(List<PackageModel> packages) {
 
         Account account = dbHelper.getAccountInfo();
-
-        List<PackageModel> packages = dbHelper.getPackageList();
 
         AllPackage model = new AllPackage();
 
@@ -244,6 +272,32 @@ public class AppManageService extends Service {
 
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
                     model.getDoExistInDB());
+        }
+    }
+
+    private PackageModel getPackageInfo(String packageName) {
+
+        try {
+
+            PackageInfo info = packageManager.getPackageInfo(packageName, 0);
+
+            PackageModel model = new PackageModel();
+
+            model.setIconHash(MD5.getHash(info.applicationInfo.loadIcon(packageManager)));
+            model.setPackageVersion(info.versionName);
+            model.setPackageName(info.packageName);
+            model.setHash(MD5.getHash(info.packageName));
+            model.setHasIcon(1);
+            model.setLabelName(info.applicationInfo.loadLabel(packageManager).toString());
+            model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(info.lastUpdateTime));
+            model.setIsDefaultApp(0);
+            model.setIsExceptionApp(0);
+
+            return model;
+
+        } catch(PackageManager.NameNotFoundException e) {
+
+            return null;
         }
     }
 }

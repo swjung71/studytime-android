@@ -17,9 +17,14 @@ import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
+import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.jakewharton.disklrucache.DiskLruCache;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -64,7 +69,9 @@ public class STApplication extends MultiDexApplication {
     private static final int DEFAULT_CACHE_SIZE = 10485760;
     private static final long DEFAULT_MAX_AGE = 60L;
 
-    private static ImageLoader imageLoader;
+    private static int DISK_IMAGECACHE_SIZE = 1024*1024*10;
+    private static Bitmap.CompressFormat DISK_IMAGECACHE_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
+    private static int DISK_IMAGECACHE_QUALITY = 100;  //PNG is lossless so quality is ignored but must be provided
 
     @Override
     public void onCreate() {
@@ -95,6 +102,9 @@ public class STApplication extends MultiDexApplication {
          * */
         Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
+        RequestManager.init(this);
+        createImageCache();
+
     }
 
     @Override
@@ -103,6 +113,15 @@ public class STApplication extends MultiDexApplication {
         super.onConfigurationChanged(newConfig);
 
         // TODO 언어 설정이 변경되면!!!
+    }
+
+    private void createImageCache(){
+        ImageCacheManager.getInstance().init(this,
+                this.getPackageCodePath()
+                , DISK_IMAGECACHE_SIZE
+                , DISK_IMAGECACHE_COMPRESS_FORMAT
+                , DISK_IMAGECACHE_QUALITY
+                , ImageCacheManager.CacheType.MEMORY);
     }
 
 

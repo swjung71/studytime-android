@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersSimpleAdapter;
 
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.model.PackageElementForP;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 
 /**
  * Created by Thomas on 2015-08-03.
@@ -157,6 +159,10 @@ public class AppGridAdapter extends BaseAdapter implements
             holder.appImg.setErrorImageResId(R.drawable.app_icon);
 
         } else {
+
+            holder.appImg.setImageUrl(HttpHelper.getImageURL(item.getIconUrl()), ImageCacheManager.getInstance().getImageLoader());
+            holder.appImg.setDefaultImageResId(R.drawable.app_icon);
+            holder.appImg.setErrorImageResId(R.drawable.app_icon);
 
         }
 

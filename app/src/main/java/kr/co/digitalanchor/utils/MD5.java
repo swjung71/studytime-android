@@ -1,5 +1,10 @@
 package kr.co.digitalanchor.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+
+import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -42,11 +47,17 @@ public class MD5 {
         return encodedText;
     }
 
-    public static final String getHash(byte[] plainedData) {
+    public static final String getHash(Drawable d) {
 
         String encodedText = "";
 
         try {
+
+            Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+            byte[] plainedData = stream.toByteArray();
 
             MessageDigest md = MessageDigest.getInstance(ALGORITHM_MD5);
 

@@ -365,16 +365,15 @@ public class GCMIntentService extends IntentService {
 
                                 List<PackageIDs> list = response.getPackages();
 
-                                if (list == null && list.size() == 0) {
-
-                                    return;
-                                }
-
                                 HashMap<String, Integer> map = new HashMap<String, Integer>();
 
-                                for (PackageIDs key : list) {
+                                if (list != null && list.size() > 0) {
 
-                                    map.put(key.getPackageId(), 1);
+                                    for (PackageIDs key : list) {
+
+                                        map.put(key.getPackageId(), 1);
+                                    }
+
                                 }
 
                                 List<PackageModel> packages = mHelper.getPackageListExcept();
