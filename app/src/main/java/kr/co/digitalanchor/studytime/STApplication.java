@@ -73,14 +73,17 @@ public class STApplication extends Application {
         // TODO Google analystics initialize
 
         analytics = GoogleAnalytics.getInstance(this);
+        analytics.setDryRun(true);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");
         tracker.setAppName("Studytime");
-        tracker.setAppVersion("1.0.9");
+        tracker.setAppVersion(getAppVersionName());
         tracker.enableExceptionReporting(true);
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
+
+
 
         /**
          * Log setting

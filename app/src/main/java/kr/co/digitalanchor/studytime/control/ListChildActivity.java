@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -318,7 +319,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         Intent intent = new Intent();
 
-        intent.setClass(getApplicationContext(), ControlChildActivity.class);
+//        intent.setClass(getApplicationContext(), ControlChildActivity.class);
+         intent.setClass(getApplicationContext(), ControlChildExActivity.class);
 
         intent.putExtra("ChildID", child.getChildID());
         intent.putExtra("Name", child.getName());
@@ -469,9 +471,14 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     private void requestSyncData() {
 
-        showLoading();
-
         final Account account = mHelper.getAccountInfo();
+
+        if (TextUtils.isEmpty(account.getID())) {
+
+            return;
+        }
+
+        showLoading();
 
         ParentModel model = new ParentModel();
         model.setParentId(account.getID());

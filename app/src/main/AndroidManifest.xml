@@ -89,9 +89,10 @@
             android:enabled="true"
             android:exported="false" />
 
-        <service android:name=".monitor.SyncService"
+        <service
+            android:name=".monitor.SyncService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity
             android:name=".intro.IntroActivity"
@@ -116,6 +117,12 @@
             android:name=".control.ControlChildActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".control.ControlChildExActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
         <activity
             android:name=".signup.WithdrawActivity"
             android:screenOrientation="portrait"
@@ -245,14 +252,6 @@
                 <action android:name="android.intent.action.BATTERY_CHANGED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.QUERY_PACKAGE_RESTART" />
-
-                <data android:scheme="package" />
-            </intent-filter>
         </receiver>
         <receiver
             android:name=".devicepolicy.AdminReceiver"
@@ -271,9 +270,11 @@
         </receiver>
 
         <!-- google analytics compaignTracking -->
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver" android:exported="true">
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="om.android.vending.INSTALL_REFERRER"/>
+                <action android:name="om.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
@@ -281,6 +282,21 @@
         <activity
             android:name=".devicepolicy.DummyActivity"
             android:label="@string/title_activity_dummy"></activity>
+
+        <service android:name=".app.AppManageService" />
+
+        <receiver android:name=".app.PackageReceiver">
+
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>

@@ -3,7 +3,6 @@ package kr.co.digitalanchor.studytime.model.api;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.SimpleXmlRequest;
-import com.google.android.gms.analytics.Tracker;
 import com.orhanobut.logger.Logger;
 
 import org.simpleframework.xml.Serializer;
@@ -13,7 +12,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 
-import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.model.AddPackageElement;
+import kr.co.digitalanchor.studytime.model.AddPackageModel;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.Board;
@@ -1016,7 +1016,7 @@ public class HttpHelper {
      * @param errorListener
      * @return
      */
-    public static SimpleXmlRequest getAddAppList(AllPackage model, Listener listener,
+    public static SimpleXmlRequest getAddAppList(AddPackageModel model, Listener listener,
                                                  ErrorListener errorListener) {
 
         StringWriter writer = null;

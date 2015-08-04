@@ -4,12 +4,12 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
- * Created by Thomas on 2015-07-29.
+ * Created by Thomas on 2015-07-31.
  */
-@Root(name = "Package")
-public class PackageModel {
+@Root(name = "Packages")
+public class AddPackageElement {
 
-    @Element(name = "Hash", required = false)
+    @Element(name = "Hash", required = false, data = true)
     String hash;
 
     @Element(name = "PackageName", required = false, data = true)
@@ -18,16 +18,10 @@ public class PackageModel {
     @Element(name = "LabelName", required = false, data = true)
     String labelName;
 
-    /**
-     * 삭제 또는 업데이트 시에만 있음
-     */
-    @Element(name = "PackageID", required = false)
-    String packageId;
-
-    @Element(name = "PackageVersion", required = false)
+    @Element(name = "PackageVersion", required = false, data = true)
     String packageVersion;
 
-    @Element(name = "Timestamp", required = false)
+    @Element(name = "Timestamp", required = false, data = true)
     String timestamp;
 
     @Element(name = "Is_ExceptionApp", required = false)
@@ -39,35 +33,12 @@ public class PackageModel {
     @Element(name = "HasIcon", required = false)
     int hasIcon;
 
-    @Element(name = "Has_Icon_In_DB", required = false)
-    int hasIconDB;
+    public AddPackageElement() {
+        isExceptionApp = -1;
 
-    @Element(name = "IconHash", required = false)
-    String iconHash;
+        isDefaultApp = -1;
 
-    int changed;
-
-    /**
-     * add 0, delete 1, update 2
-     */
-    @Element(name = "State", required = false)
-    int state;
-
-    public PackageModel() {
-
-        this.hash = null;
-        this.packageName = null;
-        this.labelName = null;
-        this.packageId = null;
-        this.packageVersion = null;
-        this.timestamp = null;
-        this.isExceptionApp = -1;
-        this.isDefaultApp = -1;
-        this.hasIcon = -1;
-        this.hasIconDB = -1;
-        this.iconHash = null;
-        this.state = -1;
-        this.changed = -1;
+        hasIcon = -1;
     }
 
     public String getHash() {
@@ -132,45 +103,5 @@ public class PackageModel {
 
     public void setHasIcon(int hasIcon) {
         this.hasIcon = hasIcon;
-    }
-
-    public String getPackageId() {
-        return packageId;
-    }
-
-    public void setPackageId(String packageId) {
-        this.packageId = packageId;
-    }
-
-    public int getHasIconDB() {
-        return hasIconDB;
-    }
-
-    public void setHasIconDB(int hasIconDB) {
-        this.hasIconDB = hasIconDB;
-    }
-
-    public String getIconHash() {
-        return iconHash;
-    }
-
-    public void setIconHash(String iconHash) {
-        this.iconHash = iconHash;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
-
-    public int getChanged() {
-        return changed;
-    }
-
-    public void setChanged(int changed) {
-        this.changed = changed;
     }
 }

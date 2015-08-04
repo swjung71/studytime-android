@@ -33,4 +33,14 @@ public class StaticValues {
 
     public static final String ACTION_SERVICE_START = "kr.co.digitalanchor.action.SERVICE_START";
 
+    public static final String ACTION_PACKAGE_SYNC = "kr.co.digitalanchor.action.PACKAGE_SYNC";
+
+    public static final String ACTION_PACKAGE_REMOVED = "kr.co.digitalanchor.action.PACKAGE_REMOVED";
+
+    public static final String ACTION_PACKAGE_ADDED = "kr.co.digitalanchor.action.PACKAGE_ADDED";
+
+    public static final String ACTION_PACKAGE_REPLACED = "kr.co.digitalanchor.action.PACKAGE_REPLACED";
+
+    public static final String PACKAGE_NAME = "packageName";
+
 }

@@ -2,13 +2,12 @@ package kr.co.digitalanchor.studytime.app;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,10 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.PackageModel;
+import kr.co.digitalanchor.studytime.model.PackageResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.utils.AndroidUtils;
@@ -41,6 +42,8 @@ public class AppManageService extends Service {
 
     boolean isFirst;
 
+    private Handler mHandler;
+
     @Override
     public void onCreate() {
 
@@ -50,20 +53,6 @@ public class AppManageService extends Service {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        isFirst = (dbHelper.getPackageListSize() < 1);
-
-        List<PackageModel> packageList;
-
-        if (isFirst) {
-
-            packageList = getAppListFromDevice();
-
-        } else {
-
-            packageList = getAbsenceAppList();
-        }
-
-        dbHelper.addApplications(packageList);
 
     }
 
@@ -74,10 +63,45 @@ public class AppManageService extends Service {
 
     }
 
+    private class ToastRunnable implements Runnable {
+        String mText;
+
+        public ToastRunnable(String text) {
+            mText = text;
+        }
+
+        @Override
+        public void run(){
+            Toast.makeText(getApplicationContext(), mText, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+
+
         switch (intent.getAction()) {
+
+            case StaticValues.ACTION_PACKAGE_SYNC:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_ADDED:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_REPLACED:
+
+
+                break;
+
+            case StaticValues.ACTION_PACKAGE_REMOVED:
+
+
+                break;
 
             default:
                 break;
@@ -91,68 +115,6 @@ public class AppManageService extends Service {
         return null;
     }
 
-
-    /**
-     * 처음 한번 호출
-     *
-     * @return
-     */
-    private List<PackageModel> getAppListFromDevice() {
-
-        PackageManager manager = getPackageManager();
-
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-
-        intent.addCategory(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-
-        List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
-
-        List<PackageModel> packageModels = new ArrayList<>();
-
-        for (ResolveInfo r : apps) {
-
-            PackageInfo packageInfo = null;
-
-            try {
-
-                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
-
-            } catch (PackageManager.NameNotFoundException e) {
-
-                continue;
-            }
-
-            if (packageInfo == null) {
-
-                continue;
-            }
-
-            PackageModel model = new PackageModel();
-
-            model.setPackageName(packageInfo.packageName);
-            model.setHash(MD5.getHash(packageInfo.packageName));
-            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
-            model.setPackageVersion(packageInfo.versionName);
-            model.setIsExceptionApp(0);
-            model.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
-
-            model.setTimestamp(AndroidUtils.convertTimeStamp4Chat(packageInfo.firstInstallTime));
-
-            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
-
-                model.setIsDefaultApp(1);
-
-            } else {
-
-                model.setIsDefaultApp(0);
-            }
-
-            packageModels.add(model);
-        }
-
-        return packageModels;
-    }
 
     /**
      * 업데이트 내용
@@ -238,56 +200,6 @@ public class AppManageService extends Service {
         return packageModels;
     }
 
-    /**
-     * Package 목록 보내기
-     */
-    private void requestAddApps() {
-
-        Account account = dbHelper.getAccountInfo();
-
-        List<PackageModel> packages = dbHelper.getPackageList();
-
-        AllPackage model = new AllPackage();
-
-        model.setPackages(packages);
-        model.setChildId(account.getID());
-        model.setParentId(account.getParentId());
-
-        SimpleXmlRequest request = HttpHelper.getAddAppList(model,
-                new Response.Listener<AllPackageResult>() {
-                    @Override
-                    public void onResponse(AllPackageResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case HttpHelper.SUCCESS:
-
-                                // TODO local db update
-                                updateLocalDB(response.getPackages());
-
-                                break;
-
-                            default:
-
-                                Logger.e(response.getResultMessage());
-
-                                break;
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Logger.e(error.toString());
-                    }
-                });
-
-        if (request != null) {
-
-            requestQueue.add(request);
-        }
-    }
 
     private void requestUpdateApps() {
 
@@ -335,12 +247,12 @@ public class AppManageService extends Service {
         }
     }
 
-    private void updateLocalDB(List<PackageModel> packages) {
+    private void updateLocalDB(List<PackageResult> packages) {
 
-        for (PackageModel model : packages) {
+        for (PackageResult model : packages) {
 
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getHasIconDB());
+                    model.getDoExistInDB());
         }
     }
 }

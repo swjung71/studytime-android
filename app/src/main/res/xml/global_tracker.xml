@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ga_trackingId">UA-63663050-2</string>
+    <string name="ga_appName">Studytime</string>
+    <string name="ga_appVersion">@string/app_version</string>
+    <string name="ga_logLevel">warning</string>
+    <integer name="ga_dispatchPeriod">1800</integer>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <screenName name="kr.co.digitalanchor.studytime.block.BlockActivity">block screen</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.block.BlockPasswordActivity">block password screen</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.control.ListChildActivity">list child activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.control.ControlChildActivity">child control activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.control.InputPwdActivity">password input activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.chat.ChildChatActivity">Child Chat activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.chat.ParentChatActivity">Parent Chat activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.login.AddInfoActivity">AddInfo Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.login.LoginActivity">Login Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.login.LoginChildActivity">Login Child Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.chat.ParentChatActivity">Parent Chat activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.signup.BoardActivity">Notices </screenName>
+    <screenName name="kr.co.digitalanchor.studytime.signup.ModPrivacyActivity">Privacy Information change</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.signup.SignUpActivity">Sign Up Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.signup.WithdrawActivity">Withdraw Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.intro.IntroActivity">Intro Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.devicepolicy.DummyActivity">Dummy Activity</screenName>
+
+
+</resources>
