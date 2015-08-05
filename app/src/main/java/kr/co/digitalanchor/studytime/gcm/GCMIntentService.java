@@ -22,7 +22,7 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
-import kr.co.digitalanchor.studytime.control.ControlChildActivity;
+import kr.co.digitalanchor.studytime.control.ControlChildExActivity;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.ChatRead;
@@ -329,7 +329,7 @@ public class GCMIntentService extends IntentService {
 
                 Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
 
-                Intent controlChild = new Intent(STApplication.applicationContext, ControlChildActivity.class);
+                Intent controlChild = new Intent(STApplication.applicationContext, ControlChildExActivity.class);
 
                 controlChild.putExtra("ChildID", senderId);
 
