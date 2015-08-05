@@ -7,7 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,12 +35,6 @@ import kr.co.digitalanchor.utils.MD5;
  * Created by Thomas on 2015-07-30.
  */
 public class AppManageService extends Service {
-
-    private static int CODE_LOCAL_SYNC = 60001;
-    private static int CODE_REMOTE_SYNC = 60002;
-    private static int CODE_LOCAL_UPDATE = 60003;
-    private static int CODE_LOCAL_DELETE = 60003;
-    private static int CODE_LOCAL_INSTALL= 60004;
 
     DBHelper dbHelper;
 
@@ -74,30 +68,43 @@ public class AppManageService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String packageName = null;
+        PackageModel model = null;
+        List<PackageModel> list = null;
 
-        switch (intent.getAction()) {
+        String action = intent.getStringExtra(StaticValues.ACTION_NAME);
+
+        Logger.d("onStartCommand()" + action);
+
+        if (TextUtils.isEmpty(action)) {
+
+            stopSelf();
+        }
+
+        switch (action) {
 
             case StaticValues.ACTION_PACKAGE_SYNC:
 
+                list = getAbsenceAppList();
+
+                requestUpdateApps(list);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_ADDED:
 
+                Logger.d("inner switch");
+
                 packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
 
-                PackageModel model = getPackageInfo(packageName);
-
-
-//        public void addApplication(String packageName, String hash, String label, String version,
-//                String timestamp, int excepted, int isDefault, String iconHash,
-//        int state, int changed) {
+                model = getPackageInfo(packageName);
 
                 dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
                         model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
                         model.getIsDefaultApp(), model.getIconHash(), 0, 0);
 
-                List<PackageModel> list = new ArrayList<>();
+                list = new ArrayList<>();
+
+                list.add(model);
 
                 requestUpdateApps(list);
 
@@ -105,13 +112,41 @@ public class AppManageService extends Service {
 
             case StaticValues.ACTION_PACKAGE_REPLACED:
 
+                Logger.d("inner switch");
+
                 packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                model = getPackageInfo(packageName);
+
+                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+                        model.getIsDefaultApp(), model.getIconHash(), 2, 0);
+
+                list = new ArrayList<>();
+
+                list.add(model);
+
+                requestUpdateApps(list);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_REMOVED:
 
+                Logger.d("inner switch");
+
                 packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                model = getPackageInfo(packageName);
+
+                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+                        model.getIsDefaultApp(), model.getIconHash(), 1, 0);
+
+                list = new ArrayList<>();
+
+                list.add(model);
+
+                requestUpdateApps(list);
 
                 break;
 
@@ -224,6 +259,8 @@ public class AppManageService extends Service {
 
     private void requestUpdateApps(List<PackageModel> packages) {
 
+        Logger.d("requestUpdateApps");
+
         Account account = dbHelper.getAccountInfo();
 
         AllPackage model = new AllPackage();
@@ -241,7 +278,7 @@ public class AppManageService extends Service {
 
                             case HttpHelper.SUCCESS:
 
-                                updateLocalDB(response.getPackages());
+//                                updateLocalDB(response.getPackages());
 
                                 break;
 
@@ -295,7 +332,7 @@ public class AppManageService extends Service {
 
             return model;
 
-        } catch(PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
 
             return null;
         }

@@ -23,27 +23,29 @@ public class PackageReceiver extends BroadcastReceiver {
             return;
         }
 
-        Intent broadcastIntent = null;
+        Logger.d(intent.getAction() + " package :" + packageName );
+
+        Intent broadcastIntent = new Intent();
 
         switch (intent.getAction()) {
 
             case Intent.ACTION_PACKAGE_REMOVED:
 
-                broadcastIntent = new Intent(StaticValues.ACTION_PACKAGE_REMOVED);
+                broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REMOVED);
 
                 break;
 
             case Intent.ACTION_PACKAGE_ADDED:
                 // install
 
-                broadcastIntent = new Intent(StaticValues.ACTION_PACKAGE_ADDED);
+                broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_ADDED);
 
                 break;
 
             case Intent.ACTION_PACKAGE_REPLACED:
                 // update
 
-                broadcastIntent = new Intent(StaticValues.ACTION_PACKAGE_REPLACED);
+                broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REPLACED);
 
                 break;
         }

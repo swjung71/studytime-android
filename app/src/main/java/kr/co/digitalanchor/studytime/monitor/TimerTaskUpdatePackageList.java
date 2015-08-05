@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import java.util.TimerTask;
 
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.app.AppManageService;
 
 /**
@@ -22,6 +23,9 @@ public class TimerTaskUpdatePackageList extends TimerTask {
     @Override
     public void run() {
 
-        context.startService(new Intent(context, AppManageService.class));
+        Intent intent = new Intent(context, AppManageService.class);
+        intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+
+        context.startService(intent);
     }
 }

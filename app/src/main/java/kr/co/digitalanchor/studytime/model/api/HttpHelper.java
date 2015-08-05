@@ -1104,7 +1104,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<AllPackageResult>(getURL() + "addAppList",
+            return new SimpleXmlRequest<AllPackageResult>(getURL() + "updateAppList",
                     AllPackageResult.class, map, listener, errorListener);
 
         } catch (Exception e) {

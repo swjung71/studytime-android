@@ -51,9 +51,11 @@ public class MD5 {
 
         String encodedText = "";
 
+        Bitmap bitmap = null;
+
         try {
 
-            Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+            bitmap = ((BitmapDrawable)d).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
@@ -78,6 +80,15 @@ public class MD5 {
         } catch (NoSuchAlgorithmException e) {
 
             encodedText = EMPTY_MD5_RESULT;
+
+        } finally {
+
+            if (bitmap != null && !bitmap.isRecycled()) {
+
+                bitmap.recycle();
+
+                bitmap = null;
+            }
         }
 
         return encodedText;
