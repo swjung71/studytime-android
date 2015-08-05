@@ -2,11 +2,14 @@ package kr.co.digitalanchor.studytime.app;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,6 +26,7 @@ import kr.co.digitalanchor.studytime.model.IconModel;
 import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.utils.ImageUtils;
+import kr.co.digitalanchor.utils.MD5;
 
 /**
  * Created by Thomas on 2015-07-31.
@@ -30,6 +34,7 @@ import kr.co.digitalanchor.utils.ImageUtils;
 public class AppIconUploader extends Service {
 
     private final int REQUEST_UPLOAD_IMAGE = 50001;
+    private final int REQUEST_MAKE_IMAGE = 50002;
 
     DBHelper dbHelper;
 
@@ -57,8 +62,6 @@ public class AppIconUploader extends Service {
 
         packageManager = getPackageManager();
 
-        requestUploadIcon();
-
         mHandler = new Handler() {
 
             @Override
@@ -72,14 +75,23 @@ public class AppIconUploader extends Service {
                         requestUploadIcon();
 
                         break;
+
+                    case REQUEST_MAKE_IMAGE:
+
+                        requestMakeImage();
+
+                        break;
                 }
             }
         };
+
+        mHandler.sendEmptyMessage(REQUEST_MAKE_IMAGE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
     }
 
     @Override
@@ -87,46 +99,35 @@ public class AppIconUploader extends Service {
         return null;
     }
 
+    private void requestMakeImage() {
+
+        if (list.size() < 1) {
+
+            return;
+        }
+
+        final PackageModel packageModel = list.get(0);
+
+        new ImageTask().execute(packageModel.getPackageName());
+    }
+
     private void requestUploadIcon() {
 
         if (list.size() < 1) {
 
-            stopSelf();
+            return;
         }
 
         final PackageModel packageModel = list.get(0);
 
         IconModel model = new IconModel();
 
-        model.setIconHash(packageModel.getHash());
         model.setPackageVersion(packageModel.getPackageVersion());
-        model.setHash(packageModel.getHash());
+        model.setHash(MD5.getHash(packageModel.getPackageName()));
+        model.setIconHash(packageModel.getHash());
         model.setIsUpdate(1);
 
-        Drawable drawable = null;
-
-        try {
-
-            drawable = packageManager.getApplicationIcon(packageModel.getPackageName());
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-
-        }
-
-        String path = ImageUtils.saveBitmap(getApplicationContext(), model.getIconHash(), drawable);
-
-        if (path == null) {
-
-            return;
-        }
-
-        file = new File(path);
-
-        if (!file.exists()) {
-
-            return;
-        }
+        file = new File(getFileStreamPath(model.getIconHash()).getPath());
 
         MultipartRequest request = HttpHelper.getUploadIcon(model, file, new Response.Listener() {
 
@@ -135,7 +136,7 @@ public class AppIconUploader extends Service {
 
                 list.remove(packageModel);
 
-                mHandler.sendEmptyMessage(REQUEST_UPLOAD_IMAGE);
+                mHandler.sendEmptyMessage(REQUEST_MAKE_IMAGE);
 
                 if (file != null) {
 
@@ -151,7 +152,7 @@ public class AppIconUploader extends Service {
 
                 list.remove(packageModel);
 
-                mHandler.sendEmptyMessage(REQUEST_UPLOAD_IMAGE);
+                mHandler.sendEmptyMessage(REQUEST_MAKE_IMAGE);
 
                 if (file != null) {
 
@@ -163,5 +164,63 @@ public class AppIconUploader extends Service {
         });
 
         requestQueue.add(request);
+    }
+
+    class ImageTask extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if (params.length < 1) {
+
+                return null;
+            }
+
+            Drawable drawable = null;
+
+            try {
+
+                PackageInfo info = packageManager.getPackageInfo(params[0], 0);
+
+                drawable = info.applicationInfo.loadIcon(packageManager);
+
+            } catch (PackageManager.NameNotFoundException e) {
+
+                return null;
+            }
+
+            String path = ImageUtils.saveBitmap(getApplicationContext(),
+                    MD5.getHash(params[0]), drawable);
+
+            if (path == null) {
+
+                return null;
+            }
+
+            file = new File(path);
+
+            if (!file.exists()) {
+
+                return null;
+            }
+
+            return path;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+
+            if (TextUtils.isEmpty(s)) {
+
+                return;
+
+            } else {
+
+                mHandler.sendEmptyMessage(REQUEST_UPLOAD_IMAGE);
+            }
+        }
     }
 }

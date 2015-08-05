@@ -233,6 +233,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(IS_DEFAULT, model.getIsDefaultApp());
 
         db.replace(TABLE_APPLICATION_FOR_CHILD, null, values);
+        db.close();
     }
 
     /**
@@ -286,6 +287,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(CHANGED, changed);
 
         db.replace(TABLE_APPLICATION_FOR_CHILD, null, values);
+        db.close();
     }
 
     /**
@@ -320,6 +322,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATE, 1);
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+        db.close();
 
     }
 
@@ -341,6 +344,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(HAS_ICON_IN_DB, hasIconServer);
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+
+        db.close();
     }
 
     /**
@@ -431,6 +436,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
+
+        db.close();
+
 
         return hash;
     }
@@ -575,7 +585,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(EXCEPTED, packageModel.getIsExceptionApp());
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?",
-                new String[] {packageModel.getPackageName()});
+                new String[]{packageModel.getPackageName()});
 
     }
 

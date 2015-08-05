@@ -131,6 +131,7 @@ public class AppGridAdapter extends BaseAdapter implements
             holder.label = (TextView) convertView.findViewById(R.id.appLabel);
             holder.appImg = (NetworkImageView) convertView.findViewById(R.id.appIcon);
             holder.lockImg = (ImageView) convertView.findViewById(R.id.lockImg);
+            holder.defalutImg = (ImageView) convertView.findViewById(R.id.appIcon2);
 
             convertView.setTag(holder);
 
@@ -154,13 +155,18 @@ public class AppGridAdapter extends BaseAdapter implements
 
         if (TextUtils.isEmpty(item.getIconUrl())) {
 
-            holder.appImg.setImageResource(R.drawable.app_icon);
-            holder.appImg.setDefaultImageResId(R.drawable.app_icon);
-            holder.appImg.setErrorImageResId(R.drawable.app_icon);
+            holder.appImg.setVisibility(View.GONE);
+            holder.defalutImg.setVisibility(View.VISIBLE);
+
+            holder.defalutImg.setImageResource(R.drawable.app_icon);
 
         } else {
 
-            holder.appImg.setImageUrl(HttpHelper.getImageURL(item.getIconUrl()), ImageCacheManager.getInstance().getImageLoader());
+            holder.appImg.setVisibility(View.VISIBLE);
+            holder.defalutImg.setVisibility(View.GONE);
+
+            holder.appImg.setImageUrl(HttpHelper.getImageURL(item.getIconUrl()),
+                    ImageCacheManager.getInstance().getImageLoader());
             holder.appImg.setDefaultImageResId(R.drawable.app_icon);
             holder.appImg.setErrorImageResId(R.drawable.app_icon);
 
@@ -181,6 +187,8 @@ public class AppGridAdapter extends BaseAdapter implements
         public ImageView lockImg;
 
         public NetworkImageView appImg;
+
+        public ImageView defalutImg;
 
     }
 }

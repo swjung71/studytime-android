@@ -25,6 +25,7 @@ public class IconModel {
     @Element(name = "IsUpdate")
     int isUpdate;
 
+
     public IconModel() {
         this.tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
     }
