@@ -118,7 +118,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     private void initView() {
 
         mSlideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        mSlideLayout.setTouchEnabled(false);
+//        mSlideLayout.setTouchEnabled(false);
         mSlideLayout.setPanelSlideListener(this);
 
         mPanelToggleButton = (ImageView) findViewById(R.id.buttonToggle);
@@ -131,19 +131,10 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                     mSlideLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
-                    mGridView.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            mGridView.setSelection(0);
-                        }
-                    });
-
                 } else if (mSlideLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
 
                     mSlideLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
 
-                    sendEmptyMessage(REQUEST_APP_LIST);
                 }
             }
         });
@@ -342,6 +333,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     @Override
     public void onPanelSlide(View panel, float slideOffset) {
 
+        Logger.d("slideOffset" + slideOffset);
     }
 
     @Override
@@ -352,6 +344,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onPanelExpanded(View panel) {
+
+        sendEmptyMessage(REQUEST_APP_LIST);
 
         mPanelToggleButton.setImageResource(R.drawable.icon_down_selector);
     }
@@ -669,6 +663,14 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                                 });
 
                                 mAdapter.notifyDataSetChanged();
+
+                                mGridView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        mGridView.setSelection(0);
+                                    }
+                                });
 
                                 break;
 
