@@ -85,7 +85,11 @@ public class TimerTaskWork extends TimerTask {
                 || currentPackage.contains(".contacts")
                 || currentPackage.contains("com.android.phone")
                 || currentPackage.contains("com.android.settings")
-                || currentPackage.contains("com.android.dialer")) {
+                || currentPackage.contains("com.android.dialer")
+                || currentPackage.equals("android")
+                || currentPackage.equals("com.android.systemui")
+                || currentPackage.equals("com.lge.settings.easy")
+                || currentPackage.equals("com.lge.bluetoothsetting")) {
 
             // not work
         } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)

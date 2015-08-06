@@ -16,23 +16,25 @@ public class ImageUtils {
 
      public static String saveBitmap(Context context, String fileName, Drawable drawable) {
 
-        Bitmap bitmap;
+        Bitmap bitmap = null;
 
-        FileOutputStream fileOutputStream = null;
+         FileOutputStream fileOutputStream = null;
 
-        int width = drawable.getIntrinsicWidth();
-
-        int height = drawable.getIntrinsicHeight();
-
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-
-        drawable.setBounds(0, 0, width, height);
-
-        drawable.draw(canvas);
 
         try {
+
+
+            int width = drawable.getIntrinsicWidth();
+
+            int height = drawable.getIntrinsicHeight();
+
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+
+            drawable.setBounds(0, 0, width, height);
+
+            drawable.draw(canvas);
 
             fileOutputStream = new FileOutputStream(context.getFileStreamPath(fileName).getPath());
 
@@ -47,7 +49,7 @@ public class ImageUtils {
                 return null;
             }
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
 
             return null;
 
@@ -64,7 +66,16 @@ public class ImageUtils {
                     fileOutputStream = null;
                 }
             }
-        }
 
+            if (bitmap != null) {
+
+                if (!bitmap.isRecycled()) {
+
+                    bitmap.recycle();
+                }
+
+                bitmap = null;
+            }
+        }
     }
 }
