@@ -92,8 +92,6 @@ public class SyncService extends Service {
 
                     default:
 
-                        stopSelf();
-
                         break;
                 }
             }
@@ -164,8 +162,6 @@ public class SyncService extends Service {
 
                             default:
 
-                                stopSelf();
-
                                 break;
                         }
                     }
@@ -175,7 +171,6 @@ public class SyncService extends Service {
                     public void onErrorResponse(VolleyError error) {
                         Logger.e(error.toString());
 
-                        stopSelf();
                     }
                 });
 

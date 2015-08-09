@@ -534,7 +534,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         for (PackageResult model : packages) {
 
             mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getDoExistInDB());
+                    model.getDoExistInDB(), 0);
         }
     }
 

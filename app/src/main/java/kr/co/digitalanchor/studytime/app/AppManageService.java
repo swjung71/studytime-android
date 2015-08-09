@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.app;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -44,6 +45,8 @@ public class AppManageService extends Service {
 
     private Handler mHandler;
 
+    private boolean isRun = false;
+
     @Override
     public void onCreate() {
 
@@ -77,7 +80,12 @@ public class AppManageService extends Service {
 
         if (TextUtils.isEmpty(action)) {
 
-            stopSelf();
+            return START_NOT_STICKY;
+        }
+
+        if (!AndroidUtils.isNetworkAvailable(getApplicationContext())) {
+
+            return START_NOT_STICKY;
         }
 
         switch (action) {
@@ -92,26 +100,47 @@ public class AppManageService extends Service {
 
             case StaticValues.ACTION_PACKAGE_ADDED:
 
-                Logger.d("inner switch");
+//                Logger.d("inner switch");
+//
+//                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+//
+//                model = getPackageInfo(packageName);
+//
+//                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+//                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+//                        model.getIsDefaultApp(), model.getIconHash(), 0, 0);
+//
+//                list = new ArrayList<>();
+//
+//                list.add(model);
+//
+//                requestUpdateApps(list);
 
-                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+                break;
 
-                model = getPackageInfo(packageName);
+            case StaticValues.ACTION_PACKAGE_REMOVED:
 
-                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
-                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
-                        model.getIsDefaultApp(), model.getIconHash(), 0, 0);
-
-                list = new ArrayList<>();
-
-                list.add(model);
-
-                requestUpdateApps(list);
+//                Logger.d("inner switch");
+//
+//                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+//
+//                model = getPackageInfo(packageName);
+//
+//                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+//                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+//                        model.getIsDefaultApp(), model.getIconHash(), 1, 0);
+//
+//                list = new ArrayList<>();
+//
+//                list.add(model);
+//
+//                requestUpdateApps(list);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_REPLACED:
 
+            /*
                 Logger.d("inner switch");
 
                 packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
@@ -127,26 +156,7 @@ public class AppManageService extends Service {
                 list.add(model);
 
                 requestUpdateApps(list);
-
-                break;
-
-            case StaticValues.ACTION_PACKAGE_REMOVED:
-
-                Logger.d("inner switch");
-
-                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
-
-                model = getPackageInfo(packageName);
-
-                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
-                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
-                        model.getIsDefaultApp(), model.getIconHash(), 1, 0);
-
-                list = new ArrayList<>();
-
-                list.add(model);
-
-                requestUpdateApps(list);
+             */
 
                 break;
 
@@ -173,14 +183,15 @@ public class AppManageService extends Service {
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
 
-        intent.addCategory(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
 
         List<PackageModel> packageModels = new ArrayList<>();
 
         HashMap<String, PackageModel> hashMap = dbHelper.getPackageStateList();
+
+        Logger.d("Size " + apps.size() + " : " + hashMap.size());
 
         for (ResolveInfo r : apps) {
 
@@ -206,35 +217,56 @@ public class AppManageService extends Service {
                     || packageInfo.packageName.contains("com.android.settings")
                     || packageInfo.packageName.contains("com.android.dialer")) {
 
-
                 continue;
             }
 
-            if (hashMap.containsKey(packageInfo.packageName)) {
+            if (!hashMap.containsKey(packageInfo.packageName)) {
 
-                PackageModel model = hashMap.get(packageInfo.packageName);
+                PackageModel packageModel = new PackageModel();
 
-                if (model.getPackageName().equals(packageInfo.versionName)) {
+                packageModel.setPackageName(packageInfo.packageName);
+                packageModel.setHash(MD5.getHash(packageInfo.packageName));
+                packageModel.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
+                packageModel.setPackageVersion(packageInfo.versionName);
+                packageModel.setIsExceptionApp(0);
+                packageModel.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
+                packageModel.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.lastUpdateTime));
 
-                    hashMap.remove(packageInfo.packageName);
+                if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
 
-                    continue;
+                    packageModel.setIsDefaultApp(1);
+                    packageModel.setState(2);
 
                 } else {
 
-                    PackageModel packageModel = new PackageModel();
-
-                    packageModel.setPackageName(packageInfo.packageName);
-                    packageModel.setHash(MD5.getHash(packageInfo.packageName));
-                    packageModel.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
-                    packageModel.setPackageVersion(packageInfo.versionName);
-                    packageModel.setIsExceptionApp(model.getIsExceptionApp());
-                    packageModel.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
-                    packageModel.setTimestamp(AndroidUtils.convertTimeStamp4Chat(packageInfo.lastUpdateTime));
-                    packageModel.setIsDefaultApp(model.getIsDefaultApp());
-
-                    packageModels.add(packageModel);
+                    packageModel.setIsDefaultApp(0);
+                    packageModel.setState(0);
                 }
+
+                packageModels.add(packageModel);
+
+                continue;
+
+            } else {
+
+                PackageModel model = hashMap.get(packageInfo.packageName);
+
+                if (model.getPackageVersion().equals(packageInfo.versionName)) {
+
+
+                } else {
+
+                    model.setPackageVersion(packageInfo.versionName);
+                    model.setState(2);
+
+                    Logger.d("updated " + model.getPackageName() + " " + model.getLabelName() + " v : " + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
+
+                    packageModels.add(model);
+                }
+
+                hashMap.remove(packageInfo.packageName);
+
+                continue;
             }
         }
 
@@ -242,13 +274,9 @@ public class AppManageService extends Service {
 
             PackageModel model = hashMap.get(key);
 
-            if (model.getState() == 1) {
-
-                continue;
-            }
-
             model.setState(1);
-            model.setChanged(1);
+
+            Logger.d("deleted " + model.getPackageName() + " " + model.getLabelName() + " v : " + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
 
             packageModels.add(model);
         }
@@ -260,6 +288,11 @@ public class AppManageService extends Service {
     private void requestUpdateApps(List<PackageModel> packages) {
 
         Logger.d("requestUpdateApps");
+
+        if (packages.size() < 1) {
+
+            return;
+        }
 
         Account account = dbHelper.getAccountInfo();
 
@@ -278,7 +311,13 @@ public class AppManageService extends Service {
 
                             case HttpHelper.SUCCESS:
 
-//                                updateLocalDB(response.getPackages());
+                                updateLocalDB(response.getPackages());
+
+                                if (response.getPackages() != null
+                                        && response.getPackages().size() > 1) {
+
+                                    startService(new Intent(getApplicationContext(), AppIconUploader.class));
+                                }
 
                                 break;
 
@@ -308,7 +347,7 @@ public class AppManageService extends Service {
         for (PackageResult model : packages) {
 
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getDoExistInDB());
+                    model.getDoExistInDB(), -1);
         }
     }
 

@@ -23,6 +23,7 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.app.AppManageService;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;
@@ -176,9 +177,14 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.buttonSetting:
 
-                AndroidUtils.hideKeyboard(mEditMessage);
+//                AndroidUtils.hideKeyboard(mEditMessage);
+//
+//                showAdditionalInfo();
 
-                showAdditionalInfo();
+                Intent intent = new Intent(getApplicationContext(), AppManageService.class);
+                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+
+                startService(intent);
 
                 break;
 

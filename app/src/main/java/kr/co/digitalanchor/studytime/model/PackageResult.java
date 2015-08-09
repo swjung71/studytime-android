@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-07-31.
  */
-@Root(name = "Package")
+@Root(name = "Package", strict = false)
 public class PackageResult {
 
     @Element(name = "PackageName", required = false)
@@ -23,6 +23,13 @@ public class PackageResult {
 
     @Element(name = "IconHash", required = false)
     String iconHash;
+
+    @Element(name = "State", required = false)
+    int state;
+
+    public PackageResult() {
+        state = -1;
+    }
 
     public String getPackageName() {
         return packageName;
@@ -62,5 +69,13 @@ public class PackageResult {
 
     public void setIconHash(String iconHash) {
         this.iconHash = iconHash;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }
