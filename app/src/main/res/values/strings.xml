@@ -51,4 +51,7 @@
     <string name="agreeTerms1">서비스 이용약관에 동의합니다.</string>
     <string name="agreeTerms2">개인정보 취급방침에 동의합니다.</string>
     <string name="confirmOk">확인</string>
+
+    <string name="exceptedAppListHeader">잠금 제외앱</string>
+    <string name="unexceptedAppListHeader">앱별 잠금 설정</string>
 </resources>

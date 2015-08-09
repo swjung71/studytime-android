@@ -34,6 +34,7 @@ public class AddPackageElement {
     int hasIcon;
 
     public AddPackageElement() {
+
         isExceptionApp = -1;
 
         isDefaultApp = -1;

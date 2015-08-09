@@ -42,5 +42,6 @@ public class StaticValues {
     public static final String ACTION_PACKAGE_REPLACED = "kr.co.digitalanchor.action.PACKAGE_REPLACED";
 
     public static final String PACKAGE_NAME = "packageName";
+    public static final String ACTION_NAME = "actionName";
 
 }

@@ -85,7 +85,11 @@ public class TimerTaskWork extends TimerTask {
                 || currentPackage.contains(".contacts")
                 || currentPackage.contains("com.android.phone")
                 || currentPackage.contains("com.android.settings")
-                || currentPackage.contains("com.android.dialer")) {
+                || currentPackage.contains("com.android.dialer")
+                || currentPackage.equals("android")
+                || currentPackage.equals("com.android.systemui")
+                || currentPackage.equals("com.lge.settings.easy")
+                || currentPackage.equals("com.lge.bluetoothsetting")) {
 
             // not work
         } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
@@ -93,9 +97,12 @@ public class TimerTaskWork extends TimerTask {
 
             // not work
 
-        } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") != 0) {
+        } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") == 0) {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+
+
+        } else if (!mHelper.isExcepted(currentPackage)){
 
             killApplication(currentPackage);
         }

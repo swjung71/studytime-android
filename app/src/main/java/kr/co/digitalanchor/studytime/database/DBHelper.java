@@ -35,6 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_ON_OFF = "onOff_table";
     private static final String TABLE_MESSAGE = "message_table";
     private static final String TABLE_APPLICATION_FOR_CHILD = "application_table_for_child";
+    private static final String TABLE_APPLICATION_FOR_PARENT = "application_table_for_parent";
     private static final String TRIGGER_NEW_MESSAGE = "new_message_trigger";
 
 
@@ -175,6 +176,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.replace(TABLE_ON_OFF, null, values);
 
+        db.close();
+
     }
 
     @Override
@@ -185,15 +188,18 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_TABLE_APP_FOR_CHILD);
 
         }
+
+        db.close();
     }
 
     /**
-     *
      * @param packages
      */
     public void addAppList(List<AddPackageElement> packages) {
 
         for (AddPackageElement element : packages) {
+
+            Logger.d(element.getPackageName() + " " + element.getLabelName());
 
             addApp(element);
         }
@@ -231,6 +237,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(IS_DEFAULT, model.getIsDefaultApp());
 
         db.replace(TABLE_APPLICATION_FOR_CHILD, null, values);
+        db.close();
     }
 
     /**
@@ -284,6 +291,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(CHANGED, changed);
 
         db.replace(TABLE_APPLICATION_FOR_CHILD, null, values);
+        db.close();
     }
 
     /**
@@ -318,6 +326,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATE, 1);
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+        db.close();
 
     }
 
@@ -329,7 +338,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param hasIconServer
      */
     public void updateApplicationAfterReg(String packageName, String packageId,
-                                          int hasIconServer) {
+                                          int hasIconServer, int state) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -338,7 +347,12 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(PACKAGE_ID, packageId);
         values.put(HAS_ICON_IN_DB, hasIconServer);
 
+        if (state > -1)
+            values.put(STATE, state);
+
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+
+        db.close();
     }
 
     /**
@@ -355,21 +369,40 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String[] result_columns = new String[]{EXCEPTED};
 
-        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
-                new String[]{packageName}, null, null, null, null);
+        Cursor cursor = null;
 
-        if (cursor.moveToFirst()) {
+        try {
 
-            do {
+            cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
+                    new String[]{packageName}, null, null, null, null);
 
-                result = (cursor.getInt(0) == 0) ? false : true;
+            Logger.d(cursor.getCount() + " " + packageName);
 
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+
+                do {
+
+                    result = (cursor.getInt(0) == 0) ? false : true;
+
+                } while (cursor.moveToNext());
+            }
+
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (cursor != null)
+                cursor.close();
+
+            cursor = null;
+
+            if (db != null) {
+
+                db.close();
+                db = null;
+            }
         }
-
-        cursor.close();
-
-        cursor = null;
 
         return result;
     }
@@ -384,8 +417,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP, STATE,
                 HAS_ICON, HAS_ICON_IN_DB, ICON_HASH};
 
-        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, null,
-                null, null, null, null, null);
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, STATE + " != ?",
+                new String [] {"1"}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
@@ -411,7 +444,72 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+
+        db.close();
+
+
         return hash;
+    }
+
+    public List<AddPackageElement> getAddPackageList() {
+
+        List<AddPackageElement> list = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] result_columns = new String[]{PACKAGE_NAME, PACKAGE_HASH,
+                LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP,
+                HAS_ICON};
+
+        Cursor cursor = null;
+
+        try {
+
+            cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, null,
+                    null, null, null, LABEL_NAME + " ASC", null);
+
+            if (cursor.moveToFirst()) {
+
+                do {
+
+                    AddPackageElement model = new AddPackageElement();
+
+                    model.setPackageName(cursor.getString(0));
+                    model.setHash(cursor.getString(1));
+                    model.setLabelName(cursor.getString(2));
+                    model.setPackageVersion(cursor.getString(3));
+                    model.setIsExceptionApp(cursor.getInt(4));
+                    model.setIsDefaultApp(cursor.getInt(5));
+                    model.setTimestamp(cursor.getString(6));
+                    model.setHasIcon(cursor.getInt(7));
+
+                    list.add(model);
+
+                } while (cursor.moveToNext());
+
+            }
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
+
+            cursor = null;
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -458,6 +556,20 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
+
         return list;
     }
 
@@ -474,7 +586,92 @@ public class DBHelper extends SQLiteOpenHelper {
 
         size = cursor.getCount();
 
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
+
         return size;
+    }
+
+    public void setExceptPackages(List<PackageModel> packages) {
+
+        for (PackageModel model : packages) {
+
+            setExceptPackage(model);
+        }
+    }
+
+    public void setExceptPackage(PackageModel packageModel) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(EXCEPTED, packageModel.getIsExceptionApp());
+
+        db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?",
+                new String[]{packageModel.getPackageName()});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
+
+    }
+
+    public List<PackageModel> getPackageListExcept() {
+
+        List<PackageModel> packages = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columns = new String[]{PACKAGE_NAME, PACKAGE_ID, EXCEPTED};
+
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns,
+                null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                PackageModel model = new PackageModel();
+
+                model.setPackageName(cursor.getString(0));
+                model.setPackageId(cursor.getString(1));
+                model.setIsExceptionApp(cursor.getInt(2));
+
+                packages.add(model);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
+
+        return packages;
     }
 
     public List<PackageModel> getPackageListNoIcon() {
@@ -486,10 +683,10 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] columns = new String[]{PACKAGE_NAME, PACKAGE_HASH, ICON_HASH,
                 PACKAGE_VERSION, CHANGED};
 
-        String [] params = new String [] { "0", "1" };
+        String[] params = new String[]{"0"};
 
         Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns,
-                HAS_ICON_IN_DB + "=? OR " + CHANGED + "=?", params,
+                HAS_ICON_IN_DB + "=?", params,
                 null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -509,7 +706,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return packages;
     }
@@ -537,6 +746,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
 
         db.insert(TABLE_ACCOUNT_INFO, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     /**
@@ -561,6 +777,14 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(EMAIL, "");
 
         db.insert(TABLE_ACCOUNT_INFO, null, values);
+
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public void updateAccount(String id, int isChild, String name, int coin, String email) {
@@ -578,6 +802,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
 
         db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public void updateCoin(String id, int coin) {
@@ -589,6 +820,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COIN, coin);
 
         db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{id});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public void addNoticeCount() {
@@ -600,6 +838,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NEW_NOTICE, 1);
 
         db.update(TABLE_ACCOUNT_INFO, values, null, null);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public void initNoticeCount() {
@@ -611,6 +856,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NEW_NOTICE, 0);
 
         db.update(TABLE_ACCOUNT_INFO, values, null, null);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public Account getAccountInfo() {
@@ -649,7 +901,19 @@ public class DBHelper extends SQLiteOpenHelper {
             account.setNotice(cursor.getInt(7));
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return account;
     }
@@ -668,6 +932,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         db.replace(TABLE_CHILD, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
     }
 
@@ -694,6 +965,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         db.replace(TABLE_CHILD, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
     }
 
@@ -738,7 +1016,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return children;
 
@@ -776,7 +1066,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return child;
     }
@@ -797,6 +1099,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_OFF, isOff);
 
         db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[]{childId});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     /**
@@ -812,6 +1121,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NEW_MESSAGE_COUNT, 0);
 
         db.update(TABLE_CHILD, values, CHILDREN_ID + "=?", new String[]{childId});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     /**
@@ -889,6 +1205,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         db.update(TABLE_MESSAGE, values, CHAT_KEY + "=?", new String[]{messagePK});
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     /**
@@ -969,7 +1292,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return messages;
     }
@@ -1011,7 +1346,19 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
 
         return messages;
     }
@@ -1031,6 +1378,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_ALLOW, "1");
 
         db.replace(TABLE_ON_OFF, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     public void updateChildMessageCount(String childId, int count) {
@@ -1047,9 +1401,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = null;
 
+        SQLiteDatabase db = null;
+
         try {
 
-            SQLiteDatabase db = this.getReadableDatabase();
+            db = this.getReadableDatabase();
 
             String[] columns = new String[]{IS_OFF};
 
@@ -1068,6 +1424,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 cursor.close();
             }
+
+            cursor = null;
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
         }
     }
 
@@ -1081,6 +1446,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_ALLOW, isAllow);
 
         db.replace(TABLE_ON_OFF, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
     }
 
     /**
@@ -1092,9 +1464,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = null;
 
+        SQLiteDatabase db = null;
+
         try {
 
-            SQLiteDatabase db = this.getReadableDatabase();
+            db = this.getReadableDatabase();
 
             String[] columns = new String[]{IS_ALLOW};
 
@@ -1112,6 +1486,15 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor != null) {
 
                 cursor.close();
+            }
+
+            cursor = null;
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
             }
         }
     }

@@ -3,9 +3,12 @@ package kr.co.digitalanchor.studytime.control;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +17,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.orhanobut.logger.Logger;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -21,7 +32,12 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
+import kr.co.digitalanchor.studytime.model.ExceptionApp;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.LoginModel;
+import kr.co.digitalanchor.studytime.model.PackageElementForP;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -29,6 +45,7 @@ import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
+import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -36,9 +53,20 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-06-12.
  */
 public class ControlChildExActivity extends BaseActivity implements View.OnClickListener,
-        MenuPopup.OnClickMenuItemListener {
+        MenuPopup.OnClickMenuItemListener, SlidingUpPanelLayout.PanelSlideListener,
+        AdapterView.OnItemClickListener {
 
     final int REQUEST_ON_OFF = 50001;
+
+    final int REQUEST_APP_LIST = 50002;
+
+    final int REQUEST_EXCEPT_APP = 50003;
+
+    SlidingUpPanelLayout mSlideLayout;
+
+    StickyGridHeadersGridView mGridView;
+
+    ImageView mPanelToggleButton;
 
     TextView mLabelPoint;
 
@@ -54,6 +82,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     Button mButtonCloseGuide;
 
+    Button mButtonConfirm;
+
     View mImgGuide;
 
     MenuPopup mMenu;
@@ -63,6 +93,10 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     Child mChild;
 
     String mChildID;
+
+    List<PackageElementForP> packages;
+
+    AppGridAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +116,48 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
 
     private void initView() {
+
+        mSlideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+//        mSlideLayout.setTouchEnabled(false);
+        mSlideLayout.setPanelSlideListener(this);
+
+        mPanelToggleButton = (ImageView) findViewById(R.id.buttonToggle);
+        mPanelToggleButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (mSlideLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+
+                    mSlideLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
+                } else if (mSlideLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+
+                    mSlideLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+
+                }
+            }
+        });
+
+        mGridView = (StickyGridHeadersGridView) findViewById(R.id.gridView);
+        mGridView.setOnItemClickListener(this);
+
+        packages = new ArrayList<PackageElementForP>();
+
+        mAdapter = new AppGridAdapter(getApplicationContext(), R.layout.layout_app_header,
+                R.layout.layout_item_app, packages);
+
+        mGridView.setAdapter(mAdapter);
+
+        mGridView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                mSlideLayout.requestDisallowInterceptTouchEvent(true);
+
+                return false;
+            }
+        });
 
         mLabelPoint = (TextView) findViewById(R.id.labelPoint);
 
@@ -109,6 +185,9 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         mMenu = new MenuPopup(getApplicationContext());
         mMenu.setOnClickMenuItemListener(this);
+
+        mButtonConfirm = (Button) findViewById(R.id.buttonConfirm);
+        mButtonConfirm.setOnClickListener(this);
 
     }
 
@@ -141,7 +220,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     private void getChildModel(String childId) {
 
-        mChild =  mHelper.getChild(childId);
+        mChild = mHelper.getChild(childId);
     }
 
     @Override
@@ -153,30 +232,40 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 Account account = mHelper.getAccountInfo();
 
+                if (mChild.getIsOFF() == 0) {
 
+                    if (account.getCoin() > 0) {
 
-                    if (mChild.getIsOFF() == 0) {
-
-                        if (account.getCoin() > 0) {
-
-                            requestOnOff();
-
-                        } else {
-
-                            Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
-
-                        }
+                        requestOnOff();
 
                     } else {
 
-                        Intent intent = new Intent();
-                        intent.setClass(getApplicationContext(), InputPwdActivity.class);
-
-                        intent.putExtra("ChildID", mChild.getChildID());
-                        intent.putExtra("Name", mChild.getName());
-
-                        startActivity(intent);
+                        Toast.makeText(getApplicationContext(), "코인이 부족합니다.",
+                                Toast.LENGTH_SHORT).show();
                     }
+
+                } else {
+
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), InputPwdActivity.class);
+
+                    intent.putExtra("ChildID", mChild.getChildID());
+                    intent.putExtra("Name", mChild.getName());
+
+                    startActivity(intent);
+                }
+
+                break;
+
+            case REQUEST_APP_LIST:
+
+                requestAppList();
+
+                break;
+
+            case REQUEST_EXCEPT_APP:
+
+                requestSetExceptionApp();
 
                 break;
 
@@ -227,6 +316,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 sendEmptyMessage(REQUEST_ON_OFF);
 
+                break;
+
+            case R.id.buttonConfirm:
+
+                sendEmptyMessage(REQUEST_EXCEPT_APP);
 
                 break;
 
@@ -234,6 +328,57 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 break;
         }
+    }
+
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+
+        Logger.d("slideOffset" + slideOffset);
+    }
+
+    @Override
+    public void onPanelCollapsed(View panel) {
+
+        mPanelToggleButton.setImageResource(R.drawable.icon_up_selector);
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+
+        sendEmptyMessage(REQUEST_APP_LIST);
+
+        mPanelToggleButton.setImageResource(R.drawable.icon_down_selector);
+    }
+
+    @Override
+    public void onPanelAnchored(View panel) {
+
+    }
+
+    @Override
+    public void onPanelHidden(View panel) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        PackageElementForP item = packages.get(position);
+
+        int exception = item.getExcepted_ex();
+
+        if (exception == 0) {
+
+            exception = 1;
+
+        } else {
+
+            exception = 0;
+        }
+
+        item.setExcepted_ex(exception);
+
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -467,4 +612,168 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                 break;
         }
     }
+
+    private void requestAppList() {
+
+        Account account = mHelper.getAccountInfo();
+
+        LoginModel model = new LoginModel();
+
+        model.setChildId(mChildID);
+        model.setParentId(account.getID());
+
+        SimpleXmlRequest request = HttpHelper.getPackageForParent(model,
+                new Response.Listener<AllPackageResultForParent>() {
+
+                    @Override
+                    public void onResponse(AllPackageResultForParent response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                packages.clear();
+
+                                List<PackageElementForP> list = response.getPackages();
+
+                                for (PackageElementForP item : list) {
+
+                                    item.setExcepted_ex(item.getExcepted());
+
+                                    item.setName(AndroidUtils.convertFromUTF8(item.getName()));
+
+                                    packages.add(item);
+                                }
+
+                                Collections.sort(packages, new Comparator<PackageElementForP>() {
+
+                                    @Override
+                                    public int compare(PackageElementForP lhs, PackageElementForP rhs) {
+
+                                        return lhs.getName().compareTo(rhs.getName());
+                                    }
+                                });
+
+                                Collections.sort(packages, new Comparator<PackageElementForP>() {
+                                    @Override
+                                    public int compare(PackageElementForP lhs, PackageElementForP rhs) {
+
+                                        return rhs.getExcepted() - lhs.getExcepted();
+                                    }
+                                });
+
+                                mAdapter.notifyDataSetChanged();
+
+                                mGridView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        mGridView.setSelection(0);
+                                    }
+                                });
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+                    }
+
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void requestSetExceptionApp() {
+
+        showLoading();
+
+        Account account = mHelper.getAccountInfo();
+
+        ExceptionApp model = new ExceptionApp();
+
+        model.setParentId(account.getID());
+        model.setChildId(mChildID);
+
+        List<PackageElementForP> list = new ArrayList<>();
+
+        for (PackageElementForP item : packages) {
+
+            if (item.getExcepted() != item.getExcepted_ex()) {
+
+                PackageElementForP itemClone = null;
+
+                try {
+
+                    itemClone = (PackageElementForP) item.clone();
+
+                } catch (CloneNotSupportedException e) {
+
+                    continue;
+                }
+
+                itemClone.setExcepted(item.getExcepted_ex());
+
+                list.add(itemClone);
+            }
+        }
+
+        if (list.size() <= 0) {
+
+            dismissLoading();
+
+            Toast.makeText(getApplicationContext(), "변경된 내용이 없습니다.", Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+
+        model.setPackages(list);
+
+        SimpleXmlRequest request = HttpHelper.getSettingExceptionApp(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                dismissLoading();
+
+                                mSlideLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
+                                Toast.makeText(getApplicationContext(), "예외 앱이 적용되었습니다.",
+                                        Toast.LENGTH_SHORT).show();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
 }

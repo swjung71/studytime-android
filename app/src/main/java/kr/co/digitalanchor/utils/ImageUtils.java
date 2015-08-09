@@ -14,44 +14,44 @@ import java.io.IOException;
  */
 public class ImageUtils {
 
-    private static String makeIconName(String packageName, String packageVersion) {
+     public static String saveBitmap(Context context, String fileName, Drawable drawable) {
 
-        String name = null;
+        Bitmap bitmap = null;
 
-        name = MD5.getHash(packageName + packageVersion);
+         FileOutputStream fileOutputStream = null;
 
-        return name;
-    }
-
-    private static boolean saveBitmap(Context context, String fileName, Drawable drawable) {
-
-        Bitmap bitmap;
-
-        FileOutputStream fileOutputStream = null;
-
-        int width = drawable.getIntrinsicWidth();
-
-        int height = drawable.getIntrinsicHeight();
-
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-
-        drawable.setBounds(0, 0, width, height);
-
-        drawable.draw(canvas);
 
         try {
+
+
+            int width = drawable.getIntrinsicWidth();
+
+            int height = drawable.getIntrinsicHeight();
+
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+
+            drawable.setBounds(0, 0, width, height);
+
+            drawable.draw(canvas);
 
             fileOutputStream = new FileOutputStream(context.getFileStreamPath(fileName).getPath());
 
             boolean result = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
 
-            return result;
+            if (result) {
 
-        } catch (FileNotFoundException e) {
+                return context.getFileStreamPath(fileName).getPath();
 
-            return false;
+            } else {
+
+                return null;
+            }
+
+        } catch (Exception e) {
+
+            return null;
 
         } finally {
 
@@ -66,7 +66,16 @@ public class ImageUtils {
                     fileOutputStream = null;
                 }
             }
-        }
 
+            if (bitmap != null) {
+
+                if (!bitmap.isRecycled()) {
+
+                    bitmap.recycle();
+                }
+
+                bitmap = null;
+            }
+        }
     }
 }

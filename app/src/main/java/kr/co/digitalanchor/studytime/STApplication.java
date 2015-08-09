@@ -7,16 +7,24 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
+import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.jakewharton.disklrucache.DiskLruCache;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -42,12 +50,11 @@ import static kr.co.digitalanchor.studytime.StaticValues.PREF;
 /**
  * Created by Thomas on 2015-06-10.
  */
-public class STApplication extends Application {
+public class STApplication extends MultiDexApplication {
 
     /**
      * xxh-dpi 으로 제작됨
      */
-
     public static volatile Context applicationContext;
 
     public static volatile Handler applicationHandler;
@@ -58,6 +65,13 @@ public class STApplication extends Application {
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
+
+    private static final int DEFAULT_CACHE_SIZE = 10485760;
+    private static final long DEFAULT_MAX_AGE = 60L;
+
+    private static int DISK_IMAGECACHE_SIZE = 1024*1024*10;
+    private static Bitmap.CompressFormat DISK_IMAGECACHE_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
+    private static int DISK_IMAGECACHE_QUALITY = 100;  //PNG is lossless so quality is ignored but must be provided
 
     @Override
     public void onCreate() {
@@ -83,12 +97,13 @@ public class STApplication extends Application {
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
 
-
-
         /**
          * Log setting
          * */
         Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
+
+        RequestManager.init(this);
+        createImageCache();
 
     }
 
@@ -98,6 +113,15 @@ public class STApplication extends Application {
         super.onConfigurationChanged(newConfig);
 
         // TODO 언어 설정이 변경되면!!!
+    }
+
+    private void createImageCache(){
+        ImageCacheManager.getInstance().init(this,
+                this.getPackageCodePath()
+                , DISK_IMAGECACHE_SIZE
+                , DISK_IMAGECACHE_COMPRESS_FORMAT
+                , DISK_IMAGECACHE_QUALITY
+                , ImageCacheManager.CacheType.MEMORY);
     }
 
 
@@ -585,5 +609,6 @@ public class STApplication extends Application {
 
         applicationContext.startActivity(intent);
     }
+
 
 }

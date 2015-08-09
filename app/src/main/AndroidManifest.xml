@@ -284,6 +284,7 @@
             android:label="@string/title_activity_dummy"></activity>
 
         <service android:name=".app.AppManageService" />
+        <service android:name=".app.AppIconUploader" />
 
         <receiver android:name=".app.PackageReceiver">
 

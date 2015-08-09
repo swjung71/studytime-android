@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -29,15 +30,14 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.app.AppIconUploader;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.devicepolicy.AdminReceiver;
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AddPackageModel;
-import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
-import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.PackageResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -175,6 +175,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case COMPLETE_ADD_INFO:
+
+                startService(new Intent(getApplicationContext(), AppIconUploader.class));
 
                 setResult(RESULT_OK);
 
@@ -469,6 +471,12 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         mHelper.addAppList(packages);
 
+        packages.clear();
+
+        packages = null;
+
+        packages = mHelper.getAddPackageList();
+
         AddPackageModel model = new AddPackageModel();
 
         model.setPackages(packages);
@@ -492,12 +500,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                                 sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
                                 sendEmptyMessage(COMPLETE_ADD_INFO);
-
-                                // test
-//                                mHelper.clearAll();
-
-                                // test
-                                STApplication.clear();
 
                                 dismissLoading();
 
@@ -532,7 +534,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         for (PackageResult model : packages) {
 
             mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getDoExistInDB());
+                    model.getDoExistInDB(), 0);
         }
     }
 
@@ -567,6 +569,15 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             }
 
             if (packageInfo == null) {
+
+                continue;
+
+            } else if (packageInfo.packageName.equals(getApplicationContext().getPackageName())
+                    || packageInfo.packageName.contains(".mms")
+                    || packageInfo.packageName.contains(".contacts")
+                    || packageInfo.packageName.contains("com.android.phone")
+                    || packageInfo.packageName.contains("com.android.settings")
+                    || packageInfo.packageName.contains("com.android.dialer")) {
 
                 continue;
             }

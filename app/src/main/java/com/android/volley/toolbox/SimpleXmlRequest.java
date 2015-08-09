@@ -62,6 +62,8 @@ public class SimpleXmlRequest<T> extends Request<T> {
         this.params = params;
         this.listener = listener;
 
+        Logger.d(url);
+
         Logger.xml(params.get("xml"));
     }
 

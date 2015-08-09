@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-07-29.
  */
-@Root(name = "Package")
+@Root(name = "Packages")
 public class PackageModel {
 
     @Element(name = "Hash", required = false)
