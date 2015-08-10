@@ -287,7 +287,7 @@ public class AppManageService extends Service {
     }
 
 
-    private void requestUpdateApps(List<PackageModel> packages) {
+    private void requestUpdateApps(final List<PackageModel> packages) {
 
         Logger.d("requestUpdateApps");
 
@@ -315,13 +315,24 @@ public class AppManageService extends Service {
 
                             case HttpHelper.SUCCESS:
 
+                                for (PackageModel model : packages) {
+
+                                    if (model.getState() == 1) {
+
+                                        PackageResult result = new PackageResult();
+
+                                        result.setState(model.getState());
+                                        result.setPackageId(model.getPackageId());
+                                        result.setDoExistInDB(model.getHasIconDB());
+                                        result.setPackageName(model.getPackageName());
+
+                                        response.getPackages().add(result);
+                                    }
+                                }
+
                                 updateLocalDB(response.getPackages());
 
-                                if (response.getPackages() != null
-                                        && response.getPackages().size() > 1) {
-
-                                    startService(new Intent(getApplicationContext(), AppIconUploader.class));
-                                }
+                                startService(new Intent(getApplicationContext(), AppIconUploader.class));
 
                                 break;
 
@@ -348,10 +359,15 @@ public class AppManageService extends Service {
 
     private void updateLocalDB(List<PackageResult> packages) {
 
+        if (packages == null) {
+
+            return;
+        }
+
         for (PackageResult model : packages) {
 
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getDoExistInDB(), -1);
+                    model.getDoExistInDB(), model.getState());
         }
     }
 

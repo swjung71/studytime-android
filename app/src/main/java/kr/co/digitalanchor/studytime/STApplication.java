@@ -87,7 +87,7 @@ public class STApplication extends MultiDexApplication {
         // TODO Google analystics initialize
 
         analytics = GoogleAnalytics.getInstance(this);
-        analytics.setDryRun(true);
+        analytics.setDryRun(false);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");
@@ -180,14 +180,26 @@ public class STApplication extends MultiDexApplication {
 
             for (int i = 0; appVersionTokens.length > i; i++) {
 
-                int result = appVersionTokens[i].compareTo(curVersionTokens[i]);
+                try {
 
-                if (result < 0) {
+                    if (Integer.parseInt(appVersionTokens[i]) < Integer.parseInt(curVersionTokens[i])) {
 
-                    isUpdate = true;
+                        isUpdate = true;
+
+                        break;
+
+                    } else if (Integer.parseInt(appVersionTokens[i]) > Integer.parseInt(curVersionTokens[i])) {
+
+                        isUpdate = false;
+
+                        break;
+                    }
+
+                } catch (NumberFormatException e) {
+
+                    isUpdate = false;
 
                     break;
-
                 }
             }
 
