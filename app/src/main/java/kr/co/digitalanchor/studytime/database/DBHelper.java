@@ -1461,16 +1461,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
                         }
                     }
-
-		/*
-        // for middle school
-		if( nud > 2 || sex > 2 || vio > 2 || lan > 1){
-
-		}
-		// for elementry school
-		if( nud > 1 || sex > 0 || vio > 1|| lan > 0){
-
-		}*/
                 }
             }
             db.endTransaction();
@@ -1481,13 +1471,42 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor isAdultURL(String hash) {
+    public boolean isAdultURL(String hash, String directory) {
+
+        boolean result = false;
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] result_columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_IS_SUB};
 
         String where = ADULT_URL_HASH + " = " + hash;
-        Cursor result = db.query(TABLE_ADULT_URL, result_columns, where, null, null, null, null);
+        Cursor cursor = db.query(TABLE_ADULT_URL, result_columns, where, null, null, null, null);
+
+        String isSub = null;
+        String dir = null;
+
+        if (cursor.moveToFirst()) {
+
+            dir = cursor.getString(0);
+            isSub = cursor.getString(1);
+
+            if (isSub.equals("0")) {
+
+                result = true;
+
+            } else if (directory.contains(dir)) {
+
+                result = true;
+
+            }
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+
+            cursor = null;
+        }
 
         return result;
     }

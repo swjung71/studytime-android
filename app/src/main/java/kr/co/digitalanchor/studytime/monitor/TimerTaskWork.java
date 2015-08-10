@@ -111,7 +111,7 @@ public class TimerTaskWork extends TimerTask {
 
             return;
         }
-    /*
+/*
         if (currentPackage.equals("com.android.browser")
                 || currentPackage.equals("com.google.android.browser") // nexus
                 || currentPackage.equals("com.android.chrome")
@@ -125,10 +125,12 @@ public class TimerTaskWork extends TimerTask {
             }
 
             // TODO url check by db
+           if (mHelper.isAdultURL(url, directory)) {
 
-            blockWebPage(currentPackage, url);
+                blockWebPage(currentPackage, url);
+            }
         }
-     */
+*/
     }
 
     private String checkRunningPackage() {
@@ -261,7 +263,7 @@ public class TimerTaskWork extends TimerTask {
 
     }
 
-    private void blockWebPage(String packageName, String url) {
+    private void blockWebPage(String packageName) {
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(StaticValues.BLOCK_PAGE_URL));
 
