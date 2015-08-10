@@ -304,6 +304,8 @@ public class AppManageService extends Service {
         model.setChildId(account.getID());
         model.setParentId(account.getParentId());
 
+        dbHelper.addApplications(packages);
+
         SimpleXmlRequest request = HttpHelper.getUpdateAppList(model,
                 new Response.Listener<AllPackageResult>() {
                     @Override

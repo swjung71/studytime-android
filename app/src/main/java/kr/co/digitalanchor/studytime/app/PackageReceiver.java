@@ -10,6 +10,7 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.monitor.MonitorService;
 
 /**
  * Created by Thomas on 2015-07-30.
@@ -37,11 +38,6 @@ public class PackageReceiver extends BroadcastReceiver {
 
         String packageName = intent.getData().getSchemeSpecificPart();
 
-        if (context.getPackageName().equalsIgnoreCase(packageName)) {
-
-            return;
-        }
-
         Logger.d(intent.getAction() + " package :" + packageName);
 
         Intent broadcastIntent = new Intent();
@@ -50,12 +46,22 @@ public class PackageReceiver extends BroadcastReceiver {
 
             case Intent.ACTION_PACKAGE_REMOVED:
 
+                if (context.getPackageName().equalsIgnoreCase(packageName)) {
+
+                    return;
+                }
+
                 broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REMOVED);
 
                 break;
 
             case Intent.ACTION_PACKAGE_ADDED:
                 // install
+
+                if (context.getPackageName().equalsIgnoreCase(packageName)) {
+
+                    return;
+                }
 
                 broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_ADDED);
 
@@ -64,7 +70,16 @@ public class PackageReceiver extends BroadcastReceiver {
             case Intent.ACTION_PACKAGE_REPLACED:
                 // update
 
-                broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REPLACED);
+                if (context.getPackageName().equalsIgnoreCase(packageName)) {
+
+                    context.startService(new Intent(context, MonitorService.class));
+
+                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+
+                } else {
+
+                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REPLACED);
+                }
 
                 break;
         }

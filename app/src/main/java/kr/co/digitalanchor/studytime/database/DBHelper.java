@@ -176,20 +176,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.replace(TABLE_ON_OFF, null, values);
 
-        db.close();
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion == 1 && newVersion == 0) {
+        if (oldVersion == 1) {
 
             db.execSQL(CREATE_TABLE_APP_FOR_CHILD);
 
         }
-
-        db.close();
     }
 
     /**
