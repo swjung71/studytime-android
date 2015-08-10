@@ -1438,6 +1438,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateAllow(int isAllow) {
 
+        Logger.d("test");
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
