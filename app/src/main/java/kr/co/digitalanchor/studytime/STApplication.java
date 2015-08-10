@@ -103,7 +103,6 @@ public class STApplication extends MultiDexApplication {
         Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
         RequestManager.init(this);
-
         createImageCache();
 
     }

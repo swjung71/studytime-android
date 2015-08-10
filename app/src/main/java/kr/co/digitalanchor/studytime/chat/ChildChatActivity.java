@@ -181,6 +181,11 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
                 showAdditionalInfo();
 
+//                Intent intent = new Intent(getApplicationContext(), AppManageService.class);
+//                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+//
+//                startService(intent);
+
                 break;
 
             case R.id.buttonClose:

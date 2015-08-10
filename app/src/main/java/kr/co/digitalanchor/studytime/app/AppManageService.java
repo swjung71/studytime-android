@@ -259,7 +259,8 @@ public class AppManageService extends Service {
                     model.setPackageVersion(packageInfo.versionName);
                     model.setState(2);
 
-                    Logger.d("updated " + model.getPackageName() + " " + model.getLabelName() + " v : " + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
+                    Logger.d("updated " + model.getPackageName() + " " + model.getLabelName() + " v : "
+                            + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
 
                     packageModels.add(model);
                 }
@@ -276,7 +277,8 @@ public class AppManageService extends Service {
 
             model.setState(1);
 
-            Logger.d("deleted " + model.getPackageName() + " " + model.getLabelName() + " v : " + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
+            Logger.d("deleted " + model.getPackageName() + " " + model.getLabelName() + " v : "
+                    + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
 
             packageModels.add(model);
         }

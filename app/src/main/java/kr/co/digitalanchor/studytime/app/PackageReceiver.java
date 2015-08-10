@@ -19,16 +19,11 @@ public class PackageReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String packageName = intent.getData().getSchemeSpecificPart();
-
-        if (context.getPackageName().equalsIgnoreCase(packageName)) {
-
-            return;
-        }
-
         DBHelper helper = new DBHelper(context);
 
         Account account = helper.getAccountInfo();
+
+        Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
 
         if (TextUtils.isEmpty(account.getID())) {
 
@@ -36,6 +31,13 @@ public class PackageReceiver extends BroadcastReceiver {
         }
 
         if (account.getIsChild() == 1) {
+
+            return;
+        }
+
+        String packageName = intent.getData().getSchemeSpecificPart();
+
+        if (context.getPackageName().equalsIgnoreCase(packageName)) {
 
             return;
         }

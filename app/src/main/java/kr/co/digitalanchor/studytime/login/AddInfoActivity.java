@@ -172,7 +172,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                 requestAddApps();
 
-
                 break;
 
             case COMPLETE_ADD_INFO:
@@ -607,71 +606,5 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         }
 
         return packageModels;
-    }
-
-    /**
-     * Package 목록 보내기
-     */
-    private void requestAdultFileList() {
-
-        showLoading();
-
-        Account account = mHelper.getAccountInfo();
-
-        List<AddPackageElement> packages = getAppListFromDevice();
-
-        mHelper.addAppList(packages);
-
-        AddPackageModel model = new AddPackageModel();
-
-        model.setPackages(packages);
-        model.setChildId(mChildID);
-        model.setParentId(mParentID);
-
-        SimpleXmlRequest request = HttpHelper.getAddAppList(model,
-                new Response.Listener<AllPackageResult>() {
-                    @Override
-                    public void onResponse(AllPackageResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case HttpHelper.SUCCESS:
-
-                                // TODO local db update
-                                updateLocalDB(response.getPackages());
-
-                                completeRegister(mParentID, mChildID);
-
-                                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
-
-                                sendEmptyMessage(COMPLETE_ADD_INFO);
-
-                                // test
-//                                mHelper.clearAll();
-
-                                // test
-                                STApplication.clear();
-
-                                dismissLoading();
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(), response.getResultMessage());
-
-                                break;
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
     }
 }
