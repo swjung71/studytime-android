@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.login;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -14,15 +15,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
-import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
+import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
-import kr.co.digitalanchor.studytime.model.ChildRegister;
+import kr.co.digitalanchor.studytime.model.GetAdultDB;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
-import kr.co.digitalanchor.studytime.monitor.MonitorService;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -35,6 +46,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     private final int REQUEST_CHILD_LOGIN = 50001;
     private final int REQUEST_ADD_INFO = 50003;
     private final int COMPLETE_CHILD_LOGIN = 50002;
+    private final int REQUEST_ADULT_FILE = 50004;
 
     private final int ACTIVITY_ADDITIONAL_INFO = 60001;
 
@@ -43,6 +55,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     EditText mEditPassword;
 
     EditText mEditChildName;
+
+    DBHelper mDBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +87,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onHandleMessage(Message msg) {
 
+        Bundle data = null;
+
         switch (msg.what) {
 
             case REQUEST_CHILD_LOGIN:
@@ -83,9 +99,17 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             case REQUEST_ADD_INFO:
 
-                Bundle data = msg.getData();
+                data = msg.getData();
 
                 showAddInfo(data.getString("ParentID"), data.getString("Name"));
+
+                break;
+
+            case REQUEST_ADULT_FILE:
+
+                data = msg.getData();
+
+                downloadAdultFile(data);
 
                 break;
 
@@ -282,6 +306,114 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         });
 
         addRequest(request);
+    }
+
+    private void downloadAdultFile(Bundle data) {
+
+        ArrayList<String> files = data.getStringArrayList("files");
+
+        if (files == null || files.size() < 1) {
+
+            return;
+        }
+
+        for (String file : files) {
+
+            new DownloadFileFromURL().execute(file);
+        }
+    }
+
+    private void requestAdultFile() {
+
+        showLoading();
+
+        GetAdultDB model = new GetAdultDB();
+
+        String date = mDBHelper.getAdultFile();
+
+        if (date != null) {
+
+            model.setDate(date);
+        }
+
+        SimpleXmlRequest request = HttpHelper.getAdultFileList(model,
+                new Response.Listener<AdultFileResult>() {
+
+                    @Override
+                    public void onResponse(AdultFileResult response) {
+
+                        Bundle data = null;
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                dismissLoading();
+
+                                data = new Bundle();
+
+                                ArrayList<String> files = response.getFileName();
+
+                                mDBHelper.setAdultFile(response);
+
+                                data.putStringArrayList("files", response.getFileName());
+                                Logger.d(data.toString());
+
+                                sendMessage(REQUEST_ADULT_FILE, data);
+
+                                break;
+
+                            default:
+
+                                break;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+    }
+
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            showLoading();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                URL url = new URL("http://wwww.dastudytime.kr/resources/studytime/" + params);
+                URLConnection conn = url.openConnection();
+                InputStream input = new BufferedInputStream(url.openStream());
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(input));
+
+                mDBHelper.setTableAdultUrl(br);
+                return null;
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            dismissLoading();
+        }
     }
 
 }

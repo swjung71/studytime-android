@@ -3,11 +3,15 @@ package kr.co.digitalanchor.studytime.monitor;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Browser;
 import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
@@ -101,11 +105,30 @@ public class TimerTaskWork extends TimerTask {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
-
-        } else if (!mHelper.isExcepted(currentPackage)){
+        } else if (!mHelper.isExcepted(currentPackage)) {
 
             killApplication(currentPackage);
+
+            return;
         }
+    /*
+        if (currentPackage.equals("com.android.browser")
+                || currentPackage.equals("com.google.android.browser") // nexus
+                || currentPackage.equals("com.android.chrome")
+                || currentPackage.equals("com.sec.android.app.sbrowser")) {
+
+            String url = getRecentUrl(currentPackage);
+
+            if (TextUtils.isEmpty(url)) {
+
+                return;
+            }
+
+            // TODO url check by db
+
+            blockWebPage(currentPackage, url);
+        }
+     */
     }
 
     private String checkRunningPackage() {
@@ -181,6 +204,114 @@ public class TimerTaskWork extends TimerTask {
         final AlarmManager alarm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
+
+    }
+
+    private String getRecentUrl(String currentPackage) {
+
+        String sortOrder = String.format("%s DESC limit 1",
+                new Object[]{"date"});
+        ContentResolver contentResolver = mContext.getContentResolver();
+
+        Uri localUri = null;
+
+        switch (currentPackage) {
+
+            case "com.sec.android.app.sbrowser":
+
+                localUri = Uri
+                        .parse("content://com.sec.android.app.sbrowser.browser/history");
+
+                break;
+
+            case "com.android.chrome":
+
+                localUri = Uri
+                        .parse("content://com.android.chrome.browser/history");
+
+                break;
+
+            default:
+
+                localUri = Browser.BOOKMARKS_URI; // not works on all phone
+
+                break;
+        }
+
+        String[] historyArray = Browser.HISTORY_PROJECTION;
+        String[] time = new String[1];
+        time[0] = String.valueOf(System.currentTimeMillis());
+
+        Cursor cursor = contentResolver.query(localUri, historyArray,
+                "date < ?", time, sortOrder);
+
+        String url = null;
+
+        if (cursor != null) {
+            if ((cursor.moveToFirst()) && (cursor.getCount() > 0)) {
+
+                url = cursor.getString(1);// URL
+            }
+
+            cursor.close();
+
+        }
+
+        return url;
+
+    }
+
+    private void blockWebPage(String packageName, String url) {
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(StaticValues.BLOCK_PAGE_URL));
+
+
+        switch (packageName) {
+
+            case "com.sec.android.app.sbrowser":
+
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setClassName(packageName,
+                        "com.sec.android.app.sbrowser.SBrowserMainActivity");
+
+                break;
+
+            case "com.android.browser":
+
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setClassName(packageName,
+                        "com.android.browser.BrowserActivity");
+
+                break;
+
+            case "com.android.chrome":
+
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setClassName(packageName,
+                        "com.google.android.apps.chrome.Main");
+
+                break;
+        }
+
+        intent.putExtra(Browser.EXTRA_APPLICATION_ID, packageName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        String[] time = new String[1];
+        time[0] = String.valueOf(System.currentTimeMillis());
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Uri localUri = Browser.BOOKMARKS_URI; // not works on all phone
+
+        try {
+            String args[] = new String[]{"" + time};
+            contentResolver.delete(localUri,
+                    "date < ? ORDER BY date DESC LIMIT 1", args);
+        } catch (Exception ex) {
+            // log
+        }
+
+        // open our block site
+        mContext.startActivity(intent);
 
     }
 
