@@ -9,11 +9,19 @@ import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
+import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
@@ -37,6 +45,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_APPLICATION_FOR_CHILD = "application_table_for_child";
     private static final String TABLE_APPLICATION_FOR_PARENT = "application_table_for_parent";
     private static final String TRIGGER_NEW_MESSAGE = "new_message_trigger";
+    private static final String TABLE_ADULT_FILE = "adult_file_table";
+    private static final String TABLE_ADULT_URL = "adult_url_table";
 
 
     //Key value
@@ -92,6 +102,14 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String HAS_ICON_IN_DB = "hasIconInDB"; // 서버에 아이콘이 있으면 1, 없으면 0
     private static final String ICON_HASH = "imageName"; // 아이콘 파일 이름
     private static final String CHANGED = "changed"; // 변경사항이 있으면 1, 아니면 0
+
+    private static final String ADULT_FILE = "fileName";//차단 웹 사이트 목록 파일 이름
+    private static final String ADULT_FILE_DATE ="date";// 차단 웹 사이트 목록 파일 날짜
+
+    private static final String ADULT_URL_ID = "adult_url_id";
+    private static final String ADULT_URL_HASH = "hash";
+    private static final String ADULT_URL_DIRECTORY = "directory";
+    private static final String ADULT_URL_IS_SUB = "isSub";
 
     private static final String CREATE_TABLE_APP_FOR_CHILD = "CREATE TABLE " + TABLE_APPLICATION_FOR_CHILD + " ("
             + PACKAGE_NAME + " TEXT PRIMARY KEY, "
@@ -164,12 +182,25 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " SET " + NEW_MESSAGE_COUNT + " = " + NEW_MESSAGE_COUNT + " + 1 "
                 + " WHERE " + CHILDREN_ID + " = new." + SENDER_ID + "; END";
 
+        String CREATE_TABLE_ADULT_FILE = "CREATE TABLE " + TABLE_ADULT_FILE + " ("
+                + ADULT_FILE + " TEXT, "
+                + ADULT_FILE_DATE + "TEXT )";
+
+        String CREATE_TABLE_ADULT_URL = "CREATE TABLE " + TABLE_ADULT_URL + " ("
+                + ADULT_URL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ADULT_URL_HASH + " TEXT, "
+                + ADULT_URL_DIRECTORY + " TEXT, "
+                + ADULT_URL_IS_SUB + " TEXT )";
+
+
         db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
         db.execSQL(CREATE_TABLE_CHILD);
         db.execSQL(CREATE_TABLE_MESSAGE);
         db.execSQL(CREATE_TABLE_ONOFF);
         db.execSQL(CREATE_TABLE_APP_FOR_CHILD);
         db.execSQL(CREATE_TRIGGER_MESSAGE);
+        db.execSQL(CREATE_TABLE_ADULT_FILE);
+        db.execSQL(CREATE_TABLE_ADULT_URL);
 
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
@@ -1297,6 +1328,153 @@ public class DBHelper extends SQLiteOpenHelper {
         return messages;
     }
 
+    public void setAdultFile(AdultFileResult model) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+
+        if(model.getFileName().size() != 0) {
+            ArrayList<String> files = model.getFileName();
+            for (String fileName : files) {
+                values.put(ADULT_FILE, fileName);
+                values.put(ADULT_FILE_DATE, "date('now')");
+                db.insert(TABLE_ADULT_FILE, null, values);
+            }
+        }
+    }
+
+    public String getAdultFile(){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + "ORDER BY " + ADULT_FILE_DATE + " DESC LIMIT 1";
+        Cursor rows = db.rawQuery(sql, null);
+
+        if(rows.getCount() == 0){
+            return null;
+        }else{
+            rows.moveToFirst();
+            return rows.getString(0);
+        }
+    }
+    public void setTableAdultUrl(BufferedReader br){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+        try {
+            //BufferedReader br = new BufferedReader(new FileReader(file));
+
+            db.beginTransaction();
+
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                int i = 0;
+                String urlHash = new String();
+                String directory = new String();
+
+                String[] sp = line.split(";");
+
+                for (; i < sp.length; i++) {
+                    String sub = sp[i];
+                    String[] subsp = sub.split(",");
+
+                    if (i == 0) {
+                        urlHash = subsp[0];
+                        directory = subsp[2];
+
+                        int nud, sex, vio, lan;
+
+                        nud = Integer.parseInt(subsp[4]);
+                        sex = Integer.parseInt(subsp[5]);
+                        vio = Integer.parseInt(subsp[6]);
+                        lan = Integer.parseInt(subsp[7]);
+
+
+                        //for high school
+                        if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
+
+                            String isDelete = subsp[10];
+
+                            if(isDelete.equalsIgnoreCase("D")){
+                                //삭제 코드
+                                String whereClause = ADULT_URL_HASH + "=" + urlHash + " AND " + ADULT_URL_DIRECTORY + "=" + directory;
+                                db.delete(TABLE_ADULT_URL, whereClause, null);
+                            }else{
+                                //삽입 코드
+                                ContentValues values = new ContentValues();
+                                values.put(ADULT_URL_HASH, urlHash);
+                                values.put(ADULT_URL_DIRECTORY, directory);
+                                values.put(ADULT_URL_IS_SUB, subsp[11]);
+                                db.insert(TABLE_ADULT_URL, null, values);
+                            }
+                        }
+
+                    } else {
+
+                        directory = subsp[1];
+
+                        int nud, sex, vio, lan;
+
+                        nud = Integer.parseInt(subsp[3]);
+                        sex = Integer.parseInt(subsp[4]);
+                        vio = Integer.parseInt(subsp[5]);
+                        lan = Integer.parseInt(subsp[6]);
+
+                        //for high school
+                        if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
+
+                            String isDelete = subsp[9];
+
+                            if(isDelete.equalsIgnoreCase("D")){
+                                //삭제 코드
+                                String whereClause = ADULT_URL_HASH + "=" + urlHash + " AND " + ADULT_URL_DIRECTORY + "=" + directory;
+                                db.delete(TABLE_ADULT_URL, whereClause, null);
+                            }else{
+                                ContentValues values = new ContentValues();
+                                values.put(ADULT_URL_HASH, urlHash);
+                                values.put(ADULT_URL_DIRECTORY, directory);
+                                values.put(ADULT_URL_IS_SUB, subsp[10]);
+                                db.insert(TABLE_ADULT_URL, null, values);
+                            }
+
+                        }
+                    }
+
+		/*
+		// for middle school
+		if( nud > 2 || sex > 2 || vio > 2 || lan > 1){
+
+		}
+		// for elementry school
+		if( nud > 1 || sex > 0 || vio > 1|| lan > 0){
+
+		}*/
+                }
+            }
+            db.endTransaction();
+        } catch (FileNotFoundException e) {
+            Logger.e(e.getMessage());
+        } catch (IOException e) {
+            Logger.e(e.getMessage());
+        }
+    }
+
+    public Cursor isAdultURL(String hash){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] result_columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_IS_SUB};
+
+        String where = ADULT_URL_HASH + " = " + hash;
+        Cursor result = db.query(TABLE_ADULT_URL, result_columns, where, null, null, null, null);
+
+        return result;
+    }
+
+
     /**
      * 처음으로 onOFF 정보를 넣거나 update할 때 사용
      *
@@ -1436,6 +1614,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADULT_FILE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADULT_URL);
 
         onCreate(db);
     }
