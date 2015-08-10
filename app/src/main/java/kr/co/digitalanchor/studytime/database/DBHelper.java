@@ -176,20 +176,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.replace(TABLE_ON_OFF, null, values);
 
-        db.close();
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion == 1 && newVersion == 0) {
+        if (oldVersion == 1 && newVersion == 2) {
 
             db.execSQL(CREATE_TABLE_APP_FOR_CHILD);
 
         }
-
-        db.close();
     }
 
     /**
@@ -397,11 +393,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cursor = null;
 
-            if (db != null) {
-
-                db.close();
-                db = null;
-            }
         }
 
         return result;
@@ -443,11 +434,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
             } while (cursor.moveToNext());
         }
-
-        cursor.close();
-
-        db.close();
-
 
         return hash;
     }
@@ -500,13 +486,6 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             cursor = null;
-
-            if (db != null) {
-
-                db.close();
-
-                db = null;
-            }
         }
 
         return list;
@@ -563,12 +542,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
 
         return list;
     }
@@ -593,12 +566,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
 
         return size;
     }
@@ -664,12 +631,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
 
         return packages;
     }
@@ -709,15 +670,6 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor != null) {
 
             cursor.close();
-        }
-
-        cursor = null;
-
-        if (db != null) {
-
-            db.close();
-
-            db = null;
         }
 
         return packages;
@@ -867,52 +819,61 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Account getAccountInfo() {
 
-        Account account = new Account();
+        Account account = null;
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
-                PARENT_ID, NEW_NOTICE};
+        SQLiteDatabase db = null;
 
-        Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
-                null, null);
+        Cursor cursor = null;
 
-        if (cursor.moveToFirst()) {
+        try {
 
-            account.setID(cursor.getString(0));
-            account.setIsChild(cursor.getInt(1));
-            account.setName(cursor.getString(2));
+            account = new Account();
 
-            if (cursor.getString(3) != null) {
-                account.setPassword(cursor.getString(3));
+            db = this.getReadableDatabase();
+
+            String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
+                    PARENT_ID, NEW_NOTICE};
+
+            cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
+                    null, null);
+
+            if (cursor.moveToFirst()) {
+
+                account.setID(cursor.getString(0));
+                account.setIsChild(cursor.getInt(1));
+                account.setName(cursor.getString(2));
+
+                if (cursor.getString(3) != null) {
+                    account.setPassword(cursor.getString(3));
+                }
+
+                account.setCoin(cursor.getInt(4));
+
+                if (cursor.getString(5) != null) {
+
+                    account.setEmail(cursor.getString(5));
+                }
+
+                if (cursor.getString(6) != null) {
+
+                    account.setParentId(cursor.getString(6));
+                }
+
+                account.setNotice(cursor.getInt(7));
             }
 
-            account.setCoin(cursor.getInt(4));
+        } catch (Exception e) {
 
-            if (cursor.getString(5) != null) {
 
-                account.setEmail(cursor.getString(5));
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
             }
 
-            if (cursor.getString(6) != null) {
+            cursor = null;
 
-                account.setParentId(cursor.getString(6));
-            }
-
-            account.setNotice(cursor.getInt(7));
-        }
-
-        if (cursor != null) {
-
-            cursor.close();
-        }
-
-        cursor = null;
-
-        if (db != null) {
-
-            db.close();
-
-            db = null;
         }
 
         return account;
@@ -1023,13 +984,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
-
         return children;
 
     }
@@ -1073,12 +1027,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
 
         return child;
     }
@@ -1299,13 +1247,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
-
         return messages;
     }
 
@@ -1353,13 +1294,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor = null;
 
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
-
         return messages;
     }
 
@@ -1403,6 +1337,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
 
+        int result = 0;
+
         try {
 
             db = this.getReadableDatabase();
@@ -1413,10 +1349,12 @@ public class DBHelper extends SQLiteOpenHelper {
                     new String[]{ONOFF_PK}, null, null, null, null);
 
             if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
+                result = cursor.getInt(0);
             }
 
-            return 0;
+        } catch (Exception e) {
+
+            result = 0;
 
         } finally {
 
@@ -1427,13 +1365,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cursor = null;
 
-            if (db != null) {
-
-                db.close();
-
-                db = null;
-            }
         }
+
+        return result;
     }
 
     public void updateAllow(int isAllow) {
@@ -1490,12 +1424,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cursor = null;
 
-            if (db != null) {
-
-                db.close();
-
-                db = null;
-            }
         }
     }
 
