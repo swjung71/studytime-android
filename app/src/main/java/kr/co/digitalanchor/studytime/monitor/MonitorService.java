@@ -35,6 +35,8 @@ public class MonitorService extends Service {
 
     TimerTask taskUpdatePackageList;
 
+    TimerTask taskUpdateDB;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -51,11 +53,13 @@ public class MonitorService extends Service {
         taskPreventAdmin = new TimerTaskPreventUncheckDeviceAdmin(this);
         taskSyncData = new TimerTaskSyncData(this);
         taskUpdatePackageList = new TimerTaskUpdatePackageList(this);
+        taskUpdateDB = new TimerTaskUpdateDB(this);
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
         timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 600L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
+        timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
     }
 
@@ -113,6 +117,8 @@ public class MonitorService extends Service {
 
         builder.setSmallIcon(R.drawable.icon_notificaiton).setContentTitle("스터디타임")
                 .setLargeIcon(bm);
+
+
 
         return builder.build();
     }
