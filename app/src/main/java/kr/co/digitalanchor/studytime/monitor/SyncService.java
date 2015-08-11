@@ -102,7 +102,7 @@ public class SyncService extends Service {
 
                 Logger.e(error.toString());
 
-                stopSelf();
+
             }
         });
 

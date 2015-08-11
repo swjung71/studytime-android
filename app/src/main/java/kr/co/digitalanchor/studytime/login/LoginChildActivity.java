@@ -341,7 +341,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = null;//mDBHelper.getAdultFile();
+        String date = mDBHelper.getAdultFile();
 
         if (date != null) {
 
