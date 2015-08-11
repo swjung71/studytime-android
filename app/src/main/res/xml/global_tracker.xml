@@ -11,7 +11,7 @@
     <screenName name="kr.co.digitalanchor.studytime.block.BlockActivity">block screen</screenName>
     <screenName name="kr.co.digitalanchor.studytime.block.BlockPasswordActivity">block password screen</screenName>
     <screenName name="kr.co.digitalanchor.studytime.control.ListChildActivity">list child activity</screenName>
-    <screenName name="kr.co.digitalanchor.studytime.control.ControlChildActivity">child control activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.control.ControlChildExActivity">child control activity</screenName>
     <screenName name="kr.co.digitalanchor.studytime.control.InputPwdActivity">password input activity</screenName>
     <screenName name="kr.co.digitalanchor.studytime.chat.ChildChatActivity">Child Chat activity</screenName>
     <screenName name="kr.co.digitalanchor.studytime.chat.ParentChatActivity">Parent Chat activity</screenName>

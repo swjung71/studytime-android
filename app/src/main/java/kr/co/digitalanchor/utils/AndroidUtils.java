@@ -3,8 +3,10 @@ package kr.co.digitalanchor.utils;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
@@ -221,6 +223,9 @@ public class AndroidUtils {
             builder.setContentIntent(intent);
         }
 
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        builder.setSound(alarmSound);
+
         nm.notify(NotificationID.getID(), builder.build());
     }
 
@@ -273,4 +278,5 @@ public class AndroidUtils {
 
         return false;
     }
+
 }

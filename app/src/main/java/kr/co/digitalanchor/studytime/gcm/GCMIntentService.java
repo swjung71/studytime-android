@@ -373,7 +373,6 @@ public class GCMIntentService extends IntentService {
 
                                         map.put(key.getPackageId(), 1);
                                     }
-
                                 }
 
                                 List<PackageModel> packages = mHelper.getPackageListExcept();

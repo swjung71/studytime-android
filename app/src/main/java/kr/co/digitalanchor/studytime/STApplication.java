@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.intro.IntroActivity;
@@ -73,6 +74,8 @@ public class STApplication extends MultiDexApplication {
     private static Bitmap.CompressFormat DISK_IMAGECACHE_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
     private static int DISK_IMAGECACHE_QUALITY = 100;  //PNG is lossless so quality is ignored but must be provided
 
+    static Pattern URL_PATTERN;
+
     @Override
     public void onCreate() {
 
@@ -87,7 +90,7 @@ public class STApplication extends MultiDexApplication {
         // TODO Google analystics initialize
 
         analytics = GoogleAnalytics.getInstance(this);
-        analytics.setDryRun(true);
+        analytics.setDryRun(false);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");
@@ -105,6 +108,7 @@ public class STApplication extends MultiDexApplication {
         RequestManager.init(this);
         createImageCache();
 
+        URL_PATTERN  = Pattern.compile("^(https?):\\/\\/([^:\\/\\s]+)(:([^\\/]*))?((\\/[^\\s/\\/]+)*)?\\/([^#\\s\\?]*)(\\?([^#\\s]*))?(#(\\w*))?$");
     }
 
     @Override
@@ -180,14 +184,26 @@ public class STApplication extends MultiDexApplication {
 
             for (int i = 0; appVersionTokens.length > i; i++) {
 
-                int result = appVersionTokens[i].compareTo(curVersionTokens[i]);
+                try {
 
-                if (result < 0) {
+                    if (Integer.parseInt(appVersionTokens[i]) < Integer.parseInt(curVersionTokens[i])) {
 
-                    isUpdate = true;
+                        isUpdate = true;
+
+                        break;
+
+                    } else if (Integer.parseInt(appVersionTokens[i]) > Integer.parseInt(curVersionTokens[i])) {
+
+                        isUpdate = false;
+
+                        break;
+                    }
+
+                } catch (NumberFormatException e) {
+
+                    isUpdate = false;
 
                     break;
-
                 }
             }
 
@@ -610,5 +626,8 @@ public class STApplication extends MultiDexApplication {
         applicationContext.startActivity(intent);
     }
 
+    public static Pattern getUrlPattern() {
 
+        return URL_PATTERN;
+    }
 }

@@ -632,9 +632,14 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                             case SUCCESS:
 
-                                packages.clear();
-
                                 List<PackageElementForP> list = response.getPackages();
+
+                                if (list == null || list.size() < 1) {
+
+                                    break;
+                                }
+
+                                packages.clear();
 
                                 for (PackageElementForP item : list) {
 

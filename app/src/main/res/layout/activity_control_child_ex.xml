@@ -228,6 +228,15 @@
             android:scaleType="fitCenter"
             android:src="@drawable/guide_text5" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="@dimen/child_control_info_guide_05_margin_bottom"
+            android:layout_marginLeft="@dimen/child_control_info_guide_05_margin_right"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text7" />
+
     </FrameLayout>
 
 </FrameLayout>

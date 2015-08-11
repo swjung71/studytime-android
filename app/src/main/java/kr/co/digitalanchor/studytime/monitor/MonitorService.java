@@ -22,6 +22,7 @@ public class MonitorService extends Service {
 
     /// 1 Second = 1000 Milli Seconds
     private final double ONE_SEC = 1000.0f;
+    private final long ONE_SECOND = 1000L;
 
     Timer timerDaemon;
 
@@ -53,8 +54,8 @@ public class MonitorService extends Service {
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskSyncData, (long) (double) (300.0f * ONE_SEC), (long) (double) (600.0f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, (long) (double) (400.0f * ONE_SEC), (long) (double) (6f + 60f * 60f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 600L * ONE_SECOND);
+        timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
 
     }
 
