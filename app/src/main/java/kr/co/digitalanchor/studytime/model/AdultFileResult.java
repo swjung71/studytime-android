@@ -18,8 +18,8 @@ public class AdultFileResult {
     @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
-    @ElementList(name = "FileName", required = false, inline = true)
-    ArrayList<String> fileName;
+    @ElementList(name = "Files", required = false, inline = true)
+    ArrayList<Files> fileName;
 
     public int getResultCode() {  return resultCode;   }
     public void setResultCode(int resultCode) {  this.resultCode = resultCode;  }
@@ -29,10 +29,12 @@ public class AdultFileResult {
     public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
     }
-    public ArrayList<String> getFileName() {
+
+    public ArrayList<Files> getFileName() {
         return fileName;
     }
-    public void setFileName(ArrayList<String> fileName) {
+
+    public void setFileName(ArrayList<Files> fileName) {
         this.fileName = fileName;
     }
 }

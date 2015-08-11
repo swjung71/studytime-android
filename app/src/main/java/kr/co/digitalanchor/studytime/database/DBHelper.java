@@ -18,6 +18,7 @@ import java.util.List;
 
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
+import kr.co.digitalanchor.studytime.model.Files;
 import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
@@ -1342,11 +1343,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (model.getFileName().size() != 0) {
 
-            ArrayList<String> files = model.getFileName();
+            ArrayList<Files> files = model.getFileName();
 
-            for (String fileName : files) {
+            for (Files file : files) {
 
-                values.put(ADULT_FILE, fileName);
+                values.put(ADULT_FILE, file.getFileName());
                 values.put(ADULT_FILE_DATE, "data('now')");
 
                 db.insert(TABLE_ADULT_FILE, null, values);
@@ -1356,24 +1357,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public String getAdultFile() {
 
+        String result = null;
+
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + "ORDER BY "
+        String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + " ORDER BY "
                 + ADULT_FILE_DATE + " DESC LIMIT 1";
 
         Cursor rows = db.rawQuery(sql, null);
 
+        if (rows.moveToFirst()) {
 
-        if (rows.getCount() == 0) {
-
-            return null;
-
-        } else {
-
-            rows.moveToFirst();
-
-            return rows.getString(0);
+            result = rows.getString(0);
         }
+
+        rows.close();
+
+        return result;
     }
 
     public void setTableAdultUrl(BufferedReader br) {
@@ -1494,7 +1494,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 result = true;
 
-            } else if (directory.contains(dir)) {
+            } else if (directory.startsWith(dir)) {
 
                 result = true;
 

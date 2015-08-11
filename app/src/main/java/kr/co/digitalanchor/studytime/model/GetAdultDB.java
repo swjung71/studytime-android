@@ -13,7 +13,7 @@ public class GetAdultDB {
     @Attribute(name = "xmlns")
     String tag;
 
-    @Element(name = "ChildID")
+    @Element(name = "ChildID", required = false)
     String childID;
 
     @Element(name = "Date", required = false)

@@ -31,6 +31,7 @@ import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
+import kr.co.digitalanchor.studytime.model.Files;
 import kr.co.digitalanchor.studytime.model.GetAdultDB;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
@@ -46,6 +47,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     private final int REQUEST_CHILD_LOGIN = 50001;
     private final int REQUEST_ADD_INFO = 50003;
     private final int COMPLETE_CHILD_LOGIN = 50002;
+    private final int REQUEST_ADULT_FILE_LIST = 50005;
     private final int REQUEST_ADULT_FILE = 50004;
 
     private final int ACTIVITY_ADDITIONAL_INFO = 60001;
@@ -57,6 +59,10 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     EditText mEditChildName;
 
     DBHelper mDBHelper;
+
+    String parentId;
+
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +105,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             case REQUEST_ADD_INFO:
 
-                data = msg.getData();
-
-                showAddInfo(data.getString("ParentID"), data.getString("Name"));
+                showAddInfo(parentId, name);
 
                 break;
 
@@ -119,6 +123,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 break;
 
+            case REQUEST_ADULT_FILE_LIST:
+
+                requestAdultFile();
+
+                break;
+
 
             default:
 
@@ -133,9 +143,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             case R.id.buttonLogin:
 
+
+                sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+
                 if (isValidate()) {
 
-                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
+//                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
                 }
 
                 break;
@@ -276,15 +289,11 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                         dismissLoading();
 
-                        data = new Bundle();
+                        parentId = response.getParentID();
 
-                        data.putString("ParentID", response.getParentID());
+                        name = mEditChildName.getText().toString();
 
-                        data.putString("Name", mEditChildName.getText().toString());
-
-                        Logger.d(data.toString());
-
-                        sendMessage(REQUEST_ADD_INFO, data);
+                        sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
                         break;
 
@@ -310,17 +319,20 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
     private void downloadAdultFile(Bundle data) {
 
-        ArrayList<String> files = data.getStringArrayList("files");
+        Logger.d("downloadAdultFile");
 
-        if (files == null || files.size() < 1) {
+        String file = data.getString("files");
+
+        if (TextUtils.isEmpty(file)) {
+
+            sendEmptyMessage(REQUEST_ADD_INFO);
 
             return;
         }
 
-        for (String file : files) {
+        Logger.d("downloadAdultFile 1" );
 
-            new DownloadFileFromURL().execute(file);
-        }
+        new DownloadFileFromURL().execute(file);
     }
 
     private void requestAdultFile() {
@@ -329,7 +341,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = mDBHelper.getAdultFile();
+        String date = null;//mDBHelper.getAdultFile();
 
         if (date != null) {
 
@@ -352,11 +364,11 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                                 data = new Bundle();
 
-                                ArrayList<String> files = response.getFileName();
+                                ArrayList<Files> files = response.getFileName();
 
                                 mDBHelper.setAdultFile(response);
 
-                                data.putStringArrayList("files", response.getFileName());
+                                data.putString("files", response.getFileName().get(0).getFileName());
                                 Logger.d(data.toString());
 
                                 sendMessage(REQUEST_ADULT_FILE, data);
@@ -376,6 +388,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                         handleError(error);
                     }
                 });
+
+        addRequest(request);
     }
 
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
@@ -384,6 +398,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         protected void onPreExecute() {
             super.onPreExecute();
 
+            Logger.d("onPreExecute");
+
             showLoading();
         }
 
@@ -391,21 +407,38 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("http://wwww.dastudytime.kr/resources/studytime/" + params);
+
+                Logger.d("http://wwww.dastudytime.kr/resources/studytime/" + params[0]);
+
+                URL url = new URL("http://wwww.dastudytime.kr/resources/studytime/" + params[0]);
+
                 URLConnection conn = url.openConnection();
+                conn.connect();
+
                 InputStream input = new BufferedInputStream(url.openStream());
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(input));
 
                 mDBHelper.setTableAdultUrl(br);
+
+                input.close();
+
                 return null;
 
             } catch (MalformedURLException e) {
+
                 e.printStackTrace();
+
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
         }
 
         @Override
@@ -413,6 +446,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             super.onPostExecute(s);
 
             dismissLoading();
+
+            sendEmptyMessage(REQUEST_ADD_INFO);
         }
     }
 

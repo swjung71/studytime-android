@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 import kr.co.digitalanchor.studytime.model.AddPackageModel;
+import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.AllPackage;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
 import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
@@ -59,7 +60,7 @@ import kr.co.digitalanchor.studytime.model.db.VersionResult;
  */
 public class HttpHelper {
 
-    public static boolean isDev = false;
+    public static boolean isDev = true;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
@@ -1337,8 +1338,8 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ExceptionAppResult>(getURL() + "getExceptionApp",
-                    ExceptionAppResult.class, map, listener, errorListener);
+            return new SimpleXmlRequest<AdultFileResult>(getURL() + "getAdultFile",
+                    AdultFileResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

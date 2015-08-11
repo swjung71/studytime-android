@@ -21,11 +21,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.utils.MD5ForAdultURL;
 
 /**
  * Created by Thomas on 2015-06-24.
@@ -51,11 +54,6 @@ public class TimerTaskWork extends TimerTask {
     @Override
     public void run() {
 
-        if (mHelper.getOnOff() != 1) {
-
-            return;
-        }
-
         String currentPackage = null;
 
         // monitor
@@ -80,38 +78,42 @@ public class TimerTaskWork extends TimerTask {
             }
         }
 
+        if (mHelper.getOnOff() == 1) {
+
 //        Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
-        // kill
-        if (TextUtils.isEmpty(currentPackage)
-                || isLauncher(currentPackage)
-                || currentPackage.contains(".mms")
-                || currentPackage.contains(".contacts")
-                || currentPackage.contains("com.android.phone")
-                || currentPackage.contains("com.android.settings")
-                || currentPackage.contains("com.android.dialer")
-                || currentPackage.equals("android")
-                || currentPackage.equals("com.android.systemui")
-                || currentPackage.equals("com.lge.settings.easy")
-                || currentPackage.equals("com.lge.bluetoothsetting")) {
+            // kill
+            if (TextUtils.isEmpty(currentPackage)
+                    || isLauncher(currentPackage)
+                    || currentPackage.contains(".mms")
+                    || currentPackage.contains(".contacts")
+                    || currentPackage.contains("com.android.phone")
+                    || currentPackage.contains("com.android.settings")
+                    || currentPackage.contains("com.android.dialer")
+                    || currentPackage.equals("android")
+                    || currentPackage.equals("com.android.systemui")
+                    || currentPackage.equals("com.lge.settings.easy")
+                    || currentPackage.equals("com.lge.bluetoothsetting")) {
 
-            // not work
-        } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
-                && currentPackage.contains("com.android.packageinstaller")) {
+                // not work
+            } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                    && currentPackage.contains("com.android.packageinstaller")) {
 
-            // not work
+                // not work
 
-        } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") == 0) {
+            } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") == 0) {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
-        } else if (!mHelper.isExcepted(currentPackage)) {
+            } else if (!mHelper.isExcepted(currentPackage)) {
 
-            killApplication(currentPackage);
+                killApplication(currentPackage);
 
-            return;
+                return;
+            }
+
         }
-/*
+
         if (currentPackage.equals("com.android.browser")
                 || currentPackage.equals("com.google.android.browser") // nexus
                 || currentPackage.equals("com.android.chrome")
@@ -119,18 +121,25 @@ public class TimerTaskWork extends TimerTask {
 
             String url = getRecentUrl(currentPackage);
 
-            if (TextUtils.isEmpty(url)) {
+            if (TextUtils.isEmpty(url) || url.equals(StaticValues.BLOCK_PAGE_URL)) {
 
                 return;
             }
 
-            // TODO url check by db
-           if (mHelper.isAdultURL(url, directory)) {
+            Logger.d("url = " + url);
 
-                blockWebPage(currentPackage, url);
+            String[] data = extractUrlParts(url);
+
+            if (data == null || data.length < 1) {
+
+                return;
+            }
+
+            if (mHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
+
+                blockWebPage(currentPackage);
             }
         }
-*/
     }
 
     private String checkRunningPackage() {
@@ -265,7 +274,8 @@ public class TimerTaskWork extends TimerTask {
 
     private void blockWebPage(String packageName) {
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(StaticValues.BLOCK_PAGE_URL));
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(StaticValues.BLOCK_PAGE_URL));
 
 
         switch (packageName) {
@@ -355,4 +365,48 @@ public class TimerTaskWork extends TimerTask {
         return names;
     }
 
+    private String[] extractUrlParts(String url) {
+
+        String [] data = null;
+
+        Pattern urlPattern = STApplication.getUrlPattern();
+
+        Matcher mc = urlPattern.matcher(url);
+
+        if (mc.matches()) {
+
+            for (int i = 0; i < mc.groupCount(); i++) {
+
+                Logger.d("match = " + mc.group(i));
+            }
+
+            //http  m.media.daum.net  null  null  /m/media/society/newsview
+
+            StringBuffer buffer = new StringBuffer();
+
+            buffer.append(mc.group(1) + "://");
+
+            if (mc.group(2).startsWith("wwww.")) {
+
+                buffer.append(mc.group(2).replaceFirst("wwww.", ""));
+
+            } else {
+
+                buffer.append(mc.group(2));
+            }
+
+            if (TextUtils.isEmpty(mc.group(3))) {
+
+                buffer.append(":80");
+
+            } else {
+
+                buffer.append(mc.group(3));
+            }
+
+            data = new String[] {buffer.toString(), mc.group(5)};
+        }
+
+        return data;
+    }
 }
