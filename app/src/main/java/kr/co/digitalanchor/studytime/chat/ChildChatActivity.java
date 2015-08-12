@@ -31,6 +31,7 @@ import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
+import kr.co.digitalanchor.studytime.monitor.DownloadService;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
@@ -185,6 +186,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 //                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
 //
 //                startService(intent);
+
+//                startService(new Intent(getApplicationContext(), DownloadService.class));
 
                 break;
 

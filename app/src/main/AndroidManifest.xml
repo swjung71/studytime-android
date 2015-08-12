@@ -287,7 +287,7 @@
 
         <service android:name=".app.AppManageService" />
         <service android:name=".app.AppIconUploader" />
-
+        <service android:name=".monitor.DownloadService"/>
         <receiver android:name=".app.PackageReceiver">
 
             <intent-filter>
@@ -298,6 +298,7 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+
 
 
     </application>

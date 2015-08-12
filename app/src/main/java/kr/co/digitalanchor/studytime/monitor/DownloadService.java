@@ -143,6 +143,11 @@ public class DownloadService extends Service  {
                                 list = response.getFileName();
                                 Logger.d(data.toString());
 
+                                if (list == null || list.size() < 1) {
+
+                                    return;
+                                }
+
                                 handler.sendEmptyMessage(REQUEST_DB_FILE);
 
                                 break;
@@ -232,6 +237,8 @@ public class DownloadService extends Service  {
                 BufferedReader br = new BufferedReader(new FileReader(fileName));
 
                 dbHelper.setTableAdultUrl(br);
+
+                Logger.d("last " + dbHelper.isAdultURL("D91DD597C13A8E15F5ED0EF44B74AD3C", null));
 
             } catch (SocketException e) {
 
