@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,8 +21,10 @@ import com.orhanobut.logger.Logger;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -159,12 +162,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             case R.id.buttonLogin:
 
-                sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+//                sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
-//                if (isValidate()) {
-//
-//                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
-//                }
+                if (isValidate()) {
+
+                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
+                }
 
                 break;
 
@@ -405,7 +408,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         addRequest(request);
     }
 
-    class DownloadFileFromURL extends AsyncTask<String, Integer, String> implements OnMessageListener {
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -477,7 +480,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                Logger.e(e.toString());
 
-
             } finally {
 
                 try {
@@ -511,12 +513,15 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 Logger.d("ftp status: " + ftp.getStatus());
 
-                File downloadFile = new File("/sdcard/" + params[0]);
+                File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
 
                 if (downloadFile.createNewFile()) {
-                    System.out.println("File is created!");
+
+                    Logger.d("File is created!");
+
                 } else {
-                    System.out.println("File already exists.");
+                    Logger.d("File already exists.");
+
                 }
 
                 FileOutputStream local = new FileOutputStream(downloadFile);
@@ -528,6 +533,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 local.close();
 
                 ftp.disconnect();
+
+                BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]));
+
+                mDBHelper.setTableAdultUrl(br);
+
+                br.close();
 
             } catch (SocketException e) {
 
@@ -545,12 +556,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setMax(100);
-            mProgressDialog.setProgress(values[0]);
+            mProgressDialog.setProgress(Integer.parseInt(values[0]));
         }
 
         @Override
@@ -559,14 +570,9 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             mProgressDialog.dismiss();
 
-//            sendEmptyMessage(REQUEST_ADD_INFO);
+            sendEmptyMessage(REQUEST_ADD_INFO);
         }
 
-        @Override
-        public void onMessage(int values) {
-
-            publishProgress(values);
-        }
     }
 
 }

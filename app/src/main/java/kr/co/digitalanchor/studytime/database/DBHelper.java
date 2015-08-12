@@ -9,6 +9,8 @@ import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -1364,11 +1366,15 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + " ORDER BY "
                 + ADULT_FILE_DATE + " DESC LIMIT 1;";
 
+
         Cursor rows = db.rawQuery(sql, null);
 
         if (rows.moveToFirst()) {
 
-            result = rows.getString(0);
+            do {
+                result = rows.getString(0);
+
+            } while (rows.moveToNext());
         }
 
         rows.close();
@@ -1376,7 +1382,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public void setTableAdultUrl(BufferedReader br, long length, OnMessageListener listener) {
+    public void setTableAdultUrl(BufferedReader br) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1390,15 +1396,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
             while ((line = br.readLine()) != null) {
 
-                if (listener != null) {
-
-                    listener.onMessage((int) (line.getBytes().length * 4 / length));
-                }
-
                 int i = 0;
 
                 String urlHash = new String();
                 String directory = new String();
+
+                line.replaceAll("&amp;", "&");
 
                 String[] sp = line.split(";");
 
@@ -1503,6 +1506,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         boolean result = false;
 
+        if (TextUtils.isEmpty(directory)) {
+
+            directory = "/";
+        }
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] result_columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_IS_SUB};
@@ -1521,13 +1529,13 @@ public class DBHelper extends SQLiteOpenHelper {
             dir = cursor.getString(0);
             isSub = cursor.getString(1);
 
-            Logger.d(hash + " " + isSub + " ");
+            Logger.d(hash + " " + dir + " ");
 
-            if (isSub.equals("0")) {
+            if (isSub.equals("P")) {
 
                 result = true;
 
-            } else if (directory.startsWith(dir)) {
+            } else if (isSub.equals("S") &&  directory.startsWith(dir)) {
 
                 result = true;
 
@@ -1565,7 +1573,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 Logger.d(cursor.getString(0) + " " + cursor.getString(1));
 
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
 
         }
 
