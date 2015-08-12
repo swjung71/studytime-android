@@ -29,7 +29,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 /**
  * Created by user on 2015-08-12.
  */
-public class DownloadService extends Service implements DownloadFileTask.TaskListener {
+public class DownloadService extends Service  {
 
     static final int REQUEST_FILE_LIST = 50001;
     static final int REQUEST_DB_FILE = 50002;
@@ -128,7 +128,6 @@ public class DownloadService extends Service implements DownloadFileTask.TaskLis
                                 list = response.getFileName();
                                 Logger.d(data.toString());
 
-
                                 handler.sendEmptyMessage(REQUEST_DB_FILE);
 
                                 break;
@@ -161,26 +160,5 @@ public class DownloadService extends Service implements DownloadFileTask.TaskLis
 
             return;
         }
-
-        DownloadFileTask task = new DownloadFileTask(getApplicationContext());
-        task.setListener(this);
-        task.execute(list.get(0).getFileName());
-    }
-
-    @Override
-    public void onPreExecute() {
-
-    }
-
-    @Override
-    public void onProgressUpdate(Integer... values) {
-
-    }
-
-    @Override
-    public void onPostExecute(String s) {
-
-        handler.sendEmptyMessage(REQUEST_DB_FILE);
-
     }
 }

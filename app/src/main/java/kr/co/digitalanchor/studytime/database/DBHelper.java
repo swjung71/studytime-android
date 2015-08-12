@@ -1350,7 +1350,7 @@ public class DBHelper extends SQLiteOpenHelper {
             for (Files file : files) {
 
                 values.put(ADULT_FILE, file.getFileName());
-                values.put(ADULT_FILE_DATE, "date('now')");
+                values.put(ADULT_FILE_DATE, AndroidUtils.getCurrentTime4Chat());
 
                 db.insert(TABLE_ADULT_FILE, null, values);
             }

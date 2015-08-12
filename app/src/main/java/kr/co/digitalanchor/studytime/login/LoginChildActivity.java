@@ -359,7 +359,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = null;//mDBHelper.getAdultFile();
+        String date = mDBHelper.getAdultFile();
 
         if (date != null) {
 
@@ -522,12 +522,15 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 byte[] data = new byte[4096];
 
                 int bytesRead = -1;
+                long total = 0;
 
                 while ((bytesRead = inputStream.read(data)) != -1) {
 
                     outputStream.write(data, 0, bytesRead);
 
-                    publishProgress();
+                    total += bytesRead;
+
+                    publishProgress(String.valueOf(total * 100 / 69000000L), "DB 다운로드");
                 }
 
                 boolean success = ftp.completePendingCommand();
@@ -538,7 +541,11 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]));
 
+                publishProgress(String.valueOf(0), "DB 적용 중");
+
                 mDBHelper.setTableAdultUrl(br);
+
+                publishProgress(String.valueOf(100), "DB 적용 중");
 
                 br.close();
 
@@ -631,6 +638,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setMax(100);
             mProgressDialog.setProgress(Integer.parseInt(values[0]));
+            mProgressDialog.setMessage(values[1]);
         }
 
         @Override
