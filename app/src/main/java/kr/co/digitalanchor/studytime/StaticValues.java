@@ -44,6 +44,6 @@ public class StaticValues {
     public static final String PACKAGE_NAME = "packageName";
     public static final String ACTION_NAME = "actionName";
 
-    public static final String BLOCK_PAGE_URL = "http://drimi.net/block/block.html";
+    public static final String BLOCK_PAGE_URL = "http://www.dastudytime.com//block/block.html";
 
 }
