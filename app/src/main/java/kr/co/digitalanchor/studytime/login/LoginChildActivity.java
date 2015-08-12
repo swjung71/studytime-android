@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -359,7 +360,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = mDBHelper.getAdultFile();
+        String date = null;// mDBHelper.getAdultFile();
 
         if (date != null) {
 
@@ -530,7 +531,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                     total += bytesRead;
 
-                    publishProgress(String.valueOf(total * 100 / 69000000L), "DB 다운로드");
+                    publishProgress(String.valueOf(total * 100 / 150000000L), "DB 다운로드");
                 }
 
                 boolean success = ftp.completePendingCommand();
@@ -539,15 +540,49 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 inputStream.close();
 
-                BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]));
+                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
 
-                publishProgress(String.valueOf(0), "DB 적용 중");
+                File file = new File(fileName);
 
-                mDBHelper.setTableAdultUrl(br);
+                long fileSize = 0;
 
-                publishProgress(String.valueOf(100), "DB 적용 중");
+                if (file.exists()) {
 
-                br.close();
+                    fileSize = file.length();
+                }
+
+                BufferedReader br = new BufferedReader(new FileReader(fileName));
+
+//                mDBHelper.setTableAdultUrl(br);
+
+                String line = null;
+
+                total = 0;
+
+                SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
+                try {
+
+                    while ((line = br.readLine()) != null) {
+
+//                db.rawQuery(line, null);
+                        db.execSQL(line);
+
+                        total += line.getBytes().length * 4;
+
+                        publishProgress(String.valueOf(total * 100/fileSize), "DB 적용 중");
+                    }
+
+                } catch (IOException e) {
+                    Logger.d(e.toString());
+                } finally {
+
+                    db.close();
+                    br.close();
+                }
+
+//                publishProgress(String.valueOf(100), "DB 적용 중");
+
 
             } catch (SocketException e) {
 

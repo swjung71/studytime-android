@@ -1386,6 +1386,24 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
+//        String line = null;
+//
+//        try {
+//
+//            while ((line = br.readLine()) != null) {
+//
+////                db.rawQuery(line, null);
+//                db.execSQL(line);
+//            }
+//
+//            db.close();
+//            br.close();
+//
+//        } catch (IOException e) {
+//            Logger.d(e.toString());
+//        }
+
+
         try {
             //BufferedReader br = new BufferedReader(new FileReader(file));
 

@@ -2,7 +2,10 @@ package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.Service;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -14,6 +17,18 @@ import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,6 +174,99 @@ public class DownloadService extends Service  {
         if (list == null || list.size() < 1) {
 
             return;
+        }
+
+        String fileName = list.get(0).getFileName();
+
+        new DownloadFileFromURL().execute(fileName);
+
+        list.remove(0);
+    }
+
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if (params == null || params.length < 1) {
+
+                return null;
+            }
+            FTPClient ftp = new FTPClient();
+
+            try {
+
+                ftp.connect("14.63.225.89", 21);
+
+                ftp.login("anonymous", "nobody");
+
+                ftp.setFileType(FTP.BINARY_FILE_TYPE);
+                ftp.enterLocalActiveMode();
+
+                String remote = "/pub/" + params[0];
+
+                File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
+
+                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+
+                InputStream inputStream = ftp.retrieveFileStream(remote);
+
+                byte[] data = new byte[4096];
+
+                int bytesRead = -1;
+
+                while ((bytesRead = inputStream.read(data)) != -1) {
+
+                    outputStream.write(data, 0, bytesRead);
+
+                }
+
+                boolean success = ftp.completePendingCommand();
+
+                outputStream.close();
+
+                inputStream.close();
+
+                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
+
+                BufferedReader br = new BufferedReader(new FileReader(fileName));
+
+                dbHelper.setTableAdultUrl(br);
+
+            } catch (SocketException e) {
+
+                Logger.e(e.toString());
+            } catch (IOException e) {
+
+                Logger.e(e.toString());
+            } catch (Exception e) {
+
+                Logger.e(e.toString());
+            } finally {
+
+                try {
+
+                    if (ftp.isConnected()) {
+
+                        ftp.logout();
+
+                        ftp.disconnect();
+                    }
+
+                } catch (IOException e) {
+
+                    Logger.e(e.toString());
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            handler.sendEmptyMessage(REQUEST_DB_FILE);
         }
     }
 }
