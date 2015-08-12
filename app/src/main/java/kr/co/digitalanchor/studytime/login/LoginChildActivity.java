@@ -21,11 +21,14 @@ import com.orhanobut.logger.Logger;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.ArrayList;
 
@@ -33,7 +36,6 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.database.OnMessageListener;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.Files;
@@ -511,6 +513,73 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 String remote = "/pub/" + params[0];
 
+                File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
+
+                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+
+                InputStream inputStream = ftp.retrieveFileStream(remote);
+
+                byte[] data = new byte[4096];
+
+                int bytesRead = -1;
+
+                while ((bytesRead = inputStream.read(data)) != -1) {
+
+                    outputStream.write(data, 0, bytesRead);
+
+                    publishProgress();
+                }
+
+                boolean success = ftp.completePendingCommand();
+
+                outputStream.close();
+
+                inputStream.close();
+
+                BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]));
+
+                mDBHelper.setTableAdultUrl(br);
+
+                br.close();
+
+            } catch (SocketException e) {
+
+                Logger.e(e.toString());
+            } catch (IOException e) {
+
+                Logger.e(e.toString());
+            } catch (Exception e) {
+
+                Logger.e(e.toString());
+            } finally {
+
+                try {
+
+                    if (ftp.isConnected()) {
+
+                        ftp.logout();
+
+                        ftp.disconnect();
+                    }
+
+                } catch (IOException e) {
+
+                    Logger.e(e.toString());
+                }
+            }
+
+            /*
+            try {
+
+                ftp.connect("14.63.225.89", 21);
+
+                ftp.login("anonymous", "nobody");
+
+                ftp.setFileType(FTP.BINARY_FILE_TYPE);
+                ftp.enterLocalActiveMode();
+
+                String remote = "/pub/" + params[0];
+
                 Logger.d("ftp status: " + ftp.getStatus());
 
                 File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
@@ -551,7 +620,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 Logger.e(e.toString());
             }
 
-
+*/
             return null;
         }
 

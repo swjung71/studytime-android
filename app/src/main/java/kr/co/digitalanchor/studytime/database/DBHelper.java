@@ -1386,7 +1386,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-
         try {
             //BufferedReader br = new BufferedReader(new FileReader(file));
 
