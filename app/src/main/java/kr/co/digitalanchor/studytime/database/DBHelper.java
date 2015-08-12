@@ -123,11 +123,11 @@ public class DBHelper extends SQLiteOpenHelper {
             + ICON_HASH + " TEXT , "
             + CHANGED + " INTEGER DEFAULT 0 ) ";
 
-    private static final String CREATE_TABLE_ADULT_FILE = "CREATE TABLE " + TABLE_ADULT_FILE + " ("
+    private static final String CREATE_TABLE_ADULT_FILE = "CREATE TABLE  " + TABLE_ADULT_FILE + " ("
             + ADULT_FILE + " TEXT, "
-            + ADULT_FILE_DATE + "TEXT )";
+            + ADULT_FILE_DATE + " TEXT )";
 
-    private static final String CREATE_TABLE_ADULT_URL = "CREATE TABLE " + TABLE_ADULT_URL + " ("
+    private static final String CREATE_TABLE_ADULT_URL = "CREATE TABLE  " + TABLE_ADULT_URL + " ("
             + ADULT_URL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ADULT_URL_HASH + " TEXT, "
             + ADULT_URL_DIRECTORY + " TEXT, "
@@ -231,8 +231,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ON_OFF);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_ADULT_FILE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_ADULT_URL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADULT_FILE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADULT_URL);
 
         onCreate(db);
     }
@@ -1348,7 +1348,7 @@ public class DBHelper extends SQLiteOpenHelper {
             for (Files file : files) {
 
                 values.put(ADULT_FILE, file.getFileName());
-                values.put(ADULT_FILE_DATE, "data('now')");
+                values.put(ADULT_FILE_DATE, "date('now')");
 
                 db.insert(TABLE_ADULT_FILE, null, values);
             }
@@ -1362,7 +1362,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + " ORDER BY "
-                + ADULT_FILE_DATE + " DESC LIMIT 1";
+                + ADULT_FILE_DATE + " DESC LIMIT 1;";
 
         Cursor rows = db.rawQuery(sql, null);
 
@@ -1376,7 +1376,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public void setTableAdultUrl(BufferedReader br) {
+    public void setTableAdultUrl(BufferedReader br, long length, OnMessageListener listener) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1390,7 +1390,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
             while ((line = br.readLine()) != null) {
 
+                if (listener != null) {
+
+                    listener.onMessage((int) (line.getBytes().length * 4 / length));
+                }
+
                 int i = 0;
+
                 String urlHash = new String();
                 String directory = new String();
 
@@ -1400,17 +1406,28 @@ public class DBHelper extends SQLiteOpenHelper {
                     String sub = sp[i];
                     String[] subsp = sub.split(",");
 
+                    if (subsp.length != 12) {
+
+                        continue;
+                    }
+
                     if (i == 0) {
                         urlHash = subsp[0];
                         directory = subsp[2];
 
                         int nud, sex, vio, lan;
 
-                        nud = Integer.parseInt(subsp[4]);
-                        sex = Integer.parseInt(subsp[5]);
-                        vio = Integer.parseInt(subsp[6]);
-                        lan = Integer.parseInt(subsp[7]);
+                        try {
 
+                            nud = Integer.parseInt(subsp[4]);
+                            sex = Integer.parseInt(subsp[5]);
+                            vio = Integer.parseInt(subsp[6]);
+                            lan = Integer.parseInt(subsp[7]);
+
+                        } catch (Exception e) {
+
+                            continue;
+                        }
 
                         //for high school
                         if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
@@ -1448,14 +1465,20 @@ public class DBHelper extends SQLiteOpenHelper {
                             String isDelete = subsp[9];
 
                             if (isDelete.equalsIgnoreCase("D")) {
+
                                 //삭제 코드
-                                String whereClause = ADULT_URL_HASH + "=" + urlHash + " AND " + ADULT_URL_DIRECTORY + "=" + directory;
+                                String whereClause = ADULT_URL_HASH + "=" + urlHash +
+                                        " AND " + ADULT_URL_DIRECTORY + "=" + directory;
+
                                 db.delete(TABLE_ADULT_URL, whereClause, null);
+
                             } else {
+
                                 ContentValues values = new ContentValues();
                                 values.put(ADULT_URL_HASH, urlHash);
                                 values.put(ADULT_URL_DIRECTORY, directory);
                                 values.put(ADULT_URL_IS_SUB, subsp[10]);
+
                                 db.insert(TABLE_ADULT_URL, null, values);
                             }
 
@@ -1463,11 +1486,16 @@ public class DBHelper extends SQLiteOpenHelper {
                     }
                 }
             }
-            db.endTransaction();
+
+            db.setTransactionSuccessful();
+
         } catch (FileNotFoundException e) {
             Logger.e(e.getMessage());
         } catch (IOException e) {
             Logger.e(e.getMessage());
+        } finally {
+
+            db.endTransaction();
         }
     }
 
@@ -1479,16 +1507,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String[] result_columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_IS_SUB};
 
-        String where = ADULT_URL_HASH + " = " + hash;
-        Cursor cursor = db.query(TABLE_ADULT_URL, result_columns, where, null, null, null, null);
+        String where = ADULT_URL_HASH + " =? ";
+        Cursor cursor = db.query(true, TABLE_ADULT_URL, result_columns, where, new String[]{hash},
+                null, null, null, null);
 
         String isSub = null;
         String dir = null;
+
+        Logger.d(hash + " " + isSub + " ");
 
         if (cursor.moveToFirst()) {
 
             dir = cursor.getString(0);
             isSub = cursor.getString(1);
+
+            Logger.d(hash + " " + isSub + " ");
 
             if (isSub.equals("0")) {
 
@@ -1510,6 +1543,42 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return result;
     }
+
+
+    public boolean selectAdultURL() {
+
+        boolean result = false;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] result_columns = new String[]{ADULT_URL_HASH, ADULT_URL_DIRECTORY, ADULT_URL_IS_SUB};
+
+        Cursor cursor = db.query(true, TABLE_ADULT_URL, result_columns, null, null,
+                null, null, null, null);
+
+        String isSub = null;
+        String dir = null;
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                Logger.d(cursor.getString(0) + " " + cursor.getString(1));
+
+            } while(cursor.moveToNext());
+
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+
+            cursor = null;
+        }
+
+        return result;
+    }
+
 
     /**
      * 처음으로 onOFF 정보를 넣거나 update할 때 사용

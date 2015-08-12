@@ -375,13 +375,6 @@ public class TimerTaskWork extends TimerTask {
 
         if (mc.matches()) {
 
-            for (int i = 0; i < mc.groupCount(); i++) {
-
-                Logger.d("match = " + mc.group(i));
-            }
-
-            //http  m.media.daum.net  null  null  /m/media/society/newsview
-
             StringBuffer buffer = new StringBuffer();
 
             buffer.append(mc.group(1) + "://");

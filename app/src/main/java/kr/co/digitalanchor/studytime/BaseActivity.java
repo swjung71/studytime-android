@@ -174,6 +174,19 @@ public class BaseActivity extends Activity {
 
             mLoading = new CustomProgressDialog(this);
             mLoading.setCancelable(false);
+
+        }
+
+        mLoading.show("");
+    }
+
+    protected void showLoading(String title) {
+
+        if (mLoading == null) {
+
+            mLoading = new CustomProgressDialog(this);
+            mLoading.setCancelable(false);
+            mLoading.setTitle(title);
         }
 
         mLoading.show("");

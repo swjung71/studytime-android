@@ -7,7 +7,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -202,10 +201,10 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                 STApplication.putBoolean(StaticValues.SHOW_ADMIN, resultCode != RESULT_OK);
 
 //                completeRegister(mParentID, mChildID);
-
+//
 //                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
-
-//                sendEmptyMessage(COMPLETE_ADD_INFO, 300);
+//
+//                sendEmptyMessage(COMPLETE_ADD_INFO);
 
                 sendEmptyMessage(REQUEST_UPLOAD_PACKAGES);
 
@@ -471,7 +470,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         mHelper.addAppList(packages);
 
-        packages.clear();
+        if (packages != null)
+            packages.clear();
 
         packages = null;
 

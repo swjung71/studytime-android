@@ -60,6 +60,9 @@ import kr.co.digitalanchor.studytime.model.db.VersionResult;
  */
 public class HttpHelper {
 
+    /**
+     * true : dev ; false : real
+     */
     public static boolean isDev = true;
 
     /**

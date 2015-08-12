@@ -19,6 +19,7 @@ import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.StaticValues;
@@ -218,6 +219,10 @@ public class AppManageService extends Service {
                     || packageInfo.packageName.contains("com.android.dialer")) {
 
                 continue;
+
+            } else if (isLauncher(packageInfo.packageName)){
+
+                continue;
             }
 
             if (!hashMap.containsKey(packageInfo.packageName)) {
@@ -235,13 +240,14 @@ public class AppManageService extends Service {
                 if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
 
                     packageModel.setIsDefaultApp(1);
-                    packageModel.setState(2);
 
                 } else {
 
                     packageModel.setIsDefaultApp(0);
-                    packageModel.setState(0);
+
                 }
+
+                packageModel.setState(0);
 
                 packageModels.add(packageModel);
 
@@ -395,5 +401,43 @@ public class AppManageService extends Service {
 
             return null;
         }
+    }
+
+    private boolean isLauncher(String packageName) {
+
+        ArrayList<String> names = getLauncherNames();
+
+        for (int i = 0; ; i++) {
+
+            if (i >= names.size()) {
+
+                return false;
+            }
+
+            if (packageName.equalsIgnoreCase((String) names.get(i))) {
+
+                return true;
+            }
+        }
+    }
+
+    private ArrayList<String> getLauncherNames() {
+
+        ArrayList<String> names = new ArrayList<>();
+
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent("android.intent.action.MAIN", null);
+
+        intent.addCategory("android.intent.category.HOME");
+
+        Iterator iterator = manager.queryIntentActivities(intent, Intent.FLAG_ACTIVITY_NO_ANIMATION).iterator();
+
+        while (iterator.hasNext()) {
+
+            names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
+        }
+
+        return names;
     }
 }

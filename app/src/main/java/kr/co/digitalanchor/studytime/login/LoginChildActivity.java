@@ -1,11 +1,13 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,20 +17,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.database.OnMessageListener;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
 import kr.co.digitalanchor.studytime.model.Files;
@@ -64,10 +66,25 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
     String name;
 
+    ProgressDialog mProgressDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         setContentView(R.layout.activity_child_login);
+
+        mDBHelper = new DBHelper(getApplicationContext());
+
+        // instantiate it within the onCreate method
+        mProgressDialog = new ProgressDialog(LoginChildActivity.this);
+        mProgressDialog.setMessage("DB 업데이트");
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setCancelable(false);
 
         initView();
     }
@@ -76,7 +93,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     protected void onStop() {
         super.onStop();
 
-        dismissLoading();
     }
 
     private void initView() {
@@ -113,7 +129,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 data = msg.getData();
 
-                downloadAdultFile(data);
+                downloadAdultFile(data.getString("files"));
 
                 break;
 
@@ -143,13 +159,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             case R.id.buttonLogin:
 
-
                 sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
-                if (isValidate()) {
-
+//                if (isValidate()) {
+//
 //                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
-                }
+//                }
 
                 break;
 
@@ -295,6 +310,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                         sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
+//                        sendEmptyMessage(REQUEST_ADD_INFO);
+
                         break;
 
                     default:
@@ -317,11 +334,9 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         addRequest(request);
     }
 
-    private void downloadAdultFile(Bundle data) {
+    private void downloadAdultFile(String file) {
 
-        Logger.d("downloadAdultFile");
-
-        String file = data.getString("files");
+        Logger.d("downloadAdultFile " + file);
 
         if (TextUtils.isEmpty(file)) {
 
@@ -329,8 +344,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             return;
         }
-
-        Logger.d("downloadAdultFile 1" );
 
         new DownloadFileFromURL().execute(file);
     }
@@ -341,7 +354,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = mDBHelper.getAdultFile();
+        String date = null;//mDBHelper.getAdultFile();
 
         if (date != null) {
 
@@ -368,7 +381,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                                 mDBHelper.setAdultFile(response);
 
-                                data.putString("files", response.getFileName().get(0).getFileName());
+                                data.putString("files", response.getFileName().get(files.size() - 1).getFileName());
                                 Logger.d(data.toString());
 
                                 sendMessage(REQUEST_ADULT_FILE, data);
@@ -392,7 +405,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         addRequest(request);
     }
 
-    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+    class DownloadFileFromURL extends AsyncTask<String, Integer, String> implements OnMessageListener {
 
         @Override
         protected void onPreExecute() {
@@ -400,54 +413,159 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             Logger.d("onPreExecute");
 
-            showLoading();
+            mProgressDialog.show();
         }
 
         @Override
         protected String doInBackground(String... params) {
 
+            if (params == null || params.length < 1) {
+
+                return null;
+            }
+/*
+            InputStream input = null;
+            URLConnection conn = null;
+            FileOutputStream fos = null;
+            BufferedOutputStream bos = null;
+
             try {
 
-                Logger.d("http://wwww.dastudytime.kr/resources/studytime/" + params[0]);
 
-                URL url = new URL("http://wwww.dastudytime.kr/resources/studytime/" + params[0]);
+                URL url = new URL("https://www.dastudytime.kr/resources/studytime/" + params[0]);
 
-                URLConnection conn = url.openConnection();
+                conn = url.openConnection();
                 conn.connect();
 
-                InputStream input = new BufferedInputStream(url.openStream());
+                int lengthOfFile = conn.getContentLength();
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(input));
+                input = url.openStream();
 
-                mDBHelper.setTableAdultUrl(br);
+                fos = new FileOutputStream("/sdcard/" + params[0]); // target은 File 객체입니다.
+                bos = new BufferedOutputStream(fos);
 
-                input.close();
+                byte data[] = new byte[8192];
+                long total = 0;
+                int count = 0;
+
+                while ((count = input.read(data)) > 0) {
+                    // allow canceling with back button
+
+                    if (isCancelled()) {
+                        return null;
+                    }
+
+                    total += count;
+                    // publishing the progress....
+                    if (lengthOfFile > 0) // only if total length is known
+                        publishProgress((int) (total * 100 / lengthOfFile));
+
+                    bos.write(data, 0, count);
+                }
+
+//                BufferedReader br = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+//
+//                Logger.d(lengthOfFile + " file");
+//
+//                mDBHelper.setTableAdultUrl(br, lengthOfFile, this);
+
+//                mDBHelper.setTableAdultUrl(br);
 
                 return null;
 
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
 
-                e.printStackTrace();
+               Logger.e(e.toString());
 
+
+            } finally {
+
+                try {
+
+                    if (input != null)
+                        input.close();
+
+                    if (fos != null)
+                        fos.close();
+
+                    if (bos != null)
+                        bos.close();
+
+                } catch (IOException ignored) {
+
+                }
+            }
+            */
+            FTPClient ftp = new FTPClient();
+
+            try {
+
+                ftp.connect("14.63.225.89", 21);
+
+                ftp.login("anonymous", "nobody");
+
+                ftp.setFileType(FTP.BINARY_FILE_TYPE);
+                ftp.enterLocalActiveMode();
+
+                String remote = "/pub/" + params[0];
+
+                Logger.d("ftp status: " + ftp.getStatus());
+
+                File downloadFile = new File("/sdcard/" + params[0]);
+
+                if (downloadFile.createNewFile()) {
+                    System.out.println("File is created!");
+                } else {
+                    System.out.println("File already exists.");
+                }
+
+                FileOutputStream local = new FileOutputStream(downloadFile);
+
+                boolean rtn = ftp.retrieveFile(remote, local);
+
+                Logger.d("result " + rtn);
+
+                local.close();
+
+                ftp.disconnect();
+
+            } catch (SocketException e) {
+
+                Logger.e(e.toString());
             } catch (IOException e) {
 
-                e.printStackTrace();
+                Logger.e(e.toString());
+            } catch (Exception e) {
+
+                Logger.e(e.toString());
             }
+
+
             return null;
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
+
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgress(values[0]);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            dismissLoading();
+            mProgressDialog.dismiss();
 
-            sendEmptyMessage(REQUEST_ADD_INFO);
+//            sendEmptyMessage(REQUEST_ADD_INFO);
+        }
+
+        @Override
+        public void onMessage(int values) {
+
+            publishProgress(values);
         }
     }
 
