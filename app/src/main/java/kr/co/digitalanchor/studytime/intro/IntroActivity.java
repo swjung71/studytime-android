@@ -21,6 +21,7 @@ import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 
+import kr.co.cashslide.Cashslide;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -65,6 +66,9 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         initialize();
 
         selectIntro();
+
+        Cashslide cashslide = new Cashslide(this, getString(R.string.cash_slide_id));
+        cashslide.appFirstLaunched();
 
     }
 

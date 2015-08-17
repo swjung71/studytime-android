@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
+import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.utils.MD5ForAdultURL;
 
@@ -41,6 +42,8 @@ public class TimerTaskWork extends TimerTask {
 
     private DBHelper mHelper;
 
+    private AdultDBHelper mAdultDBHelper;
+
 
     public TimerTaskWork(Context context) {
 
@@ -49,6 +52,8 @@ public class TimerTaskWork extends TimerTask {
         mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         mHelper = new DBHelper(mContext);
+
+        mAdultDBHelper = new AdultDBHelper(mContext);
     }
 
     @Override
@@ -135,7 +140,7 @@ public class TimerTaskWork extends TimerTask {
                 return;
             }
 
-            if (mHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
+            if (mAdultDBHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
 
                 blockWebPage(currentPackage);
             }
@@ -312,7 +317,31 @@ public class TimerTaskWork extends TimerTask {
         time[0] = String.valueOf(System.currentTimeMillis());
 
         ContentResolver contentResolver = mContext.getContentResolver();
-        Uri localUri = Browser.BOOKMARKS_URI; // not works on all phone
+
+        Uri localUri = null;
+
+        switch (packageName) {
+
+            case "com.sec.android.app.sbrowser":
+
+                localUri = Uri
+                        .parse("content://com.sec.android.app.sbrowser.browser/history");
+
+                break;
+
+            case "com.android.chrome":
+
+                localUri = Uri
+                        .parse("content://com.android.chrome.browser/history");
+
+                break;
+
+            default:
+
+                localUri = Browser.BOOKMARKS_URI; // not works on all phone
+
+                break;
+        }
 
         try {
             String args[] = new String[]{"" + time};

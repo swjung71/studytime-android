@@ -287,7 +287,8 @@
 
         <service android:name=".app.AppManageService" />
         <service android:name=".app.AppIconUploader" />
-        <service android:name=".monitor.DownloadService"/>
+        <service android:name=".monitor.DownloadService" />
+
         <receiver android:name=".app.PackageReceiver">
 
             <intent-filter>
@@ -299,7 +300,15 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="kr.co.cashslide.ReferrerReceiver"
+            android:exported="true">
 
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+
+        </receiver>
 
     </application>
 
