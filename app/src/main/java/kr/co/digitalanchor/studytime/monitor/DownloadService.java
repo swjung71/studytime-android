@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.Files;
@@ -54,6 +55,7 @@ public class DownloadService extends Service  {
 
     DBHelper dbHelper;
 
+    AdultDBHelper adultDBHelper;
 
     List<Files> list;
 
@@ -236,9 +238,7 @@ public class DownloadService extends Service  {
 
                 BufferedReader br = new BufferedReader(new FileReader(fileName));
 
-                dbHelper.setTableAdultUrl(br);
-
-                Logger.d("last " + dbHelper.isAdultURL("D91DD597C13A8E15F5ED0EF44B74AD3C", null));
+                adultDBHelper.setTableAdultUrl(br);
 
             } catch (SocketException e) {
 

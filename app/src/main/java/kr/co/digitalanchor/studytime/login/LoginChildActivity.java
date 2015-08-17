@@ -2,7 +2,6 @@ package kr.co.digitalanchor.studytime.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,21 +20,21 @@ import com.orhanobut.logger.Logger;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.SocketException;
 import java.util.ArrayList;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
+import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
@@ -87,7 +86,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         // instantiate it within the onCreate method
         mProgressDialog = new ProgressDialog(LoginChildActivity.this);
-        mProgressDialog.setMessage("DB 업데이트");
+        mProgressDialog.setMessage("DB 다운로드 중");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(false);
@@ -316,8 +315,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                         sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
-//                        sendEmptyMessage(REQUEST_ADD_INFO);
-
                         break;
 
                     default:
@@ -411,7 +408,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         addRequest(request);
     }
 
-    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+    class DownloadFileFromURL extends AsyncTask<String, Integer, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -423,85 +420,22 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
+
+            boolean result = false;
 
             if (params == null || params.length < 1) {
 
                 return null;
             }
-/*
-            InputStream input = null;
-            URLConnection conn = null;
-            FileOutputStream fos = null;
-            BufferedOutputStream bos = null;
 
-            try {
-
-
-                URL url = new URL("https://www.dastudytime.kr/resources/studytime/" + params[0]);
-
-                conn = url.openConnection();
-                conn.connect();
-
-                int lengthOfFile = conn.getContentLength();
-
-                input = url.openStream();
-
-                fos = new FileOutputStream("/sdcard/" + params[0]); // target은 File 객체입니다.
-                bos = new BufferedOutputStream(fos);
-
-                byte data[] = new byte[8192];
-                long total = 0;
-                int count = 0;
-
-                while ((count = input.read(data)) > 0) {
-                    // allow canceling with back button
-
-                    if (isCancelled()) {
-                        return null;
-                    }
-
-                    total += count;
-                    // publishing the progress....
-                    if (lengthOfFile > 0) // only if total length is known
-                        publishProgress((int) (total * 100 / lengthOfFile));
-
-                    bos.write(data, 0, count);
-                }
-
-//                BufferedReader br = new BufferedReader(new InputStreamReader(input, "UTF-8"));
-//
-//                Logger.d(lengthOfFile + " file");
-//
-//                mDBHelper.setTableAdultUrl(br, lengthOfFile, this);
-
-//                mDBHelper.setTableAdultUrl(br);
-
-                return null;
-
-            } catch (Exception e) {
-
-               Logger.e(e.toString());
-
-            } finally {
-
-                try {
-
-                    if (input != null)
-                        input.close();
-
-                    if (fos != null)
-                        fos.close();
-
-                    if (bos != null)
-                        bos.close();
-
-                } catch (IOException ignored) {
-
-                }
-            }
-            */
             FTPClient ftp = new FTPClient();
+
+            long fileSize = 0L;
+            long total = 0L;
+
+            int bytesRead = -1;
+
 
             try {
 
@@ -510,9 +444,25 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 ftp.login("anonymous", "nobody");
 
                 ftp.setFileType(FTP.BINARY_FILE_TYPE);
+
                 ftp.enterLocalActiveMode();
 
-                String remote = "/pub/" + params[0];
+                ftp.changeWorkingDirectory("/pub/");
+
+                FTPFile[] files = ftp.listFiles();
+
+                int i = 0;
+                for (; files.length > i; i++) {
+
+                    if (files[i].getName().equals(params[0])) {
+
+                        break;
+                    }
+                }
+
+                fileSize = files[i].getSize();
+
+                String remote = params[0];
 
                 File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
 
@@ -522,8 +472,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 byte[] data = new byte[4096];
 
-                int bytesRead = -1;
-                long total = 0;
+                bytesRead = -1;
+                total = 0;
 
                 while ((bytesRead = inputStream.read(data)) != -1) {
 
@@ -531,7 +481,8 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                     total += bytesRead;
 
-                    publishProgress(String.valueOf(total * 100 / 150000000L), "DB 다운로드");
+                    publishProgress((int) (total * 100 / fileSize));
+
                 }
 
                 boolean success = ftp.completePendingCommand();
@@ -540,59 +491,11 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 inputStream.close();
 
-                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
-
-                File file = new File(fileName);
-
-                long fileSize = 0;
-
-                if (file.exists()) {
-
-                    fileSize = file.length();
-                }
-
-                BufferedReader br = new BufferedReader(new FileReader(fileName));
-
-//                mDBHelper.setTableAdultUrl(br);
-
-                String line = null;
-
-                total = 0;
-
-                SQLiteDatabase db = mDBHelper.getWritableDatabase();
-
-                try {
-
-                    while ((line = br.readLine()) != null) {
-
-//                db.rawQuery(line, null);
-                        db.execSQL(line);
-
-                        total += line.getBytes().length * 4;
-
-                        publishProgress(String.valueOf(total * 100/fileSize), "DB 적용 중");
-                    }
-
-                } catch (IOException e) {
-                    Logger.d(e.toString());
-                } finally {
-
-                    db.close();
-                    br.close();
-                }
-
-//                publishProgress(String.valueOf(100), "DB 적용 중");
-
-
-            } catch (SocketException e) {
-
-                Logger.e(e.toString());
             } catch (IOException e) {
 
                 Logger.e(e.toString());
-            } catch (Exception e) {
 
-                Logger.e(e.toString());
+
             } finally {
 
                 try {
@@ -610,79 +513,120 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 }
             }
 
-            /*
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    mProgressDialog.setMessage("DB 적용중");
+                }
+            });
+
+            FileInputStream fis = null;
+            FileOutputStream fos = null;
+
             try {
 
-                ftp.connect("14.63.225.89", 21);
+                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
 
-                ftp.login("anonymous", "nobody");
+                String dir = "/data/data/" + getApplicationContext().getPackageName() + "/databases";
+                String dest = "adult.db";
 
-                ftp.setFileType(FTP.BINARY_FILE_TYPE);
-                ftp.enterLocalActiveMode();
+                File directory = new File(dir);
 
-                String remote = "/pub/" + params[0];
+                if (!directory.exists()) {
 
-                Logger.d("ftp status: " + ftp.getStatus());
-
-                File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
-
-                if (downloadFile.createNewFile()) {
-
-                    Logger.d("File is created!");
-
-                } else {
-                    Logger.d("File already exists.");
-
+                    directory.mkdir();
                 }
 
-                FileOutputStream local = new FileOutputStream(downloadFile);
+                File file2 = new File(fileName);
+                File file = new File(dir + "/" + dest);
 
-                boolean rtn = ftp.retrieveFile(remote, local);
 
-                Logger.d("result " + rtn);
+                if (file.exists()) {
 
-                local.close();
+                    file.delete();
+                }
 
-                ftp.disconnect();
+                file.createNewFile();
 
-                BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]));
+                fis = new FileInputStream(file2);
 
-                mDBHelper.setTableAdultUrl(br);
+                fos = new FileOutputStream(file);
 
-                br.close();
+                Logger.d(fileName);
+                Logger.d(dir + "/" + dest);
 
-            } catch (SocketException e) {
+                Logger.d(file2.length() + " " + file.length());
 
-                Logger.e(e.toString());
+                byte[] data = new byte[4096];
+
+                bytesRead = -1;
+                total = 0;
+
+                while ((bytesRead = fis.read(data)) != -1) {
+
+                    fos.write(data, 0, bytesRead);
+
+                    total += bytesRead;
+
+                    publishProgress((int) (total * 100 / fileSize));
+
+                    System.out.println("total = " + fileSize + ", cur = " + total) ;
+                }
+
+                result = true;
+
             } catch (IOException e) {
 
                 Logger.e(e.toString());
-            } catch (Exception e) {
 
-                Logger.e(e.toString());
+            } finally {
+
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+
+                    }
+                }
+
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+
+                    }
+                }
             }
 
-*/
-            return null;
+            return result;
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
 
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setMax(100);
-            mProgressDialog.setProgress(Integer.parseInt(values[0]));
-            mProgressDialog.setMessage(values[1]);
+            mProgressDialog.setProgress(values[0]);
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
 
             mProgressDialog.dismiss();
 
-            sendEmptyMessage(REQUEST_ADD_INFO);
+            if (result) {
+
+                sendEmptyMessage(REQUEST_ADD_INFO);
+
+            } else {
+
+                Toast.makeText(getApplicationContext(), "DB 파일 다운로드가 실패 하였습니다." +
+                        " 잠시후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
     }
