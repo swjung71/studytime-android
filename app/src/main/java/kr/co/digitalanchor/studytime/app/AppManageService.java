@@ -93,7 +93,7 @@ public class AppManageService extends Service {
 
             case StaticValues.ACTION_PACKAGE_SYNC:
 
-                list = getAbsenceAppList();
+                list = getMissingPackageModelList();
 
                 requestUpdateApps(list);
 
@@ -179,25 +179,28 @@ public class AppManageService extends Service {
      *
      * @return
      */
-    private List<PackageModel> getAbsenceAppList() {
+    public List<PackageModel> getMissingPackageModelList() {
 
         PackageManager manager = getPackageManager();
+
+        // 최종 업데이트될 패키지 목록
+        List<PackageModel> result = new ArrayList<>();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
 
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
+        // 디바이스에서 뽑은 App 목록
         List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
 
-        List<PackageModel> packageModels = new ArrayList<>();
+        HashMap<String, String> listInDevice = new HashMap<>();
 
-        HashMap<String, PackageModel> hashMap = dbHelper.getPackageStateList();
+        HashMap<String, PackageModel> listInDB = dbHelper.getPackageStateList();
 
-        Logger.d("Size " + apps.size() + " : " + hashMap.size());
-
+        // 중복 제거
         for (ResolveInfo r : apps) {
 
-            PackageInfo packageInfo = null;
+            PackageInfo packageInfo;
 
             try {
 
@@ -224,9 +227,14 @@ public class AppManageService extends Service {
             } else if (isLauncher(packageInfo.packageName)){
 
                 continue;
+
+            } else if (listInDevice.containsKey(packageInfo.packageName)) {
+
+                continue;
             }
 
-            if (!hashMap.containsKey(packageInfo.packageName)) {
+            if (!listInDB.containsKey(packageInfo.packageName)) {
+                // DB에 없는 패키지는 설치로 간주 한다.
 
                 PackageModel packageModel = new PackageModel();
 
@@ -250,18 +258,19 @@ public class AppManageService extends Service {
 
                 packageModel.setState(0);
 
-                packageModels.add(packageModel);
+                Logger.d("install " + packageModel.getPackageName() + " " + packageModel.getLabelName() + " v : "
+                        + packageModel.getPackageVersion() + (packageModel.getIsDefaultApp() == 0 ? " " : " prelaod"));
+
+                result.add(packageModel);
 
                 continue;
 
             } else {
+                // DB에 있는 패키지는 버전을 비교하여 업데이트 유무를 판별한다.
 
-                PackageModel model = hashMap.get(packageInfo.packageName);
+                PackageModel model = listInDB.get(packageInfo.packageName);
 
-                if (model.getPackageVersion().equals(packageInfo.versionName)) {
-
-
-                } else {
+                if (!model.getPackageVersion().equals(packageInfo.versionName)) {
 
                     model.setPackageVersion(packageInfo.versionName);
                     model.setState(2);
@@ -269,28 +278,34 @@ public class AppManageService extends Service {
                     Logger.d("updated " + model.getPackageName() + " " + model.getLabelName() + " v : "
                             + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
 
-                    packageModels.add(model);
+                    result.add(model);
                 }
 
-                hashMap.remove(packageInfo.packageName);
+                listInDB.remove(packageInfo.packageName);
+
+                listInDevice.put(packageInfo.packageName, packageInfo.versionName);
 
                 continue;
             }
         }
 
-        for (String key : hashMap.keySet()) {
+        for (String key : listInDB.keySet()) {
 
-            PackageModel model = hashMap.get(key);
+            PackageModel model = listInDB.get(key);
+
+            if (model.getState() == 1 && model.getChanged() == 0) {
+                continue;
+            }
 
             model.setState(1);
 
             Logger.d("deleted " + model.getPackageName() + " " + model.getLabelName() + " v : "
                     + model.getPackageVersion() + (model.getIsDefaultApp() == 0 ? " " : " prelaod"));
 
-            packageModels.add(model);
+            result.add(model);
         }
 
-        return packageModels;
+        return result;
     }
 
 
@@ -322,7 +337,9 @@ public class AppManageService extends Service {
 
                             case HttpHelper.SUCCESS:
 
-                                for (PackageModel model : packages) {
+                                List<PackageModel> list = dbHelper.getDeletedApps();
+
+                                for (PackageModel model : list) {
 
                                     if (model.getState() == 1) {
 
@@ -330,7 +347,7 @@ public class AppManageService extends Service {
 
                                         result.setState(model.getState());
                                         result.setPackageId(model.getPackageId());
-                                        result.setDoExistInDB(model.getHasIconDB());
+                                        result.setDoExistInDB(-1);
                                         result.setPackageName(model.getPackageName());
 
                                         response.getPackages().add(result);
@@ -371,10 +388,14 @@ public class AppManageService extends Service {
             return;
         }
 
+
         for (PackageResult model : packages) {
 
+            Logger.d(model.getPackageName() + " " + model.getPackageId() + " " +
+                    model.getDoExistInDB() + " " + model.getState() + " " + 0);
+
             dbHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-                    model.getDoExistInDB(), model.getState());
+                    model.getDoExistInDB(), model.getState(), 0);
         }
     }
 

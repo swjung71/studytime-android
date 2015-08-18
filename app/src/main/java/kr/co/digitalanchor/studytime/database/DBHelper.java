@@ -9,11 +9,6 @@ import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
 
-import org.w3c.dom.Text;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +21,7 @@ import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.utils.AndroidUtils;
+import kr.co.digitalanchor.utils.MD5;
 
 /**
  * Created by Thomas on 2015-06-16.
@@ -300,8 +296,12 @@ public class DBHelper extends SQLiteOpenHelper {
         if (!TextUtils.isEmpty(packageName))
             values.put(PACKAGE_NAME, packageName);
 
-        if (!TextUtils.isEmpty(hash))
-            values.put(PACKAGE_HASH, hash);
+        if (TextUtils.isEmpty(hash)) {
+
+            hash = MD5.getHash(packageName);
+        }
+
+        values.put(PACKAGE_HASH, hash);
 
         if (!TextUtils.isEmpty(label))
             values.put(LABEL_NAME, label);
@@ -361,11 +361,62 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(STATE, 1);
+        values.put(CHANGED, 1);
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
         db.close();
 
     }
+
+    public List<PackageModel> getDeletedApps() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        List<PackageModel> results = new ArrayList<>();
+
+        String[] result_columns = new String[]{PACKAGE_NAME, PACKAGE_ID, PACKAGE_HASH,
+                LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP, STATE,
+                HAS_ICON, HAS_ICON_IN_DB, ICON_HASH, CHANGED};
+
+
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, STATE +
+                        "=? AND " + CHANGED + "=?",
+                new String[] {"1", "1"}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                PackageModel model = new PackageModel();
+
+                model.setPackageName(cursor.getString(0));
+                model.setPackageId(cursor.getString(1));
+                model.setHash(cursor.getString(2));
+                model.setLabelName(cursor.getString(3));
+                model.setPackageVersion(cursor.getString(4));
+                model.setIsExceptionApp(cursor.getInt(5));
+                model.setIsDefaultApp(cursor.getInt(6));
+                model.setTimestamp(cursor.getString(7));
+                model.setState(cursor.getInt(8));
+                model.setHasIcon(cursor.getInt(9));
+                model.setHasIconDB(cursor.getInt(10));
+                model.setIconHash(cursor.getString(11));
+                model.setChanged(cursor.getInt(12));
+
+                results.add(model);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        return results;
+    }
+
+
 
     /**
      * App 정보를 서버에 등록 후 실행 (자녀용)
@@ -375,22 +426,44 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param hasIconServer
      */
     public void updateApplicationAfterReg(String packageName, String packageId,
-                                          int hasIconServer, int state) {
+                                          int hasIconServer, int state, int changed) {
+
+        Logger.d(packageName + " " + packageId + " " + hasIconServer + " " + state + " " + changed);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
         values.put(PACKAGE_ID, packageId);
-        values.put(HAS_ICON_IN_DB, hasIconServer);
+
+        if (hasIconServer > -1)
+            values.put(HAS_ICON_IN_DB, hasIconServer);
 
         if (state > -1)
             values.put(STATE, state);
 
-        db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+        if (changed > -1)
+            values.put(CHANGED, changed);
 
-        db.close();
+        Logger.d(values.toString());
+
+        db.beginTransaction();
+
+        try {
+
+            db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+        } finally {
+
+            db.endTransaction();
+            db.close();
+        }
     }
+
 
     /**
      * @param packageName
@@ -447,10 +520,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String[] result_columns = new String[]{PACKAGE_NAME, PACKAGE_ID, PACKAGE_HASH,
                 LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP, STATE,
-                HAS_ICON, HAS_ICON_IN_DB, ICON_HASH};
+                HAS_ICON, HAS_ICON_IN_DB, ICON_HASH, CHANGED};
 
-        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, STATE + " != ?",
-                new String[]{"1"}, null, null, null, null);
+//        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, STATE + " != ?",
+//                new String[]{"1"}, null, null, null, null);
+
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, null,
+                null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
@@ -470,6 +546,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 model.setHasIcon(cursor.getInt(9));
                 model.setHasIconDB(cursor.getInt(10));
                 model.setIconHash(cursor.getString(11));
+                model.setChanged(cursor.getInt(12));
 
                 hash.put(model.getPackageName(), model);
 
@@ -598,17 +675,29 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String [] columns = new String[] {PACKAGE_NAME, PACKAGE_ID};
+        String[] result_columns = new String[]{PACKAGE_NAME, PACKAGE_ID, PACKAGE_HASH,
+                LABEL_NAME, PACKAGE_VERSION, EXCEPTED, IS_DEFAULT, TIMESTAMP, STATE,
+                HAS_ICON, HAS_ICON_IN_DB, ICON_HASH};
 
-        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns, PACKAGE_NAME + "=?",
-                new String[] {packageName}, null, null, null, null);
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
+                new String[]{packageName}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
             model = new PackageModel();
 
-            model.setPackageName(packageName);
+            model.setPackageName(cursor.getString(0));
             model.setPackageId(cursor.getString(1));
+            model.setHash(cursor.getString(2));
+            model.setLabelName(cursor.getString(3));
+            model.setPackageVersion(cursor.getString(4));
+            model.setIsExceptionApp(cursor.getInt(5));
+            model.setIsDefaultApp(cursor.getInt(6));
+            model.setTimestamp(cursor.getString(7));
+            model.setState(cursor.getInt(8));
+            model.setHasIcon(cursor.getInt(9));
+            model.setHasIconDB(cursor.getInt(10));
+            model.setIconHash(cursor.getString(11));
         }
 
         return model;

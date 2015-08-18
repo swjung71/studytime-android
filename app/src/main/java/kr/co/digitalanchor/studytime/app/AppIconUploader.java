@@ -58,8 +58,6 @@ public class AppIconUploader extends Service {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        list = dbHelper.getPackageListNoIcon();
-
         packageManager = getPackageManager();
 
         mHandler = new Handler() {
@@ -85,7 +83,16 @@ public class AppIconUploader extends Service {
             }
         };
 
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        list = dbHelper.getPackageListNoIcon();
+
         mHandler.sendEmptyMessage(REQUEST_MAKE_IMAGE);
+
+        return START_NOT_STICKY;
     }
 
     @Override

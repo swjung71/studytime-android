@@ -90,7 +90,7 @@ public class STApplication extends MultiDexApplication {
         // TODO Google analystics initialize
 
         analytics = GoogleAnalytics.getInstance(this);
-        analytics.setDryRun(false);
+        analytics.setDryRun(true);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");

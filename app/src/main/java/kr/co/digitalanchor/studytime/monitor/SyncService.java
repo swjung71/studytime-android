@@ -44,7 +44,14 @@ public class SyncService extends Service {
 
         dbHelper = new DBHelper(STApplication.applicationContext);
 
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
         requestSync();
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
