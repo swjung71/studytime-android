@@ -385,6 +385,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                                 mDBHelper.setAdultFile(response);
 
                                 data.putString("files", response.getFileName().get(files.size() - 1).getFileName());
+
                                 Logger.d(data.toString());
 
                                 sendMessage(REQUEST_ADULT_FILE, data);
@@ -426,7 +427,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             if (params == null || params.length < 1) {
 
-                return null;
+                return result;
             }
 
             FTPClient ftp = new FTPClient();
@@ -571,7 +572,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                     publishProgress((int) (total * 100 / fileSize));
 
-                    System.out.println("total = " + fileSize + ", cur = " + total) ;
                 }
 
                 result = true;

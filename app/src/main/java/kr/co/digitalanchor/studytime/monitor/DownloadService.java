@@ -2,13 +2,13 @@ package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,13 +23,13 @@ import org.apache.commons.net.ftp.FTPClient;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.STApplication;
@@ -45,7 +45,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 /**
  * Created by user on 2015-08-12.
  */
-public class DownloadService extends Service  {
+public class DownloadService extends Service {
 
     static final int REQUEST_FILE_LIST = 50001;
     static final int REQUEST_DB_FILE = 50002;
@@ -59,6 +59,8 @@ public class DownloadService extends Service  {
 
     List<Files> list;
 
+    String date = null;
+
     Handler handler = new Handler() {
 
         @Override
@@ -67,21 +69,21 @@ public class DownloadService extends Service  {
 
             switch (msg.what) {
 
-                case REQUEST_FILE_LIST :
+                case REQUEST_FILE_LIST:
 
                     requestAdultFile();
 
-                break;
+                    break;
 
                 case REQUEST_DB_FILE:
 
                     downloadFile();
 
-                break;
+                    break;
 
                 case SELECT_FILE_LIST:
 
-                break;
+                    break;
 
                 default:
 
@@ -117,7 +119,7 @@ public class DownloadService extends Service  {
 
         GetAdultDB model = new GetAdultDB();
 
-        String date = dbHelper.getAdultFile();
+        date = dbHelper.getAdultFile();
 
         if (date != null) {
 
@@ -138,11 +140,10 @@ public class DownloadService extends Service  {
 
                                 data = new Bundle();
 
-                                ArrayList<Files> files = response.getFileName();
-
                                 dbHelper.setAdultFile(response);
 
                                 list = response.getFileName();
+
                                 Logger.d(data.toString());
 
                                 if (list == null || list.size() < 1) {
@@ -234,21 +235,28 @@ public class DownloadService extends Service  {
 
                 inputStream.close();
 
-                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
+                if (TextUtils.isEmpty(date)) {
 
-                BufferedReader br = new BufferedReader(new FileReader(fileName));
+                    copyDataBaseFile(params[0]);
 
-                adultDBHelper.setTableAdultUrl(br);
+                } else {
+
+                    insertAdultURL(params[0]);
+                }
+
 
             } catch (SocketException e) {
 
                 Logger.e(e.toString());
+
             } catch (IOException e) {
 
                 Logger.e(e.toString());
+
             } catch (Exception e) {
 
                 Logger.e(e.toString());
+
             } finally {
 
                 try {
@@ -271,9 +279,117 @@ public class DownloadService extends Service  {
 
         @Override
         protected void onPostExecute(String s) {
+
             super.onPostExecute(s);
 
             handler.sendEmptyMessage(REQUEST_DB_FILE);
+        }
+
+        public void copyDataBaseFile(String name) {
+
+            FileInputStream fis = null;
+            FileOutputStream fos = null;
+
+            try {
+
+                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + name;
+
+                String dir = "/data/data/" + getApplicationContext().getPackageName() + "/databases";
+                String dest = "adult.db";
+
+                File directory = new File(dir);
+
+                if (!directory.exists()) {
+
+                    directory.mkdir();
+                }
+
+                File file2 = new File(fileName);
+                File file = new File(dir + "/" + dest);
+
+
+                if (file.exists()) {
+
+                    file.delete();
+                }
+
+                file.createNewFile();
+
+                fis = new FileInputStream(file2);
+
+                fos = new FileOutputStream(file);
+
+                Logger.d(fileName);
+                Logger.d(dir + "/" + dest);
+
+                Logger.d(file2.length() + " " + file.length());
+
+                byte[] data = new byte[4096];
+
+                int bytesRead = -1;
+
+                while ((bytesRead = fis.read(data)) != -1) {
+
+                    fos.write(data, 0, bytesRead);
+
+                }
+
+            } catch (IOException e) {
+
+                Logger.e(e.toString());
+
+            } finally {
+
+                if (fis != null) {
+
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+
+                    }
+                }
+
+                if (fos != null) {
+
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+        }
+
+        public void insertAdultURL(String name) {
+
+            BufferedReader br = null;
+
+            try {
+
+                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + name;
+
+                br = new BufferedReader(new FileReader(fileName));
+
+                adultDBHelper.setTableAdultUrl(br);
+
+            } catch (IOException e) {
+
+                Logger.e(e.toString());
+
+            } finally {
+
+                try {
+
+                    if (br != null) {
+                        br.close();
+                    }
+
+                } catch (IOException e) {
+
+                    Logger.e(e.toString());
+
+                }
+            }
         }
     }
 }

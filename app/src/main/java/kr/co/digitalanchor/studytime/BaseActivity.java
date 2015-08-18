@@ -372,7 +372,7 @@ public class BaseActivity extends Activity {
 
         String text = "이름:\n전화번호:\n" + account.getEmail() + "이 보낸메일 \n";
 
-        intent.setType("plain/text");
+        intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@digitalanchor.co.kr"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "1:1 상담");
         intent.putExtra(Intent.EXTRA_TEXT, text);
