@@ -101,41 +101,42 @@ public class AppManageService extends Service {
 
             case StaticValues.ACTION_PACKAGE_ADDED:
 
-//                Logger.d("inner switch");
-//
-//                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
-//
-//                model = getPackageInfo(packageName);
-//
-//                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
-//                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
-//                        model.getIsDefaultApp(), model.getIconHash(), 0, 0);
-//
-//                list = new ArrayList<>();
-//
-//                list.add(model);
-//
-//                requestUpdateApps(list);
+                Logger.d(StaticValues.ACTION_PACKAGE_ADDED);
+
+                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                model = getPackageInfo(packageName);
+                model.setState(0);
+
+                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
+                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
+                        model.getIsDefaultApp(), model.getIconHash(), 0, 0);
+
+                list = new ArrayList<>();
+
+                list.add(model);
+
+                requestUpdateApps(list);
 
                 break;
 
             case StaticValues.ACTION_PACKAGE_REMOVED:
 
-//                Logger.d("inner switch");
-//
-//                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
-//
-//                model = getPackageInfo(packageName);
-//
-//                dbHelper.addApplication(model.getPackageName(), model.getHash(), model.getLabelName(),
-//                        model.getPackageVersion(), model.getTimestamp(), model.getIsExceptionApp(),
-//                        model.getIsDefaultApp(), model.getIconHash(), 1, 0);
-//
-//                list = new ArrayList<>();
-//
-//                list.add(model);
-//
-//                requestUpdateApps(list);
+                Logger.d(StaticValues.ACTION_PACKAGE_REMOVED);
+
+                packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                model = dbHelper.getPackage(packageName);
+
+                model.setState(1);
+
+                dbHelper.deleteApplication(packageName);
+
+                list = new ArrayList<>();
+
+                list.add(model);
+
+                requestUpdateApps(list);
 
                 break;
 

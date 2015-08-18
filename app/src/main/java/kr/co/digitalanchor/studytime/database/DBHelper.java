@@ -592,6 +592,28 @@ public class DBHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public PackageModel getPackage(String packageName) {
+
+        PackageModel model = null;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String [] columns = new String[] {PACKAGE_NAME, PACKAGE_ID};
+
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns, PACKAGE_NAME + "=?",
+                new String[] {packageName}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            model = new PackageModel();
+
+            model.setPackageName(packageName);
+            model.setPackageId(cursor.getString(1));
+        }
+
+        return model;
+    }
+
     public int getPackageListSize() {
 
         int size = 0;
