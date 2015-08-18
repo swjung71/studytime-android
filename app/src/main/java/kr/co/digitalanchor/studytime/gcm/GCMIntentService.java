@@ -377,7 +377,11 @@ public class GCMIntentService extends IntentService {
 
                                 List<PackageModel> packages = mHelper.getPackageListExcept();
 
+                                Logger.d("packages " + packages.size());
+
                                 for (PackageModel model : packages) {
+
+                                    Logger.d(model.getPackageName() +  " " + model.getPackageId() + " " + map.toString());
 
                                     if (map.containsKey(model.getPackageId())) {
 

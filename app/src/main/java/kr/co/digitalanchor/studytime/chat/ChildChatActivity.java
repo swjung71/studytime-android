@@ -177,14 +177,14 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.buttonSetting:
 
-                Intent intent = new Intent(this, AppManageService.class);
-                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
-
-                startService(intent);
-
-//                AndroidUtils.hideKeyboard(mEditMessage);
+//                Intent intent = new Intent(this, AppManageService.class);
+//                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
 //
-//                showAdditionalInfo();
+//                startService(intent);
+
+                AndroidUtils.hideKeyboard(mEditMessage);
+
+                showAdditionalInfo();
 
                 break;
 

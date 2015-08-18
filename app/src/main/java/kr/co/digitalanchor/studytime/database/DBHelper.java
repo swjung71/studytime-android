@@ -381,7 +381,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, STATE +
                         "=? AND " + CHANGED + "=?",
-                new String[] {"1", "1"}, null, null, null, null);
+                new String[]{"1", "1"}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
@@ -417,7 +417,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
     /**
      * App 정보를 서버에 등록 후 실행 (자녀용)
      *
@@ -447,21 +446,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Logger.d(values.toString());
 
-        db.beginTransaction();
+        db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
 
-        try {
-
-            db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
-
-        } catch (Exception e) {
-
-            Logger.e(e.toString());
-
-        } finally {
-
-            db.endTransaction();
-            db.close();
-        }
+        db.close();
     }
 
 
@@ -475,8 +462,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        ContentValues values = new ContentValues();
-
         String[] result_columns = new String[]{EXCEPTED};
 
         Cursor cursor = null;
@@ -486,13 +471,13 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
                     new String[]{packageName}, null, null, null, null);
 
-            Logger.d(cursor.getCount() + " " + packageName);
-
             if (cursor.moveToFirst()) {
 
                 do {
 
                     result = (cursor.getInt(0) == 0) ? false : true;
+
+                    Logger.d(packageName + " " + result);
 
                 } while (cursor.moveToNext());
             }
