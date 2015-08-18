@@ -46,4 +46,6 @@ public class StaticValues {
 
     public static final String BLOCK_PAGE_URL = "http://www.dastudytime.com//block/block.html";
 
+    public static final String IS_SITE_BLOCK = "isSiteBlock";
+
 }

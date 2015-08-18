@@ -23,7 +23,6 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.studytime.app.AppManageService;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;
@@ -31,7 +30,6 @@ import kr.co.digitalanchor.studytime.model.ChatSendResult;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
-import kr.co.digitalanchor.studytime.monitor.DownloadService;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;

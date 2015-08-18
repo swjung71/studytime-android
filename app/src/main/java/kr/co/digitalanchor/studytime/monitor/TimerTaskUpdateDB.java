@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.util.TimerTask;
 
@@ -18,5 +19,6 @@ public class TimerTaskUpdateDB extends TimerTask {
     @Override
     public void run() {
 
+        context.startService(new Intent(context, DownloadService.class));
     }
 }

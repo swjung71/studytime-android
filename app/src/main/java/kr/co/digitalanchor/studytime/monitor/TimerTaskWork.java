@@ -42,9 +42,6 @@ public class TimerTaskWork extends TimerTask {
 
     private DBHelper mHelper;
 
-    private AdultDBHelper mAdultDBHelper;
-
-
     public TimerTaskWork(Context context) {
 
         mContext = context;
@@ -53,7 +50,6 @@ public class TimerTaskWork extends TimerTask {
 
         mHelper = new DBHelper(mContext);
 
-        mAdultDBHelper = new AdultDBHelper(mContext);
     }
 
     @Override
@@ -119,10 +115,11 @@ public class TimerTaskWork extends TimerTask {
 
         }
 
-        if (currentPackage.equals("com.android.browser")
+        if (STApplication.getBoolean(StaticValues.IS_SITE_BLOCK, true)
+                && (currentPackage.equals("com.android.browser")
                 || currentPackage.equals("com.google.android.browser") // nexus
                 || currentPackage.equals("com.android.chrome")
-                || currentPackage.equals("com.sec.android.app.sbrowser")) {
+                || currentPackage.equals("com.sec.android.app.sbrowser"))) {
 
             String url = getRecentUrl(currentPackage);
 
@@ -140,7 +137,9 @@ public class TimerTaskWork extends TimerTask {
                 return;
             }
 
-            if (mAdultDBHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
+            AdultDBHelper helper = new AdultDBHelper(mContext);
+
+            if (helper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
 
                 blockWebPage(currentPackage);
             }
@@ -396,7 +395,7 @@ public class TimerTaskWork extends TimerTask {
 
     private String[] extractUrlParts(String url) {
 
-        String [] data = null;
+        String[] data = null;
 
         Pattern urlPattern = STApplication.getUrlPattern();
 
@@ -426,7 +425,7 @@ public class TimerTaskWork extends TimerTask {
                 buffer.append(mc.group(3));
             }
 
-            data = new String[] {buffer.toString(), mc.group(5)};
+            data = new String[]{buffer.toString(), mc.group(5)};
         }
 
         return data;

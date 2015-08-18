@@ -33,6 +33,7 @@ import java.net.SocketException;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
@@ -108,6 +109,14 @@ public class DownloadService extends Service {
         handler.sendEmptyMessage(REQUEST_FILE_LIST);
 
         return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+
+        STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , true);
+
+        super.onDestroy();
     }
 
     @Override
@@ -290,6 +299,8 @@ public class DownloadService extends Service {
             FileInputStream fis = null;
             FileOutputStream fos = null;
 
+            STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , false);
+
             try {
 
                 String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + name;
@@ -339,6 +350,8 @@ public class DownloadService extends Service {
                 Logger.e(e.toString());
 
             } finally {
+
+                STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , true);
 
                 if (fis != null) {
 
