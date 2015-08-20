@@ -339,8 +339,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
     private void downloadAdultFile(String file) {
 
-        Logger.d("downloadAdultFile " + file);
-
         if (TextUtils.isEmpty(file)) {
 
             sendEmptyMessage(REQUEST_ADD_INFO);

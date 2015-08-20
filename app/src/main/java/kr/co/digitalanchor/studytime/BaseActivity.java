@@ -86,6 +86,7 @@ public class BaseActivity extends Activity {
 
     @Override
     protected void onStop() {
+
         super.onStop();
 
     }

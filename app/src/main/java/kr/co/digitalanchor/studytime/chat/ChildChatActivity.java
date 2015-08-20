@@ -23,7 +23,6 @@ import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.studytime.app.AppManageService;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;

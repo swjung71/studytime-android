@@ -1,6 +1,5 @@
 package kr.co.digitalanchor.studytime;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,14 +16,10 @@ import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
 import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.jakewharton.disklrucache.DiskLruCache;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -70,7 +65,7 @@ public class STApplication extends MultiDexApplication {
     private static final int DEFAULT_CACHE_SIZE = 10485760;
     private static final long DEFAULT_MAX_AGE = 60L;
 
-    private static int DISK_IMAGECACHE_SIZE = 1024*1024*10;
+    private static int DISK_IMAGECACHE_SIZE = 1024 * 1024 * 10;
     private static Bitmap.CompressFormat DISK_IMAGECACHE_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
     private static int DISK_IMAGECACHE_QUALITY = 100;  //PNG is lossless so quality is ignored but must be provided
 
@@ -90,7 +85,7 @@ public class STApplication extends MultiDexApplication {
         // TODO Google analystics initialize
 
         analytics = GoogleAnalytics.getInstance(this);
-        analytics.setDryRun(true);
+        analytics.setDryRun(false);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");
@@ -103,12 +98,12 @@ public class STApplication extends MultiDexApplication {
         /**
          * Log setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
 
         RequestManager.init(this);
         createImageCache();
 
-        URL_PATTERN  = Pattern.compile("^(https?):\\/\\/([^:\\/\\s]+)(:([^\\/]*))?((\\/[^\\s/\\/]+)*)?\\/([^#\\s\\?]*)(\\?([^#\\s]*))?(#(\\w*))?$");
+        URL_PATTERN = Pattern.compile("^(https?):\\/\\/([^:\\/\\s]+)(:([^\\/]*))?((\\/[^\\s/\\/]+)*)?\\/([^#\\s\\?]*)(\\?([^#\\s]*))?(#(\\w*))?$");
     }
 
     @Override
@@ -119,7 +114,7 @@ public class STApplication extends MultiDexApplication {
         // TODO 언어 설정이 변경되면!!!
     }
 
-    private void createImageCache(){
+    private void createImageCache() {
         ImageCacheManager.getInstance().init(this,
                 this.getPackageCodePath()
                 , DISK_IMAGECACHE_SIZE
@@ -178,9 +173,9 @@ public class STApplication extends MultiDexApplication {
             PackageInfo info = applicationContext.getPackageManager()
                     .getPackageInfo(applicationContext.getPackageName(), 0);
 
-            String [] appVersionTokens =  info.versionName.split("\\.");
+            String[] appVersionTokens = info.versionName.split("\\.");
 
-            String [] curVersionTokens = currentVersionName.split("\\.");
+            String[] curVersionTokens = currentVersionName.split("\\.");
 
             for (int i = 0; appVersionTokens.length > i; i++) {
 

@@ -2,7 +2,9 @@ package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,6 +22,8 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CheckPackageResult;
 import kr.co.digitalanchor.studytime.model.ExceptionAppResult;
+import kr.co.digitalanchor.studytime.model.GCMUpdate;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.PackageIDs;
 import kr.co.digitalanchor.studytime.model.PackageModel;
@@ -33,7 +37,12 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class SyncService extends Service {
 
+    private final int REQUEST_SYNC = 50001;
+    private final int REQUEST_SYNC_GCM = 50002;
+
     DBHelper dbHelper;
+
+    Handler handler;
 
     @Override
     public void onCreate() {
@@ -44,12 +53,34 @@ public class SyncService extends Service {
 
         dbHelper = new DBHelper(STApplication.applicationContext);
 
+        handler = new Handler() {
+
+            @Override
+            public void handleMessage(Message msg) {
+
+                switch (msg.what) {
+
+                    case REQUEST_SYNC:
+
+                        requestSync();
+
+                        break;
+
+                    case REQUEST_SYNC_GCM :
+
+                        getUpdateGCM();
+
+                        break;
+                }
+            }
+        };
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        requestSync();
+        handler.sendEmptyMessage(REQUEST_SYNC);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -101,6 +132,8 @@ public class SyncService extends Service {
 
                         break;
                 }
+
+                handler.sendEmptyMessage(REQUEST_SYNC_GCM);
             }
 
         }, new Response.ErrorListener() {
@@ -177,6 +210,37 @@ public class SyncService extends Service {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Logger.e(error.toString());
+
+                    }
+                });
+
+        if (request != null) {
+
+            RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
+
+            queue.add(request);
+        }
+    }
+
+    private void getUpdateGCM() {
+
+        Account account = dbHelper.getAccountInfo();
+
+        GCMUpdate model = new GCMUpdate();
+
+        model.setGCM(STApplication.getRegistrationId());
+        model.setId(account.getID());
+        model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
+
+        SimpleXmlRequest request = HttpHelper.getUpdate(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
                     }
                 });

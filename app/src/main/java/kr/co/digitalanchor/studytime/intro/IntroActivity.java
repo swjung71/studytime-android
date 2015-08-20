@@ -355,19 +355,20 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         model.setId(account.getID());
         model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
 
-        SimpleXmlRequest request = HttpHelper.getUpdate(model, new Response.Listener<GeneralResult>() {
-            @Override
-            public void onResponse(GeneralResult response) {
+        SimpleXmlRequest request = HttpHelper.getUpdate(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
 
-                getAvailableUpdate();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                        getAvailableUpdate();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                getAvailableUpdate();
-            }
-        });
+                        getAvailableUpdate();
+                    }
+                });
 
         addRequest(request);
     }
