@@ -54,6 +54,11 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
          * 공지사항
          */
         void onClickNotice();
+
+        /**
+         * 알림 모아보기
+         */
+        void onClickNotificationBooad();
     }
 
     private OnClickMenuItemListener mListener;
@@ -74,6 +79,7 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
         view.findViewById(R.id.menuInquiry).setOnClickListener(this);
         view.findViewById(R.id.menuWithdraw).setOnClickListener(this);
         view.findViewById(R.id.buttonLogOut).setOnClickListener(this);
+        view.findViewById(R.id.menuNotification).setOnClickListener(this);
 
         mLabelName = (TextView) view.findViewById(R.id.labelName);
 
@@ -157,6 +163,13 @@ public class MenuPopup extends QuickActionWidget implements View.OnClickListener
 
 
                 break;
+
+            case R.id.menuNotification:
+
+                if (mListener != null) {
+
+                    mListener.onClickNotificationBooad();
+                }
 
             default:
 

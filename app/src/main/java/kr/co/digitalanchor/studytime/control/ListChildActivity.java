@@ -41,6 +41,7 @@ import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
+import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
 import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
@@ -273,6 +274,12 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         showNotice();
     }
 
+    @Override
+    public void onClickNotificationBooad() {
+
+        showNotificationBoard();
+    }
+
     private void drawView() {
 
         Account account = mHelper.getAccountInfo();
@@ -326,6 +333,17 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         startActivity(intent);
 
+    }
+
+    private void showNotificationBoard() {
+
+        IgawAdbrix.retention("notificationBoard");
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), NotificationActivity.class);
+
+        startActivity(intent);
     }
 
     private void showModifyInfo() {

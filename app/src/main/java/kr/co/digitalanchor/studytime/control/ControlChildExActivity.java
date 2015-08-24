@@ -21,7 +21,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -44,6 +43,7 @@ import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
+import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
@@ -333,7 +333,6 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     @Override
     public void onPanelSlide(View panel, float slideOffset) {
 
-        Logger.d("slideOffset" + slideOffset);
     }
 
     @Override
@@ -416,6 +415,12 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     public void onClickNotice() {
 
         showNotice();
+    }
+
+    @Override
+    public void onClickNotificationBooad() {
+
+        showNotificationBoard();
     }
 
     private void drawView() {
@@ -505,6 +510,17 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         intent.setClass(getApplicationContext(), BoardActivity.class);
 
         intent.putExtra("option", 0);
+
+        startActivity(intent);
+    }
+
+    private void showNotificationBoard() {
+
+        IgawAdbrix.retention("notificationBoard");
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), NotificationActivity.class);
 
         startActivity(intent);
     }

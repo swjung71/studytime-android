@@ -39,7 +39,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-06-15.
  */
 public class ChildChatActivity extends BaseActivity implements View.OnClickListener,
-        MessageReceiver.OnMessageListener{
+        MessageReceiver.OnMessageListener {
 
     private final int REQUEST_SEND_MESSAGE = 50001;
 
@@ -144,7 +144,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
         mAdapter = new ChildChatAdapter(getApplicationContext(), mMessages, mAccount.getID());
 
         mListChat.setAdapter(mAdapter);
-     }
+    }
 
     @Override
     protected void onHandleMessage(Message msg) {
@@ -178,6 +178,11 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
 //                Intent intent = new Intent(this, AppManageService.class);
 //                intent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+//
+//                startService(intent);
+
+                // TEST
+//                Intent intent = new Intent(this, DownloadService.class);
 //
 //                startService(intent);
 
@@ -230,7 +235,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
         if (TextUtils.isEmpty(message)) {
 
-            return ;
+            return;
         }
 
         long primaryKey = mHelper.insertMessageBeforeSend(mAccount.getParentId(), mAccount.getParentName(),

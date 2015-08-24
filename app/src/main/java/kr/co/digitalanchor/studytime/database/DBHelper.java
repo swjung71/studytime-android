@@ -257,6 +257,9 @@ public class DBHelper extends SQLiteOpenHelper {
         if (!TextUtils.isEmpty(model.getPackageVersion()))
             values.put(PACKAGE_VERSION, model.getPackageVersion());
 
+        else
+            values.put(PACKAGE_VERSION, "1.0");
+
         if (!TextUtils.isEmpty(model.getTimestamp()))
             values.put(TIMESTAMP, model.getTimestamp());
 
@@ -308,6 +311,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (!TextUtils.isEmpty(version))
             values.put(PACKAGE_VERSION, version);
+
+        else
+            values.put(PACKAGE_VERSION, "1.0");
 
         if (!TextUtils.isEmpty(timestamp))
             values.put(TIMESTAMP, timestamp);

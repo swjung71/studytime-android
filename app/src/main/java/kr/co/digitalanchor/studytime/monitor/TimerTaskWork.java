@@ -96,9 +96,13 @@ public class TimerTaskWork extends TimerTask {
                     || currentPackage.equals("com.lge.settings.easy")
                     || currentPackage.equals("com.lge.bluetoothsetting")) {
 
+                return;
+
                 // not work
             } else if (STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
                     && currentPackage.contains("com.android.packageinstaller")) {
+
+                return;
 
                 // not work
 
@@ -106,13 +110,14 @@ public class TimerTaskWork extends TimerTask {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
+                return;
+
             } else if (!mHelper.isExcepted(currentPackage)) {
 
                 killApplication(currentPackage);
 
                 return;
             }
-
         }
 
         if (STApplication.getBoolean(StaticValues.IS_SITE_BLOCK, true)
@@ -223,6 +228,11 @@ public class TimerTaskWork extends TimerTask {
     }
 
     private String getRecentUrl(String currentPackage) {
+
+        if (TextUtils.isEmpty(currentPackage)) {
+
+            return null;
+        }
 
         String sortOrder = String.format("%s DESC limit 1",
                 new Object[]{"date"});

@@ -56,4 +56,6 @@
 
     <string name="exceptedAppListHeader">잠금 제외앱</string>
     <string name="unexceptedAppListHeader">앱별 잠금 설정</string>
+
+    <string name="density">default</string>
 </resources>

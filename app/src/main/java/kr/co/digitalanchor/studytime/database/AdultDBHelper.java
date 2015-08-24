@@ -31,7 +31,7 @@ public class AdultDBHelper extends SQLiteOpenHelper {
     private static final String ADULT_URL_IS_SUB = "isSub";
 
 
-    private static final String CREATE_TABLE_ADULT_URL = "CREATE TABLE  " + TABLE_ADULT_URL + " ("
+    private static final String CREATE_TABLE_ADULT_URL = "CREATE TABLE IF NOT EXISTS " + TABLE_ADULT_URL + " ("
             + ADULT_URL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ADULT_URL_HASH + " TEXT, "
             + ADULT_URL_DIRECTORY + " TEXT, "
@@ -57,6 +57,11 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
         boolean result = false;
 
+        if (TextUtils.isEmpty(hash)) {
+
+            return result;
+        }
+
         if (TextUtils.isEmpty(directory)) {
 
             directory = "/";
@@ -64,9 +69,9 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String [] columns = new String [] {ADULT_URL_DIRECTORY, ADULT_URL_FILE, ADULT_URL_IS_SUB};
+        String[] columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_FILE, ADULT_URL_IS_SUB};
 
-        String where = ADULT_URL_HASH  + " =?";
+        String where = ADULT_URL_HASH + " =?";
 
         Cursor cursor = db.query(false, TABLE_ADULT_URL, columns, where, new String[]{hash},
                 null, null, null, null);
@@ -85,7 +90,7 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
                     break;
 
-                } else if (isSub.equals("S") &&  directory.startsWith(dir)) {
+                } else if (isSub.equals("S") && directory.startsWith(dir)) {
 
                     result = true;
 
@@ -113,9 +118,12 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
     public void setTableAdultUrl(BufferedReader br) {
 
+        Logger.d("setTableAdultUrl");
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
+            //BufferedReader br = new BufferedReader(new FileReader(file));
 
             db.beginTransaction();
 
@@ -123,96 +131,63 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
             while ((line = br.readLine()) != null) {
 
-                int i = 0;
+                //int i = 0;
 
                 String urlHash = new String();
                 String directory = new String();
+                String file = new String();
 
-                line.replaceAll("&amp;", "&");
+                String[] subsp = line.split(",");
 
-                String[] sp = line.split(";");
+                if (subsp.length != 12) {
+                    continue;
+                }
 
-                for (; i < sp.length; i++) {
-                    String sub = sp[i];
-                    String[] subsp = sub.split(",");
+                urlHash = subsp[0];
+                directory = subsp[2];
+                file = subsp[3];
 
-                    if (subsp.length != 12) {
+                int nud, sex, vio, lan;
 
-                        continue;
-                    }
+                try {
 
-                    if (i == 0) {
-                        urlHash = subsp[0];
-                        directory = subsp[2];
+                    nud = Integer.parseInt(subsp[4]);
+                    sex = Integer.parseInt(subsp[5]);
+                    vio = Integer.parseInt(subsp[6]);
+                    lan = Integer.parseInt(subsp[7]);
 
-                        int nud, sex, vio, lan;
+                } catch (Exception e) {
 
-                        try {
+                    Logger.e(e.toString());
 
-                            nud = Integer.parseInt(subsp[4]);
-                            sex = Integer.parseInt(subsp[5]);
-                            vio = Integer.parseInt(subsp[6]);
-                            lan = Integer.parseInt(subsp[7]);
+                    continue;
+                }
 
-                        } catch (Exception e) {
+                //for high school
+                if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
 
-                            continue;
-                        }
+                    String isDelete = subsp[10];
 
-                        //for high school
-                        if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
+                    if (isDelete.equalsIgnoreCase("D")) {
 
-                            String isDelete = subsp[10];
+                        //삭제 코드
+                        String whereClause = ADULT_URL_HASH + "=" + urlHash + " AND " +
+                                ADULT_URL_DIRECTORY + "=" + directory + " AND " +
+                                ADULT_URL_FILE + " = " + file;
 
-                            if (isDelete.equalsIgnoreCase("D")) {
-                                //삭제 코드
-                                String whereClause = ADULT_URL_HASH + "=" + urlHash + " AND " + ADULT_URL_DIRECTORY + "=" + directory;
-                                db.delete(TABLE_ADULT_URL, whereClause, null);
-                            } else {
-                                //삽입 코드
-                                ContentValues values = new ContentValues();
-                                values.put(ADULT_URL_HASH, urlHash);
-                                values.put(ADULT_URL_DIRECTORY, directory);
-                                values.put(ADULT_URL_IS_SUB, subsp[11]);
-                                db.insert(TABLE_ADULT_URL, null, values);
-                            }
-                        }
+                        db.delete(TABLE_ADULT_URL, whereClause, null);
 
                     } else {
 
-                        directory = subsp[1];
+                        //삽입 코드
+                        ContentValues values = new ContentValues();
 
-                        int nud, sex, vio, lan;
+                        values.put(ADULT_URL_HASH, urlHash);
+                        values.put(ADULT_URL_DIRECTORY, directory);
+                        values.put(ADULT_URL_IS_SUB, subsp[11]);
+                        values.put(ADULT_URL_FILE, file);
 
-                        nud = Integer.parseInt(subsp[3]);
-                        sex = Integer.parseInt(subsp[4]);
-                        vio = Integer.parseInt(subsp[5]);
-                        lan = Integer.parseInt(subsp[6]);
-
-                        //for high school
-                        if (nud > 2 || sex > 2 || vio > 3 || lan > 2) {
-
-                            String isDelete = subsp[9];
-
-                            if (isDelete.equalsIgnoreCase("D")) {
-
-                                //삭제 코드
-                                String whereClause = ADULT_URL_HASH + "=" + urlHash +
-                                        " AND " + ADULT_URL_DIRECTORY + "=" + directory;
-
-                                db.delete(TABLE_ADULT_URL, whereClause, null);
-
-                            } else {
-
-                                ContentValues values = new ContentValues();
-                                values.put(ADULT_URL_HASH, urlHash);
-                                values.put(ADULT_URL_DIRECTORY, directory);
-                                values.put(ADULT_URL_IS_SUB, subsp[10]);
-
-                                db.insert(TABLE_ADULT_URL, null, values);
-                            }
-
-                        }
+                        db.insert(TABLE_ADULT_URL, null, values);
                     }
                 }
             }
@@ -220,9 +195,13 @@ public class AdultDBHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
 
         } catch (FileNotFoundException e) {
+
             Logger.e(e.getMessage());
+
         } catch (IOException e) {
+
             Logger.e(e.getMessage());
+
         } finally {
 
             db.endTransaction();

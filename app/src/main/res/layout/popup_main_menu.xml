@@ -166,6 +166,45 @@
                 android:background="#f2f2f2" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/menuNotification"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/menu_popup_item_height"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/labelNotificatio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
+                android:text="알림 모아보기"
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
+
+            <ImageView
+                android:id="@+id/badgeNotificatio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/labelNotificatio"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/labelNotificatio"
+                android:layout_toRightOf="@+id/labelNotificatio"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_badge"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_popup_divider_height"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
+                android:background="#f2f2f2" />
+        </RelativeLayout>
+
         <FrameLayout
             android:id="@+id/menuWithdraw"
             android:layout_width="match_parent"
@@ -199,5 +238,5 @@
         android:layout_marginRight="@dimen/menu_popup_arrow_margin_right"
         android:scaleType="fitXY"
         android:src="@drawable/menu_point"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 </FrameLayout>

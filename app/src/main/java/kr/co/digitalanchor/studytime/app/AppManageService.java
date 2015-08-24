@@ -241,7 +241,16 @@ public class AppManageService extends Service {
                 packageModel.setPackageName(packageInfo.packageName);
                 packageModel.setHash(MD5.getHash(packageInfo.packageName));
                 packageModel.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
-                packageModel.setPackageVersion(packageInfo.versionName);
+
+                if (TextUtils.isEmpty(packageInfo.versionName)) {
+
+                    packageModel.setPackageVersion("1.0");
+
+                } else {
+
+                    packageModel.setPackageVersion(packageInfo.versionName);
+                }
+
                 packageModel.setIsExceptionApp(0);
                 packageModel.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
                 packageModel.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.lastUpdateTime));
@@ -270,9 +279,16 @@ public class AppManageService extends Service {
 
                 PackageModel model = listInDB.get(packageInfo.packageName);
 
-                if (!model.getPackageVersion().equals(packageInfo.versionName)) {
+                String versionName = packageInfo.versionName;
 
-                    model.setPackageVersion(packageInfo.versionName);
+                if (TextUtils.isEmpty(versionName)) {
+
+                    versionName = "1.0";
+                }
+
+                if (!model.getPackageVersion().equals(versionName)) {
+
+                    model.setPackageVersion(versionName);
                     model.setState(2);
 
                     Logger.d("updated " + model.getPackageName() + " " + model.getLabelName() + " v : "
@@ -283,7 +299,7 @@ public class AppManageService extends Service {
 
                 listInDB.remove(packageInfo.packageName);
 
-                listInDevice.put(packageInfo.packageName, packageInfo.versionName);
+                listInDevice.put(packageInfo.packageName, versionName);
 
                 continue;
             }

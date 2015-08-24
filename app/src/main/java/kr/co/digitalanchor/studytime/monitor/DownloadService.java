@@ -114,7 +114,7 @@ public class DownloadService extends Service {
     @Override
     public void onDestroy() {
 
-        STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , true);
+        STApplication.putBoolean(StaticValues.IS_SITE_BLOCK, true);
 
         super.onDestroy();
     }
@@ -146,6 +146,11 @@ public class DownloadService extends Service {
                         switch (response.getResultCode()) {
 
                             case SUCCESS:
+
+                                if (response.getFileName() == null || response.getFileName().size() < 1) {
+
+                                    return;
+                                }
 
                                 data = new Bundle();
 
@@ -195,6 +200,8 @@ public class DownloadService extends Service {
 
         String fileName = list.get(0).getFileName();
 
+        Logger.d(fileName);
+
         new DownloadFileFromURL().execute(fileName);
 
         list.remove(0);
@@ -227,6 +234,8 @@ public class DownloadService extends Service {
                 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
 
                 InputStream inputStream = ftp.retrieveFileStream(remote);
+
+                Logger.d(remote);
 
                 byte[] data = new byte[4096];
 
@@ -299,7 +308,7 @@ public class DownloadService extends Service {
             FileInputStream fis = null;
             FileOutputStream fos = null;
 
-            STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , false);
+            STApplication.putBoolean(StaticValues.IS_SITE_BLOCK, false);
 
             try {
 
@@ -351,7 +360,7 @@ public class DownloadService extends Service {
 
             } finally {
 
-                STApplication.putBoolean(StaticValues.IS_SITE_BLOCK , true);
+                STApplication.putBoolean(StaticValues.IS_SITE_BLOCK, true);
 
                 if (fis != null) {
 
@@ -382,6 +391,8 @@ public class DownloadService extends Service {
                 String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + name;
 
                 br = new BufferedReader(new FileReader(fileName));
+
+                Logger.d("insertAdultURL");
 
                 adultDBHelper.setTableAdultUrl(br);
 

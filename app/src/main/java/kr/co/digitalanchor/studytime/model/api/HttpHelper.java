@@ -1083,7 +1083,7 @@ public class HttpHelper {
 
     /**
      * package 목록 업데이트하기
-     * <p>
+     * <p/>
      * 앱을 추가로 설치하거나, 삭제하거나, 업데이트할 때, 그리고 local db의 앱목록과
      * 설치된 앱목록을 비교하여 cleaning 할 때 보낼 필요가 있으면 보냄
      *

@@ -1,7 +1,6 @@
 package kr.co.digitalanchor.studytime.control;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -13,10 +12,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
-import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
-import com.igaworks.adpopcorn.IgawAdpopcorn;
-import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
@@ -32,6 +28,7 @@ import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
+import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -145,7 +142,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void getChildModel(String childId) {
 
-        mChild =  mHelper.getChild(childId);
+        mChild = mHelper.getChild(childId);
     }
 
     @Override
@@ -158,29 +155,28 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
                 Account account = mHelper.getAccountInfo();
 
 
+                if (mChild.getIsOFF() == 0) {
 
-                    if (mChild.getIsOFF() == 0) {
+                    if (account.getCoin() > 0) {
 
-                        if (account.getCoin() > 0) {
-
-                            requestOnOff();
-
-                        } else {
-
-                            Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
-
-                        }
+                        requestOnOff();
 
                     } else {
 
-                        Intent intent = new Intent();
-                        intent.setClass(getApplicationContext(), InputPwdActivity.class);
+                        Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
 
-                        intent.putExtra("ChildID", mChild.getChildID());
-                        intent.putExtra("Name", mChild.getName());
-
-                        startActivity(intent);
                     }
+
+                } else {
+
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), InputPwdActivity.class);
+
+                    intent.putExtra("ChildID", mChild.getChildID());
+                    intent.putExtra("Name", mChild.getName());
+
+                    startActivity(intent);
+                }
 
                 break;
 
@@ -275,6 +271,23 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
     public void onClickNotice() {
 
         showNotice();
+    }
+
+    @Override
+    public void onClickNotificationBooad() {
+
+        showNotificationBoard();
+    }
+
+    private void showNotificationBoard() {
+
+        IgawAdbrix.retention("notificationBoard");
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), NotificationActivity.class);
+
+        startActivity(intent);
     }
 
     private void drawView() {
