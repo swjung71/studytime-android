@@ -121,7 +121,8 @@ public class TimerTaskWork extends TimerTask {
         }
 
         if (STApplication.getBoolean(StaticValues.IS_SITE_BLOCK, true)
-                && (currentPackage.equals("com.android.browser")
+                && !TextUtils.isEmpty(currentPackage)
+                && ( currentPackage.equals("com.android.browser")
                 || currentPackage.equals("com.google.android.browser") // nexus
                 || currentPackage.equals("com.android.chrome")
                 || currentPackage.equals("com.sec.android.app.sbrowser"))) {

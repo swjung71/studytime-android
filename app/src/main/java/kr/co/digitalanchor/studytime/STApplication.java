@@ -396,9 +396,16 @@ public class STApplication extends MultiDexApplication {
 
     public static boolean getBoolean(String key, boolean defaultValue) {
 
-        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+        try {
 
-        return pref.getBoolean(key, defaultValue);
+            SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+            return pref.getBoolean(key, defaultValue);
+
+        } catch (Exception e) {
+
+            return defaultValue;
+        }
     }
 
     public static boolean putBoolean(String key, boolean value) {

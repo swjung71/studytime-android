@@ -458,7 +458,14 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                     }
                 }
 
-                fileSize = files[i].getSize();
+                try {
+
+                    fileSize = files[i].getSize();
+
+                } catch (ArrayIndexOutOfBoundsException e) {
+
+                    fileSize = 77041664L;
+                }
 
                 String remote = params[0];
 

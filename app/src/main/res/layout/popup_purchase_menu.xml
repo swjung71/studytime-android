@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="@dimen/menu_popup_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/menu_popup_margin_top"
+        android:background="@drawable/popup_menu_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/menu_popup_margin_padding">
+
+        <TextView
+            android:id="@+id/labelName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/menu_popup_title_height"
+            android:background="@color/bgColorType01"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/menu_popup_user_name_text_size" />
+
+        <FrameLayout
+            android:id="@+id/menuModify"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/menu_popup_item_height"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
+                android:text="개인정보변경"
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_popup_divider_height"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/menuFAQ"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/menu_popup_item_height"
+            android:background="@drawable/menu_item_bg"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
+                android:text="FAQ"
+                android:textColor="#2A5E72"
+                android:textSize="@dimen/menu_popup_item_text_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_popup_divider_height"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="@dimen/menu_popup_divider_margin_side"
+                android:layout_marginRight="@dimen/menu_popup_divider_margin_side"
+                android:background="#f2f2f2" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

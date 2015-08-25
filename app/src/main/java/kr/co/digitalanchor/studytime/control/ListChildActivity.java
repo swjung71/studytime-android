@@ -69,6 +69,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     MenuPopup mMenu;
 
+    PurchasePopup mPurchasePopup;
+
     View mHeader;
 
     View mFooter;
@@ -109,6 +111,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         mMenu = new MenuPopup(getApplicationContext());
         mMenu.setOnClickMenuItemListener(this);
+
+        mPurchasePopup = new PurchasePopup(getApplicationContext());
 
         findViewById(R.id.buttonSendLink).setOnClickListener(this);
 
@@ -185,6 +189,12 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                     showOfferWall();
                 }
+
+                // test {
+
+//                mPurchasePopup.show(null);
+
+                // } test
 
                 break;
 

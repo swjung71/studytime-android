@@ -969,44 +969,56 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Account account = new Account();
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
-                PARENT_ID, NEW_NOTICE};
+        Cursor cursor = null;
 
-        Cursor cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
-                null, null);
+        try {
 
-        if (cursor.moveToFirst()) {
+            SQLiteDatabase db = this.getReadableDatabase();
 
-            account.setID(cursor.getString(0));
-            account.setIsChild(cursor.getInt(1));
-            account.setName(cursor.getString(2));
+            String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
+                    PARENT_ID, NEW_NOTICE};
 
-            if (cursor.getString(3) != null) {
-                account.setPassword(cursor.getString(3));
+            cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
+                    null, null);
+
+            if (cursor.moveToFirst()) {
+
+                account.setID(cursor.getString(0));
+                account.setIsChild(cursor.getInt(1));
+                account.setName(cursor.getString(2));
+
+                if (cursor.getString(3) != null) {
+                    account.setPassword(cursor.getString(3));
+                }
+
+                account.setCoin(cursor.getInt(4));
+
+                if (cursor.getString(5) != null) {
+
+                    account.setEmail(cursor.getString(5));
+                }
+
+                if (cursor.getString(6) != null) {
+
+                    account.setParentId(cursor.getString(6));
+                }
+
+                account.setNotice(cursor.getInt(7));
             }
 
-            account.setCoin(cursor.getInt(4));
+        } catch (Exception e) {
 
-            if (cursor.getString(5) != null) {
+            Logger.e(e.toString());
+        } finally {
 
-                account.setEmail(cursor.getString(5));
+            if (cursor != null) {
+
+                cursor.close();
             }
 
-            if (cursor.getString(6) != null) {
+            cursor = null;
 
-                account.setParentId(cursor.getString(6));
-            }
-
-            account.setNotice(cursor.getInt(7));
         }
-
-        if (cursor != null) {
-
-            cursor.close();
-        }
-
-        cursor = null;
 
         return account;
     }
