@@ -33,6 +33,9 @@ public class PurchasePopup extends QuickActionWidget implements View.OnClickList
 
         View view = LayoutInflater.from(context).inflate(R.layout.popup_purchase_menu, null);
 
+        view.findViewById(R.id.menuGooglePlay).setOnClickListener(this);
+        view.findViewById(R.id.menuOfferwall).setOnClickListener(this);
+
         setContentView(view);
 
         setFocusable(true);
@@ -42,9 +45,36 @@ public class PurchasePopup extends QuickActionWidget implements View.OnClickList
                 android.graphics.Color.TRANSPARENT));
     }
 
+    public void setOnClickMenuItemListener(OnClickPurchaseItemListener listener) {
+
+        mListener = listener;
+    }
+
     @Override
     public void onClick(View v) {
 
+        dismiss();
+
+        switch (v.getId()) {
+
+            case R.id.menuGooglePlay:
+
+                if (mListener != null) {
+
+                    mListener.onClickPurchase();
+                }
+
+                break;
+
+            case R.id.menuOfferwall:
+
+                if (mListener != null) {
+
+                    mListener.onClickFreePay();
+                }
+
+                break;
+        }
     }
 
     @Override

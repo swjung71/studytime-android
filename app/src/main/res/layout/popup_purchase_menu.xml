@@ -25,7 +25,7 @@
             android:textSize="@dimen/menu_popup_user_name_text_size" />
 
         <FrameLayout
-            android:id="@+id/menuModify"
+            android:id="@+id/menuOfferwall"
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
@@ -36,7 +36,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
-                android:text="개인정보변경"
+                android:text="무료"
                 android:textColor="#2A5E72"
                 android:textSize="@dimen/menu_popup_item_text_size" />
 
@@ -50,7 +50,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/menuFAQ"
+            android:id="@+id/menuGooglePlay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
@@ -61,7 +61,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/menu_popup_item_text_padding_left"
-                android:text="FAQ"
+                android:text="유료결제"
                 android:textColor="#2A5E72"
                 android:textSize="@dimen/menu_popup_item_text_size" />
 

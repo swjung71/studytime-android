@@ -81,7 +81,7 @@ public class TimerTaskWork extends TimerTask {
 
         if (mHelper.getOnOff() == 1) {
 
-//        Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
             // kill
             if (TextUtils.isEmpty(currentPackage)
@@ -94,7 +94,8 @@ public class TimerTaskWork extends TimerTask {
                     || currentPackage.equals("android")
                     || currentPackage.equals("com.android.systemui")
                     || currentPackage.equals("com.lge.settings.easy")
-                    || currentPackage.equals("com.lge.bluetoothsetting")) {
+                    || currentPackage.equals("com.lge.bluetoothsetting")
+                    || currentPackage.equals("com.skt.prod.phone")) {
 
                 return;
 
@@ -108,7 +109,7 @@ public class TimerTaskWork extends TimerTask {
 
             } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") == 0) {
 
-//            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+//                 Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
                 return;
 
@@ -122,7 +123,7 @@ public class TimerTaskWork extends TimerTask {
 
         if (STApplication.getBoolean(StaticValues.IS_SITE_BLOCK, true)
                 && !TextUtils.isEmpty(currentPackage)
-                && ( currentPackage.equals("com.android.browser")
+                && (currentPackage.equals("com.android.browser")
                 || currentPackage.equals("com.google.android.browser") // nexus
                 || currentPackage.equals("com.android.chrome")
                 || currentPackage.equals("com.sec.android.app.sbrowser"))) {
