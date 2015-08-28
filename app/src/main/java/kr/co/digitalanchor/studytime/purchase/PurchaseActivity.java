@@ -17,6 +17,7 @@ import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
@@ -34,8 +35,6 @@ import kr.co.digitalanchor.utils.IabHelper;
 import kr.co.digitalanchor.utils.IabResult;
 import kr.co.digitalanchor.utils.Inventory;
 import kr.co.digitalanchor.utils.Purchase;
-
-import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-08-25.
@@ -62,9 +61,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
     Button offerwall;
 
-    DBHelper dbHelper;
-
     String selectedKey;
+    int selectedHeart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +105,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
-        dbHelper = new DBHelper(getApplicationContext());
-
         InitializeUI();
 
         loadData();
@@ -141,7 +137,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
                     if (purchase != null && verifyDeveloperPayload(purchase)) {
 
-                        Logger.d("We have gas. Consuming it.");
+                        Logger.d("We have gas. Consuming it." + selectedKey);
 
                         mHelper.consumeAsync(inventory.getPurchase(selectedKey),
                                 mConsumeFinishedListener);
@@ -335,6 +331,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
         selectedKey = item.getKey();
 
+        selectedHeart = Integer.parseInt(item.getHeart());
+
         String payload = "";
 
         setWaitScreen(true);
@@ -384,69 +382,70 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
     void saveData(String key) {
 
-        Logger.d(key);
-
         showLoading();
 
-        String heart = "0";
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
 
-        for (Item item : items) {
+        Logger.d("saveData #1 " + (items == null) + " " + items.size());
 
-            if (key.equals(item.getKey())) {
 
-                heart = item.getHeart();
-            }
-        }
+        Logger.d("saveData #2");
 
         final Account account = dbHelper.getAccountInfo();
 
-        final SetCoin model = new SetCoin();
+        SetCoin model = new SetCoin();
 
         model.setParentID(account.getID());
-        model.setCoin(account.getCoin() + Integer.parseInt(heart));
+        model.setCoin(account.getCoin() + selectedHeart);
 
-//        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
-//                new Response.Listener<CoinResult>() {
-//
-//                    @Override
-//                    public void onResponse(CoinResult response) {
-//
-//                        switch (response.getResultCode()) {
-//
-//                            case SUCCESS:
-//
-//                                dismissLoading();
-//
-//                                dbHelper.updateCoin(account.getID(), response.getCoin());
-//
-//                                selectedKey = null;
-//
-//                                break;
-//
-//                            default:
-//
-//                                handleResultCode(response.getResultCode(),
-//                                        response.getResultMessage());
-//
-//                                break;
-//                        }
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                        handleError(error);
-//                    }
-//                });
-//
-//        addRequest(request);
+        Logger.d("saveData #3" );
+
+        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
+                new Response.Listener<CoinResult>() {
+
+                    @Override
+                    public void onResponse(CoinResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case HttpHelper.SUCCESS:
+
+                                dismissLoading();
+
+                                DBHelper dbHelper = new DBHelper(getApplicationContext());
+
+                                dbHelper.updateCoin(account.getID(), response.getCoin());
+
+                                selectedKey = null;
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 
     private void loadData() {
 
         showLoading();
+
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
 
         Account account = dbHelper.getAccountInfo();
 
@@ -474,6 +473,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                                 }
 
                                 items.clear();
+
 
                                 for (Item item : tmp) {
 
@@ -520,22 +520,4 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         findViewById(R.id.main).setVisibility(set ? View.GONE : View.VISIBLE);
     }
 
-    class UpdateCoin extends AsyncTask<Void, Void, Void> {
-
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    sendEmptyMessage(REQUEST_UPDATE_COIN, 1000L);
-
-                }
-            });
-
-            return null;
-        }
-    }
 }
