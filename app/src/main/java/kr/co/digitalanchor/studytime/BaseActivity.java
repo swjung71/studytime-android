@@ -26,8 +26,8 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.purchase.ClauseViewActivity;
 import kr.co.digitalanchor.studytime.purchase.PurchaseActivity;
-import kr.co.digitalanchor.utils.Purchase;
 
 
 /**
@@ -304,7 +304,7 @@ public class BaseActivity extends Activity {
 
         Logger.e(msg);
 
-        Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     protected void handleError(VolleyError error) {
@@ -342,9 +342,15 @@ public class BaseActivity extends Activity {
 
     }
 
-    protected  void showPurchase() {
+    protected void showPurchase() {
 
         Intent intent = new Intent(getApplicationContext(), PurchaseActivity.class);
+        startActivity(intent);
+    }
+
+    protected void showPurchaseInfo() {
+
+        Intent intent = new Intent(getApplicationContext(), ClauseViewActivity.class);
         startActivity(intent);
     }
 

@@ -15,8 +15,8 @@ public class GetNotificationResult {
     @Element(name = "ResultCode", required = false)
     int resultCode;
 
-    @Element(name = "ResultCode", required = false)
-    String resultString;
+    @Element(name = "ResultMessage", required = false)
+    String resultMessage;
 
 
     @ElementList(name = "Notification", required = false, inline = true)
@@ -30,12 +30,12 @@ public class GetNotificationResult {
         this.resultCode = resultCode;
     }
 
-    public String getResultString() {
-        return resultString;
+    public String getResultMessage() {
+        return resultMessage;
     }
 
-    public void setResultString(String resultString) {
-        this.resultString = resultString;
+    public void setResultMessage(String resultMessage) {
+        this.resultMessage = resultMessage;
     }
 
     public ArrayList<NotificationModel> getNotificationModels() {

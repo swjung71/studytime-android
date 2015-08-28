@@ -135,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/children_list_point_label_margin_left"
-                android:maxLength="3"
+                android:maxLength="5"
                 android:paddingLeft="@dimen/children_list_point_label_padding_left"
                 android:singleLine="true"
                 android:textColor="@color/white"

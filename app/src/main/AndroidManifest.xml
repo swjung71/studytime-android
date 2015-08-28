@@ -319,6 +319,10 @@
             android:name=".purchase.PurchaseActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".purchase.ClauseViewActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

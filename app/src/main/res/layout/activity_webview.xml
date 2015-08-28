@@ -5,22 +5,21 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/labelTitle"
+    <kr.co.digitalanchor.studytime.view.FontTextView
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/activity_title_bar_height"
         android:background="@color/bgColorType01"
         android:gravity="center"
-        android:text="알림 모아보기"
+        android:text="유료서비스 이용약관"
         android:textColor="@color/white"
         android:textSize="@dimen/activity_title_text" />
 
-    <ListView
-        android:id="@+id/list"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#A65EA8"
-        android:dividerHeight="1px"
+        android:nestedScrollingEnabled="true"
         android:overScrollMode="never" />
 
 </LinearLayout>

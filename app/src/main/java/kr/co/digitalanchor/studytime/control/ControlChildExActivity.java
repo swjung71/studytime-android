@@ -281,7 +281,9 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
             case R.id.buttonPoint:
 
-                showOfferWall();
+//                showOfferWall();
+
+                showPurchase();
 
                 break;
 

@@ -2,9 +2,9 @@ package kr.co.digitalanchor.studytime.purchase;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +17,6 @@ import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
@@ -30,6 +29,7 @@ import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.view.FontTextView;
 import kr.co.digitalanchor.utils.AndroidUtils;
 import kr.co.digitalanchor.utils.IabHelper;
 import kr.co.digitalanchor.utils.IabResult;
@@ -43,6 +43,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         AdapterView.OnItemClickListener {
 
     private final int REQUEST_UPDATE_COIN = 50001;
+    private final int REQUEST_CONSUME_ITEM = 50002;
 
     // Debug tag, for logging
     static final String TAG = "PurchaseActivity";
@@ -60,6 +61,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
     ItemAdapter itemAdapter;
 
     Button offerwall;
+
+    FontTextView info;
 
     String selectedKey;
     int selectedHeart;
@@ -101,6 +104,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
                 Logger.d("Setup successful. Querying inventory.");
+
                 mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
@@ -108,6 +112,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         InitializeUI();
 
         loadData();
+
 
     }
 
@@ -133,11 +138,12 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
                     Logger.d("Query inventory was successful.");
 
+                    if (TextUtils.isEmpty(selectedKey))
+                        selectedKey = inventory.getRecentPuchase();
+
                     Purchase purchase = inventory.getPurchase(selectedKey);
 
                     if (purchase != null && verifyDeveloperPayload(purchase)) {
-
-                        Logger.d("We have gas. Consuming it." + selectedKey);
 
                         mHelper.consumeAsync(inventory.getPurchase(selectedKey),
                                 mConsumeFinishedListener);
@@ -182,6 +188,10 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 saveData(selectedKey);
 
                 break;
+
+            case REQUEST_CONSUME_ITEM:
+
+                onlyConsume();
 
 
         }
@@ -274,7 +284,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                         // successfully consumed, so we apply the effects of the item in our
                         // game world's logic, which in our case means filling the gas tank a bit
 
-                        sendEmptyMessage(REQUEST_UPDATE_COIN, 1000L);
+                        sendEmptyMessage(REQUEST_UPDATE_COIN);
 
                     } else {
 
@@ -312,6 +322,12 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 showOfferWall();
 
                 break;
+
+            case R.id.info:
+
+                showPurchaseInfo();
+
+                break;
         }
     }
 
@@ -347,6 +363,9 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
         offerwall = (Button) footer.findViewById(R.id.buttonOfferwall);
         offerwall.setOnClickListener(this);
+
+        info = (FontTextView) footer.findViewById(R.id.info);
+        info.setOnClickListener(this);
 
         listView = (ListView) findViewById(R.id.list);
         listView.setOnItemClickListener(this);
@@ -515,9 +534,13 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+    private void onlyConsume() {
+
+    }
+
     void setWaitScreen(boolean set) {
 
-        findViewById(R.id.main).setVisibility(set ? View.GONE : View.VISIBLE);
+//        findViewById(R.id.main).setVisibility(set ? View.GONE : View.VISIBLE);
     }
 
 }

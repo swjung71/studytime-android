@@ -172,7 +172,7 @@
             android:layout_height="@dimen/menu_popup_item_height"
             android:background="@drawable/menu_item_bg"
             android:clickable="true"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/labelNotificatio"

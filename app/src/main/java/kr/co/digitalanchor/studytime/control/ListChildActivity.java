@@ -53,7 +53,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class ListChildActivity extends BaseActivity implements View.OnClickListener,
         MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener,
-        IgawRewardItemEventListener, PurchasePopup.OnClickPurchaseItemListener {
+        IgawRewardItemEventListener {
 
     private final int REQUEST_UPDATE_COIN = 50001;
 
@@ -284,18 +284,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     public void onClickNotificationBooad() {
 
         showNotificationBoard();
-    }
-
-    @Override
-    public void onClickFreePay() {
-
-        showOfferWall();
-    }
-
-    @Override
-    public void onClickPurchase() {
-
-        showPurchase();
     }
 
     private void drawView() {

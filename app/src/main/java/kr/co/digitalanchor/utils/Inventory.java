@@ -17,6 +17,7 @@ package kr.co.digitalanchor.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,20 @@ public class Inventory {
      */
     public Purchase getPurchase(String sku) {
         return mPurchaseMap.get(sku);
+    }
+
+    public String getRecentPuchase() {
+
+        String key = null;
+
+        Iterator<String> keys = mPurchaseMap.keySet().iterator();
+        while (keys.hasNext()) {
+
+            key = keys.next();
+
+        }
+
+        return key;
     }
 
     /**

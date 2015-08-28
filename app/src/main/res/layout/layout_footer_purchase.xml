@@ -34,22 +34,41 @@
         android:orientation="vertical"
         android:padding="18dp">
 
-        <kr.co.digitalanchor.studytime.view.FontTextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:text="규정안내"
-            android:textColor="#666666"
-            android:textSize="14dp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <kr.co.digitalanchor.studytime.view.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:text="약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용"
-            android:textColor="#666666"
-            android:textSize="14dp" />
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:clickable="true"
+                android:text="유료서비스 이용약관"
+                android:textColor="#666666"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:text="약관보기"
+                android:textColor="#a65ea8"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_alignBaseline="@id/info"
+                android:layout_alignLeft="@id/info"
+                android:layout_alignRight="@id/info"
+                android:background="#a65ea8" />
+
+        </RelativeLayout>
+
 
         <kr.co.digitalanchor.studytime.view.FontTextView
             android:layout_width="match_parent"
