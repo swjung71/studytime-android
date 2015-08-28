@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@color/white">
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:layout_marginLeft="18dp"
+            android:text="name"
+            android:textColor="@color/textColorType03"
+            android:textSize="16dp" />
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:id="@+id/cost"
+            android:layout_width="85dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="18dp"
+            android:background="@drawable/box_type_14_bg"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:text="cost"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#a65ea8" />
+</LinearLayout>

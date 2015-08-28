@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f3f3"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/labelTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_title_bar_height"
+        android:background="@color/bgColorType01"
+        android:gravity="center"
+        android:text="하트 충전하기"
+        android:textColor="@color/white"
+        android:textSize="@dimen/activity_title_text" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/transparent"
+        android:dividerHeight="0px"
+        android:listSelector="@color/transparent"
+        android:overScrollMode="never"
+        android:scrollingCache="false" />
+
+</LinearLayout>

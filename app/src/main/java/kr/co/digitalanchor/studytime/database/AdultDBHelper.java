@@ -3,6 +3,7 @@ package kr.co.digitalanchor.studytime.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
@@ -39,18 +40,30 @@ public class AdultDBHelper extends SQLiteOpenHelper {
             + ADULT_URL_IS_SUB + " TEXT )";
 
     public AdultDBHelper(Context context) {
+
         super(context, DB_NAME, null, VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL(CREATE_TABLE_ADULT_URL);
+        try {
+
+            db.execSQL(CREATE_TABLE_ADULT_URL);
+
+        } catch (SQLException e) {
+
+            Logger.e(e.toString());
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADULT_URL);
+
+        this.onCreate(db);
     }
 
     public boolean isAdultURL(String hash, String directory) {
@@ -67,50 +80,63 @@ public class AdultDBHelper extends SQLiteOpenHelper {
             directory = "/";
         }
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
 
-        String[] columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_FILE, ADULT_URL_IS_SUB};
+        try {
 
-        String where = ADULT_URL_HASH + " =?";
+            SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(false, TABLE_ADULT_URL, columns, where, new String[]{hash},
-                null, null, null, null);
+            String[] columns = new String[]{ADULT_URL_DIRECTORY, ADULT_URL_FILE, ADULT_URL_IS_SUB};
 
-        if (cursor.moveToFirst()) {
+            String where = ADULT_URL_HASH + " =?";
 
-            do {
+            cursor = db.query(false, TABLE_ADULT_URL, columns, where, new String[]{hash},
+                    null, null, null, null);
 
-                String dir = cursor.getString(0);
-                String file = cursor.getString(1);
-                String isSub = cursor.getString(2);
+            if (cursor.moveToFirst()) {
 
-                if (isSub.equals("P")) {
+                do {
 
-                    result = true;
+                    String dir = cursor.getString(0);
+                    String file = cursor.getString(1);
+                    String isSub = cursor.getString(2);
 
-                    break;
+                    if (isSub.equals("P")) {
 
-                } else if (isSub.equals("S") && directory.startsWith(dir)) {
+                        result = true;
 
-                    result = true;
+                        break;
 
-                    break;
+                    } else if (isSub.equals("S") && directory.startsWith(dir)) {
 
-                } else if (!file.equals("/") && isSub.equals("S") && directory.endsWith(file)) {
+                        result = true;
 
-                    result = true;
+                        break;
 
-                    break;
-                }
+                    } else if (!file.equals("/") && isSub.equals("S") && directory.endsWith(file)) {
 
-            } while (cursor.moveToNext());
-        }
+                        result = true;
 
-        if (cursor != null) {
+                        break;
+                    }
 
-            cursor.close();
+                } while (cursor.moveToNext());
+            }
 
-            cursor = null;
+        } catch (SQLException e) {
+
+            Logger.e(e.toString());
+
+            return result;
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+
+                cursor = null;
+            }
         }
 
         return result;

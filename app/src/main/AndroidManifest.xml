@@ -294,7 +294,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
                 <data android:scheme="package" />
             </intent-filter>
@@ -315,6 +314,10 @@
             android:name=".signup.NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name=".purchase.PurchaseActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

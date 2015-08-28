@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@color/white"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp">
+
+        <kr.co.digitalanchor.studytime.view.FontButton
+            android:id="@+id/buttonOfferwall"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:background="@drawable/box_type_09_bg"
+            android:text="무료 충전"
+            android:textColor="@color/text_04_selector"
+            android:textSize="16dp" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#a65ea8" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="규정안내"
+            android:textColor="#666666"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용약관 내용"
+            android:textColor="#666666"
+            android:textSize="14dp" />
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="발행자 정보"
+            android:textColor="#666666"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="상호:  (주)디지털앵커\n대표자:  정승욱\n사업자번호: 215 87 88953\n통신판매업신고:  2015-서울강남-0776호\n대표전화:  070.4618.1319\n문의메일:  support@digitalanchor.co.kr\n주소:  서울시 역삼동 651-14번지 신영빌딩2층"
+            android:textColor="#666666"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

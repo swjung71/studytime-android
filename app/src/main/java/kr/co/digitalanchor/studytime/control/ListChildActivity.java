@@ -69,8 +69,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     MenuPopup mMenu;
 
-    PurchasePopup mPurchasePopup;
-
     View mHeader;
 
     View mFooter;
@@ -111,9 +109,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         mMenu = new MenuPopup(getApplicationContext());
         mMenu.setOnClickMenuItemListener(this);
-
-        mPurchasePopup = new PurchasePopup(getApplicationContext());
-        mPurchasePopup.setOnClickMenuItemListener(this);
 
         findViewById(R.id.buttonSendLink).setOnClickListener(this);
 
@@ -186,16 +181,16 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.buttonPoint:
 
+//                if (!isDuplicateRuns()) {
+//
+//                    showOfferWall();
+//                }
+
                 if (!isDuplicateRuns()) {
 
-                    showOfferWall();
+                    showPurchase();
                 }
 
-                // test {
-
-//                mPurchasePopup.show(v);
-
-                // } test
 
                 break;
 
@@ -300,6 +295,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClickPurchase() {
 
+        showPurchase();
     }
 
     private void drawView() {

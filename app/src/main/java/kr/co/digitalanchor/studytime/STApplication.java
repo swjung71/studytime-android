@@ -98,7 +98,7 @@ public class STApplication extends MultiDexApplication {
         /**
          * Log setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
         RequestManager.init(this);
         createImageCache();

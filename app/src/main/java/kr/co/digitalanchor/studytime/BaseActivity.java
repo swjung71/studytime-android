@@ -26,6 +26,8 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.purchase.PurchaseActivity;
+import kr.co.digitalanchor.utils.Purchase;
 
 
 /**
@@ -338,6 +340,12 @@ public class BaseActivity extends Activity {
 
         sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
+    }
+
+    protected  void showPurchase() {
+
+        Intent intent = new Intent(getApplicationContext(), PurchaseActivity.class);
+        startActivity(intent);
     }
 
     protected void showOfferWall() {
