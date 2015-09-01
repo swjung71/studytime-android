@@ -100,6 +100,7 @@
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
+            android:excludeFromRecents="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -139,15 +140,18 @@
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
+            android:excludeFromRecents="true"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".login.LoginChildActivity"
             android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".login.AddInfoActivity"
             android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustPan" />
 
@@ -173,6 +177,7 @@
         <activity
             android:name=".chat.ChildChatActivity"
             android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity

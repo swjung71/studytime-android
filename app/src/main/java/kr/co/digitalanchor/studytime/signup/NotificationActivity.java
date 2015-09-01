@@ -100,6 +100,11 @@ public class NotificationActivity extends BaseActivity {
 
                                 List<NotificationModel> items = response.getNotificationModels();
 
+                                if (items == null || items.size() < 1) {
+
+                                    return;
+                                }
+
                                 for (NotificationModel item : items) {
 
                                     item.setMsg(AndroidUtils.convertFromUTF8(item.getMsg()));
