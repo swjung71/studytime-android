@@ -109,6 +109,50 @@ public class GCMIntentService extends IntentService {
 
         switch (code) {
 
+            /**
+             * 자녀가 GPS 요청을 받을 때
+             *
+             * recieverID : 자녀 ID
+             * senderID : 부모 ID
+             * timestamp : 부모가 요청한 시간
+             * requestID : 부모가 요청한 Unique ID
+             *
+             */
+            case "GPSREQUEST":
+
+
+                break;
+
+            /**
+             * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (성공)
+             *
+             * recieverID : 자녀 ID
+             * senderID : 부모 ID
+             * timestamp : 부모가 요청한 시간
+             * requestID : 부모가 요청한 Unique ID
+             * name : 자녀 이름
+             * msg : 메시지
+             *
+             */
+            case "GPS_SUCCESS":
+
+                break;
+
+            /**
+             * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (실패)
+             *
+             * recieverID : 자녀 ID
+             * senderID : 부모 ID
+             * timestamp : 부모가 요청한 시간
+             * requestID : 부모가 요청한 Unique ID
+             * name : 자녀 이름
+             * msg : 메시지
+             *
+             */
+            case "GPS_FAIL":
+
+                break;
+
             case "RE_REG":
             case "REG_CHILD":
 
@@ -381,7 +425,7 @@ public class GCMIntentService extends IntentService {
 
                                 for (PackageModel model : packages) {
 
-                                    Logger.d(model.getPackageName() +  " " + model.getPackageId() + " " + map.toString());
+                                    Logger.d(model.getPackageName() + " " + model.getPackageId() + " " + map.toString());
 
                                     if (map.containsKey(model.getPackageId())) {
 

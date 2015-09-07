@@ -133,6 +133,9 @@ public class DownloadService extends Service {
         if (date != null) {
 
             model.setDate(date);
+        } else {
+
+            return;
         }
 
         SimpleXmlRequest request = HttpHelper.getAdultFileList(model,

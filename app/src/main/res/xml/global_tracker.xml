@@ -25,6 +25,9 @@
     <screenName name="kr.co.digitalanchor.studytime.signup.WithdrawActivity">Withdraw Activity</screenName>
     <screenName name="kr.co.digitalanchor.studytime.intro.IntroActivity">Intro Activity</screenName>
     <screenName name="kr.co.digitalanchor.studytime.devicepolicy.DummyActivity">Dummy Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.signup.NotificationActivity">Alarm Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.purchase.PurchaseActivity">Purchase Activity</screenName>
+    <screenName name="kr.co.digitalanchor.studytime.purchase.ClauseViewActivity">Purchase  Clause Activity</screenName>
 
 
 </resources>

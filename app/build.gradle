@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 20
-        versionName "1.1.7"
+        versionCode 23
+        versionName "1.1.10"
         multiDexEnabled = true
     }
 

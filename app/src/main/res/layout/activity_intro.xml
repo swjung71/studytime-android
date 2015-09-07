@@ -13,185 +13,207 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/intro_top_height"
-            android:background="@color/bgColorType01"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/intro_title_img_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/intro_title_img_top_margin"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logo" />
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/intro_title_info_01_top_margin">
-
-                <kr.co.digitalanchor.studytime.view.FontTextView
-                    android:id="@+id/labelModeSelect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:text="@string/intro_info_01"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/intro_title_info_01_text_size" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@id/labelModeSelect"
-                    android:layout_marginRight="@dimen/intro_title_info_01_img_right_margin"
-                    android:layout_toLeftOf="@id/labelModeSelect"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/icon_down" />
-
-            </RelativeLayout>
-
-            <kr.co.digitalanchor.studytime.view.FontTextView
-                android:id="@+id/labelUseInfo"
-                android:layout_width="@dimen/intro_title_info_02_width"
-                android:layout_height="@dimen/intro_title_info_02_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/intro_title_info_02_top_margin"
-                android:background="@drawable/box_type_01_bg"
-                android:gravity="center"
-                android:textSize="@dimen/intro_title_info_02_text"
-                android:text="@string/intro_info_02" />
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/buttonModeParent"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/intro_mode_select_layout_height"
-            android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
-            android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
-            android:layout_marginTop="@dimen/intro_mode_select_layout_p_margin_top"
-            android:background="@drawable/box_type_02_bg"
-            android:clickable="true"
-            android:padding="@dimen/intro_mode_select_layout_padding">
-
-            <ImageView
-                android:id="@+id/imageRightArrow01"
-                android:layout_width="@dimen/intro_mode_select_arrow_width"
-                android:layout_height="@dimen/intro_mode_select_arrow_height"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_right_selector" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:duplicateParentState="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/img_parent_selector" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
-                android:layout_toLeftOf="@id/imageRightArrow01"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <kr.co.digitalanchor.studytime.view.FontTextView
-                    android:id="@+id/labelParent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/intro_parent_button_title"
-                    android:textColor="@color/textColorType02"
-                    android:textSize="@dimen/intro_mode_select_text_size_large" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/intro_top_height"
+                    android:background="@color/bgColorType01"
+                    android:orientation="vertical">
 
-                <kr.co.digitalanchor.studytime.view.FontTextView
-                    android:id="@+id/labelParentInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/intro_parent_button_content"
-                    android:textColor="@color/textColorType03"
-                    android:textSize="@dimen/intro_mode_select_text_size_small" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/intro_title_img_height"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/intro_title_img_top_margin"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/logo" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/intro_title_info_01_top_margin">
+
+                        <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:id="@+id/labelModeSelect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="@string/intro_info_01"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/intro_title_info_01_text_size" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@id/labelModeSelect"
+                            android:layout_marginRight="@dimen/intro_title_info_01_img_right_margin"
+                            android:layout_toLeftOf="@id/labelModeSelect"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/icon_down" />
+
+                    </RelativeLayout>
+
+                    <kr.co.digitalanchor.studytime.view.FontTextView
+                        android:id="@+id/labelUseInfo"
+                        android:layout_width="@dimen/intro_title_info_02_width"
+                        android:layout_height="@dimen/intro_title_info_02_height"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/intro_title_info_02_top_margin"
+                        android:background="@drawable/box_type_01_bg"
+                        android:gravity="center"
+                        android:text="@string/intro_info_02"
+                        android:textSize="@dimen/intro_title_info_02_text" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/buttonModeParent"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/intro_mode_select_layout_height"
+                    android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
+                    android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
+                    android:layout_marginTop="@dimen/intro_mode_select_layout_p_margin_top"
+                    android:background="@drawable/box_type_02_bg"
+                    android:clickable="true"
+                    android:padding="@dimen/intro_mode_select_layout_padding">
+
+                    <ImageView
+                        android:id="@+id/imageRightArrow01"
+                        android:layout_width="@dimen/intro_mode_select_arrow_width"
+                        android:layout_height="@dimen/intro_mode_select_arrow_height"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_right_selector" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/img_parent_selector" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
+                        android:layout_toLeftOf="@id/imageRightArrow01"
+                        android:orientation="vertical">
+
+                        <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:id="@+id/labelParent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:duplicateParentState="true"
+                            android:text="@string/intro_parent_button_title"
+                            android:textColor="@color/textColorType02"
+                            android:textSize="@dimen/intro_mode_select_text_size_large" />
+
+                        <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:id="@+id/labelParentInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:duplicateParentState="true"
+                            android:text="@string/intro_parent_button_content"
+                            android:textColor="@color/textColorType03"
+                            android:textSize="@dimen/intro_mode_select_text_size_small" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/buttonModeKids"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/intro_mode_select_layout_height"
+                    android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
+                    android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
+                    android:layout_marginTop="@dimen/intro_mode_select_layout_c_margin_top"
+                    android:background="@drawable/box_type_02_bg"
+                    android:clickable="true"
+                    android:padding="0.33dp">
+
+                    <ImageView
+                        android:id="@+id/imageRightArrow02"
+                        android:layout_width="@dimen/intro_mode_select_arrow_width"
+                        android:layout_height="@dimen/intro_mode_select_arrow_height"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_right_selector" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/img_kid_selector" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
+                        android:layout_toLeftOf="@id/imageRightArrow02"
+                        android:orientation="vertical">
+
+                        <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:id="@+id/labelKid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:duplicateParentState="true"
+                            android:text="@string/intro_child_button_title"
+                            android:textColor="@color/textColorType02"
+                            android:textSize="@dimen/intro_mode_select_text_size_large" />
+
+                        <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:id="@+id/labelKidInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:duplicateParentState="true"
+                            android:text="@string/intro_child_button_content"
+                            android:textColor="@color/textColorType03"
+                            android:textSize="@dimen/intro_mode_select_text_size_small" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
 
             </LinearLayout>
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/buttonModeKids"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/intro_mode_select_layout_height"
-            android:layout_marginLeft="@dimen/intro_mode_select_layout_margin"
-            android:layout_marginRight="@dimen/intro_mode_select_layout_margin"
-            android:layout_marginTop="@dimen/intro_mode_select_layout_c_margin_top"
-            android:background="@drawable/box_type_02_bg"
-            android:clickable="true"
-            android:padding="0.33dp">
-
-            <ImageView
-                android:id="@+id/imageRightArrow02"
-                android:layout_width="@dimen/intro_mode_select_arrow_width"
-                android:layout_height="@dimen/intro_mode_select_arrow_height"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/intro_mode_select_arrow_margin"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_right_selector" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:duplicateParentState="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/img_kid_selector" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/intro_mode_select_text_box_margin"
-                android:layout_toLeftOf="@id/imageRightArrow02"
-                android:orientation="vertical">
-
-                <kr.co.digitalanchor.studytime.view.FontTextView
-                    android:id="@+id/labelKid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/intro_child_button_title"
-                    android:textColor="@color/textColorType02"
-                    android:textSize="@dimen/intro_mode_select_text_size_large" />
-
-                <kr.co.digitalanchor.studytime.view.FontTextView
-                    android:id="@+id/labelKidInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/intro_child_button_content"
-                    android:textColor="@color/textColorType03"
-                    android:textSize="@dimen/intro_mode_select_text_size_small" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
+        </ScrollView>
 
     </LinearLayout>
 
     <include layout="@layout/activity_parent_splash" />
 
     <include layout="@layout/activity_child_splash" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:text="@string/density"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:visibility="visible" />
 
 </FrameLayout>

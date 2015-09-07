@@ -96,7 +96,7 @@ public class STApplication extends MultiDexApplication {
         tracker.enableAutoActivityTracking(true);
 
         /**
-         * Log setting
+         * Log Setting
          * */
         Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
 
@@ -471,7 +471,6 @@ public class STApplication extends MultiDexApplication {
                 adpopcornDeviceId = wifiInfo.getMacAddress();
 
             }
-
         }
 
         return adpopcornDeviceId;

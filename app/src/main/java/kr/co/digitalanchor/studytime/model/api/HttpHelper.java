@@ -34,6 +34,7 @@ import kr.co.digitalanchor.studytime.model.ExceptionApp;
 import kr.co.digitalanchor.studytime.model.ExceptionAppResult;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
+import kr.co.digitalanchor.studytime.model.GPSResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetAdultDB;
 import kr.co.digitalanchor.studytime.model.GetNotificationResult;
@@ -1085,7 +1086,7 @@ public class HttpHelper {
 
     /**
      * package 목록 업데이트하기
-     * <p/>
+     * <p>
      * 앱을 추가로 설치하거나, 삭제하거나, 업데이트할 때, 그리고 local db의 앱목록과
      * 설치된 앱목록을 비교하여 cleaning 할 때 보낼 필요가 있으면 보냄
      *
@@ -1411,6 +1412,7 @@ public class HttpHelper {
         }
     }
 
+
     public static SimpleXmlRequest getGoodItems(ParentModel model, Listener listener,
                                                 ErrorListener errorListener) {
 
@@ -1453,4 +1455,107 @@ public class HttpHelper {
             }
         }
     }
+
+    /**
+     * 위치 요청 부모 -> 자녀
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getRequestGPS(ParentModel model, Listener listener,
+                                                 ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/requestGPS",
+                    GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * 자녀 결과 SPG 결과 보내기
+     *
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getRequestGPS(GPSResult model, Listener listener,
+                                                 ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GeneralResult>(getURL() + "sendGPS",
+                    GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
 }

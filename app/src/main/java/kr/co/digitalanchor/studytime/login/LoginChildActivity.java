@@ -496,10 +496,11 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 inputStream.close();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
 
                 Logger.e(e.toString());
 
+                return true;
 
             } finally {
 

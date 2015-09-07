@@ -1,11 +1,14 @@
 package kr.co.digitalanchor.studytime.monitor;
 
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v7.app.NotificationCompat;
 
 import com.orhanobut.logger.Logger;
@@ -23,6 +26,8 @@ public class MonitorService extends Service {
     /// 1 Second = 1000 Milli Seconds
     private final double ONE_SEC = 1000.0f;
     private final long ONE_SECOND = 1000L;
+
+    private static final int REBOOT_DELAY_TIMER = 5 * 1000;
 
     Timer timerDaemon;
 
@@ -61,6 +66,8 @@ public class MonitorService extends Service {
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
+        unregisterRestartAlarm();
+
     }
 
     /**
@@ -77,6 +84,8 @@ public class MonitorService extends Service {
 
             timerDaemon.cancel();
         }
+
+        registerRestartAlarm();
 
         super.onDestroy();
     }
@@ -119,7 +128,29 @@ public class MonitorService extends Service {
                 .setLargeIcon(bm);
 
 
-
         return builder.build();
+    }
+
+    private void registerRestartAlarm() {
+
+        Intent intent = new Intent(MonitorService.this, AllIntentReceiver.class);
+        intent.setAction("kr.co.digitalanchor.action.SERVICE_START");
+        PendingIntent sender = PendingIntent.getBroadcast(MonitorService.this, 0, intent, 0);
+
+        long firstTime = SystemClock.elapsedRealtime();
+        firstTime += REBOOT_DELAY_TIMER;
+
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, REBOOT_DELAY_TIMER, sender);
+    }
+
+    private void unregisterRestartAlarm() {
+
+        Intent intent = new Intent(MonitorService.this, AllIntentReceiver.class);
+        intent.setAction("kr.co.digitalanchor.action.SERVICE_START");
+        PendingIntent sender = PendingIntent.getBroadcast(MonitorService.this, 0, intent, 0);
+
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.cancel(sender);
     }
 }

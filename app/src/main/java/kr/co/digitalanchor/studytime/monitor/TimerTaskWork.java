@@ -95,7 +95,11 @@ public class TimerTaskWork extends TimerTask {
                     || currentPackage.equals("com.android.systemui")
                     || currentPackage.equals("com.lge.settings.easy")
                     || currentPackage.equals("com.lge.bluetoothsetting")
-                    || currentPackage.equals("com.skt.prod.phone")) {
+                    || currentPackage.equals("com.skt.prod.phone")
+                    || currentPackage.equals("com.sec.imsphone")
+                    || currentPackage.equals("com.sec.ims")
+                    || currentPackage.equals("com.sec.phone")
+                    || currentPackage.equals("com.android.incallui")) {
 
                 return;
 

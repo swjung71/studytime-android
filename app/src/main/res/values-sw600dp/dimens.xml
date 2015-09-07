@@ -1,2 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- common-->
+
+    <!-- title bar -->
+    <dimen name="activity_title_bar_height">54dp</dimen>
+    <dimen name="activity_title_text">18dp</dimen>
+
+    <!-- action button -->
+    <dimen name="button_action">40dp</dimen>
+    <dimen name="button_action_text">18dp</dimen>
+
+    <!-- activity_intro -->
+    <dimen name="intro_top_height">256.67dp</dimen>
+
+    <dimen name="intro_title_img_height">90dp</dimen>
+    <dimen name="intro_title_img_top_margin">18dp</dimen>
+
+    <dimen name="intro_title_info_01_top_margin">17dp</dimen>
+    <dimen name="intro_title_info_01_text_size">15dp</dimen>
+    <dimen name="intro_title_info_01_img_right_margin">13dp</dimen>
+
+    <dimen name="intro_title_info_02_width">260dp</dimen>
+    <dimen name="intro_title_info_02_height">51.67dp</dimen>
+    <dimen name="intro_title_info_02_top_margin">15dp</dimen>
+
+    <dimen name="intro_mode_select_layout_height">95dp</dimen>
+    <dimen name="intro_mode_select_layout_margin">18dp</dimen>
+    <dimen name="intro_mode_select_layout_p_margin_top">28dp</dimen>
+    <dimen name="intro_mode_select_layout_c_margin_top">18dp</dimen>
+    <dimen name="intro_mode_select_layout_padding">0.33dp</dimen>
+
+    <dimen name="intro_mode_select_arrow_width">16dp</dimen>
+    <dimen name="intro_mode_select_arrow_height">32dp</dimen>
+    <dimen name="intro_mode_select_arrow_margin">12dp</dimen>
+
+    <dimen name="intro_mode_select_text_box_margin">20dp</dimen>
+
+    <dimen name="intro_mode_select_text_size_large">20dp</dimen>
+    <dimen name="intro_mode_select_text_size_small">13dp</dimen>
+
+    <!-- activity_parent_login -->
+    <dimen name="login_parent_logo_height">120dp</dimen>
+    <dimen name="login_parent_logo_margin">60dp</dimen>
+
+    <dimen name="login_parent_content_width">270dp</dimen>
+    <dimen name="login_parent_content_height">46dp</dimen>
+    <dimen name="login_parent_content_text_size">16dp</dimen>
+
+    <dimen name="login_parent_edit_box_padding">33dp</dimen>
+
+    <dimen name="login_parent_email_box_margin_top">42dp</dimen>
+    <dimen name="login_parent_password_box_margin_top">18dp</dimen>
+    <dimen name="login_parent_button_box_margin_top">18dp</dimen>
+
+    <dimen name="login_parent_button_width">129.33dp</dimen>
+
+    <dimen name="login_parent_button_margin">11dp</dimen>
+    <dimen name="login_parent_button_margin_top">11dp</dimen>
+
+    <!-- activity_signeup -->
+    <dimen name="signup_content_layout_padding_bottom">20dp</dimen>
+    <dimen name="signup_content_layout_padding_side">18dp</dimen>
+    <dimen name="signup_content_layout_padding_top">23.33dp</dimen>
+
+    <dimen name="signup_content_height">38.33dp</dimen>
+    <dimen name="signup_content_edit_padding">25dp</dimen>
+    <dimen name="signup_content_edit_text_size">14dp</dimen>
+    <dimen name="signup_content_edit_margin_top">23.33dp</dimen>
+
+    <dimen name="signup_content_text_margin_top">14dp</dimen>
+
+    <dimen name="signup_content_text_02_margin_top">8.67dp</dimen>
+
+    <dimen name="signup_info_label_margin_top">20dp</dimen>
+    <dimen name="signup_info_label_minHeight">20dp</dimen>
+    <dimen name="signup_info_small_text_size">11dp</dimen>
+    <dimen name="signup_info_drawable_padding">11dp</dimen>
+    <dimen name="signup_info_button_width">68.33dp</dimen>
+
+    <!-- activity_child_list -->
+    <dimen name="children_list_title_bar_padding">18dp</dimen>
+
+    <dimen name="children_list_point_box_height">34.67dp</dimen>
+    <dimen name="children_list_point_box_padding">6dp</dimen>
+
+    <dimen name="children_list_point_label_width">40dp</dimen>
+    <dimen name="children_list_point_label_margin_left">26.33dp</dimen>
+    <dimen name="children_list_point_label_padding_left">6.33dp</dimen>
+    <dimen name="children_list_point_label_text_size">18.33dp</dimen>
+    <dimen name="children_list_point_button_margin_left">10dp</dimen>
+
+    <dimen name="children_list_menu_button_width">40dp</dimen>
+    <dimen name="children_list_menu_button_height">40dp</dimen>
+    <dimen name="children_list_menu_button_margin_right">8dp</dimen>
+    <dimen name="children_list_menu_button_padding">10dp</dimen>
+
+    <dimen name="children_list_divider_height">11dp</dimen>
+
+    <dimen name="children_list_empty_layout_padding">16dp</dimen>
+    <dimen name="children_list_empty_text_margin_top">20dp</dimen>
+    <dimen name="children_list_empty_text_padding">12dp</dimen>
+    <dimen name="children_list_empty_text_size">16dp</dimen>
+
+    <dimen name="children_list_footer_layout_height">80dp</dimen>
+    <dimen name="children_list_footer_layout_padding">1dp</dimen>
+
+    <dimen name="children_list_footer_layout_inner_height">78dp</dimen>
+    <dimen name="children_list_footer_layout_inner_margin">16dp</dimen>
+
+    <dimen name="children_list_footer_image_margin">1dp</dimen>
+    <dimen name="children_list_footer_text_size">16dp</dimen>
+
+    <!-- layout_child_item -->
+    <dimen name="child_item_layout_height">72dp</dimen>
+    <dimen name="child_item_layout_margin">16dp</dimen>
+    <dimen name="child_item_layout_padding">0.33dp</dimen>
+
+    <dimen name="child_item_profile_img_width">91.33dp</dimen>
+
+    <dimen name="child_item_noti_text_margin_right">14.33dp</dimen>
+    <dimen name="child_item_noti_text_size">12dp</dimen>
+
+    <dimen name="child_item_name_text_margin">12.33dp</dimen>
+    <dimen name="child_item_name_text_size">18dp</dimen>
+
+    <!-- layout_child_header -->
+    <dimen name="child_item_header_margin_top">20dp</dimen>
+    <dimen name="child_item_header_margin_bottom">9dp</dimen>
+    <dimen name="child_item_header_margin_left">10dp</dimen>
+    <dimen name="child_item_header_text_size">16dp</dimen>
+
+
+    <!-- activity_control_child -->
+    <dimen name="child_control_chat_margin_top">60dp</dimen>
+
+    <dimen name="child_control_info_button_margin_bottom">23.33dp</dimen>
+    <dimen name="child_control_info_button_margin_right">18dp</dimen>
+
+    <dimen name="child_control_guide_close_margin">20dp</dimen>
+    <dimen name="child_control_guide_close_text_size">20dp</dimen>
+
+    <dimen name="child_control_info_guide_01_margin_left">158dp</dimen>
+    <dimen name="child_control_info_guide_01_margin_top">17dp</dimen>
+
+    <dimen name="child_control_info_guide_02_margin_left">40dp</dimen>
+    <dimen name="child_control_info_guide_02_margin_top">40dp</dimen>
+
+    <dimen name="child_control_info_guide_03_margin_left">226.67dp</dimen>
+    <dimen name="child_control_info_guide_03_margin_top">216dp</dimen>
+
+    <dimen name="child_control_info_guide_04_margin_left">20dp</dimen>
+    <dimen name="child_control_info_guide_04_margin_top">206dp</dimen>
+
+    <dimen name="child_control_info_guide_05_margin_bottom">45dp</dimen>
+    <dimen name="child_control_info_guide_05_margin_right">45dp</dimen>
+
+    <!-- acitivty_modify_privacy -->
+    <dimen name="modify_privacy_divider_height">0.33dp</dimen>
+    <dimen name="modify_privacy_divider_text_margin_top">14dp</dimen>
+    <dimen name="modify_privacy_divider_text_size">16dp</dimen>
+    <dimen name="modify_privacy_divider_text2_margin_top">8.67dp</dimen>
+    <dimen name="modify_privacy_radio_margin">11dp</dimen>
+
+    <!-- activity_parent_chat -->
+    <dimen name="parent_chat_edit_margin_right">8dp</dimen>
+    <dimen name="parent_chat_edit_min_height">28dp</dimen>
+    <dimen name="parent_chat_edit_padding">9dp</dimen>
+    <dimen name="parent_chat_edit_text_size">13dp</dimen>
+
+    <!-- layout_chat_item_p -->
+    <dimen name="pchat_item_date_margin_top">16dp</dimen>
+    <dimen name="pchat_item_date_text_size">10dp</dimen>
+    <dimen name="pchat_item_date_padding_side">18dp</dimen>
+    <dimen name="pchat_item_date_padding_updown">18dp</dimen>
+
+    <dimen name="pchat_item_host_msg_text_size">14dp</dimen>
+
+    <dimen name="pchat_item_host_time_text_size">8dp</dimen>
+    <dimen name="pchat_item_host_time_height">15dp</dimen>
+    <dimen name="pchat_item_host_time_margin">5dp</dimen>
+    <dimen name="pchat_item_host_time_padding">5dp</dimen>
+
+    <!-- activity_block_password -->
+    <dimen name="block_password_logo_height">100dp</dimen>
+    <dimen name="block_password_logo_margin_top">48dp</dimen>
+
+    <dimen name="block_password_icon_height">78dp</dimen>
+    <dimen name="block_password_icon_margin_top">30dp</dimen>
+
+    <dimen name="block_password_edit_layout_margin">46dp</dimen>
+
+    <dimen name="block_password_edit_width">220dp</dimen>
+    <dimen name="block_password_edit_height">47dp</dimen>
+    <dimen name="block_password_icon_padding">33dp</dimen>
+
+    <dimen name="block_password_button_width">60dp</dimen>
+    <dimen name="block_password_button_height">47dp</dimen>
+    <dimen name="block_password_button_margin">7dp</dimen>
+    <dimen name="block_password_button_text_size">16dp</dimen>
+
+    <!-- activity_add_info -->
+    <dimen name="add_info_layout_padding_bottom">20dp</dimen>
+    <dimen name="add_info_layout_padding_side">18dp</dimen>
+    <dimen name="add_info_layout_padding_top">23dp</dimen>
+
+    <dimen name="add_info_edit_margin_bottom">14dp</dimen>
+    <dimen name="add_info_label_margin_top">8.67dp</dimen>
+    <dimen name="add_info_radio_margin">11dp</dimen>
+
+    <dimen name="add_info_check_area_margin_top">20dp</dimen>
+
+    <dimen name="add_info_check_button_width">68.33dp</dimen>
+    <dimen name="add_info_check_button_min_height">20dp</dimen>
+    <dimen name="add_info_check_button_text_size">11.33dp</dimen>
+
+    <dimen name="add_info_check_drawable_padding">5dp</dimen>
+    <dimen name="add_info_check_text_size">16dp</dimen>
+
+    <!-- layout_parent_input_pwd -->
+    <dimen name="parent_password_logo_margin_top">70dp</dimen>
+
+    <dimen name="parent_password_edit_width">220dp</dimen>
+    <dimen name="parent_password_edit_height">47dp</dimen>
+    <dimen name="parent_password_edit_margin">52dp</dimen>
+    <dimen name="parent_password_edit_padding">20dp</dimen>
+    <dimen name="parent_password_edit_text_size">16dp</dimen>
+
+    <dimen name="parent_password_button_width">60dp</dimen>
+    <dimen name="parent_password_button_height">47dp</dimen>
+
+    <!-- activity_withdraw -->
+    <dimen name="withdraw_padding_side">16dp</dimen>
+    <dimen name="withdraw_padding_top">20dp</dimen>
+
+    <dimen name="withdraw_info_text_size">16dp</dimen>
+
+    <!-- activity_child_login -->
+    <dimen name="child_login_logo_height">120dp</dimen>
+    <dimen name="child_login_logo_margin_top">60dp</dimen>
+
+    <!-- activity_guide -->
+    <dimen name="guide_indicator_margin_top">400dp</dimen>
+
+
+</resources>

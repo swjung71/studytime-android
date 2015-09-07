@@ -1009,6 +1009,7 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
 
             Logger.e(e.toString());
+
         } finally {
 
             if (cursor != null) {
@@ -1465,23 +1466,35 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String result = null;
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = null;
 
-        String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + " ORDER BY "
-                + ADULT_FILE_DATE + " DESC LIMIT 1;";
+        Cursor rows = null;
+
+        try {
+
+            db = this.getReadableDatabase();
+
+            String sql = "SELECT " + ADULT_FILE_DATE + " FROM " + TABLE_ADULT_FILE + " ORDER BY "
+                    + ADULT_FILE_DATE + " DESC LIMIT 1;";
 
 
-        Cursor rows = db.rawQuery(sql, null);
+            rows = db.rawQuery(sql, null);
 
-        if (rows.moveToFirst()) {
+            if (rows.moveToFirst()) {
 
-            do {
-                result = rows.getString(0);
+                do {
+                    result = rows.getString(0);
 
-            } while (rows.moveToNext());
+                } while (rows.moveToNext());
+            }
+
+        } finally {
+
+            if (rows != null) {
+
+                rows.close();
+            }
         }
-
-        rows.close();
 
         return result;
     }
@@ -1593,7 +1606,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void updateAllow(int isAllow) {
+    public void updateAllow(int w) {
 
         Logger.d("test");
 
@@ -1602,7 +1615,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
         values.put(IS_OFF, getOnOff());
-        values.put(IS_ALLOW, isAllow);
+        values.put(IS_ALLOW, w);
 
         db.replace(TABLE_ON_OFF, null, values);
 
@@ -1637,6 +1650,10 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 return cursor.getInt(0);
             }
+
+            return -1;
+
+        } catch (Exception e) {
 
             return -1;
 

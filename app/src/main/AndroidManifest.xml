@@ -13,7 +13,6 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
@@ -36,6 +35,13 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!--
+ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -52,7 +58,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -66,7 +71,6 @@
         <meta-data
             android:name="igaworks_hash_key"
             android:value="0e161219e6a840a8" />
-
         <meta-data
             android:name="igaworks_reward_server_type"
             android:value="client" />
@@ -90,7 +94,6 @@
             android:name=".monitor.MonitorService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".monitor.SyncService"
             android:enabled="true"
@@ -98,9 +101,9 @@
 
         <activity
             android:name=".intro.IntroActivity"
+            android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:excludeFromRecents="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -120,12 +123,10 @@
             android:name=".control.ControlChildActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name=".control.ControlChildExActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name=".signup.WithdrawActivity"
             android:screenOrientation="portrait"
@@ -138,20 +139,20 @@
         -->
         <activity
             android:name=".login.LoginActivity"
+            android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:excludeFromRecents="true"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".login.LoginChildActivity"
-            android:screenOrientation="portrait"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".login.AddInfoActivity"
-            android:screenOrientation="portrait"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustPan" />
 
@@ -176,8 +177,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".chat.ChildChatActivity"
-            android:screenOrientation="portrait"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
@@ -284,18 +285,18 @@
                 <action android:name="om.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
         <activity
             android:name=".devicepolicy.DummyActivity"
-            android:label="@string/title_activity_dummy"></activity>
+            android:label="@string/title_activity_dummy" />
 
         <service android:name=".app.AppManageService" />
         <service android:name=".app.AppIconUploader" />
         <service android:name=".monitor.DownloadService" />
 
         <receiver android:name=".app.PackageReceiver">
-
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
@@ -303,15 +304,12 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="kr.co.cashslide.ReferrerReceiver"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
-
         </receiver>
 
         <!-- 알림 모아보기 -->
@@ -319,15 +317,16 @@
             android:name=".signup.NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
-
         <activity
             android:name=".purchase.PurchaseActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".purchase.ClauseViewActivity"
             android:screenOrientation="portrait" />
 
+        <service
+            android:name=".location.LocationService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
