@@ -25,6 +25,7 @@ import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.control.ControlChildExActivity;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.location.LocationService;
 import kr.co.digitalanchor.studytime.model.ChatRead;
 import kr.co.digitalanchor.studytime.model.ChatReadResult;
 import kr.co.digitalanchor.studytime.model.ExceptionAppResult;
@@ -121,6 +122,14 @@ public class GCMIntentService extends IntentService {
             case "GPSREQUEST":
 
 
+//
+//                LocationService.startLocationService(getApplicationContext(),
+//                        bundle.getString("recieverID"),
+//                        bundle.getString("senderID"),
+//                        bundle.getString("timestamp"),
+//                        bundle.getString("requestID"));
+
+
                 break;
 
             /**
@@ -210,10 +219,10 @@ public class GCMIntentService extends IntentService {
 
                 mHelper.addNoticeCount();
 
+                sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
+
                 AndroidUtils.showNotification(STApplication.applicationContext, null,
                         bundle.getString("msg"), getIntentNotice(account.getIsChild()));
-
-                sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
@@ -322,11 +331,8 @@ public class GCMIntentService extends IntentService {
 
         switch (isChild) {
 
-            default:
 
-                return null;
-
-            case 0: // child
+            case 1: // child
 
                 Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
 
@@ -335,7 +341,7 @@ public class GCMIntentService extends IntentService {
 
                 return pIntent;
 
-            case 1: // parent
+            case 0: // parent
 
                 Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
 
@@ -347,6 +353,10 @@ public class GCMIntentService extends IntentService {
                 stackBuilder.addNextIntent(notice);
 
                 return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            default:
+
+                return null;
         }
     }
 
@@ -387,7 +397,7 @@ public class GCMIntentService extends IntentService {
                 stackBuilder.addNextIntent(controlChild);
                 stackBuilder.addNextIntent(chat);
 
-                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 

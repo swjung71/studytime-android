@@ -24,6 +24,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.location.LocationService;
 import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
@@ -186,9 +187,16 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 //
 //                startService(intent);
 
-                AndroidUtils.hideKeyboard(mEditMessage);
+                Logger.d("onClick() + buttonSetting");
 
-                showAdditionalInfo();
+                // GPS TEST
+                Intent intent = new Intent(this, LocationService.class);
+
+                startService(intent);
+
+//                AndroidUtils.hideKeyboard(mEditMessage);
+//
+//                showAdditionalInfo();
 
                 break;
 

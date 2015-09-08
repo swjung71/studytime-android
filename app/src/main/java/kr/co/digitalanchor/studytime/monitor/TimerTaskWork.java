@@ -81,7 +81,7 @@ public class TimerTaskWork extends TimerTask {
 
         if (mHelper.getOnOff() == 1) {
 
-            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+//            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
             // kill
             if (TextUtils.isEmpty(currentPackage)

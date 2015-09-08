@@ -1,29 +1,25 @@
 package kr.co.digitalanchor.studytime.location;
 
-import android.app.IntentService;
-import android.content.Context;
+import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.text.TextUtils;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
-public class LocationService extends IntentService implements LocationListener {
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
+import com.android.volley.toolbox.Volley;
+import com.orhanobut.logger.Logger;
 
-    public static void startLocationService(Context context) {
+import kr.co.digitalanchor.studytime.STApplication;
 
-        Intent intent = new Intent(context, LocationService.class);
+public class LocationService extends Service implements LocationListener {
 
-        context.startService(intent);
-    }
-
+    RequestQueue mQueue;
 
     boolean isGPSEnabled = false;
 
@@ -45,22 +41,58 @@ public class LocationService extends IntentService implements LocationListener {
     protected LocationManager locationManager;
 
     public LocationService() {
-        super("LocationService");
+
+        Logger.d("LocationService");
+
+        mQueue = Volley.newRequestQueue(STApplication.applicationContext);
     }
 
+
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (intent != null) {
 
             handleActionWork();
 
         }
+
+        return START_NOT_STICKY;
     }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
 
     private void handleActionWork() {
 
+            getLocation();
 
+        while (isGPSEnabled) {
+
+            if (location == null) {
+
+                continue;
+            }
+
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+
+            if (lat == 0.0 && lon == 0.0) {
+
+                continue;
+
+            }
+
+            break;
+        }
+
+        Logger.d("com Latitude : " + lat + ", Longitude : " + lon);
+
+        this.stopSelf();
     }
 
     public Location getLocation() {
@@ -127,10 +159,81 @@ public class LocationService extends IntentService implements LocationListener {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
+            Logger.e(e.toString());
+
+            System.out.println(e.toString());
         }
 
         return location;
+    }
+
+    /**
+     * 위도 값을 가져옵니다.
+     *
+     * @return
+     */
+    public double getLatitude() {
+
+        if (location != null) {
+
+            lat = location.getLatitude();
+        }
+
+        return lat;
+    }
+
+    /**
+     * 경도 값을 가져옵니다.
+     *
+     * @return
+     */
+    public double getLongitude() {
+
+        if (location != null) {
+
+            lon = location.getLongitude();
+        }
+
+        return lon;
+    }
+
+    public boolean isGetLocation() {
+
+        return this.isGetLocation;
+    }
+
+
+
+    protected void addRequest(SimpleXmlRequest request) {
+
+        try {
+
+            mQueue.add(request);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+        }
+    }
+
+    protected void handleResultCode(int code, String msg) {
+
+        switch (code) {
+
+            default:
+
+                if (TextUtils.isEmpty(msg)) {
+
+                    Logger.e(msg);
+                }
+
+                break;
+        }
+    }
+
+    protected void handeleError(VolleyError error) {
+
+        Logger.e(error.toString());
     }
 
     @Override
@@ -152,5 +255,4 @@ public class LocationService extends IntentService implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
-
 }
