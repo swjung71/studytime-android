@@ -27,6 +27,10 @@ public class StaticValues {
 
     public static final String NEW_NOTICE_ARRIVED = "NEW_NOTICE_ARRIVED";
 
+    public static final String SUCCESS_REQUEST_LOCATION = "SUCCESS_REQUEST_LOCATION";
+
+    public static final String FAILURE_REQUEST_LOCATION = "FAILURE_REQUEST_LOCATION";
+
     public static final String REGISTER_CHILD = "REGISTER_CHILD";
 
     public static final String IS_SHOW_GUIDE = "isShowGuide";

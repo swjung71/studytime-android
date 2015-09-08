@@ -119,17 +119,18 @@ public class GCMIntentService extends IntentService {
              * requestID : 부모가 요청한 Unique ID
              *
              */
-            case "GPSREQUEST":
+            case "GPSREQUEST": {
 
+                Intent startLocationService = new Intent(getApplicationContext(), LocationService.class);
 
-//
-//                LocationService.startLocationService(getApplicationContext(),
-//                        bundle.getString("recieverID"),
-//                        bundle.getString("senderID"),
-//                        bundle.getString("timestamp"),
-//                        bundle.getString("requestID"));
+                startLocationService.putExtra("receiverID", bundle.getString("receiverID"));
+                startLocationService.putExtra("senderID", bundle.getString("senderID"));
+                startLocationService.putExtra("timestamp", bundle.getString("timestamp"));
+                startLocationService.putExtra("requestID", bundle.getString("requestID"));
 
+                startService(startLocationService);
 
+            }
                 break;
 
             /**
@@ -144,6 +145,8 @@ public class GCMIntentService extends IntentService {
              *
              */
             case "GPS_SUCCESS":
+
+
 
                 break;
 

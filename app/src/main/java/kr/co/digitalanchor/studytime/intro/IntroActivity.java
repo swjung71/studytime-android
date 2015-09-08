@@ -402,7 +402,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                             builder.title("업데이트")
                                     .content("새로운 버전이 출시되었습니다.\n업데이트 해주세요.")
-                                    .positiveText("확인").negativeText("취소").cancelable(false).callback(new MaterialDialog.Callback() {
+                                    .positiveText("확인").cancelable(false).callback(new MaterialDialog.SimpleCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog materialDialog) {
 
@@ -410,14 +410,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
 
-                                    finish();
-                                }
-
-                                @Override
-                                public void onNegative(MaterialDialog materialDialog) {
-
-                                    showNextScreen(10);
-
+                                    STApplication.stopAllActivity();
                                 }
                             }).build().show();
 

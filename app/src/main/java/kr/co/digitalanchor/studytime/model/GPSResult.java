@@ -29,7 +29,7 @@ public class GPSResult {
     String GPSResultCode;
 
     @Element(name = "Title", required = false)
-    String title;
+    String address;
 
     @Element(name = "Latitude", required = false)
     String latitude;
@@ -88,12 +88,12 @@ public class GPSResult {
         this.GPSResultCode = GPSResultCode;
     }
 
-    public String getTitle() {
-        return title;
+    public String getAddress() {
+        return address;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getLatitude() {

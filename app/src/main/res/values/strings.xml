@@ -60,4 +60,6 @@
     <string name="density">default</string>
 
     <string name="key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx/2DmWYpE++Ukpy8NFNGBbTAv1PFhJb6wYlbZ7k0TV4MyejCh4R/w06YQzzF6ja6pBVommVrxPDuOdujtJByi3VEGlTVryfiaFON8eBiRSzyJwQfaJyOSR/j8jv7l77Fka+SCQs/shuqhMByfM4pIG72VodajQaoyjNQirDg0v7qKkmVyIwp2rec/6GXM73sERBPLQeXJ77upF9PBB4bUMVXbFyhoozzejvWjIJvu5hg/SuOqU1soulYbB52ZNFVDCxVG9PG4dh7ytzz4IGZgA+6Qc/HdEYlX+HZWT7fob96YyBSeP3d7er3z/vWuYQq0GHMgIVrOpw+pi27oRe7kQIDAQAB</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

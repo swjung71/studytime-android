@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.co.digitalanchor.studytime">
+    package="kr.co.digitalanchor.studytime" >
 
     <supports-screens
         android:anyDensity="true"
@@ -57,10 +57,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
@@ -104,7 +108,7 @@
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -216,7 +220,7 @@
 
         <receiver
             android:name="com.igaworks.IgawReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -237,7 +241,7 @@
 
         <receiver
             android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -248,12 +252,12 @@
         <receiver
             android:name=".monitor.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".monitor.AllIntentReceiver">
+        <receiver android:name=".monitor.AllIntentReceiver" >
             <intent-filter>
                 <action android:name="kr.co.digitalanchor.action.SERVICE_START" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
@@ -263,7 +267,7 @@
         </receiver>
         <receiver
             android:name=".devicepolicy.AdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
@@ -280,7 +284,7 @@
         <!-- google analytics compaignTracking -->
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="om.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -296,7 +300,7 @@
         <service android:name=".app.AppIconUploader" />
         <service android:name=".monitor.DownloadService" />
 
-        <receiver android:name=".app.PackageReceiver">
+        <receiver android:name=".app.PackageReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
@@ -306,7 +310,7 @@
         </receiver>
         <receiver
             android:name="kr.co.cashslide.ReferrerReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -327,6 +331,11 @@
         <service
             android:name=".location.LocationService"
             android:exported="false" />
+
+        <activity
+            android:name=".location.MapActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

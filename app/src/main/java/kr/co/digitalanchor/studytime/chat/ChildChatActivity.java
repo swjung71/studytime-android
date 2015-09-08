@@ -190,13 +190,13 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
                 Logger.d("onClick() + buttonSetting");
 
                 // GPS TEST
-                Intent intent = new Intent(this, LocationService.class);
-
-                startService(intent);
-
-//                AndroidUtils.hideKeyboard(mEditMessage);
+//                Intent intent = new Intent(this, LocationService.class);
 //
-//                showAdditionalInfo();
+//                startService(intent);
+
+                AndroidUtils.hideKeyboard(mEditMessage);
+
+                showAdditionalInfo();
 
                 break;
 

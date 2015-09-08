@@ -34,6 +34,7 @@ import kr.co.digitalanchor.studytime.model.ExceptionApp;
 import kr.co.digitalanchor.studytime.model.ExceptionAppResult;
 import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
+import kr.co.digitalanchor.studytime.model.GPSRequest;
 import kr.co.digitalanchor.studytime.model.GPSResult;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetAdultDB;
@@ -66,7 +67,7 @@ public class HttpHelper {
     /**
      * true : dev ; false : real
      */
-    public static boolean isDev = false;
+    public static boolean isDev = true;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
@@ -1464,7 +1465,7 @@ public class HttpHelper {
      * @param errorListener
      * @return
      */
-    public static SimpleXmlRequest getRequestGPS(ParentModel model, Listener listener,
+    public static SimpleXmlRequest getRequestGPS(GPSRequest model, Listener listener,
                                                  ErrorListener errorListener) {
 
         StringWriter writer = null;

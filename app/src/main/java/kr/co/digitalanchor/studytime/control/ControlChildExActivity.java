@@ -31,12 +31,15 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.location.MapActivity;
 import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.ExceptionApp;
+import kr.co.digitalanchor.studytime.model.GPSRequest;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.PackageElementForP;
+import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -61,6 +64,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     final int REQUEST_APP_LIST = 50002;
 
     final int REQUEST_EXCEPT_APP = 50003;
+
+    final int REQUEST_CHILD_LOCATION = 50004;
 
     SlidingUpPanelLayout mSlideLayout;
 
@@ -269,6 +274,12 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 break;
 
+            case REQUEST_CHILD_LOCATION:
+
+                requestChildLocation();
+
+                break;
+
             default:
                 break;
         }
@@ -281,9 +292,13 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
             case R.id.buttonPoint:
 
-//                showOfferWall();
+//                showPurchase();
 
-                showPurchase();
+                // MAP REQUEST TEST
+//                showMapView(37.5071957, 127.0361441);
+
+                // LOCATION REQUEST TEST
+                sendEmptyMessage(REQUEST_CHILD_LOCATION);
 
                 break;
 
@@ -525,6 +540,66 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         intent.setClass(getApplicationContext(), NotificationActivity.class);
 
         startActivity(intent);
+    }
+
+    private void showMapView(double latitude, double longitude) {
+
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+
+        startActivity(intent);
+    }
+
+    private void requestChildLocation() {
+
+        Toast.makeText(getApplicationContext(), "requestChildLocation", Toast.LENGTH_LONG).show();
+
+        final Account account = mHelper.getAccountInfo();
+
+        GPSRequest model = new GPSRequest();
+
+        model.setParentId(account.getID());
+        model.setChildId(mChildID);
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        model.setRequestId(timestamp);
+        model.setTimeStamp(timestamp);
+
+        SimpleXmlRequest request = HttpHelper.getRequestGPS(model,
+                new Response.Listener<GeneralResult>() {
+
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case SUCCESS:
+
+                                // TODO : PUSH를 기다린다.
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 
     private void requestOnOff() {

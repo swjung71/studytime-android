@@ -10,14 +10,23 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.model.GPSResult;
+import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 
 public class LocationService extends Service implements LocationListener {
+
+    /** TODO : GPS 가 꺼져있으면 실패로 보내야함
+     *
+     */
+
 
     RequestQueue mQueue;
 
@@ -31,6 +40,14 @@ public class LocationService extends Service implements LocationListener {
 
     double lat; // 위도
     double lon; // 경도
+
+    String parentId;
+
+    String childId;
+
+    String timestamp;
+
+    String requestId;
 
     // 최소 GPS 정보 업데이트 거리 10 미터
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 10;
@@ -53,6 +70,17 @@ public class LocationService extends Service implements LocationListener {
 
         if (intent != null) {
 
+            Bundle bundle = intent.getExtras();
+
+            parentId = bundle.getString("senderID");
+
+            childId = bundle.getString("receiverID");
+
+            timestamp = bundle.getString("timestamp");
+
+            requestId = bundle.getString("requestID");
+
+
             handleActionWork();
 
         }
@@ -69,7 +97,7 @@ public class LocationService extends Service implements LocationListener {
 
     private void handleActionWork() {
 
-            getLocation();
+        getLocation();
 
         while (isGPSEnabled) {
 
@@ -92,7 +120,7 @@ public class LocationService extends Service implements LocationListener {
 
         Logger.d("com Latitude : " + lat + ", Longitude : " + lon);
 
-        this.stopSelf();
+        requstSendLocation();
     }
 
     public Location getLocation() {
@@ -202,7 +230,56 @@ public class LocationService extends Service implements LocationListener {
         return this.isGetLocation;
     }
 
+    private void requstSendLocation() {
 
+        GPSResult model = new GPSResult();
+
+        model.setParentId(parentId);
+        model.setRequestId(requestId);
+        model.setAccuracy(String.valueOf(location.getAccuracy()));
+        model.setChildId(childId);
+        model.setTimestamp(timestamp);
+        model.setLatitude(String.valueOf(lat));
+        model.setLongitude(String.valueOf(lon));
+        model.setType("GPS");
+        model.setGPSResultCode("SUCCESS");
+
+
+        SimpleXmlRequest request = HttpHelper.getRequestGPS(model,
+                new Response.Listener<GeneralResult>() {
+                    @Override
+                    public void onResponse(GeneralResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case HttpHelper.SUCCESS:
+
+                                LocationService.this.stopSelf();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                                LocationService.this.stopSelf();
+
+                                break;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+
+                        LocationService.this.stopSelf();
+
+                    }
+                });
+
+        addRequest(request);
+    }
 
     protected void addRequest(SimpleXmlRequest request) {
 
@@ -231,7 +308,7 @@ public class LocationService extends Service implements LocationListener {
         }
     }
 
-    protected void handeleError(VolleyError error) {
+    protected void handleError(VolleyError error) {
 
         Logger.e(error.toString());
     }
