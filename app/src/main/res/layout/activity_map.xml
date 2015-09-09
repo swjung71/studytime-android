@@ -23,4 +23,15 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/header" />
 
+    <kr.co.digitalanchor.studytime.view.FontTextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:background="@color/black_opacity_50"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/intro_title_info_02_text" />
+
 </RelativeLayout>

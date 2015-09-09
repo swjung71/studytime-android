@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,7 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.dialog.LoadingDialog;
 import kr.co.digitalanchor.studytime.location.MapActivity;
 import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
@@ -109,6 +112,10 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     AppGridAdapter mAdapter;
 
     LocationReceiver mReceiver;
+
+    LoadingDialog mDialog;
+
+    CountDownTimer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,6 +235,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
+
+        if (mDialog != null && mDialog.isShowing()) {
+
+            mDialog.dismiss();
+        }
 
         unregisterReceiver(mReceiver);
     }
@@ -583,6 +595,14 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     }
 
     private void requestChildLocation() {
+
+        if (mDialog == null) {
+
+            mDialog = new LoadingDialog(ControlChildExActivity.this);
+            mDialog.setCancelable(false);
+        }
+
+        mDialog.show();
 
         Toast.makeText(getApplicationContext(), "requestChildLocation", Toast.LENGTH_LONG).show();
 

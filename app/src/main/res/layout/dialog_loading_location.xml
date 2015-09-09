@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="20dp"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_inner_bg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
+            android:text="이런 경우 자녀를 찾을 수 없어요!"
+            android:textColor="@color/white"
+            android:textSize="@dimen/intro_title_info_02_text"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:drawableLeft="@drawable/img_gps3"
+                android:drawablePadding="5dp"
+                android:paddingLeft="5dp"
+                android:text="스마트폰의 GPS가 꺼져있는 경우"
+                android:textColor="@color/white"
+                android:textSize="@dimen/child_item_noti_text_size" />
+
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:drawableLeft="@drawable/img_gps3"
+                android:drawablePadding="5dp"
+                android:paddingLeft="5dp"
+                android:text="네트워크가 원할하지 않는 경우"
+                android:textColor="@color/white"
+                android:textSize="@dimen/child_item_noti_text_size" />
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:drawableLeft="@drawable/img_gps3"
+                android:drawablePadding="5dp"
+                android:paddingLeft="5dp"
+                android:text="스마트폰이 꺼져 있는 경우"
+                android:textColor="@color/white"
+                android:textSize="@dimen/child_item_noti_text_size" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="50dp"
+            android:src="@drawable/img_gps1" />
+
+        <ImageView
+            android:id="@+id/blink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/img_gps2" />
+
+
+    </FrameLayout>
+
+
+</LinearLayout>
