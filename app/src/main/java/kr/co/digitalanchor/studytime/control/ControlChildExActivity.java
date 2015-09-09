@@ -88,6 +88,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     ImageButton mButtonUse;
 
+    ImageButton mButtonLocation;
+
     Button mButtonCloseGuide;
 
     Button mButtonConfirm;
@@ -182,6 +184,9 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         mButtonChat = (ImageButton) findViewById(R.id.buttonChat);
         mButtonChat.setOnClickListener(this);
+
+        mButtonLocation = (ImageButton) findViewById(R.id.buttonLocation);
+        mButtonLocation.setOnClickListener(this);
 
         mButtonUse = (ImageButton) findViewById(R.id.buttonUse);
         mButtonUse.setOnClickListener(this);
@@ -299,15 +304,20 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         switch (v.getId()) {
 
-            case R.id.buttonPoint:
 
-//                showPurchase();
+            case R.id.buttonLocation:
 
                 // MAP REQUEST TEST
-//                showMapView(37.5071957, 127.0361441);
+                // showMapView(37.5071957, 127.0361441);
 
                 // LOCATION REQUEST TEST
                 sendEmptyMessage(REQUEST_CHILD_LOCATION);
+
+                break;
+
+            case R.id.buttonPoint:
+
+                showPurchase();
 
                 break;
 
