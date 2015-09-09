@@ -1,6 +1,9 @@
 package kr.co.digitalanchor.studytime.control;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.MotionEvent;
@@ -36,10 +39,10 @@ import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.ExceptionApp;
 import kr.co.digitalanchor.studytime.model.GPSRequest;
+import kr.co.digitalanchor.studytime.model.GPSResultParent;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.PackageElementForP;
-import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -205,6 +208,12 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         drawView();
 
         toggleOnOff();
+
+        IntentFilter filter = new IntentFilter();
+
+        filter.addAction(StaticValues.SUCCESS_REQUEST_LOCATION);
+
+        registerReceiver(new LocationReceiver(), filter);
     }
 
     private void getData() {
@@ -872,6 +881,76 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                 });
 
         addRequest(request);
+    }
+
+    private void getGPS(String parentId, String childId, final String requestId, String timestamp) {
+
+        GPSRequest model = new GPSRequest();
+
+        model.setParentId(parentId);
+        model.setRequestId(requestId);
+        model.setTimeStamp(timestamp);
+        model.setChildId(childId);
+
+        SimpleXmlRequest request = HttpHelper.getGPS(model, new Response.Listener<GPSResultParent>() {
+            @Override
+            public void onResponse(GPSResultParent response) {
+
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+
+                        intent.putExtra("latitude", Double.parseDouble(response.getLatitude()));
+                        intent.putExtra("longitude", Double.parseDouble(response.getLongitude()));
+
+                        startActivity(intent);
+
+
+                        break;
+
+
+                    default:
+
+                        break;
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        addRequest(request);
+    }
+
+    class LocationReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String name = intent.getAction();
+
+            switch (name) {
+
+                case StaticValues.SUCCESS_REQUEST_LOCATION:
+
+
+                    Bundle data = intent.getExtras();
+
+                    getGPS(data.getString("receiverID"), data.getString("senderID"),
+                            data.getString("requestID"), data.getString("timestamp"));
+
+                    break;
+
+                default:
+
+                    break;
+            }
+        }
     }
 
 }

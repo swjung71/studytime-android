@@ -146,7 +146,7 @@ public class GCMIntentService extends IntentService {
              */
             case "GPS_SUCCESS":
 
-
+                receiveChildLocationInfo(bundle);
 
                 break;
 
@@ -274,6 +274,24 @@ public class GCMIntentService extends IntentService {
         }
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
+    }
+
+    private void receiveChildLocationInfo(Bundle data) {
+
+        if (data == null) {
+
+            return;
+        }
+
+        Intent intent = new Intent(StaticValues.SUCCESS_REQUEST_LOCATION);
+
+        intent.putExtra("receiverID", data.getString("receiverID"));
+        intent.putExtra("senderID", data.getString("senderID"));
+        intent.putExtra("timestamp", data.getString("timestamp"));
+        intent.putExtra("requestID", data.getString("requestID"));
+
+        sendBroadcast(intent);
+
     }
 
     private void updateChildrenInfo(Bundle data) {

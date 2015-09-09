@@ -503,6 +503,47 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public boolean isExceptedForService(String packageName) {
+
+        boolean result = true;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] result_columns = new String[]{EXCEPTED};
+
+        Cursor cursor = null;
+
+        try {
+
+            cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
+                    new String[]{packageName}, null, null, null, null);
+
+            if (cursor.moveToFirst()) {
+
+                do {
+
+                    result = (cursor.getInt(0) == 0) ? false : true;
+
+                    Logger.d(packageName + " " + result);
+
+                } while (cursor.moveToNext());
+            }
+
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (cursor != null)
+                cursor.close();
+
+            cursor = null;
+
+        }
+
+        return result;
+    }
+
     public HashMap<String, PackageModel> getPackageStateList() {
 
         HashMap<String, PackageModel> hash = new HashMap<>();

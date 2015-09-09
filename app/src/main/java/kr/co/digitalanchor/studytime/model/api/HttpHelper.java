@@ -36,6 +36,7 @@ import kr.co.digitalanchor.studytime.model.FAQResult;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
 import kr.co.digitalanchor.studytime.model.GPSRequest;
 import kr.co.digitalanchor.studytime.model.GPSResult;
+import kr.co.digitalanchor.studytime.model.GPSResultParent;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.GetAdultDB;
 import kr.co.digitalanchor.studytime.model.GetNotificationResult;
@@ -1516,7 +1517,7 @@ public class HttpHelper {
      * @param errorListener
      * @return
      */
-    public static SimpleXmlRequest getRequestGPS(GPSResult model, Listener listener,
+    public static SimpleXmlRequest getSendGPS(GPSResult model, Listener listener,
                                                  ErrorListener errorListener) {
 
         StringWriter writer = null;
@@ -1535,6 +1536,56 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<GeneralResult>(getURL() + "sendGPS",
                     GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    /**
+     * 부모가 GPS 결과 받기
+     * @param model
+     * @param listener
+     * @param errorListener
+     * @return
+     */
+    public static SimpleXmlRequest getGPS(GPSRequest model, Listener listener,
+                                              ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<GPSResultParent>(getURL() + "parent/getGPS",
+                    GPSResultParent.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

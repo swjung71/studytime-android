@@ -245,7 +245,7 @@ public class LocationService extends Service implements LocationListener {
         model.setGPSResultCode("SUCCESS");
 
 
-        SimpleXmlRequest request = HttpHelper.getRequestGPS(model,
+        SimpleXmlRequest request = HttpHelper.getSendGPS(model,
                 new Response.Listener<GeneralResult>() {
                     @Override
                     public void onResponse(GeneralResult response) {
