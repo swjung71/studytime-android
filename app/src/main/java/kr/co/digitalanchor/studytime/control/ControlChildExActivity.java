@@ -108,6 +108,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     AppGridAdapter mAdapter;
 
+    LocationReceiver mReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -218,7 +220,16 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         filter.addAction(StaticValues.SUCCESS_REQUEST_LOCATION);
 
-        registerReceiver(new LocationReceiver(), filter);
+        mReceiver = new LocationReceiver();
+
+        registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceiver(mReceiver);
     }
 
     private void getData() {
