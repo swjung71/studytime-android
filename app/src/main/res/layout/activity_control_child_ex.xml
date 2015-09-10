@@ -187,7 +187,7 @@
         android:layout_height="match_parent"
         android:background="@color/black_opacity_50"
         android:clickable="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <kr.co.digitalanchor.studytime.view.FontButton
             android:id="@+id/buttonClose"
@@ -241,6 +241,15 @@
             android:layout_marginRight="@dimen/child_control_info_guide_05_margin_right"
             android:scaleType="fitCenter"
             android:src="@drawable/guide_text5" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="@dimen/child_control_info_guide_06_margin_left"
+            android:layout_marginTop="@dimen/child_control_info_guide_06_margin_top"
+            android:scaleType="fitCenter"
+            android:src="@drawable/guide_text6" />
 
         <ImageView
             android:layout_width="wrap_content"

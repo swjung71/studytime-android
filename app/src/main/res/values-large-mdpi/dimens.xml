@@ -151,10 +151,13 @@
     <dimen name="child_control_info_guide_03_margin_top">476dp</dimen>
 
     <dimen name="child_control_info_guide_04_margin_left">57dp</dimen>
-    <dimen name="child_control_info_guide_04_margin_top">680dp</dimen>
+    <dimen name="child_control_info_guide_04_margin_top">380dp</dimen>
 
     <dimen name="child_control_info_guide_05_margin_bottom">90dp</dimen>
     <dimen name="child_control_info_guide_05_margin_right">90dp</dimen>
+
+    <dimen name="child_control_info_guide_06_margin_left">45dp</dimen>
+    <dimen name="child_control_info_guide_06_margin_top">275dp</dimen>
 
     <!-- acitivty_modify_privacy -->
     <dimen name="modify_privacy_divider_height">1dp</dimen>

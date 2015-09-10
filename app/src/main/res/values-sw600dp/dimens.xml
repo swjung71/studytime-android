@@ -155,6 +155,9 @@
     <dimen name="child_control_info_guide_05_margin_bottom">45dp</dimen>
     <dimen name="child_control_info_guide_05_margin_right">45dp</dimen>
 
+    <dimen name="child_control_info_guide_06_margin_left">45dp</dimen>
+    <dimen name="child_control_info_guide_06_margin_top">275dp</dimen>
+
     <!-- acitivty_modify_privacy -->
     <dimen name="modify_privacy_divider_height">0.33dp</dimen>
     <dimen name="modify_privacy_divider_text_margin_top">14dp</dimen>
