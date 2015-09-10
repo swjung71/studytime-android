@@ -127,6 +127,7 @@
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/activity_title_bar_height"
@@ -134,7 +135,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="34.67dp"
+            android:layout_height="@dimen/children_list_point_box_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="18dp"
@@ -148,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/children_list_point_label_margin_left"
-                android:maxLength="5"
+                android:maxLength="3"
                 android:paddingLeft="@dimen/children_list_point_label_padding_left"
                 android:singleLine="true"
                 android:textColor="@color/white"

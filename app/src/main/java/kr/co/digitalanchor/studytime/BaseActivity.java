@@ -1,11 +1,11 @@
 package kr.co.digitalanchor.studytime;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -33,7 +33,7 @@ import kr.co.digitalanchor.studytime.purchase.PurchaseActivity;
 /**
  * Created by Thomas on 2015-06-10.
  */
-public class BaseActivity extends Activity {
+public class BaseActivity extends FragmentActivity {
 
     private final long INTERVAL = 1000;
 

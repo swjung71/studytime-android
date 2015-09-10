@@ -101,6 +101,8 @@ public class LocationService extends Service implements LocationListener {
 
         while (isGPSEnabled) {
 
+            Logger.d("location loop");
+
             if (location == null) {
 
                 continue;
@@ -120,7 +122,7 @@ public class LocationService extends Service implements LocationListener {
 
         Logger.d("com Latitude : " + lat + ", Longitude : " + lon);
 
-        requstSendLocation();
+        requestSendLocation();
     }
 
     public Location getLocation() {
@@ -230,20 +232,31 @@ public class LocationService extends Service implements LocationListener {
         return this.isGetLocation;
     }
 
-    private void requstSendLocation() {
+    private void requestSendLocation() {
 
         GPSResult model = new GPSResult();
 
-        model.setParentId(parentId);
-        model.setRequestId(requestId);
-        model.setAccuracy(String.valueOf(location.getAccuracy()));
-        model.setChildId(childId);
-        model.setTimestamp(timestamp);
-        model.setLatitude(String.valueOf(lat));
-        model.setLongitude(String.valueOf(lon));
-        model.setType("GPS");
-        model.setGPSResultCode("SUCCESS");
+        if (isGPSEnabled) {
 
+            model.setParentId(parentId);
+            model.setRequestId(requestId);
+            model.setAccuracy(String.valueOf(location.getAccuracy()));
+            model.setChildId(childId);
+            model.setTimestamp(timestamp);
+            model.setLatitude(String.valueOf(lat));
+            model.setLongitude(String.valueOf(lon));
+            model.setType("GPS");
+            model.setGPSResultCode("SUCCESS");
+
+        } else {
+
+            model.setParentId(parentId);
+            model.setRequestId(requestId);
+            model.setChildId(childId);
+            model.setTimestamp(timestamp);
+            model.setGPSResultCode("FAIL");
+
+        }
 
         SimpleXmlRequest request = HttpHelper.getSendGPS(model,
                 new Response.Listener<GeneralResult>() {

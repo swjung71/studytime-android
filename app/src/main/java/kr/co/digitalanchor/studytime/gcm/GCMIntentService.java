@@ -163,6 +163,8 @@ public class GCMIntentService extends IntentService {
              */
             case "GPS_FAIL":
 
+                receiveChildLocationInfoFail(bundle.getString("msg"));
+
                 break;
 
             case "RE_REG":
@@ -275,6 +277,16 @@ public class GCMIntentService extends IntentService {
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
+
+    private void receiveChildLocationInfoFail(String msg) {
+
+        Intent intent = new Intent(StaticValues.FAILURE_REQUEST_LOCATION);
+
+        intent.putExtra("msg", msg);
+
+        sendBroadcast(intent);
+    }
+
 
     private void receiveChildLocationInfo(Bundle data) {
 

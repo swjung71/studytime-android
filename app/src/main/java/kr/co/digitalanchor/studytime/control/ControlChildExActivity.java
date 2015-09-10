@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -17,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -72,6 +72,10 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     final int REQUEST_EXCEPT_APP = 50003;
 
     final int REQUEST_CHILD_LOCATION = 50004;
+
+    final long MILLIS_IN_FUTURE = 40 * 1000;
+
+    final long COUNTDOWN_IN_INTERVAL = 1000;
 
     SlidingUpPanelLayout mSlideLayout;
 
@@ -137,7 +141,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     private void initView() {
 
         mSlideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-//        mSlideLayout.setTouchEnabled(false);
+
         mSlideLayout.setPanelSlideListener(this);
 
         mPanelToggleButton = (ImageView) findViewById(R.id.buttonToggle);
@@ -226,6 +230,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         IntentFilter filter = new IntentFilter();
 
         filter.addAction(StaticValues.SUCCESS_REQUEST_LOCATION);
+        filter.addAction(StaticValues.FAILURE_REQUEST_LOCATION);
 
         mReceiver = new LocationReceiver();
 
@@ -239,6 +244,12 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         if (mDialog != null && mDialog.isShowing()) {
 
             mDialog.dismiss();
+        }
+
+        if (mTimer != null) {
+
+            mTimer.cancel();
+
         }
 
         unregisterReceiver(mReceiver);
@@ -604,7 +615,26 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         mDialog.show();
 
-        Toast.makeText(getApplicationContext(), "requestChildLocation", Toast.LENGTH_LONG).show();
+        if (mTimer == null) {
+
+            mTimer = new CountDownTimer(MILLIS_IN_FUTURE, COUNTDOWN_IN_INTERVAL) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    if (mDialog != null && mDialog.isShowing()) {
+
+                        mDialog.dismiss();
+                    }
+                }
+            };
+        }
+
+        mTimer.start();
 
         final Account account = mHelper.getAccountInfo();
 
@@ -628,14 +658,13 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                             case SUCCESS:
 
-                                // TODO : PUSH를 기다린다.
+                                //  PUSH를 기다린다.
 
                                 break;
 
                             default:
 
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
+                                mDialog.dismiss();
 
                                 break;
                         }
@@ -645,7 +674,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        handleError(error);
+                        mDialog.dismiss();
                     }
                 });
 
@@ -924,7 +953,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         addRequest(request);
     }
 
-    private void getGPS(String parentId, String childId, final String requestId, String timestamp) {
+    private void getGPS(final String parentId, String childId, final String requestId, String timestamp) {
 
         GPSRequest model = new GPSRequest();
 
@@ -977,7 +1006,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
             switch (name) {
 
-                case StaticValues.SUCCESS_REQUEST_LOCATION:
+                case StaticValues.SUCCESS_REQUEST_LOCATION: {
 
 
                     Bundle data = intent.getExtras();
@@ -985,7 +1014,42 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     getGPS(data.getString("receiverID"), data.getString("senderID"),
                             data.getString("requestID"), data.getString("timestamp"));
 
-                    break;
+                }
+
+                break;
+
+                case StaticValues.FAILURE_REQUEST_LOCATION: {
+
+                    if (mTimer != null) {
+
+                        mTimer.cancel();
+                    }
+
+                    if (mDialog != null && mDialog.isShowing()) {
+
+                        mDialog.dismiss();
+                    }
+
+                    Bundle data = intent.getExtras();
+
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
+
+                    builder.title("실패")
+                            .content(data.getString("msg"))
+                            .positiveText("확인").cancelable(true).callback(
+                            new MaterialDialog.SimpleCallback() {
+
+                                @Override
+                                public void onPositive(MaterialDialog materialDialog) {
+
+                                    materialDialog.dismiss();
+                                }
+
+                            }).build().show();
+
+                }
+
+                break;
 
                 default:
 
@@ -993,5 +1057,4 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
             }
         }
     }
-
 }

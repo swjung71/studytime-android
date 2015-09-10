@@ -3,11 +3,12 @@ package kr.co.digitalanchor.studytime.location;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.SimpleXmlRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -20,9 +21,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.model.CoinResult;
+import kr.co.digitalanchor.studytime.model.SetCoin;
+import kr.co.digitalanchor.studytime.model.api.HttpHelper;
+import kr.co.digitalanchor.studytime.model.db.Account;
 
-public class MapActivity extends FragmentActivity {
+public class MapActivity extends BaseActivity {
+
+    final int COST_LOCATION = 3;
 
     private GoogleMap mMap;
 
@@ -45,6 +54,8 @@ public class MapActivity extends FragmentActivity {
         longitude = bundle.getDouble("longitude", 0.0);
 
         textAddress = (TextView) findViewById(R.id.address);
+
+        saveData();
 
     }
 
@@ -119,6 +130,60 @@ public class MapActivity extends FragmentActivity {
 
         updateText();
 
+    }
+
+    void saveData() {
+
+        showLoading();
+
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+
+        final Account account = dbHelper.getAccountInfo();
+
+        SetCoin model = new SetCoin();
+
+        model.setParentID(account.getID());
+        model.setCoin(account.getCoin() - COST_LOCATION);
+
+        Logger.d("saveData #3");
+
+        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
+                new Response.Listener<CoinResult>() {
+
+                    @Override
+                    public void onResponse(CoinResult response) {
+
+                        switch (response.getResultCode()) {
+
+                            case HttpHelper.SUCCESS:
+
+                                dismissLoading();
+
+                                DBHelper dbHelper = new DBHelper(getApplicationContext());
+
+                                dbHelper.updateCoin(account.getID(), response.getCoin());
+
+                                break;
+
+                            default:
+
+                                handleResultCode(response.getResultCode(),
+                                        response.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
     }
 
     @Override
