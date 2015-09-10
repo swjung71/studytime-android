@@ -15,3 +15,36 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#-dontwarn org.simpleframework.xml.**
+
+-dontshrink
+
+-keep public class org.simpleframework.** { *; }
+-keep class org.simpleframework.xml.** { *; }
+-keep class org.simpleframework.xml.core.** { *; }
+-keep class org.simpleframework.xml.util.** { *; }
+
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes ElementList, Root
+-keepattributes Element
+-keepattributes SourceFile,LineNumberTable
+
+-dontwarn javax.xml.stream.XMLInputFactory
+-dontwarn javax.xml.stream.XMLEventReader
+-dontwarn javax.xml.stream.XMLEvent
+-dontwarn javax.xml.stream.events.XMLEvent
+-dontwarn javax.xml.stream.events.Attribute
+-dontwarn javax.xml.stream.Attribute
+-dontwarn javax.xml.stream.Location
+-dontwarn javax.xml.stream.events.StartElement
+-dontwarn javax.xml.stream.events.Characters
+
+-keep class com.android.volley.** {*;}
+-keep interface com.android.volley.** {*;}
+
+-keep class kr.co.digitalanchor.studytime.model.** {*;}
+-keep interface kr.co.digitalanchor.studytime.model.** {*;}
+
+
