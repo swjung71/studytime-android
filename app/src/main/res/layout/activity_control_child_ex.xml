@@ -187,7 +187,7 @@
         android:layout_height="match_parent"
         android:background="@color/black_opacity_50"
         android:clickable="true"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <kr.co.digitalanchor.studytime.view.FontButton
             android:id="@+id/buttonClose"

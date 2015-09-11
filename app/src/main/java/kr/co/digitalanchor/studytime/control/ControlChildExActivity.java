@@ -632,6 +632,21 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                         mDialog.dismiss();
                     }
+
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
+
+                    builder.title("실패")
+                            .content("자녀분의 스마트폰 전원이 꺼져있거나 네트워크가 원할하지 않습니다.")
+                            .positiveText("확인").cancelable(true).callback(
+                            new MaterialDialog.SimpleCallback() {
+
+                                @Override
+                                public void onPositive(MaterialDialog materialDialog) {
+
+                                    materialDialog.dismiss();
+                                }
+
+                            }).build().show();
                 }
             };
         }
