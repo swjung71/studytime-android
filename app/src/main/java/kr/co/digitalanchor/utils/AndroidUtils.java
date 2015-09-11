@@ -226,7 +226,7 @@ public class AndroidUtils {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         builder.setSound(alarmSound);
 
-        nm.notify(/*NotificationID.getID()*/2, builder.build());
+        nm.notify(2, builder.build());
     }
 
     /**

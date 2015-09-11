@@ -66,7 +66,7 @@ public class SyncService extends Service {
 
                         break;
 
-                    case REQUEST_SYNC_GCM :
+                    case REQUEST_SYNC_GCM:
 
                         getUpdateGCM();
 
@@ -231,6 +231,7 @@ public class SyncService extends Service {
         model.setGCM(STApplication.getRegistrationId());
         model.setId(account.getID());
         model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
+        model.setVersion(STApplication.getAppVersionName());
 
         SimpleXmlRequest request = HttpHelper.getUpdate(model,
                 new Response.Listener<GeneralResult>() {

@@ -354,6 +354,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
         model.setGCM(STApplication.getRegistrationId());
         model.setId(account.getID());
         model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
+        model.setVersion(STApplication.getAppVersionName());
 
         SimpleXmlRequest request = HttpHelper.getUpdate(model,
                 new Response.Listener<GeneralResult>() {

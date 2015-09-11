@@ -344,6 +344,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                 // MAP REQUEST TEST
                 // showMapView(37.5071957, 127.0361441);
 
+                IgawAdbrix.retention("requestChildLocation");
+
                 // LOCATION REQUEST TEST
                 sendEmptyMessage(REQUEST_CHILD_LOCATION);
 

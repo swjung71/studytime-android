@@ -15,6 +15,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.igaworks.adbrix.IgawAdbrix;
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
@@ -54,6 +55,8 @@ public class MapActivity extends BaseActivity {
         longitude = bundle.getDouble("longitude", 0.0);
 
         textAddress = (TextView) findViewById(R.id.address);
+
+        IgawAdbrix.retention("viewChildLocation");
 
         saveData();
 

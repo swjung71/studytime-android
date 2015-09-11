@@ -360,12 +360,14 @@ public class GCMIntentService extends IntentService {
 
     private PendingIntent getIntentNotice(int isChild) {
 
+        Logger.d("isChild " + isChild);
+
         TaskStackBuilder stackBuilder = null;
 
         switch (isChild) {
 
 
-            case 1: // child
+            case 0: // child
 
                 Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
 
@@ -374,7 +376,7 @@ public class GCMIntentService extends IntentService {
 
                 return pIntent;
 
-            case 0: // parent
+            case 1: // parent
 
                 Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
 

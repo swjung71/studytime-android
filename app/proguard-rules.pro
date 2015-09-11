@@ -18,6 +18,9 @@
 
 #-dontwarn org.simpleframework.xml.**
 
+-keep class com.igaworks.** { *; }
+-dontwarn com.igaworks.**
+
 -dontshrink
 
 -keep public class org.simpleframework.** { *; }

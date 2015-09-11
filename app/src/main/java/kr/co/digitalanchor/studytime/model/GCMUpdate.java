@@ -22,6 +22,9 @@ public class GCMUpdate {
     @Element(name = "ID", required = false)
     String id;
 
+    @Element(name = "Version", required = false)
+    String version;
+
     public GCMUpdate() {
 
         tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
@@ -50,4 +53,13 @@ public class GCMUpdate {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
 }
