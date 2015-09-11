@@ -11,6 +11,7 @@ android {
         versionCode 24
         versionName "1.2.0"
         multiDexEnabled = true
+
     }
 
     packagingOptions {
@@ -31,6 +32,15 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.each {
+                    output ->
+                        def file = output.outputFile
+                        output.outputFile = new File(file.parent,
+                                file.name.replace("app-release", "studytime-release-" + defaultConfig.versionName))
+                }
+            }
         }
 
         debug {
