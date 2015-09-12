@@ -1,15 +1,15 @@
 package kr.co.digitalanchor.studytime.monitor;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
-import kr.co.digitalanchor.studytime.STApplication;
-import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.studytime.block.BlockActivity;
+import java.util.Calendar;
+
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 
@@ -17,6 +17,11 @@ import kr.co.digitalanchor.studytime.model.db.Account;
  * Created by Thomas on 2015-06-29.
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
+
+    /**
+     * The Constant REPEAT_TIME.
+     */
+    private static final long REPEAT_TIME = 1000 * 3; // 3s
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,11 +32,31 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
             Account account = helper.getAccountInfo();
 
-            Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
+            Logger.d("isChild " + account.getIsChild() + "  OnOff " + helper.getOnOff());
 
             if (account.getIsChild() == 0) {
 
                 context.startService(new Intent(context, MonitorService.class));
+/*
+                Intent MonitorServiceIntent = new Intent(context, MonitorService.class);
+
+                AlarmManager service = (AlarmManager) context
+                        .getSystemService(Context.ALARM_SERVICE);
+
+                PendingIntent pending = PendingIntent.getService(context, 0,
+                        MonitorServiceIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+                Calendar cal = Calendar.getInstance();
+                // Start 5 seconds after boot completed
+                cal.add(Calendar.SECOND, 5);
+
+                // Fetch every x seconds
+                // InexactRepeating allows Android to optimize the energy
+                // consumption
+                service.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                        cal.getTimeInMillis(), REPEAT_TIME, pending);
+*/
             }
 
         } else {
