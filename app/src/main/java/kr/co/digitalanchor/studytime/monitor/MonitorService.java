@@ -27,7 +27,7 @@ public class MonitorService extends Service {
     private final double ONE_SEC = 1000.0f;
     private final long ONE_SECOND = 1000L;
 
-    private static final int REBOOT_DELAY_TIMER = 5 * 1000;
+    private static final int REBOOT_DELAY_TIMER = 2 * 1000;
 
     Timer timerDaemon;
 
@@ -66,9 +66,9 @@ public class MonitorService extends Service {
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
-//        unregisterRestartAlarm();
+        unregisterRestartAlarm();
 
-        registerRestartAlarm();
+//        registerRestartAlarm();
     }
 
     /**
@@ -81,12 +81,14 @@ public class MonitorService extends Service {
 
         Logger.d("Destroy MonitorService");
 
+        startService(new Intent(getApplicationContext(), SyncService.class));
+
         if (timerDaemon != null) {
 
             timerDaemon.cancel();
         }
 
-//        registerRestartAlarm();
+        registerRestartAlarm();
 
         super.onDestroy();
     }
