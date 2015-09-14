@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
 public class MonitorService extends Service {
@@ -81,7 +83,7 @@ public class MonitorService extends Service {
 
         Logger.d("Destroy MonitorService");
 
-        startService(new Intent(getApplicationContext(), SyncService.class));
+        killApplication();
 
         if (timerDaemon != null) {
 
@@ -155,5 +157,26 @@ public class MonitorService extends Service {
 
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.cancel(sender);
+    }
+
+    private void killApplication() {
+
+        Intent block = new Intent(getApplicationContext(), BlockActivity.class);
+
+        block.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(block);
+
+        Intent main = new Intent(Intent.ACTION_MAIN);
+
+        main.addCategory(Intent.CATEGORY_HOME);
+        main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, main, PendingIntent.FLAG_ONE_SHOT);
+
+        final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
+
     }
 }
