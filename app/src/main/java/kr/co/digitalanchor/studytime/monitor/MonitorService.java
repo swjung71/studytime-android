@@ -66,8 +66,9 @@ public class MonitorService extends Service {
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
-        unregisterRestartAlarm();
+//        unregisterRestartAlarm();
 
+        registerRestartAlarm();
     }
 
     /**
@@ -85,7 +86,7 @@ public class MonitorService extends Service {
             timerDaemon.cancel();
         }
 
-        registerRestartAlarm();
+//        registerRestartAlarm();
 
         super.onDestroy();
     }
