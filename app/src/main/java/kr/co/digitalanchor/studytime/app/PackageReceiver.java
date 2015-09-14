@@ -70,16 +70,16 @@ public class PackageReceiver extends BroadcastReceiver {
             case Intent.ACTION_PACKAGE_REPLACED:
                 // update
 
-                if (context.getPackageName().equalsIgnoreCase(packageName)) {
-
-                    context.startService(new Intent(context, MonitorService.class));
-
-                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
-
-                } else {
-
-                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REPLACED);
-                }
+//                if (context.getPackageName().equalsIgnoreCase(packageName)) {
+//
+//                    context.startService(new Intent(context, MonitorService.class));
+//
+//                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_SYNC);
+//
+//                } else {
+//
+//                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_REPLACED);
+//                }
 
                 break;
         }

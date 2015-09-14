@@ -83,9 +83,11 @@ public class TimerTaskWork extends TimerTask {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
+
             // kill
             if (TextUtils.isEmpty(currentPackage)
                     || isLauncher(currentPackage)
+//                    || isDialer(currentPackage)
                     || currentPackage.contains(".mms")
                     || currentPackage.contains(".contacts")
                     || currentPackage.contains("com.android.phone")
@@ -113,7 +115,7 @@ public class TimerTaskWork extends TimerTask {
 
             } else if (currentPackage.compareTo("kr.co.digitalanchor.studytime") == 0) {
 
-//                 Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+                Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
                 return;
 
@@ -405,6 +407,50 @@ public class TimerTaskWork extends TimerTask {
 
             names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
         }
+
+        return names;
+    }
+
+    private boolean isDialer(String packageName) {
+
+        ArrayList<String> names = getDialer();
+
+        for (int i = 0; ; i++) {
+
+            if (i >= names.size()) {
+
+                return false;
+            }
+
+            if (packageName.equalsIgnoreCase((String) names.get(i))) {
+
+                Logger.d((String) names.get(i));
+
+                return true;
+            }
+        }
+    }
+
+    private ArrayList<String> getDialer() {
+
+        ArrayList<String> names = new ArrayList<>();
+        PackageManager manager = mContext.getPackageManager();
+
+        Intent intent = new Intent("android.intent.action.NEW_OUTGOING_CALL", null);
+
+        intent.addCategory("android.intent.category.DEFAULT");
+
+        Logger.d(manager.queryIntentActivities(intent, 0).size() + " 개");
+
+        Iterator iterator = manager.queryIntentActivities(intent, 0).iterator();
+
+
+        while (iterator.hasNext()) {
+
+            names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
+        }
+
+        Logger.d("names size " + names.size());
 
         return names;
     }

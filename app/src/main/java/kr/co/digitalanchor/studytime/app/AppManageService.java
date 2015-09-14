@@ -231,6 +231,9 @@ public class AppManageService extends Service {
             } else if (listInDevice.containsKey(packageInfo.packageName)) {
 
                 continue;
+            } else if (isDialer(packageInfo.packageName)) {
+
+                continue;
             }
 
             if (!listInDB.containsKey(packageInfo.packageName)) {
@@ -468,6 +471,44 @@ public class AppManageService extends Service {
         Intent intent = new Intent("android.intent.action.MAIN", null);
 
         intent.addCategory("android.intent.category.HOME");
+
+        Iterator iterator = manager.queryIntentActivities(intent, Intent.FLAG_ACTIVITY_NO_ANIMATION).iterator();
+
+        while (iterator.hasNext()) {
+
+            names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
+        }
+
+        return names;
+    }
+
+    private boolean isDialer(String packageName) {
+
+        ArrayList<String> names = getDialer();
+
+        for (int i = 0; ; i++) {
+
+            if (i >= names.size()) {
+
+                return false;
+            }
+
+            if (packageName.equalsIgnoreCase((String) names.get(i))) {
+
+                return true;
+            }
+        }
+    }
+
+    private ArrayList<String> getDialer() {
+
+        ArrayList<String> names = new ArrayList<>();
+
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent("android.intent.action.CALL", null);
+
+//        intent.addCategory("android.intent.category.HOME");
 
         Iterator iterator = manager.queryIntentActivities(intent, Intent.FLAG_ACTIVITY_NO_ANIMATION).iterator();
 

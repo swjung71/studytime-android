@@ -70,7 +70,6 @@ public class MonitorService extends Service {
 
         unregisterRestartAlarm();
 
-//        registerRestartAlarm();
     }
 
     /**

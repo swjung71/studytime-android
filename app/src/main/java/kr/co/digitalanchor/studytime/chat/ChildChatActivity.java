@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.chat;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -189,14 +190,19 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
                 Logger.d("onClick() + buttonSetting");
 
+                // Phone TEST
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:01032332852"));
+
+                startActivity(intent);
+
                 // GPS TEST
 //                Intent intent = new Intent(this, LocationService.class);
 //
 //                startService(intent);
 
-                AndroidUtils.hideKeyboard(mEditMessage);
-
-                showAdditionalInfo();
+//                AndroidUtils.hideKeyboard(mEditMessage);
+//
+//                showAdditionalInfo();
 
                 break;
 
