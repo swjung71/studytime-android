@@ -411,49 +411,6 @@ public class TimerTaskWork extends TimerTask {
         return names;
     }
 
-    private boolean isDialer(String packageName) {
-
-        ArrayList<String> names = getDialer();
-
-        for (int i = 0; ; i++) {
-
-            if (i >= names.size()) {
-
-                return false;
-            }
-
-            if (packageName.equalsIgnoreCase((String) names.get(i))) {
-
-                Logger.d((String) names.get(i));
-
-                return true;
-            }
-        }
-    }
-
-    private ArrayList<String> getDialer() {
-
-        ArrayList<String> names = new ArrayList<>();
-        PackageManager manager = mContext.getPackageManager();
-
-        Intent intent = new Intent("android.intent.action.NEW_OUTGOING_CALL", null);
-
-        intent.addCategory("android.intent.category.DEFAULT");
-
-        Logger.d(manager.queryIntentActivities(intent, 0).size() + " 개");
-
-        Iterator iterator = manager.queryIntentActivities(intent, 0).iterator();
-
-
-        while (iterator.hasNext()) {
-
-            names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
-        }
-
-        Logger.d("names size " + names.size());
-
-        return names;
-    }
 
     private String[] extractUrlParts(String url) {
 

@@ -152,7 +152,9 @@ private boolean flag = true;
 
             DBHelper helper = new DBHelper(getApplicationContext());
 
-            helper.initNoticeCount();
+            String id = helper.getAccountInfo().getID();
+
+            helper.initNoticeCount(id);
 
         } else if (Type == 1) {
 

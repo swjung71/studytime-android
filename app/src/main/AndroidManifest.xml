@@ -264,8 +264,8 @@
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.BATTERY_CHANGED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
             </intent-filter>
         </receiver>
         <receiver
@@ -339,6 +339,18 @@
             android:name=".location.MapActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name=".monitor.EventService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/service_config" />
+        </service>
 
     </application>
 

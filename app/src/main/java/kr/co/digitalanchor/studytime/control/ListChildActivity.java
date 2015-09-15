@@ -73,6 +73,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     View mFooter;
 
+    TextView mBadge;
+
     ChildListAdapter mAdapter;
 
     ArrayList<Child> mChildren;
@@ -110,6 +112,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         mMenu = new MenuPopup(getApplicationContext());
         mMenu.setOnClickMenuItemListener(this);
 
+        mBadge = (TextView) findViewById(R.id.badge);
+
         findViewById(R.id.buttonSendLink).setOnClickListener(this);
 
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -127,6 +131,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         mList.addFooterView(mFooter);
 
         mList.setAdapter(makeAdapter());
+
 
     }
 
@@ -150,6 +155,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         registerReceiver(registerChildReceiver, intentFilter);
 
         requestSyncData();
+
+        updateBadge();
     }
 
     @Override
@@ -546,6 +553,32 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         });
 
         addRequest(request);
+    }
+
+    private void updateBadge() {
+
+        Account account = mHelper.getAccountInfo();
+
+        int count = account.getNotice();
+
+        Logger.d(count + "개");
+
+        if (count < 1) {
+
+            mBadge.setVisibility(View.GONE);
+
+        } else if (count > 0 && count < 10) {
+
+            mBadge.setText(String.valueOf(count));
+
+            mBadge.setVisibility(View.VISIBLE);
+
+        } else {
+
+            mBadge.setText("9+");
+
+            mBadge.setVisibility(View.VISIBLE);
+        }
     }
 
     class RegisterChildReceiver extends BroadcastReceiver {

@@ -105,6 +105,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     MenuPopup mMenu;
 
+    TextView mBadge;
+
     DBHelper mHelper;
 
     Child mChild;
@@ -143,6 +145,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         mSlideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 
         mSlideLayout.setPanelSlideListener(this);
+
+        mBadge = (TextView) findViewById(R.id.badge);
 
         mPanelToggleButton = (ImageView) findViewById(R.id.buttonToggle);
         mPanelToggleButton.setOnClickListener(new View.OnClickListener() {
@@ -226,6 +230,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         drawView();
 
         toggleOnOff();
+
+        updateBadge();
 
         IntentFilter filter = new IntentFilter();
 
@@ -1012,6 +1018,30 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         });
 
         addRequest(request);
+    }
+
+    private void updateBadge() {
+
+        Account account = mHelper.getAccountInfo();
+
+        int count = account.getNotice();
+
+        if (count < 1) {
+
+            mBadge.setVisibility(View.GONE);
+
+        } else if (count > 0 && count < 10) {
+
+            mBadge.setText(String.valueOf(count));
+
+            mBadge.setVisibility(View.VISIBLE);
+
+        } else {
+
+            mBadge.setText("9+");
+
+            mBadge.setVisibility(View.VISIBLE);
+        }
     }
 
     class LocationReceiver extends BroadcastReceiver {

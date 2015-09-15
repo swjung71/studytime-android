@@ -62,4 +62,6 @@
     <string name="key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx/2DmWYpE++Ukpy8NFNGBbTAv1PFhJb6wYlbZ7k0TV4MyejCh4R/w06YQzzF6ja6pBVommVrxPDuOdujtJByi3VEGlTVryfiaFON8eBiRSzyJwQfaJyOSR/j8jv7l77Fka+SCQs/shuqhMByfM4pIG72VodajQaoyjNQirDg0v7qKkmVyIwp2rec/6GXM73sERBPLQeXJ77upF9PBB4bUMVXbFyhoozzejvWjIJvu5hg/SuOqU1soulYbB52ZNFVDCxVG9PG4dh7ytzz4IGZgA+6Qc/HdEYlX+HZWT7fob96YyBSeP3d7er3z/vWuYQq0GHMgIVrOpw+pi27oRe7kQIDAQAB</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="txt_accessibility_summary">페이스북 메신저 차단, 게스트모드 전환시 앱 차단, 구글 검색창 차단, 크롬 브라우저의 시크릿모드 사용시에도 유해차단/모니터링을 하기 위해서 「접근성 > 서비스 > 스터디타임」를 활성화(켜짐) 하십시요. 보다 빈틈없는 모니터링 및 자녀보호 서비스를 가능하도록 합니다.</string>
 </resources>

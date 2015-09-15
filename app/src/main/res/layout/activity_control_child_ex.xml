@@ -179,6 +179,23 @@
             android:padding="@dimen/children_list_menu_button_padding"
             android:scaleType="fitCenter"
             android:src="@drawable/button_menu" />
+
+        <TextView
+            android:id="@+id/badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonMenu"
+            android:layout_marginBottom="-20dp"
+            android:layout_marginLeft="-25dp"
+            android:layout_toRightOf="@id/buttonMenu"
+            android:background="@drawable/img_noti"
+            android:gravity="center"
+            android:minWidth="20dp"
+            android:padding="3dp"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="10dp"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <FrameLayout

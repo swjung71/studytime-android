@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeViewClicked|typeViewFocused|typeViewTextChanged|typeWindowContentChanged|typeViewTextSelectionChanged"
+    android:accessibilityFeedbackType="feedbackAllMask"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/txt_accessibility_summary"
+    android:notificationTimeout="300"
+    android:packageNames="@null"
+    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity" />

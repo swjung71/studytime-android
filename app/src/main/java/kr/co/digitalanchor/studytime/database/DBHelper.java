@@ -207,6 +207,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_TABLE_ADULT_URL);
 
                 break;
+
+
+            case 2:
+
+
+                break;
         }
     }
 
@@ -464,7 +470,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public boolean isExcepted(String packageName) {
 
-        boolean result = false;
+        boolean result = true;
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -970,41 +976,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addNoticeCount() {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-        values.put(NEW_NOTICE, 1);
-
-        db.update(TABLE_ACCOUNT_INFO, values, null, null);
-
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
-    }
-
-    public void initNoticeCount() {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-        values.put(NEW_NOTICE, 0);
-
-        db.update(TABLE_ACCOUNT_INFO, values, null, null);
-
-        if (db != null) {
-
-            db.close();
-
-            db = null;
-        }
-    }
 
     public Account getAccountInfo() {
 
@@ -1707,6 +1678,56 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cursor = null;
 
+        }
+    }
+
+    public void initNoticeCount(String id) {
+
+        SQLiteDatabase db = null;
+
+        try {
+
+            db = getWritableDatabase();
+
+            db.execSQL("UPDATE " + TABLE_ACCOUNT_INFO + " SET " + NEW_NOTICE + " = 0 "
+                    + "WHERE " + TABLE_ACCOUNT_INFO + "." + ID + " = " + id);
+
+        } catch (Exception e) {
+
+
+        } finally {
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
+        }
+    }
+
+    public void addNewNotice(String id) {
+
+        SQLiteDatabase db = null;
+
+        try {
+
+            db = getWritableDatabase();
+
+            db.execSQL("UPDATE " + TABLE_ACCOUNT_INFO + " SET " + NEW_NOTICE + " = " + NEW_NOTICE + " + 1 "
+                    + "WHERE " + TABLE_ACCOUNT_INFO + "." + ID + " = " + id);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+        } finally {
+
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
         }
     }
 }

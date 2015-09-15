@@ -222,7 +222,7 @@ public class GCMIntentService extends IntentService {
                 time : 메시지 보내는 시간
                  */
 
-                mHelper.addNoticeCount();
+                mHelper.addNewNotice(account.getID());
 
                 sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
 
