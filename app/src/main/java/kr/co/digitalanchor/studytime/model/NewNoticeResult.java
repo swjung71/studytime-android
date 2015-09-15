@@ -1,16 +1,17 @@
 package kr.co.digitalanchor.studytime.model;
 
+/**
+ * Created by Thomas on 2015-09-15.
+ */
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by Thomas on 2015-06-25.
- */
 @Root(name = "NewNoticesResult", strict = false)
-public class NoticesResult {
+public class NewNoticeResult {
 
     @Element(name = "ResultCode", required = false)
     int resultCode;
@@ -18,8 +19,11 @@ public class NoticesResult {
     @Element(name = "ResultMessage", required = false)
     String resultMessage;
 
+    @Element(name = "hasNewNotices", required = false)
+    String hasNewNotice;
+
     @ElementList(name = "Notice", required = false, inline = true)
-    ArrayList<Notice> Notices;
+    List<Notice> notices;
 
     public int getResultCode() {
         return resultCode;
@@ -37,12 +41,19 @@ public class NoticesResult {
         this.resultMessage = resultMessage;
     }
 
-    public ArrayList<Notice> getNotices() {
-        return Notices;
+    public String getHasNewNotice() {
+        return hasNewNotice;
     }
 
-    public void setNotices(ArrayList<Notice> notices) {
-        Notices = notices;
+    public void setHasNewNotice(String hasNewNotice) {
+        this.hasNewNotice = hasNewNotice;
     }
 
+    public List<Notice> getNotices() {
+        return notices;
+    }
+
+    public void setNotices(List<Notice> notices) {
+        this.notices = notices;
+    }
 }

@@ -166,8 +166,6 @@ public class NotificationActivity extends BaseActivity {
 
             content.setText(model.getMsg());
 
-            Logger.d(model.getMsg() + " " + model.getCode() + " " + position);
-
             switch (model.getCode()) {
 
                 case "CHAT":
@@ -188,6 +186,13 @@ public class NotificationActivity extends BaseActivity {
 
                     icon.setBackgroundResource(R.drawable.icon_noti1);
                     icon.setText("공지");
+
+                    break;
+
+                case "GPSREQUEST":
+
+                    icon.setBackgroundResource(R.drawable.icon_noti4);
+                    icon.setText("위치");
 
                     break;
 

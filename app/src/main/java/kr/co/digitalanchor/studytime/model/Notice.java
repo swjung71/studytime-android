@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-06-25.
  */
-@Root(name = "Notice")
+@Root(name = "Notice", strict = false)
 public class Notice {
 
     @Element(name = "Title", required = false)
@@ -17,6 +17,9 @@ public class Notice {
 
     @Element(name = "Date", required = false)
     String date;
+
+    @Element(name = "NoticeID", required = false)
+    String noticeId;
 
     public String getContent() {
         return content;
@@ -40,5 +43,13 @@ public class Notice {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getNoticeId() {
+        return noticeId;
+    }
+
+    public void setNoticeId(String noticeId) {
+        this.noticeId = noticeId;
     }
 }

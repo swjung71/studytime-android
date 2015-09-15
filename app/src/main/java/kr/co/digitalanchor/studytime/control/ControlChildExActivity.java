@@ -1044,6 +1044,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         }
     }
 
+
     class LocationReceiver extends BroadcastReceiver {
 
         @Override

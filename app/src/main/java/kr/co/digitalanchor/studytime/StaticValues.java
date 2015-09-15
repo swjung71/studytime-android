@@ -52,4 +52,6 @@ public class StaticValues {
 
     public static final String IS_SITE_BLOCK = "isSiteBlock";
 
+    public static final String RECENT_NOTICE_ID = "recentNoticeId";
+
 }

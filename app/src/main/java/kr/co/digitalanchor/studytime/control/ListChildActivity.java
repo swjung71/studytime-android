@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -26,6 +27,7 @@ import com.igaworks.interfaces.IgawRewardItemEventListener;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -33,6 +35,9 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CoinResult;
+import kr.co.digitalanchor.studytime.model.NewNoticeResult;
+import kr.co.digitalanchor.studytime.model.Notice;
+import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.SetCoin;
@@ -43,10 +48,12 @@ import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
+import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
 import static kr.co.digitalanchor.studytime.StaticValues.REGISTER_CHILD;
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+import static kr.co.digitalanchor.studytime.model.api.HttpHelper.getNewNotice;
 
 /**
  * Created by Thomas on 2015-06-19.
@@ -96,6 +103,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         IgawCommon.setClientRewardEventListener(this);
 
         IgawAdpopcornExtension.getClientPendingRewardItems(getApplicationContext());
+
+        getNewNotice();
 
     }
 
@@ -579,6 +588,92 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
             mBadge.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void getNewNotice() {
+
+        Account account = mHelper.getAccountInfo();
+
+        ParentModel model = new ParentModel();
+
+        model.setParentId(account.getID());
+
+        SimpleXmlRequest request = HttpHelper.getNewNotice(model, new Response.Listener<NewNoticeResult>() {
+            @Override
+            public void onResponse(NewNoticeResult response) {
+
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        List<Notice> notices = response.getNotices();
+
+                        if (!response.getHasNewNotice().equals("1")) {
+
+                            return;
+                        }
+
+                        if (notices == null || notices.size() < 1) {
+
+                            return;
+                        }
+
+                        Notice notice = notices.get(0);
+
+                        int id = -1, mid = -1;
+
+                        try {
+
+                            id = Integer.parseInt(notice.getNoticeId());
+
+                        } catch (NumberFormatException e) {
+
+                            return;
+                        }
+
+                        if (id < 1) {
+
+                            return;
+                        }
+
+                        mid = STApplication.getInt(StaticValues.RECENT_NOTICE_ID, -1);
+
+                        if (id > mid) {
+
+                            STApplication.putInt(StaticValues.RECENT_NOTICE_ID, id);
+
+                            MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
+
+                            builder.title(notice.getTitle()).content(AndroidUtils.convertFromUTF8(notice.getContent()))
+                                    .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog materialDialog) {
+
+                                    materialDialog.dismiss();
+                                }
+                            });
+                        }
+
+                        break;
+
+                    default:
+
+                        handleResultCode(response.getResultCode(),
+                                response.getResultMessage());
+
+                        break;
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                handleError(error);
+            }
+        });
+
+        addRequest(request);
     }
 
     class RegisterChildReceiver extends BroadcastReceiver {

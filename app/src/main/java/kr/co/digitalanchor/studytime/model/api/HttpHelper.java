@@ -44,6 +44,7 @@ import kr.co.digitalanchor.studytime.model.GetVersion;
 import kr.co.digitalanchor.studytime.model.GoodsResult;
 import kr.co.digitalanchor.studytime.model.IconModel;
 import kr.co.digitalanchor.studytime.model.LoginModel;
+import kr.co.digitalanchor.studytime.model.NewNoticeResult;
 import kr.co.digitalanchor.studytime.model.NewPassword;
 import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
@@ -68,7 +69,7 @@ public class HttpHelper {
     /**
      * true : dev ; false : real
      */
-    public static boolean isDev = false;
+    public static boolean isDev = true;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
@@ -1518,7 +1519,7 @@ public class HttpHelper {
      * @return
      */
     public static SimpleXmlRequest getSendGPS(GPSResult model, Listener listener,
-                                                 ErrorListener errorListener) {
+                                              ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -1562,13 +1563,14 @@ public class HttpHelper {
 
     /**
      * 부모가 GPS 결과 받기
+     *
      * @param model
      * @param listener
      * @param errorListener
      * @return
      */
     public static SimpleXmlRequest getGPS(GPSRequest model, Listener listener,
-                                              ErrorListener errorListener) {
+                                          ErrorListener errorListener) {
 
         StringWriter writer = null;
 
@@ -1586,6 +1588,49 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<GPSResultParent>(getURL() + "parent/getGPS",
                     GPSResultParent.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getNewNotice(ParentModel model, Listener listener,
+                                                ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<NewNoticeResult>(getURL() + "parent/newNotices",
+                    NewNoticeResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 
