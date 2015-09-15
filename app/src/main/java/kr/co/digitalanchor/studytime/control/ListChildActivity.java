@@ -37,7 +37,6 @@ import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.NewNoticeResult;
 import kr.co.digitalanchor.studytime.model.Notice;
-import kr.co.digitalanchor.studytime.model.NoticesResult;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.SetCoin;
@@ -149,7 +148,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
 
-        Logger.d("onStart");
 
         if (registerChildReceiver == null) {
 
@@ -451,7 +449,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             item.didGiveRewardItem();
         }
 
-        Logger.d("Reward " + point + "\n igawRewardItems count " + igawRewardItems.length);
 
         requestUpdatePoint(point);
     }
@@ -459,7 +456,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
 
-        Logger.d(" b : " + b + " s : " + s + " s1 : " + s1);
     }
 
     private void requestUpdatePoint(int point) {
@@ -538,8 +534,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                     default:
 
-                        Logger.d(response.toString());
-
                         sendEmptyMessage(REQUEST_UPDATE_DATA);
 
                         dismissLoading();
@@ -553,7 +547,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Logger.e(error.toString());
 
                 sendEmptyMessage(REQUEST_UPDATE_DATA);
 
@@ -569,8 +562,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         Account account = mHelper.getAccountInfo();
 
         int count = account.getNotice();
-
-        Logger.d(count + "개");
 
         if (count < 1) {
 
@@ -628,10 +619,12 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                         } catch (NumberFormatException e) {
 
+
                             return;
                         }
 
                         if (id < 1) {
+
 
                             return;
                         }
@@ -644,14 +637,15 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                             MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
 
-                            builder.title(notice.getTitle()).content(AndroidUtils.convertFromUTF8(notice.getContent()))
+                            builder.title(AndroidUtils.convertFromUTF8(notice.getTitle()))
+                                    .content(AndroidUtils.convertFromUTF8(notice.getContent()))
                                     .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog materialDialog) {
 
                                     materialDialog.dismiss();
                                 }
-                            });
+                            }).build().show();
                         }
 
                         break;
@@ -680,8 +674,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Logger.d(intent.toString());
 
             switch (intent.getAction()) {
 

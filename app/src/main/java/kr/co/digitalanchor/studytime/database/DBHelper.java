@@ -1126,9 +1126,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 child.setNewMessageCount(cursor.getInt(4));
 
-                Logger.d("child " + child.getName() + " " + child.getChildID()
-                        + " " + child.getNewMessageCount());
-
                 children.add(child);
 
             } while (cursor.moveToNext());
