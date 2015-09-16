@@ -310,6 +310,26 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
                     Logger.e(ex.toString());
 
+                    STApplication.applicationHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            MaterialDialog.Builder builder = new MaterialDialog.Builder(IntroActivity.this);
+
+                            builder.title("알림").content("네트워크가 꺼져있습니다. 네트워크 상태를 확인하시고 앱을 다시 시작해주세요.")
+                                    .positiveText("확인")
+                                    .callback(new MaterialDialog.SimpleCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog materialDialog) {
+
+                                            STApplication.stopAllActivity();
+
+                                            materialDialog.dismiss();
+                                        }
+                                    }).build().show();
+                        }
+                    });
+
                     return "Failed";
                 }
             }

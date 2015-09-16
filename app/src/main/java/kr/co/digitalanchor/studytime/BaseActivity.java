@@ -9,7 +9,9 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
@@ -328,6 +330,22 @@ public class BaseActivity extends FragmentActivity {
         } else if (error instanceof NetworkError) {
 
             Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof NoConnectionError) {
+
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
+
+            builder.title("알림").content("네트워크가 꺼져있습니다. 네트워크 상태를 확인하시고 앱을 다시 시작해주세요.")
+                    .positiveText("확인")
+                    .callback(new MaterialDialog.SimpleCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog materialDialog) {
+
+                            STApplication.stopAllActivity();
+
+                            materialDialog.dismiss();
+                        }
+                    }).build().show();
 
         } else {
 

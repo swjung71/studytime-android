@@ -8,11 +8,16 @@ import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.utils.Base64;
+import kr.co.digitalanchor.utils.Base64DecoderException;
 
 /**
  * Created by Thomas on 2015-09-15.
  */
 public class EventService extends AccessibilityService {
+
+    private final static String facebook = "Y3BvLmpmaWxqeHl2LmJmcnE=";
+    private static String facebookD ;
 
     DBHelper mHelper;
 
@@ -23,6 +28,8 @@ public class EventService extends AccessibilityService {
 
 
         mHelper = new DBHelper(getApplicationContext());
+
+        setURL();
     }
 
     @Override
@@ -42,9 +49,7 @@ public class EventService extends AccessibilityService {
 
         String packageName = event.getPackageName().toString();
 
-        if ("com.facebook.orca".equals(packageName) && !mHelper.isExcepted(packageName)
-                && ("android.widget.FrameLayout".equals(event.getClassName())
-                || "android.view.ViewGroup".equals(event.getClassName()))) {
+        if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
 
 
 //        if ("com.facebook.orca".equals(packageName) && !mHelper.isExcepted(packageName)) {
@@ -63,6 +68,36 @@ public class EventService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
+
+    }
+
+    private static void setURL(){
+
+        facebookD="";
+
+        try {
+
+            byte[] decoded = Base64.decode(facebook);
+
+            String tmpString = new String(decoded);
+
+            Logger.i("Decoded : " + tmpString);
+
+            byte[] value = Base64.decrypt(decoded);
+
+            facebookD = new String(value);
+
+            Logger.i("Decrypt :" + facebookD);
+
+        } catch (Base64DecoderException e){
+
+            Logger.e(e.getMessage());
+
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+        }
 
     }
 }
