@@ -52,7 +52,6 @@ import kr.co.digitalanchor.utils.AndroidUtils;
 import static kr.co.digitalanchor.studytime.StaticValues.NEW_MESSAGE_ARRIVED;
 import static kr.co.digitalanchor.studytime.StaticValues.REGISTER_CHILD;
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
-import static kr.co.digitalanchor.studytime.model.api.HttpHelper.getNewNotice;
 
 /**
  * Created by Thomas on 2015-06-19.
@@ -637,8 +636,21 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
                             MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
 
+                            String content = null;
+
+                            try {
+
+                                content = AndroidUtils.convertFromUTF8(notice.getContent()).replaceAll("n", "").replaceAll("\\\\", "\n");
+
+                                Logger.d(content);
+
+                            } catch (NullPointerException e) {
+
+                                return;
+                            }
+
                             builder.title(AndroidUtils.convertFromUTF8(notice.getTitle()))
-                                    .content(AndroidUtils.convertFromUTF8(notice.getContent()))
+                                    .content(content)
                                     .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog materialDialog) {

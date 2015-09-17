@@ -268,11 +268,9 @@ private boolean flag = true;
 
             content.title = AndroidUtils.convertFromUTF8(item.getTitle());
 
-            content.content = AndroidUtils.convertFromUTF8(item.getContent());
+            content.content = AndroidUtils.convertFromUTF8(item.getContent()).replaceAll("n", "").replaceAll("\\\\", "\n");
 
             content.category = AndroidUtils.convertFromUTF8(item.getCategory());
-
-            content.content = content.content.replaceAll("\\\\n", System.getProperty("line.separator"));
 
             mContents.add(content);
         }
