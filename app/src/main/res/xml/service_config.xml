@@ -7,4 +7,4 @@
     android:description="@string/txt_accessibility_summary"
     android:notificationTimeout="300"
     android:packageNames="@null"
-    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity" />
+    android:settingsActivity="kr.co.digitalanchor.BlockActivity" />

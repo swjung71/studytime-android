@@ -3,6 +3,7 @@ package kr.co.digitalanchor.studytime.monitor;
 import android.accessibilityservice.AccessibilityService;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.orhanobut.logger.Logger;
 
@@ -17,7 +18,14 @@ import kr.co.digitalanchor.utils.Base64DecoderException;
 public class EventService extends AccessibilityService {
 
     private final static String facebook = "Y3BvLmpmaWxqeHl2LmJmcnE=";
-    private static String facebookD ;
+    private final static String chrome = "Y3BvLmVzanl3cm4ub3VmZGN2";
+    private final static String lge = "bGhn";
+
+    private static String facebookD;
+    private static String chromeD;
+    private static String lgeD;
+
+    private boolean isSame = false;
 
     DBHelper mHelper;
 
@@ -34,11 +42,11 @@ public class EventService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-
+/*
         Logger.d("package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
                 + "\nevent type " + event.getEventType());
-
+*/
 
         Account account = mHelper.getAccountInfo();
 
@@ -51,9 +59,6 @@ public class EventService extends AccessibilityService {
 
         if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
 
-
-//        if ("com.facebook.orca".equals(packageName) && !mHelper.isExcepted(packageName)) {
-
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -61,6 +66,33 @@ public class EventService extends AccessibilityService {
                     performGlobalAction(GLOBAL_ACTION_HOME);
 
                 }
+            }
+
+        } else if (chromeD.equalsIgnoreCase(packageName)) {
+
+            String url = "";
+
+            if (event.getClassName().toString().equals("android.widget.EditText")
+                    && event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
+
+
+                AccessibilityNodeInfo source = event.getSource();
+                CharSequence typedURL = source.getText();
+
+                String toString = typedURL.toString();
+
+
+                if (url.equals(toString)) {
+
+                    isSame = true;
+                    Logger.i("typeURL and url is same");
+
+                    //performGlobalAction(GLOBAL_ACTION_BACK);
+                } else {
+                    isSame = false;
+                }
+            } else if (event.getClassName().toString().equals("android.widget.ScrollView")) {
+
             }
         }
     }
@@ -71,9 +103,9 @@ public class EventService extends AccessibilityService {
 
     }
 
-    private static void setURL(){
+    private static void setURL() {
 
-        facebookD="";
+        facebookD = "";
 
         try {
 
@@ -89,7 +121,7 @@ public class EventService extends AccessibilityService {
 
             Logger.i("Decrypt :" + facebookD);
 
-        } catch (Base64DecoderException e){
+        } catch (Base64DecoderException e) {
 
             Logger.e(e.getMessage());
 

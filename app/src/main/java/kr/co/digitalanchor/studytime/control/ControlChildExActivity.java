@@ -1056,11 +1056,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 case StaticValues.SUCCESS_REQUEST_LOCATION: {
 
-
                     Bundle data = intent.getExtras();
 
                     getGPS(data.getString("receiverID"), data.getString("senderID"),
                             data.getString("requestID"), data.getString("timestamp"));
+
 
                 }
 
