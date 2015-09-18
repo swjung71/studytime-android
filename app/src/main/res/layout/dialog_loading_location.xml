@@ -73,19 +73,35 @@
         android:layout_height="wrap_content"
         android:layout_margin="14dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="50dp"
-            android:src="@drawable/img_gps1" />
+        <!--<com.industry.thomas.circleprogress.CircleProgressView
+            xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            CircleProgressView:barColor="#A65EA8"
+            CircleProgressView:barWidth="35dp"
+            CircleProgressView:contourSize="0dp"
+            CircleProgressView:maxValue="100"
+            CircleProgressView:rimColor="#D2D2D2"
+            CircleProgressView:rimWidth="35dp"
+            CircleProgressView:seekMode="true"
+            CircleProgressView:textColor="#A65EA8"
+            CircleProgressView:unit="개"
+            CircleProgressView:unitColor="#009688" />-->
+        <!--
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingTop="50dp"
+                    android:src="@drawable/img_gps1" />
 
-        <ImageView
-            android:id="@+id/blink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/img_gps2" />
+                <ImageView
+                    android:id="@+id/blink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/img_gps2" />-->
 
 
     </FrameLayout>

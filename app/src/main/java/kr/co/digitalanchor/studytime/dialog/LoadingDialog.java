@@ -36,21 +36,21 @@ public class LoadingDialog extends Dialog {
 
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        image = (ImageView) findViewById(R.id.blink);
-        animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
+//        image = (ImageView) findViewById(R.id.blink);
+//        animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
     }
 
     @Override
     public void show() {
         super.show();
 
-        image.startAnimation(animation);
+//        image.startAnimation(animation);
     }
 
     @Override
     public void dismiss() {
         super.dismiss();
 
-        image.clearAnimation();
+//        image.clearAnimation();
     }
 }
