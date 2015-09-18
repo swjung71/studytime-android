@@ -73,9 +73,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     final int REQUEST_CHILD_LOCATION = 50004;
 
-    final long MILLIS_IN_FUTURE = 40 * 1000;
-
-    final long COUNTDOWN_IN_INTERVAL = 1000;
+    final int COIN_REQUEST_LOCATION = 3;
 
     SlidingUpPanelLayout mSlideLayout;
 
@@ -350,10 +348,29 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                 // MAP REQUEST TEST
                 // showMapView(37.5071957, 127.0361441);
 
-                IgawAdbrix.retention("requestChildLocation");
+                Account account = mHelper.getAccountInfo();
 
-                // LOCATION REQUEST TEST
-                sendEmptyMessage(REQUEST_CHILD_LOCATION);
+//                if (account.getCoin() < COIN_REQUEST_LOCATION) {
+//
+//                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
+//
+//                    builder.content("코인이 부족합니다.\n자녀의 위치를 확인하기 위해서는 " +
+//                            COIN_REQUEST_LOCATION + " 코인이 필요합니다.").positiveText("확인")
+//                            .callback(new MaterialDialog.SimpleCallback() {
+//                                @Override
+//                                public void onPositive(MaterialDialog materialDialog) {
+//
+//                                    materialDialog.dismiss();
+//                                }
+//                            }).build().show();
+//
+//                } else {
+
+                    IgawAdbrix.retention("requestChildLocation");
+
+                    // LOCATION REQUEST TEST
+                    sendEmptyMessage(REQUEST_CHILD_LOCATION);
+//                }
 
                 break;
 
@@ -625,10 +642,14 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         if (mTimer == null) {
 
-            mTimer = new CountDownTimer(MILLIS_IN_FUTURE, COUNTDOWN_IN_INTERVAL) {
+            mTimer = new CountDownTimer(StaticValues.MILLIS_IN_FUTURE, StaticValues.COUNTDOWN_IN_INTERVAL) {
                 @Override
                 public void onTick(long millisUntilFinished) {
 
+                    if (mDialog != null && mDialog.isShowing()) {
+
+                        mDialog.onTick(millisUntilFinished);
+                    }
                 }
 
                 @Override
@@ -701,7 +722,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     }
                 });
 
-        addRequest(request);
+//        addRequest(request);
     }
 
     private void requestOnOff() {
@@ -1056,12 +1077,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 case StaticValues.SUCCESS_REQUEST_LOCATION: {
 
+
                     Bundle data = intent.getExtras();
 
                     getGPS(data.getString("receiverID"), data.getString("senderID"),
                             data.getString("requestID"), data.getString("timestamp"));
-
-
                 }
 
                 break;

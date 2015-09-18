@@ -54,4 +54,8 @@ public class StaticValues {
 
     public static final String RECENT_NOTICE_ID = "recentNoticeId";
 
+    public static final long MILLIS_IN_FUTURE = 40 * 1000;
+
+    public static final long COUNTDOWN_IN_INTERVAL = 1000;
+
 }

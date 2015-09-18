@@ -163,5 +163,6 @@
     <orderEntry type="library" exported="" name="IgawAdpopcorn_v3.5.2a" level="project" />
     <orderEntry type="library" exported="" name="logger-1.10" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.3.6" level="project" />
+    <orderEntry type="module" module-name="circleprogressview" exported="" />
   </component>
 </module>
