@@ -45,12 +45,12 @@ public class LoadingDialog extends Dialog {
         progressView.setUnit("초");
         progressView.setShowUnit(true);
 
-        progressView.setTextSize(20); // text size set, auto text size off
-        progressView.setUnitSize(15); // if i set the text size i also have to set the unit size
+        progressView.setTextSize(16); // text size set, auto text size off
+        progressView.setUnitSize(9); // if i set the text size i also have to set the unit size
         progressView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
         //if you want the calculated text sizes to be bigger/smaller you can do so via
-        progressView.setUnitScale(0.9f);
-        progressView.setTextScale(0.9f);
+        progressView.setUnitScale(0.6f);
+        progressView.setTextScale(0.6f);
 
         progressView.setTextMode(TextMode.VALUE);
 

@@ -350,27 +350,27 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 Account account = mHelper.getAccountInfo();
 
-//                if (account.getCoin() < COIN_REQUEST_LOCATION) {
-//
-//                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
-//
-//                    builder.content("코인이 부족합니다.\n자녀의 위치를 확인하기 위해서는 " +
-//                            COIN_REQUEST_LOCATION + " 코인이 필요합니다.").positiveText("확인")
-//                            .callback(new MaterialDialog.SimpleCallback() {
-//                                @Override
-//                                public void onPositive(MaterialDialog materialDialog) {
-//
-//                                    materialDialog.dismiss();
-//                                }
-//                            }).build().show();
-//
-//                } else {
+                if (account.getCoin() < COIN_REQUEST_LOCATION) {
+
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
+
+                    builder.content("코인이 부족합니다.\n자녀의 위치를 확인하기 위해서는 " +
+                            COIN_REQUEST_LOCATION + " 코인이 필요합니다.").positiveText("확인")
+                            .callback(new MaterialDialog.SimpleCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog materialDialog) {
+
+                                    materialDialog.dismiss();
+                                }
+                            }).build().show();
+
+                } else {
 
                     IgawAdbrix.retention("requestChildLocation");
 
                     // LOCATION REQUEST TEST
                     sendEmptyMessage(REQUEST_CHILD_LOCATION);
-//                }
+                }
 
                 break;
 
@@ -722,7 +722,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     }
                 });
 
-//        addRequest(request);
+        addRequest(request);
     }
 
     private void requestOnOff() {
@@ -1027,6 +1027,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                     default:
 
+                        handleResultCode(response.getResultCode(), response.getResultMessage());
+
                         break;
                 }
 
@@ -1035,6 +1037,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                handleError(error);
             }
         });
 

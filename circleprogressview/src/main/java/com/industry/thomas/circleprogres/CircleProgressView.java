@@ -1248,8 +1248,7 @@ public class CircleProgressView extends View {
                 }
 
                 //move unite to top of text
-//                float dy = mActualTextBounds.top - mUnitBounds.top;
-                float dy = mActualTextBounds.top - mUnitBounds.bottom;
+                float dy = mActualTextBounds.top - mUnitBounds.top;
 
                 mUnitBounds.offset(0, dy);
 

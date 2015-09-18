@@ -87,8 +87,8 @@
             CircleProgressView:rimWidth="20dp"
             CircleProgressView:seekMode="false"
             CircleProgressView:unit="초"
-            CircleProgressView:textsColor="#009688"
-            CircleProgressView:unitColor="#009688" />
+            CircleProgressView:textsColor="#A65EA8"
+            CircleProgressView:unitColor="#A65EA8" />
         <!--
                 <ImageView
                     android:layout_width="wrap_content"
