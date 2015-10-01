@@ -48,53 +48,53 @@ public class EventService extends AccessibilityService {
                 + "\nevent type " + event.getEventType());
 */
 
-        Account account = mHelper.getAccountInfo();
-
-        if (account.getIsChild() != 0 || mHelper.getOnOff() != 1) {
-
-            return;
-        }
-
-        String packageName = event.getPackageName().toString();
-
-        if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
-
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
-                    performGlobalAction(GLOBAL_ACTION_HOME);
-
-                }
-            }
-
-        } else if (chromeD.equalsIgnoreCase(packageName)) {
-
-            String url = "";
-
-            if (event.getClassName().toString().equals("android.widget.EditText")
-                    && event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
-
-
-                AccessibilityNodeInfo source = event.getSource();
-                CharSequence typedURL = source.getText();
-
-                String toString = typedURL.toString();
-
-
-                if (url.equals(toString)) {
-
-                    isSame = true;
-                    Logger.i("typeURL and url is same");
-
-                    //performGlobalAction(GLOBAL_ACTION_BACK);
-                } else {
-                    isSame = false;
-                }
-            } else if (event.getClassName().toString().equals("android.widget.ScrollView")) {
-
-            }
-        }
+//        Account account = mHelper.getAccountInfo();
+//
+//        if (account.getIsChild() != 0 || mHelper.getOnOff() != 1) {
+//
+//            return;
+//        }
+//
+//        String packageName = event.getPackageName().toString();
+//
+//        if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
+//
+//            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//
+//                    performGlobalAction(GLOBAL_ACTION_HOME);
+//
+//                }
+//            }
+//
+//        } else if (chromeD.equalsIgnoreCase(packageName)) {
+//
+//            String url = "";
+//
+//            if (event.getClassName().toString().equals("android.widget.EditText")
+//                    && event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
+//
+//
+//                AccessibilityNodeInfo source = event.getSource();
+//                CharSequence typedURL = source.getText();
+//
+//                String toString = typedURL.toString();
+//
+//
+//                if (url.equals(toString)) {
+//
+//                    isSame = true;
+//                    Logger.i("typeURL and url is same");
+//
+//                    //performGlobalAction(GLOBAL_ACTION_BACK);
+//                } else {
+//                    isSame = false;
+//                }
+//            } else if (event.getClassName().toString().equals("android.widget.ScrollView")) {
+//
+//            }
+//        }
     }
 
 

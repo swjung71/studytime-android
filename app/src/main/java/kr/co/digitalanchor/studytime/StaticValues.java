@@ -23,6 +23,8 @@ public class StaticValues {
 
     public static final String SHOW_ADMIN = "showAdmin";
 
+    public static final String SHOW_SETTING = "showSettings";
+
     public static final String NEW_MESSAGE_ARRIVED = "NEW_MESSAGE_ARRIVED";
 
     public static final String NEW_NOTICE_ARRIVED = "NEW_NOTICE_ARRIVED";
