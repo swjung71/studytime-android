@@ -130,9 +130,9 @@ public class EventService extends AccessibilityService {
                 }
 
 
-
-            } else if (event.getClassName().toString().equals("android.widget.ScrollView")
-                    && event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+            } else if ((event.getClassName().toString().equals("android.widget.ScrollView")
+                    || event.getClassName().toString().equals("android.view.ViewGroup"))
+                    && (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)) {
 
                 if (isSame) {
 
