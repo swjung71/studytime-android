@@ -489,7 +489,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                     result = (cursor.getInt(0) == 0) ? false : true;
 
-                    Logger.d(packageName + " " + result);
+//                    Logger.d(packageName + " " + result);
 
                 } while (cursor.moveToNext());
             }

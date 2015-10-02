@@ -90,7 +90,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         if (!STApplication.isAccessibilityEnabled() && !isSettings()) {
 
-            Logger.d("Disabled");
+//            Logger.d("Disabled");
 
             showBlockSettingView();
 
@@ -98,7 +98,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         } else {
 
-            Logger.d("Enabled");
+//            Logger.d("Enabled");
 
             hideBlockSettingView();
         }
@@ -163,7 +163,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
             packageName = info.getPackageName();
 
-            Logger.d(info.getClassName());
+//            Logger.d(info.getClassName());
 
             isAdmin = info.getClassName().equalsIgnoreCase("com.android.settings.DeviceAdminAdd");
 
@@ -239,7 +239,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
             }
         }
 
-        Logger.d(packageName);
+//        Logger.d(packageName);
 
         if (context.getPackageName().equals(packageName)) {
 
@@ -255,7 +255,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
                 return false;
             }
 
-            Logger.d(names.get(i));
+//            Logger.d(names.get(i));
 
             if (packageName.equalsIgnoreCase((String) names.get(i))) {
 
@@ -282,7 +282,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
             names.add(((ResolveInfo) iterator.next()).activityInfo.packageName);
         }
 
-        Logger.d(names.size() + "");
+//        Logger.d(names.size() + "");
 
         return names;
     }

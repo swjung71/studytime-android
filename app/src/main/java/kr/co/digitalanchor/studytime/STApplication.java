@@ -642,23 +642,23 @@ public class STApplication extends MultiDexApplication {
             accessibilityEnabled = Settings.Secure.getInt(applicationContext.getContentResolver(),
                     android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
 
-            Logger.d("Accessibility: " + accessibilityEnabled);
+//            Logger.d("Accessibility: " + accessibilityEnabled);
 
         } catch (Settings.SettingNotFoundException e) {
-            Logger.d("Error finding setting, default accessibility to not found: " + e.getMessage());
+//            Logger.d("Error finding setting, default accessibility to not found: " + e.getMessage());
         }
 
         TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
 
         if (accessibilityEnabled == 1) {
 
-            Logger.d("***Accessibility IS ENABLED***: ");
+//            Logger.d("***Accessibility IS ENABLED***: ");
 
 
             String settingValue = Settings.Secure.getString(applicationContext.getContentResolver(),
                     Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
 
-            Logger.d("Setting: " + settingValue);
+//            Logger.d("Setting: " + settingValue);
 
             if (settingValue != null) {
 
@@ -669,22 +669,22 @@ public class STApplication extends MultiDexApplication {
 
                     String accessabilityService = splitter.next();
 
-                    Logger.d("Setting: " + accessabilityService);
+//                    Logger.d("Setting: " + accessabilityService);
 
                     if (accessabilityService.equalsIgnoreCase("kr.co.digitalanchor.studytime/kr.co.digitalanchor.studytime.monitor.EventService")) {
 
-                        Logger.d("We've found the correct setting - accessibility is switched on!");
+//                        Logger.d("We've found the correct setting - accessibility is switched on!");
 
                         return true;
                     }
                 }
             }
 
-            Logger.d("***END***");
+//            Logger.d("***END***");
 
         } else {
 
-            Logger.d("***ACCESSIBILIY IS DISABLED***");
+//            Logger.d("***ACCESSIBILIY IS DISABLED***");
         }
 
         return accessibilityFound;

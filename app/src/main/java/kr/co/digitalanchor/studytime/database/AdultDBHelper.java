@@ -80,6 +80,8 @@ public class AdultDBHelper extends SQLiteOpenHelper {
             directory = "/";
         }
 
+        Logger.d("hash " + hash + ", directory " + directory);
+
         Cursor cursor = null;
 
         try {
