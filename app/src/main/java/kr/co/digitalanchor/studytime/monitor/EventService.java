@@ -144,6 +144,10 @@ public class EventService extends AccessibilityService {
 
                     isSame = false;
                 }
+
+            } else {
+
+
             }
         }
     }
