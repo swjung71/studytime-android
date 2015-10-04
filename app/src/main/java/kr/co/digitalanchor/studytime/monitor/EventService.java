@@ -1,6 +1,10 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
@@ -12,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -76,6 +81,8 @@ public class EventService extends AccessibilityService {
 
                     performGlobalAction(GLOBAL_ACTION_HOME);
 
+                    killApplication(facebookD);
+
                 }
             }
 
@@ -115,12 +122,6 @@ public class EventService extends AccessibilityService {
 
                 if (mAdultDBHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
 
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//
-//                        performGlobalAction(GLOBAL_ACTION_BACK);
-//
-//                    }
-
                     isSame = true;
                     Logger.i("typeURL and url is same");
 
@@ -145,7 +146,7 @@ public class EventService extends AccessibilityService {
                     isSame = false;
                 }
 
-            } else {
+            } else  {
 
 
             }
@@ -276,5 +277,28 @@ public class EventService extends AccessibilityService {
         }
 
         return data;
+    }
+
+    private void killApplication(String packageName) {
+
+        Context context = getApplicationContext();
+
+        Intent block = new Intent(context, BlockActivity.class);
+
+        block.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(block);
+
+        Intent main = new Intent(Intent.ACTION_MAIN);
+
+        main.addCategory(Intent.CATEGORY_HOME);
+        main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent intent = PendingIntent.getActivity(context, 0, main, PendingIntent.FLAG_ONE_SHOT);
+
+        final AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
+
     }
 }
