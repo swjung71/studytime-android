@@ -7,14 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.AdultDBHelper;
@@ -81,7 +86,7 @@ public class EventService extends AccessibilityService {
 
                     performGlobalAction(GLOBAL_ACTION_HOME);
 
-                    killApplication(facebookD);
+                    showBlockToast();
 
                 }
             }
@@ -146,7 +151,7 @@ public class EventService extends AccessibilityService {
                     isSame = false;
                 }
 
-            } else  {
+            } else {
 
 
             }
@@ -279,26 +284,16 @@ public class EventService extends AccessibilityService {
         return data;
     }
 
-    private void killApplication(String packageName) {
+    private void showBlockToast() {
 
-        Context context = getApplicationContext();
+        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        View layout = inflater.inflate(R.layout.activity_block, null);
 
-        Intent block = new Intent(context, BlockActivity.class);
-
-        block.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        context.startActivity(block);
-
-        Intent main = new Intent(Intent.ACTION_MAIN);
-
-        main.addCategory(Intent.CATEGORY_HOME);
-        main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        PendingIntent intent = PendingIntent.getActivity(context, 0, main, PendingIntent.FLAG_ONE_SHOT);
-
-        final AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
-
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setMargin(0.0f, 0.0f);
+        toast.setView(layout);
+        toast.show();
     }
 }

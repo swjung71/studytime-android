@@ -11,8 +11,6 @@ import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.orhanobut.logger.Logger;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -241,7 +239,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
 //        Logger.d(packageName);
 
-        if (context.getPackageName().equals(packageName)) {
+        if (context.getPackageName().equals(packageName) || packageName.equals("android")) {
 
             return true;
         }
