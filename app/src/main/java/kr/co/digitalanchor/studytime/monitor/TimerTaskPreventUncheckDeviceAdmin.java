@@ -64,11 +64,12 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
 
+
+
     }
 
     @Override
     public void run() {
-
 
         if (helper.isAllow() != 1)
             return;
@@ -139,6 +140,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
                     blockView = new BlockPasswordLayout(context);
 
                     windowManager.addView(blockView, layoutParams);
+
                 }
             });
         }
@@ -337,5 +339,4 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         }
     }
-
 }

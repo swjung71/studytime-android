@@ -9,9 +9,12 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -278,5 +281,6 @@ public class AndroidUtils {
 
         return false;
     }
+
 
 }

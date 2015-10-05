@@ -16,20 +16,20 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/block_password_logo_height"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/block_password_logo_margin_top"
                 android:scaleType="fitCenter"
-                android:src="@drawable/login_logo" />
+                android:src="@drawable/img1_c" />
 
             <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/text"
                 android:layout_width="@dimen/login_parent_content_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
-                android:textSize="@dimen/block_password_button_text_size"
-                android:textColor="@color/bgColorType02"
-                android:text="※ 스마트폰으로 제어하기 위해선 접근성기능이 필요합니다."/>
+                android:layout_marginTop="@dimen/login_parent_edit_box_padding"
+                android:textSize="@dimen/login_parent_password_box_margin_top"
+                android:textColor="@color/bgColorType02"/>
 
 
             <kr.co.digitalanchor.studytime.view.FontButton

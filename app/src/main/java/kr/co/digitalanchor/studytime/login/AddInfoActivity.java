@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +56,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
     private final int REQUEST_ADD_INFO = 50001;
     private final int REQUEST_UPLOAD_PACKAGES = 50002;
     private final int COMPLETE_ADD_INFO = 50003;
+
+    private final int ACTIVATION_ACCESS_REQUEST = 40002;
 
     private final int ACTIVATION_REQUEST = 40003;
 
@@ -455,6 +458,13 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         startActivityForResult(intent, ACTIVATION_REQUEST);
 
 //        startActivityForResult(intent, REQUEST_UPLOAD_PACKAGES);
+    }
+
+    private void showSetting() {
+
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**

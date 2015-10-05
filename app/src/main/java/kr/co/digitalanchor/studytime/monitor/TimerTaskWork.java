@@ -13,6 +13,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Browser;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
@@ -24,6 +28,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
@@ -121,7 +126,9 @@ public class TimerTaskWork extends TimerTask {
 
             } else if (!mHelper.isExcepted(currentPackage)) {
 
-                killApplication(currentPackage);
+//                killApplication(currentPackage);
+
+                blockApplication();
 
                 return;
             }
@@ -210,6 +217,37 @@ public class TimerTaskWork extends TimerTask {
             return null;
 
         }
+    }
+
+    private void blockApplication() {
+
+        STApplication.applicationHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View layout = inflater.inflate(R.layout.activity_block, null);
+
+                Toast toast = new Toast(mContext);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setMargin(0.0f, 0.0f);
+                toast.setView(layout);
+                toast.show();
+
+            }
+        });
+
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.MAIN");
+        intent.addCategory("android.intent.category.HOME");
+        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                | Intent.FLAG_ACTIVITY_FORWARD_RESULT
+                | Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        mContext.startActivity(intent);
     }
 
     private void killApplication(String packageName) {

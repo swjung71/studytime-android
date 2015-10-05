@@ -291,7 +291,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 if (mChild.getIsOFF() == 0) {
 
-                    if (account.getCoin() > 0) {
+                    if (HttpHelper.isDev) {
+
+                        requestOnOff();
+
+                    } else if (account.getCoin() > 0) {
 
                         requestOnOff();
 
@@ -739,7 +743,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         model.setChildID(mChild.getChildID());
         model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
         model.setName(account.getName());
-        model.setCoin(account.getCoin() - 1);
+        model.setCoin(HttpHelper.isDev ? 10 : account.getCoin() - 1);
 
         SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
                 new Response.Listener<CoinResult>() {
