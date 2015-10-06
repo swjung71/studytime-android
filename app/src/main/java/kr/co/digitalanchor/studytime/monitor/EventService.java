@@ -64,9 +64,9 @@ public class EventService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-        /*Logger.d("package name " + event.getPackageName().toString()
-                + "\nclass name " + event.getClassName().toString()
-                + "\nevent type " + event.getEventType());*/
+//        Logger.d("package name " + event.getPackageName().toString()
+//                + "\nclass name " + event.getClassName().toString()
+//                + "\nevent type " + event.getEventType());
 
 
         Account account = mHelper.getAccountInfo();
@@ -80,6 +80,7 @@ public class EventService extends AccessibilityService {
 
         if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
 
+            Logger.d("event " + event.getEventType());
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

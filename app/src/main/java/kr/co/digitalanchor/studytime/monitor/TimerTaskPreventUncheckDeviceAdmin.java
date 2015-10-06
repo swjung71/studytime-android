@@ -60,10 +60,9 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
         layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.TYPE_PRIORITY_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
-
 
 
     }
@@ -92,8 +91,6 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 //            Logger.d("Disabled");
 
             showBlockSettingView();
-
-            return;
 
         } else {
 
@@ -209,6 +206,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
                     windowManager.removeView(settingView);
 
                     settingView = null;
+
                 }
             });
         }
@@ -241,27 +239,32 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
 //        Logger.d(packageName);
 
-        if (context.getPackageName().equals(packageName) || packageName.equals("android")) {
+        if ((System.currentTimeMillis() - STApplication.getLong(StaticValues.SHOW_SETTING, 0L) < 15000)
+                || context.getPackageName().equals(packageName)/* || packageName.equals("android"))*/) {
 
             return true;
+
+        } else {
+
+            return false;
         }
 
-        ArrayList<String> names = getSettingsNames();
-
-        for (int i = 0; ; i++) {
-
-            if (i >= names.size()) {
-
-                return false;
-            }
-
-//            Logger.d(names.get(i));
-
-            if (packageName.equalsIgnoreCase((String) names.get(i))) {
-
-                return true;
-            }
-        }
+//        ArrayList<String> names = getSettingsNames();
+//
+//        for (int i = 0; ; i++) {
+//
+//            if (i >= names.size()) {
+//
+//                return false;
+//            }
+//
+////            Logger.d(names.get(i));
+//
+//            if (packageName.equalsIgnoreCase((String) names.get(i))) {
+//
+//                return true;
+//            }
+//        }
     }
 
     private ArrayList<String> getSettingsNames() {

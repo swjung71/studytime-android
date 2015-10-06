@@ -88,7 +88,6 @@ public class TimerTaskWork extends TimerTask {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
 
-
             // kill
             if (TextUtils.isEmpty(currentPackage)
                     || isLauncher(currentPackage)

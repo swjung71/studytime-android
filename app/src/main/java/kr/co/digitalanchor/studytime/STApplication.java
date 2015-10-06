@@ -393,6 +393,24 @@ public class STApplication extends MultiDexApplication {
         return editor.commit();
     }
 
+    public static long getLong(String key, long defaultValue) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        return pref.getLong(key, defaultValue);
+    }
+
+    public static boolean putLong(String key, long value) {
+
+        SharedPreferences pref = applicationContext.getSharedPreferences(PREF, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putLong(key, value);
+
+        return editor.commit();
+    }
+
 
     public static boolean getBoolean(String key, boolean defaultValue) {
 

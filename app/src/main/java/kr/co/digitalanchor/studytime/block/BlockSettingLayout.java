@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
 /**
@@ -74,6 +76,8 @@ public class BlockSettingLayout extends FrameLayout implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.buttonSettings:
+
+                STApplication.putLong(StaticValues.SHOW_SETTING, System.currentTimeMillis());
 
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
