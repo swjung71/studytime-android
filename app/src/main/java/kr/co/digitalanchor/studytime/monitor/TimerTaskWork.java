@@ -84,6 +84,9 @@ public class TimerTaskWork extends TimerTask {
             }
         }
 
+//        if (!currentPackage.equals("kr.co.digitalanchor.studytime"))
+//            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
+
         if (mHelper.getOnOff() == 1) {
 
 //            Logger.d("pk [" + currentPackage + "]  version = " + Build.VERSION.SDK_INT);
@@ -227,29 +230,46 @@ public class TimerTaskWork extends TimerTask {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View layout = inflater.inflate(R.layout.activity_block, null);
 
-                Toast toast = new Toast(mContext);
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.setDuration(Toast.LENGTH_SHORT);
-                toast.setMargin(0.0f, 0.0f);
-                toast.setView(layout);
-                toast.show();
+                if (STApplication.toast == null)
+                    STApplication.toast = new Toast(mContext);
+
+                STApplication.toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                STApplication.toast.setDuration(Toast.LENGTH_SHORT);
+                STApplication.toast.setMargin(0.0f, 0.0f);
+                STApplication.toast.setView(layout);
+                STApplication.toast.show();
 
             }
         });
 
         Intent intent = new Intent();
-        intent.setAction("android.intent.action.MAIN");
-        intent.addCategory("android.intent.category.HOME");
-        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                | Intent.FLAG_ACTIVITY_FORWARD_RESULT
-                | Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+//                | Intent.FLAG_ACTIVITY_FORWARD_RESULT
+//                | Intent.FLAG_ACTIVITY_NEW_TASK
+//                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+//                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         mContext.startActivity(intent);
     }
 
     private void killApplication(String packageName) {
+
+        Intent home = new Intent();
+        home.setAction(Intent.ACTION_MAIN);
+        home.addCategory(Intent.CATEGORY_HOME);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+//                | Intent.FLAG_ACTIVITY_FORWARD_RESULT
+//                | Intent.FLAG_ACTIVITY_NEW_TASK
+//                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+//                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        mContext.startActivity(home);
 
         Intent block = new Intent(mContext, BlockActivity.class);
 
@@ -269,6 +289,7 @@ public class TimerTaskWork extends TimerTask {
         final AlarmManager alarm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
+
 
     }
 

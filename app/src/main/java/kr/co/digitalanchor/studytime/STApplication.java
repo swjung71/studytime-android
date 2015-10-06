@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
 import com.captechconsulting.captechbuzz.model.images.RequestManager;
@@ -61,6 +62,8 @@ public class STApplication extends MultiDexApplication {
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
+
+    public static Toast toast;
 
     private static final int DEFAULT_CACHE_SIZE = 10485760;
     private static final long DEFAULT_MAX_AGE = 60L;
