@@ -96,7 +96,7 @@
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-            android:name=".monitor.MonitorService"
+            android:name=".monitor.B"
             android:enabled="true"
             android:exported="false" />
         <service

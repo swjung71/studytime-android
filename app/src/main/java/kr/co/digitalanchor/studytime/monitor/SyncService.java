@@ -88,7 +88,7 @@ public class SyncService extends Service {
     @Override
     public void onDestroy() {
 
-        startService(new Intent(getApplicationContext(), MonitorService.class));
+        startService(new Intent(getApplicationContext(), B.class));
 
         super.onDestroy();
 

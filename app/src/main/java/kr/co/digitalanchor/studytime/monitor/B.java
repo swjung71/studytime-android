@@ -21,7 +21,7 @@ import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
-public class MonitorService extends Service {
+public class B extends Service {
 
     private final int notificationId = Integer.MAX_VALUE;
 
@@ -137,9 +137,9 @@ public class MonitorService extends Service {
 
     private void registerRestartAlarm() {
 
-        Intent intent = new Intent(MonitorService.this, AllIntentReceiver.class);
+        Intent intent = new Intent(B.this, AllIntentReceiver.class);
         intent.setAction("kr.co.digitalanchor.action.SERVICE_START");
-        PendingIntent sender = PendingIntent.getBroadcast(MonitorService.this, 0, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(B.this, 0, intent, 0);
 
         long firstTime = SystemClock.elapsedRealtime();
         firstTime += REBOOT_DELAY_TIMER;
@@ -150,9 +150,9 @@ public class MonitorService extends Service {
 
     private void unregisterRestartAlarm() {
 
-        Intent intent = new Intent(MonitorService.this, AllIntentReceiver.class);
+        Intent intent = new Intent(B.this, AllIntentReceiver.class);
         intent.setAction("kr.co.digitalanchor.action.SERVICE_START");
-        PendingIntent sender = PendingIntent.getBroadcast(MonitorService.this, 0, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(B.this, 0, intent, 0);
 
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.cancel(sender);

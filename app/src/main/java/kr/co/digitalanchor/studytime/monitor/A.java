@@ -104,16 +104,12 @@ public class A extends AccessibilityService {
 
                 if (data == null || data.length < 1) {
 
-                    Logger.e("data is null");
-
                     return;
                 }
 
                 if (mAdultDBHelper.isAdultURL(new MD5ForAdultURL().toDigest(data[0]), data[1])) {
 
                     isSame = true;
-                    Logger.i("typeURL and url is same");
-
 
                 } else {
                     isSame = false;
@@ -169,13 +165,9 @@ public class A extends AccessibilityService {
 
             String tmpString = new String(decoded);
 
-            Logger.i("Decoded : " + tmpString);
-
             byte[] value = Base64.decrypt(decoded);
 
             facebookD = new String(value);
-
-            Logger.i("Decrypt :" + facebookD);
 
         } catch (Base64DecoderException e) {
 
@@ -195,13 +187,11 @@ public class A extends AccessibilityService {
 
             String tmpString = new String(decoded);
 
-            Logger.i("Decoded : " + tmpString);
 
             byte[] value = Base64.decrypt(decoded);
 
             chromeD = new String(value);
 
-            Logger.i("Decrypt :" + chromeD);
 
         } catch (Base64DecoderException e) {
 
@@ -221,13 +211,10 @@ public class A extends AccessibilityService {
 
             String tmpString = new String(decoded);
 
-            Logger.i("Decoded : " + tmpString);
 
             byte[] value = Base64.decrypt(decoded);
 
             lgeD = new String(value);
-
-            Logger.i("Decrypt :" + lgeD);
 
         } catch (Base64DecoderException e) {
 

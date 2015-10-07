@@ -1,14 +1,10 @@
 package kr.co.digitalanchor.studytime.monitor;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import com.orhanobut.logger.Logger;
-
-import java.util.Calendar;
 
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -36,7 +32,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
             if (account.getIsChild() == 0) {
 
-                context.startService(new Intent(context, MonitorService.class));
+                context.startService(new Intent(context, B.class));
 /*
                 Intent MonitorServiceIntent = new Intent(context, MonitorService.class);
 

@@ -22,7 +22,7 @@ public class AllIntentReceiver extends BroadcastReceiver {
 
         if (account.getIsChild() == 0) {
 
-            context.startService(new Intent(STApplication.applicationContext, MonitorService.class));
+            context.startService(new Intent(STApplication.applicationContext, B.class));
         }
     }
 }
