@@ -130,7 +130,7 @@ public class TimerTaskWork extends TimerTask {
 
 //                killApplication(currentPackage);
 
-                blockApplication();
+                blockApplication(currentPackage);
 
                 return;
             }
@@ -221,7 +221,7 @@ public class TimerTaskWork extends TimerTask {
         }
     }
 
-    private void blockApplication() {
+    private void blockApplication(String packageName) {
 
         STApplication.applicationHandler.post(new Runnable() {
             @Override
@@ -254,6 +254,18 @@ public class TimerTaskWork extends TimerTask {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         mContext.startActivity(intent);
+
+        intent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
+
+        mContext.startActivity(intent);
+
+        intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        mContext.startActivity(intent);
+
     }
 
     private void killApplication(String packageName) {
@@ -289,8 +301,6 @@ public class TimerTaskWork extends TimerTask {
         final AlarmManager alarm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         alarm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, intent);
-
-
     }
 
     private String getRecentUrl(String currentPackage) {

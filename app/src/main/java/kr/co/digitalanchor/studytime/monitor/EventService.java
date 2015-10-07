@@ -1,10 +1,6 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.accessibilityservice.AccessibilityService;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -21,7 +17,6 @@ import java.util.regex.Pattern;
 
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
-import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -64,35 +59,21 @@ public class EventService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-//        Logger.d("package name " + event.getPackageName().toString()
-//                + "\nclass name " + event.getClassName().toString()
-//                + "\nevent type " + event.getEventType());
+        Logger.d("package name " + event.getPackageName().toString()
+                + "\nclass name " + event.getClassName().toString()
+                + "\nevent type " + event.getEventType());
 
 
         Account account = mHelper.getAccountInfo();
 
-        if (account.getIsChild() != 0 || mHelper.getOnOff() != 1) {
+        if (account.getIsChild() != 0) {
 
             return;
         }
 
         String packageName = event.getPackageName().toString();
 
-        if (facebookD.equals(packageName) && !mHelper.isExcepted(packageName)) {
-
-            Logger.d("event " + event.getEventType());
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
-                    performGlobalAction(GLOBAL_ACTION_HOME);
-
-                    showBlockToast();
-
-                }
-            }
-
-        } else if (chromeD.equalsIgnoreCase(packageName)) {
+        if (chromeD.equalsIgnoreCase(packageName)) {
 
             if (event.getClassName().toString().equals("android.widget.EditText")
                     && event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
@@ -151,10 +132,21 @@ public class EventService extends AccessibilityService {
 
                     isSame = false;
                 }
+            }
 
-            } else {
+        } else if (mHelper.getOnOff() == 1
+                && facebookD.equals(packageName)
+                && !mHelper.isExcepted(packageName)) {
 
+            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                    performGlobalAction(GLOBAL_ACTION_HOME);
+
+                    showBlockToast();
+
+                }
             }
         }
     }
