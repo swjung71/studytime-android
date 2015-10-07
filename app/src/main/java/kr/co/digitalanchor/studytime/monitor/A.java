@@ -27,7 +27,7 @@ import kr.co.digitalanchor.utils.MD5ForAdultURL;
 /**
  * Created by Thomas on 2015-09-15.
  */
-public class EventService extends AccessibilityService {
+public class A extends AccessibilityService {
 
     private final static String facebook = "Y3BvLmpmaWxqeHl2LmJmcnE=";
     private final static String chrome = "Y3BvLmVzanl3cm4ub3VmZGN2";

@@ -692,7 +692,7 @@ public class STApplication extends MultiDexApplication {
 
 //                    Logger.d("Setting: " + accessabilityService);
 
-                    if (accessabilityService.equalsIgnoreCase("kr.co.digitalanchor.studytime/kr.co.digitalanchor.studytime.monitor.EventService")) {
+                    if (accessabilityService.equalsIgnoreCase("kr.co.digitalanchor.studytime/kr.co.digitalanchor.studytime.monitor.A")) {
 
 //                        Logger.d("We've found the correct setting - accessibility is switched on!");
 
