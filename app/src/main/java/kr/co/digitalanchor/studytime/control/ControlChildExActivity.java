@@ -359,7 +359,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
 
                     builder.content("코인이 부족합니다.\n자녀의 위치를 확인하기 위해서는 " +
-                            COIN_REQUEST_LOCATION + " 코인이 필요합니다.").positiveText("확인")
+                            COIN_REQUEST_LOCATION + "코인이 필요합니다.").positiveText("확인")
                             .callback(new MaterialDialog.SimpleCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog materialDialog) {

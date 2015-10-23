@@ -1,100 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg">
 
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/login_parent_logo_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_logo_margin"
-                android:scaleType="fitCenter"
-                android:src="@drawable/login_logo" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/login_parent_logo_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_logo_margin"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/login_logo"/>
 
             <kr.co.digitalanchor.studytime.view.FontEditText
-                android:id="@+id/editEmailAddr"
-                android:layout_width="@dimen/login_parent_content_width"
-                android:layout_height="@dimen/login_parent_content_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
-                android:background="@drawable/box_type_03_bg"
-                android:gravity="center_vertical"
-                android:hint="@string/edit_email_hint"
-                android:paddingLeft="@dimen/login_parent_edit_box_padding"
-                android:paddingRight="@dimen/login_parent_edit_box_padding"
-                android:singleLine="true"
-                android:inputType="textUri"
-                android:textSize="@dimen/login_parent_content_text_size"
-                android:textColorHint="@color/bgColorType01" />
+                    android:id="@+id/editEmailAddr"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
+                    android:background="@drawable/box_type_03_bg"
+                    android:gravity="center_vertical"
+                    android:hint="@string/edit_email_hint"
+                    android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                    android:paddingRight="@dimen/login_parent_edit_box_padding"
+                    android:singleLine="true"
+                    android:inputType="textUri"
+                    android:textSize="@dimen/login_parent_content_text_size"
+                    android:textColorHint="@color/bgColorType01"/>
 
             <kr.co.digitalanchor.studytime.view.FontEditText
-                android:id="@+id/editPassword"
-                android:layout_width="@dimen/login_parent_content_width"
-                android:layout_height="@dimen/login_parent_content_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                android:background="@drawable/box_type_03_bg"
-                android:gravity="center_vertical"
-                android:hint="@string/edit_password_hint"
-                android:paddingLeft="@dimen/login_parent_edit_box_padding"
-                android:paddingRight="@dimen/login_parent_edit_box_padding"
-                android:singleLine="true"
-                android:inputType="textPassword"
-                android:textSize="@dimen/login_parent_content_text_size"
-                android:textColorHint="@color/bgColorType01" />
+                    android:id="@+id/editPassword"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                    android:background="@drawable/box_type_03_bg"
+                    android:gravity="center_vertical"
+                    android:hint="@string/edit_password_hint"
+                    android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                    android:paddingRight="@dimen/login_parent_edit_box_padding"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/login_parent_content_text_size"
+                    android:textColorHint="@color/bgColorType01"/>
 
             <LinearLayout
-                android:layout_width="@dimen/login_parent_content_width"
-                android:layout_height="@dimen/login_parent_content_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_button_box_margin_top"
-                android:orientation="horizontal">
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_button_box_margin_top"
+                    android:orientation="horizontal">
 
                 <kr.co.digitalanchor.studytime.view.FontButton
-                    android:id="@+id/buttonSignUp"
-                    android:layout_width="@dimen/login_parent_button_width"
-                    android:layout_height="@dimen/login_parent_content_height"
-                    android:background="@drawable/box_type_04_bg"
-                    android:gravity="center"
-                    android:text="회원가입"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/login_parent_content_text_size" />
+                        android:id="@+id/buttonSignUp"
+                        android:layout_width="@dimen/login_parent_button_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:background="@drawable/box_type_04_bg"
+                        android:gravity="center"
+                        android:text="회원가입"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/login_parent_content_text_size"/>
 
                 <kr.co.digitalanchor.studytime.view.FontButton
-                    android:id="@+id/buttonLogin"
-                    android:layout_width="@dimen/login_parent_button_width"
-                    android:layout_height="@dimen/login_parent_content_height"
-                    android:layout_marginLeft="@dimen/login_parent_button_margin"
-                    android:background="@drawable/box_type_04_bg"
-                    android:gravity="center"
-                    android:text="로그인"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/login_parent_content_text_size" />
+                        android:id="@+id/buttonLogin"
+                        android:layout_width="@dimen/login_parent_button_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_marginLeft="@dimen/login_parent_button_margin"
+                        android:background="@drawable/box_type_04_bg"
+                        android:gravity="center"
+                        android:text="로그인"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/login_parent_content_text_size"/>
 
             </LinearLayout>
 
             <kr.co.digitalanchor.studytime.view.FontButton
-                android:id="@+id/buttonFindPwd"
-                android:layout_width="@dimen/login_parent_content_width"
-                android:layout_height="@dimen/login_parent_content_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/login_parent_button_margin_top"
-                android:background="@drawable/box_type_04_bg"
-                android:gravity="center"
-                android:text="비밀번호 찾기"
-                android:textColor="@color/white"
-                android:textSize="@dimen/login_parent_content_text_size" />
+                    android:id="@+id/buttonFindPwd"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_button_margin_top"
+                    android:background="@drawable/box_type_04_bg"
+                    android:gravity="center"
+                    android:text="비밀번호 찾기"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/login_parent_content_text_size"/>
+
+            <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
+                    android:id="@+id/buttonOAuthLoginImg"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_button_margin_top"
+                    android:layout_height="@dimen/login_parent_content_height"/>
 
         </LinearLayout>
 

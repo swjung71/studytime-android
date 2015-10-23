@@ -1,6 +1,8 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -8,21 +10,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.nhn.android.naverlogin.OAuthLogin;
+import com.nhn.android.naverlogin.OAuthLoginDefine;
+import com.nhn.android.naverlogin.OAuthLoginHandler;
+import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 import com.orhanobut.logger.Logger;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.dialog.SettingPasswordDialog;
+import kr.co.digitalanchor.studytime.model.ChangePassModel;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
+import kr.co.digitalanchor.studytime.model.NaverUserInfo;
 import kr.co.digitalanchor.studytime.model.NewPassword;
+import kr.co.digitalanchor.studytime.model.OutParentRegister;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
@@ -30,6 +38,8 @@ import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.SignUpActivity;
 import kr.co.digitalanchor.utils.StringValidator;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -38,398 +48,767 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private final int REQUEST_LOGIN = 50001;
-    private final int COMPLETE_LOGIN = 50002;
-    private final int REQUEST_PARENT_INFO = 50003;
-    private final int REQUEST_FIND_PASSWORD = 50004;
+  private final int REQUEST_LOGIN = 50001;
+  private final int COMPLETE_LOGIN = 50002;
+  private final int REQUEST_PARENT_INFO = 50003;
+  private final int REQUEST_FIND_PASSWORD = 50004;
+  private final int REQUEST_EXTENAL_INPUT_PASSWORD = 50005;
+  private final int REQUEST_NAVER_LOGIN = 50006;
 
-    EditText mEditEmailAddr;
+  private Context mContext;
 
-    EditText mEditPassword;
+  /** 네이버 로그인 인스턴스 */
+  private OAuthLogin mOAuthLoginInstance;
 
-    DBHelper mHelper;
+  /** 네이버 로그인 버튼 */
+  private OAuthLoginButton mOAuthLoginButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  EditText mEditEmailAddr;
 
-        setContentView(R.layout.activity_parent_login);
+  EditText mEditPassword;
 
-        initView();
+  View mContainerButtons;
 
-        mHelper = new DBHelper(getApplicationContext());
+  View mContainerBoxes;
 
-    }
+  Button mButtonSignup;
 
-    private void initView() {
+  Button mButtonLogin;
 
-        mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
+  Button mButtonFindPwd;
 
-        mEditPassword = (EditText) findViewById(R.id.editPassword);
+  DBHelper mHelper;
 
-        ((Button) findViewById(R.id.buttonLogin)).setOnClickListener(this);
+  ParentLoginResult parentLoginResult;
 
-        ((Button) findViewById(R.id.buttonSignUp)).setOnClickListener(this);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        ((Button) findViewById(R.id.buttonFindPwd)).setOnClickListener(this);
-    }
+    setContentView(R.layout.activity_parent_login_ext);
 
-    @Override
-    protected void onHandleMessage(Message msg) {
+    OAuthLoginDefine.DEVELOPER_VERSION = true;
 
-        switch (msg.what) {
+    mContext = this;
 
-            case REQUEST_LOGIN:
+    initData();
 
-                requestParentLogin();
+    initView();
 
-                break;
+    mHelper = new DBHelper(mContext);
 
-            case COMPLETE_LOGIN:
+  }
 
-                completeLogin();
+  private void initData() {
 
-                break;
+    mOAuthLoginInstance = OAuthLogin.getInstance();
 
-            case REQUEST_PARENT_INFO:
+    mOAuthLoginInstance.init(mContext,
+        StaticValues.OAUTH_NAVER_CLIENT_ID,
+        StaticValues.OAUTH_NAVER_CLIENT_SECRET,
+        StaticValues.OAUTH_NAVER_CLIENT_NAME);
+  }
 
-                requestPhoneInfo();
+  private void initView() {
 
-                break;
+    mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
 
-            case REQUEST_FIND_PASSWORD:
+    mEditPassword = (EditText) findViewById(R.id.editPassword);
 
-                requestParentFindPwd();
+    mButtonLogin = (Button) findViewById(R.id.buttonLogin);
+    mButtonLogin.setOnClickListener(this);
 
-                break;
+    mButtonSignup = (Button) findViewById(R.id.buttonSignUp);
+    mButtonSignup.setOnClickListener(this);
 
-            default:
+    mButtonFindPwd = (Button) findViewById(R.id.buttonFindPwd);
+    mButtonFindPwd.setOnClickListener(this);
 
-                break;
+    mContainerButtons = findViewById(R.id.container_login_buttons);
+
+    mContainerBoxes = findViewById(R.id.container_login_textboxes);
+
+    mOAuthLoginButton = (OAuthLoginButton) findViewById(R.id.buttonOAuthLoginImg);
+    mOAuthLoginButton.setOAuthLoginHandler(mOAuthLoginHandler);
+  }
+
+  @Override
+  protected void onHandleMessage(Message msg) {
+
+    Bundle bundle = null;
+
+    switch (msg.what) {
+
+      case REQUEST_EXTENAL_INPUT_PASSWORD:
+
+        bundle = msg.getData();
+        String pwd = bundle.getString("pwd");
+
+        Logger.d(pwd);
+
+        requestInputExternalPass(pwd);
+
+        break;
+
+      case REQUEST_NAVER_LOGIN:
+
+        bundle = msg.getData();
+
+        NaverUserInfo info = bundle.getParcelable("info");
+
+        Logger.d(info.getName());
+
+        if (info == null) {
+
+          dismissLoading();
+
+          break;
+
         }
+
+        requestExternalLogin(info);
+
+        break;
+
+      case REQUEST_LOGIN:
+
+        requestParentLogin();
+
+        break;
+
+      case COMPLETE_LOGIN:
+
+        completeLogin();
+
+        break;
+
+      case REQUEST_PARENT_INFO:
+
+        requestPhoneInfo();
+
+        break;
+
+      case REQUEST_FIND_PASSWORD:
+
+        requestParentFindPwd();
+
+        break;
+
+      default:
+
+        break;
+    }
+  }
+
+  @Override
+  public void onBackPressed() {
+
+    if (mContainerButtons.getVisibility() == View.VISIBLE) {
+
+      super.onBackPressed();
+
+    } else {
+
+      mContainerButtons.setVisibility(View.VISIBLE);
+
+      mContainerBoxes.setVisibility(View.GONE);
+
+      mButtonSignup.setVisibility(View.VISIBLE);
+
+      mButtonFindPwd.setVisibility(View.GONE);
+    }
+  }
+
+
+  @Override
+  public void onClick(View v) {
+
+    if (isDuplicateRuns()) {
+
+      return;
     }
 
-    @Override
-    public void onClick(View v) {
+    switch (v.getId()) {
 
-        if (isDuplicateRuns()) {
+      case R.id.buttonSignUp:
 
-            return;
+        showSignUp();
+
+        break;
+
+      case R.id.buttonLogin:
+
+        if (mContainerButtons.getVisibility() == View.VISIBLE) {
+
+          mContainerButtons.setVisibility(View.GONE);
+
+          mContainerBoxes.setVisibility(View.VISIBLE);
+
+          mButtonSignup.setVisibility(View.GONE);
+
+          mButtonFindPwd.setVisibility(View.VISIBLE);
+
+        } else if (isValidateLoginInfo()) {
+
+          sendEmptyMessage(REQUEST_LOGIN);
+
         }
 
-        switch (v.getId()) {
+        break;
 
-            case R.id.buttonSignUp:
+      case R.id.buttonFindPwd:
 
-                showSignUp();
+        if (isValidateEmailInfo()) {
 
-                break;
-
-            case R.id.buttonLogin:
-
-                if (isValidateLoginInfo()) {
-
-                    sendEmptyMessage(REQUEST_LOGIN);
-
-                }
-
-                break;
-
-            case R.id.buttonFindPwd:
-
-                if (isValidateEmailInfo()) {
-
-                    sendEmptyMessage(REQUEST_FIND_PASSWORD);
-                }
-
-                break;
-
-            default:
-
-                break;
+          sendEmptyMessage(REQUEST_FIND_PASSWORD);
         }
+
+        break;
+
+      default:
+
+        break;
     }
+  }
 
-    private boolean isValidateLoginInfo() {
+  private boolean isValidateLoginInfo() {
 
-        String msg = null;
-        String temp = null;
+    String msg = null;
+    String temp = null;
 
-        do {
+    do {
 
-            temp = mEditEmailAddr.getText().toString();
+      temp = mEditEmailAddr.getText().toString();
 
-            if (TextUtils.isEmpty(temp)) {
+      if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 이메일 미 입력";
+        msg = "경고 문구 : 이메일 미 입력";
 
-                break;
+        break;
 
-            }
+      }
 
-            if (!StringValidator.isEmail(temp)) {
+      if (!StringValidator.isEmail(temp)) {
 
-                msg = "경고 문구 : 이메일 형식 틀림";
+        msg = "경고 문구 : 이메일 형식 틀림";
 
-                break;
-            }
+        break;
+      }
 
-            temp = mEditPassword.getText().toString();
+      temp = mEditPassword.getText().toString();
 
-            if (TextUtils.isEmpty(temp)) {
+      if (TextUtils.isEmpty(temp)) {
 
-                msg = "경고 문구 : 비밀번호 미 입력";
+        msg = "경고 문구 : 비밀번호 미 입력";
 
-                break;
-            }
+        break;
+      }
 
-        } while (false);
+    } while (false);
 
-        if (TextUtils.isEmpty(msg)) {
+    if (TextUtils.isEmpty(msg)) {
 
-            return true;
+      return true;
 
-        } else {
+    } else {
 
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+      Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
 
-            return false;
-        }
+      return false;
     }
+  }
 
-    private void requestParentLogin() {
+  private void requestUserInfoFromNaver() {
 
-        showLoading();
+    showLoading();
 
-        ParentLogin model = new ParentLogin();
+    new RequestNaverApiTask().execute();
+  }
 
-        model.setEmail(mEditEmailAddr.getText().toString());
+  private void requestParentLogin() {
 
-        model.setPassword(mEditPassword.getText().toString());
+    showLoading();
 
-        SimpleXmlRequest request = HttpHelper.getParentLogin(model, new Response.Listener<ParentLoginResult>() {
+    ParentLogin model = new ParentLogin();
 
-            @Override
-            public void onResponse(ParentLoginResult res) {
+    model.setEmail(mEditEmailAddr.getText().toString());
 
-                Logger.d(res.toString());
+    model.setPassword(mEditPassword.getText().toString());
 
-                switch (res.getResultCode()) {
+    SimpleXmlRequest request = HttpHelper.getParentLogin(model, new Response.Listener<ParentLoginResult>() {
 
-                    case SUCCESS:
+      @Override
+      public void onResponse(ParentLoginResult res) {
 
-                        mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+        Logger.d(res.toString());
 
-                        mHelper.insertChildren(res.getChildren());
+        switch (res.getResultCode()) {
 
-                        sendEmptyMessage(REQUEST_PARENT_INFO);
+          case SUCCESS:
 
-                        break;
+            mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
 
-                    default:
+            mHelper.insertChildren(res.getChildren());
 
-                        handleResultCode(res.getResultCode(), res.getResultMessage());
+            sendEmptyMessage(REQUEST_PARENT_INFO);
 
-                        break;
-                }
+            break;
+
+          default:
+
+            handleResultCode(res.getResultCode(), res.getResultMessage());
+
+            break;
+        }
+      }
+    }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+        handleError(error);
+
+      }
+    });
+
+    if (request != null) {
+
+      mQueue.add(request);
+
+    } else {
+
+      dismissLoading();
+    }
+  }
+
+  private void requestInputExternalPass(String pwd) {
+
+    showLoading();
+
+    ChangePassModel model = new ChangePassModel();
+
+    model.setEmail(parentLoginResult.getEmail());
+
+    model.setNewPass(pwd);
+
+    SimpleXmlRequest request = HttpHelper.getExternalPassword(model,
+        new Response.Listener<GeneralResult>() {
+          @Override
+          public void onResponse(GeneralResult res) {
+
+            switch (res.getResultCode()) {
+
+              case SUCCESS:
+
+                mHelper.insertAccount(parentLoginResult.getParentID(), 1, parentLoginResult.getName(), parentLoginResult.getCoin(), parentLoginResult.getEmail());
+
+                mHelper.insertChildren(parentLoginResult.getChildren());
+
+                dismissLoading();
+
+                sendEmptyMessage(COMPLETE_LOGIN);
+
+                break;
+
+              default:
+
+                mOAuthLoginInstance.logout(mContext);
+
+                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                break;
             }
+          }
         }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+          @Override
+          public void onErrorResponse(VolleyError error) {
 
-                handleError(error);
-
-            }
+            handleError(error);
+          }
         });
 
-        if (request != null) {
+    addRequest(request);
+  }
 
-            mQueue.add(request);
+  private void completeLogin() {
 
-        } else {
+    showMain();
 
-            dismissLoading();
-        }
-    }
+  }
 
-    private void completeLogin() {
+  private void requestExternalLogin(NaverUserInfo info) {
 
-        showMain();
+    dismissLoading();
 
-    }
+    Toast.makeText(getApplicationContext(), info.getEmail(), Toast.LENGTH_SHORT).show();
 
-    private void requestPhoneInfo() {
+    OutParentRegister model = new OutParentRegister();
 
-        ParentPhoneInfo model = new ParentPhoneInfo();
+    model.setEmail(info.getEmail());
+    model.setSex(info.getGender());
+    model.setName(info.getName());
+    model.setPassword(" ");
+    model.setAge(info.getAge());
+    model.setBirthday(info.getBirthday());
+    model.setPhoneNumber(STApplication.getPhoneNumber());
+    model.setAppVersion(STApplication.getAppVersionName());
+    model.setNationalCode(STApplication.getNationalCode());
+    model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+    model.setLang(STApplication.getLanguageCode());
+    model.setOutCompanyName("Naver");
 
-        Account account = mHelper.getAccountInfo();
+    SimpleXmlRequest request = HttpHelper.getExternalLogin(model,
+        new Response.Listener<ParentLoginResult>() {
+          @Override
+          public void onResponse(ParentLoginResult res) {
 
-        // ParentID
-        model.setParentID(account.getID());
+            switch (res.getResultCode()) {
 
-        model.setLang(STApplication.getLanguageCode());
+              case SUCCESS:
 
-        model.setPhoneNumber(STApplication.getPhoneNumber());
+                dismissLoading();
 
-        model.setAppVersion(STApplication.getAppVersionName());
+                Toast.makeText(getApplicationContext(), res.getName(), Toast.LENGTH_SHORT).show();
 
-        // GCM
-        model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
 
-        model.setNationCode(STApplication.getNationalCode());
+                mHelper.insertChildren(res.getChildren());
 
-        SimpleXmlRequest request = HttpHelper.getParentPhoneInfo(model,
-                new Response.Listener<GeneralResult>() {
-
-                    @Override
-                    public void onResponse(GeneralResult response) {
-
-                        dismissLoading();
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                sendEmptyMessage(COMPLETE_LOGIN);
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(), response.getResultMessage());
-
-                                break;
-                        }
-                    }
-
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        if (request != null) {
-
-            mQueue.add(request);
-
-        } else {
-
-            dismissLoading();
-        }
-    }
-
-    private boolean isValidateEmailInfo() {
-
-        String msg = null;
-        String temp = null;
-
-        do {
-
-            temp = mEditEmailAddr.getText().toString();
-
-            if (TextUtils.isEmpty(temp)) {
-
-                msg = "이메일을 입력하세요.";
+                sendEmptyMessage(COMPLETE_LOGIN);
 
                 break;
 
-            }
+              case 1028:
 
-            if (!StringValidator.isEmail(temp)) {
+                dismissLoading();
 
-                msg = "이메일 형식에 맞지 않습니다.";
+                parentLoginResult = res;
+
+//                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+
+//                mHelper.insertChildren(res.getChildren());
+
+//                sendEmptyMessage(REQUEST_PASSWORD);
+
+                SettingPasswordDialog dialog = new SettingPasswordDialog(LoginActivity.this);
+                dialog.setListener(new SettingPasswordDialog.OnPasswordDialogListener() {
+                  @Override
+                  public void OnCancel() {
+                    mOAuthLoginInstance.logout(mContext);
+                  }
+
+                  @Override
+                  public void OnConfirm(String password) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("pwd", password);
+
+                    sendMessage(REQUEST_EXTENAL_INPUT_PASSWORD, bundle);
+                  }
+                });
+                dialog.show();
+
+                break;
+
+              default:
+
+                mOAuthLoginInstance.logout(getApplicationContext());
+
+                handleResultCode(res.getResultCode(), res.getResultMessage());
 
                 break;
             }
 
-        } while (false);
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
 
-        if (TextUtils.isEmpty(msg)) {
+            handleError(error);
+          }
+        });
 
-            return true;
+    addRequest(request);
+  }
 
-        } else {
+  private void requestPhoneInfo() {
 
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    ParentPhoneInfo model = new ParentPhoneInfo();
 
-            return false;
-        }
+    Account account = mHelper.getAccountInfo();
+
+    // ParentID
+    model.setParentID(account.getID());
+
+    model.setLang(STApplication.getLanguageCode());
+
+    model.setPhoneNumber(STApplication.getPhoneNumber());
+
+    model.setAppVersion(STApplication.getAppVersionName());
+
+    // GCM
+    model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+
+    model.setNationCode(STApplication.getNationalCode());
+
+    SimpleXmlRequest request = HttpHelper.getParentPhoneInfo(model,
+        new Response.Listener<GeneralResult>() {
+
+          @Override
+          public void onResponse(GeneralResult response) {
+
+            dismissLoading();
+
+            switch (response.getResultCode()) {
+
+              case SUCCESS:
+
+                sendEmptyMessage(COMPLETE_LOGIN);
+
+                break;
+
+              default:
+
+                handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                break;
+            }
+          }
+
+        }, new Response.ErrorListener() {
+
+          @Override
+          public void onErrorResponse(VolleyError error) {
+
+            handleError(error);
+          }
+        });
+
+    if (request != null) {
+
+      mQueue.add(request);
+
+    } else {
+
+      dismissLoading();
+    }
+  }
+
+  private boolean isValidateEmailInfo() {
+
+    String msg = null;
+    String temp = null;
+
+    do {
+
+      temp = mEditEmailAddr.getText().toString();
+
+      if (TextUtils.isEmpty(temp)) {
+
+        msg = "이메일을 입력하세요.";
+
+        break;
+
+      }
+
+      if (!StringValidator.isEmail(temp)) {
+
+        msg = "이메일 형식에 맞지 않습니다.";
+
+        break;
+      }
+
+    } while (false);
+
+    if (TextUtils.isEmpty(msg)) {
+
+      return true;
+
+    } else {
+
+      Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+
+      return false;
+    }
+  }
+
+  private void requestParentFindPwd() {
+
+    showLoading();
+
+    NewPassword model = new NewPassword();
+
+    model.setEmail(mEditEmailAddr.getText().toString());
+
+    SimpleXmlRequest request = HttpHelper.getTemporaryPassword(model,
+        new Response.Listener<GeneralResult>() {
+          @Override
+          public void onResponse(GeneralResult response) {
+
+            switch (response.getResultCode()) {
+
+              case SUCCESS:
+
+                dismissLoading();
+
+                MaterialDialog.Builder buidler = new MaterialDialog.Builder(LoginActivity.this);
+
+                buidler.title("비밀번호 찾기")
+                    .content("회원가입하신 이메일 주소로 임시 비밀번호를 전송해 드립니다.")
+                    .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
+                  @Override
+                  public void onPositive(MaterialDialog materialDialog) {
+
+                    materialDialog.dismiss();
+
+                  }
+                }).build().show();
+
+                break;
+
+              default:
+
+                handleResultCode(response.getResultCode(),
+                    response.getResultMessage());
+
+                break;
+            }
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+
+            handleError(error);
+
+          }
+        });
+
+    addRequest(request);
+  }
+
+
+  private void showSignUp() {
+
+    Intent intent = new Intent();
+
+    intent.setClass(mContext, SignUpActivity.class);
+
+    startActivity(intent);
+  }
+
+  private void showMain() {
+
+    Intent intent = new Intent();
+
+    intent.setClass(mContext, ListChildActivity.class);
+
+    startActivity(intent);
+
+    finish();
+  }
+
+  private OAuthLoginHandler mOAuthLoginHandler = new OAuthLoginHandler() {
+    @Override
+    public void run(boolean success) {
+
+      Logger.d("is " + success);
+
+      if (success) {
+
+        String accessToken = mOAuthLoginInstance.getAccessToken(mContext);
+        String refreshToken = mOAuthLoginInstance.getRefreshToken(mContext);
+        long expiresAt = mOAuthLoginInstance.getExpiresAt(mContext);
+        String tokenType = mOAuthLoginInstance.getTokenType(mContext);
+
+        requestUserInfoFromNaver();
+
+      } else {
+
+        String errorCode = mOAuthLoginInstance.getLastErrorCode(mContext).getCode();
+        String errorDesc = mOAuthLoginInstance.getLastErrorDesc(mContext);
+
+        Logger.e("errorCode:" + errorCode + ", errorDesc:" + errorDesc);
+      }
+    }
+  };
+
+  /** 로그인 삭제 */
+  private class DeleteTokenTask extends AsyncTask<Void, Void, Void> {
+    @Override
+    protected Void doInBackground(Void... params) {
+      boolean isSuccessDeleteToken = mOAuthLoginInstance.logoutAndDeleteToken(mContext);
+
+      if (!isSuccessDeleteToken) {
+      }
+
+      return null;
     }
 
-    private void requestParentFindPwd() {
+    protected void onPostExecute(Void v) {
 
-        showLoading();
+      // update View
+    }
+  }
 
-        NewPassword model = new NewPassword();
+  /** 유저 정보 요청 */
+  private class RequestNaverApiTask extends AsyncTask<Void, Void, NaverUserInfo> {
 
-        model.setEmail(mEditEmailAddr.getText().toString());
+    @Override
+    protected NaverUserInfo doInBackground(Void... params) {
 
-        SimpleXmlRequest request = HttpHelper.getTemporaryPassword(model,
-                new Response.Listener<GeneralResult>() {
-                    @Override
-                    public void onResponse(GeneralResult response) {
+      String url = "https://openapi.naver.com/v1/nid/getUserProfile.xml";
+      String at = mOAuthLoginInstance.getAccessToken(mContext);
 
-                        switch (response.getResultCode()) {
+      String result = mOAuthLoginInstance.requestApi(mContext, at, url);
 
-                            case SUCCESS:
+      Serializer serializer = new Persister();
 
-                                dismissLoading();
+      NaverUserInfo info = new NaverUserInfo();
 
-                                MaterialDialog.Builder buidler = new MaterialDialog.Builder(LoginActivity.this);
+      Logger.xml(result);
 
-                                buidler.title("비밀번호 찾기")
-                                        .content("회원가입하신 이메일 주소로 임시 비밀번호를 전송해 드립니다.")
-                                        .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
-                                            @Override
-                                            public void onPositive(MaterialDialog materialDialog) {
-                                                
-                                                materialDialog.dismiss();
-                                                        
-                                            }
-                                        }).build().show();
+      try {
 
-                                break;
+        info = serializer.read(NaverUserInfo.class, result);
 
-                            default:
+      } catch (Exception e) {
 
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
+        Logger.e(e.getMessage());
 
-                                break;
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+        info = null;
+      }
 
-                        handleError(error);
-
-                    }
-                });
-
-        addRequest(request);
+      return info;
     }
 
-    private void showSignUp() {
+    protected void onPostExecute(NaverUserInfo info) {
 
-        Intent intent = new Intent();
+      if (info == null || info.getResultCode() != 0) {
 
-        intent.setClass(getApplicationContext(), SignUpActivity.class);
+        dismissLoading();
 
-        startActivity(intent);
+      } else {
+
+
+        Bundle bundle = new Bundle();
+
+        bundle.putParcelable("info", info);
+
+        sendMessage(REQUEST_NAVER_LOGIN, bundle);
+      }
+    }
+  }
+
+  /** 토큰 갱신 */
+  private class RefreshTokenTask extends AsyncTask<Void, Void, String> {
+
+    @Override
+    protected String doInBackground(Void... params) {
+      return mOAuthLoginInstance.refreshAccessToken(mContext);
     }
 
-    private void showMain() {
+    protected void onPostExecute(String res) {
 
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), ListChildActivity.class);
-
-        startActivity(intent);
-
-        finish();
+      // update View
     }
+  }
 }

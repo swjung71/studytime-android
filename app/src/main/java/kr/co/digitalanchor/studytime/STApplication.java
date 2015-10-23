@@ -21,6 +21,7 @@ import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
 import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.nhn.android.naverlogin.OAuthLogin;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -636,6 +637,10 @@ public class STApplication extends MultiDexApplication {
         helper.clearAll();
 
         clear();
+
+        OAuthLogin oAuthLoginInstance = OAuthLogin.getInstance();
+
+        oAuthLoginInstance.logout(applicationContext);
 
         for (BaseActivity activity : activities) {
 

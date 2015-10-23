@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Thomas on 2015-06-16.
  */
-@Root(name = "ParentLoginResult")
+@Root(name = "ParentLoginResult", strict = false)
 public class ParentLoginResult {
 
     @Element(name = "ResultCode")
