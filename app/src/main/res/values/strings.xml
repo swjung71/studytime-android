@@ -69,4 +69,6 @@
     <string name="txt_accessibility_setting_2">&quot;켜짐&quot;으로 체크하셔야 합니다.</string>
     <string name="txt_accessibility_1">&quot;스터디타임&quot;</string>
     <string name="txt_accessibility_2">&quot;켜짐&quot;</string>
+
+    <string name="facebook_app_id">1230623910296946</string>
 </resources>

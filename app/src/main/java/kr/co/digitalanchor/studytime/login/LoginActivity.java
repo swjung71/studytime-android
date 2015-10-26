@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
@@ -14,11 +15,29 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+import com.google.gson.Gson;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginDefine;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 import com.orhanobut.logger.Logger;
+import java.util.Arrays;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -27,6 +46,7 @@ import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.SettingPasswordDialog;
 import kr.co.digitalanchor.studytime.model.ChangePassModel;
+import kr.co.digitalanchor.studytime.model.FacebookProfile;
 import kr.co.digitalanchor.studytime.model.GeneralResult;
 import kr.co.digitalanchor.studytime.model.NaverUserInfo;
 import kr.co.digitalanchor.studytime.model.NewPassword;
@@ -38,6 +58,7 @@ import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.SignUpActivity;
 import kr.co.digitalanchor.utils.StringValidator;
+import org.json.JSONObject;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -46,7 +67,8 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 /**
  * Created by Thomas on 2015-06-10.
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener,
+    GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
   private final int REQUEST_LOGIN = 50001;
   private final int COMPLETE_LOGIN = 50002;
@@ -54,6 +76,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
   private final int REQUEST_FIND_PASSWORD = 50004;
   private final int REQUEST_EXTENAL_INPUT_PASSWORD = 50005;
   private final int REQUEST_NAVER_LOGIN = 50006;
+  private final int REQUEST_FACEBOOK_LOGIN = 50007;
 
   private Context mContext;
 
@@ -75,17 +98,48 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
   Button mButtonLogin;
 
+  /** Google+ */
+  private SignInButton mPlusSignInButton;
+
+  /* Is there a ConnectionResult resolution in progress? */
+  private boolean mIsResolving = false;
+  /* Should we automatically resolve ConnectionResults when possible? */
+  private boolean mShouldResolve = false;
+
+  /* Request code used to invoke sign in user interactions. */
+  private static final int RC_SIGN_IN = 0;
+  private GoogleApiClient mGoogleApiClient;
+
   Button mButtonFindPwd;
+
+  LoginButton mButtonFacebook;
 
   DBHelper mHelper;
 
   ParentLoginResult parentLoginResult;
 
+  CallbackManager mCallbackManager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_parent_login_ext);
+    try {
+
+      FacebookSdk.sdkInitialize(getApplicationContext());
+
+      FacebookSdk.setIsDebugEnabled(true);
+
+      Logger.d("is debug " + FacebookSdk.isDebugEnabled());
+
+      mCallbackManager = CallbackManager.Factory.create();
+
+      setContentView(R.layout.activity_parent_login_ext);
+
+    } catch (Exception e) {
+
+      Logger.e(e.getMessage());
+    }
 
     OAuthLoginDefine.DEVELOPER_VERSION = true;
 
@@ -130,6 +184,67 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     mOAuthLoginButton = (OAuthLoginButton) findViewById(R.id.buttonOAuthLoginImg);
     mOAuthLoginButton.setOAuthLoginHandler(mOAuthLoginHandler);
+
+    mButtonFacebook = (LoginButton) findViewById(R.id.buttonFacebookLogin);
+    mButtonFacebook.setReadPermissions(Arrays.asList("public_profile, email, user_birthday"));
+    mButtonFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+      @Override
+      public void onSuccess(LoginResult loginResult) {
+
+        GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(),
+            new GraphRequest.GraphJSONObjectCallback() {
+
+              @Override
+              public void onCompleted(JSONObject object, GraphResponse response) {
+
+                Logger.json(object.toString());
+
+                Gson gson = new Gson();
+
+                FacebookProfile profile = gson.fromJson(object.toString(), FacebookProfile.class);
+
+                Logger.d(profile.getName());
+
+                Bundle data = new Bundle();
+
+                data.putParcelable("info", profile);
+
+                sendMessage(REQUEST_FACEBOOK_LOGIN, data);
+              }
+            });
+
+        Bundle parameters = new Bundle();
+
+        parameters.putString("fields", "id,name,email,gender,birthday");
+
+        request.setParameters(parameters);
+        request.executeAsync();
+      }
+
+      @Override
+      public void onCancel() {
+        Toast.makeText(LoginActivity.this, "User cancelled", Toast.LENGTH_SHORT).show();
+      }
+
+      @Override
+      public void onError(FacebookException error) {
+        Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+
+        Logger.e(error.getMessage());
+      }
+    });
+
+    mPlusSignInButton = (SignInButton) findViewById(R.id.buttonGoogleLogin);
+    mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
+    mPlusSignInButton.setOnClickListener(this);
+
+    mGoogleApiClient = new GoogleApiClient.Builder(this)
+        .addConnectionCallbacks(this)
+        .addOnConnectionFailedListener(this)
+        .addApi(Plus.API)
+        .addScope(new Scope(Scopes.PLUS_LOGIN))
+        .addScope(new Scope(Scopes.PLUS_ME))
+        .build();
   }
 
   @Override
@@ -166,7 +281,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         }
 
-        requestExternalLogin(info);
+        requestNaverLogin(info);
+
+        break;
+
+      case REQUEST_FACEBOOK_LOGIN:
+
+        bundle = msg.getData();
+
+        FacebookProfile profile = bundle.getParcelable("info");
+
+        Logger.d(profile.getName());
+
+        if (profile == null) {
+
+          LoginManager.getInstance().logOut();
+
+          dismissLoading();
+
+          break;
+
+        }
+
+        requestFacebookLogin(profile);
 
         break;
 
@@ -230,6 +367,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     switch (v.getId()) {
 
+      case R.id.buttonGoogleLogin:
+
+        showLoading();
+
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+
+            try {
+
+              mShouldResolve = true;
+
+              mGoogleApiClient.connect();
+
+            } catch (Exception e) {
+
+              dismissLoading();
+            }
+          }
+        }).start();
+
+        break;
+
       case R.id.buttonSignUp:
 
         showSignUp();
@@ -269,6 +429,88 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         break;
     }
+  }
+
+  @Override
+  public void onConnected(Bundle bundle) {
+
+    Logger.d("onConnected");
+
+    mShouldResolve = false;
+
+    dismissLoading();
+
+    if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+
+      Person currentPerson = Plus.PeopleApi
+          .getCurrentPerson(mGoogleApiClient);
+      String personName = currentPerson.getDisplayName();
+      String personPhotoUrl = currentPerson.getImage().getUrl();
+      String personGooglePlusProfile = currentPerson.getUrl();
+      String birth = currentPerson.getBirthday();
+      String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+      Logger.d("name " + personName + "\n" +
+          "personPhotoUrl " + personPhotoUrl + "\n" +
+          "personGooglePlusProfile " + personGooglePlusProfile + "\n" +
+          "birth " + birth + "\n" +
+          "email " + email + "\n");
+      Toast.makeText(getApplicationContext(),
+          email, Toast.LENGTH_LONG).show();
+
+    } else {
+
+      Toast.makeText(getApplicationContext(),
+          "Person information is null", Toast.LENGTH_LONG).show();
+
+      mGoogleApiClient.disconnect();
+    }
+  }
+
+  @Override
+  public void onConnectionSuspended(int i) {
+
+    Logger.d("onConnectionSuspended");
+
+    dismissLoading();
+    mGoogleApiClient.connect();
+  }
+
+  @Override
+  public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    Logger.d("onConnectionFailed");
+
+    dismissLoading();
+
+    if (!mIsResolving && mShouldResolve) {
+      if (connectionResult.hasResolution()) {
+        try {
+          connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+          mIsResolving = true;
+        } catch (IntentSender.SendIntentException e) {
+          Logger.e("Could not resolve ConnectionResult.", e);
+          Toast.makeText(LoginActivity.this, "Could not resolve ConnectionResult", Toast.LENGTH_LONG).show();
+          mIsResolving = false;
+        }
+      } else {
+        // Could not resolve the connection result, show the user an
+        // error dialog.
+        Toast.makeText(LoginActivity.this, "Error on Login, check your google + login method", Toast.LENGTH_LONG).show();
+      }
+    } else {
+      // Show the signed-out UI
+
+      Toast.makeText(LoginActivity.this, "Error on Login, check your google + login method", Toast.LENGTH_LONG).show();
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    super.onActivityResult(requestCode, resultCode, data);
+
+    mCallbackManager.onActivityResult(requestCode, resultCode, data);
   }
 
   private boolean isValidateLoginInfo() {
@@ -386,7 +628,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     ChangePassModel model = new ChangePassModel();
 
-    model.setEmail(parentLoginResult.getEmail());
+    model.setParentId(parentLoginResult.getParentID());
 
     model.setNewPass(pwd);
 
@@ -399,7 +641,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
               case SUCCESS:
 
-                mHelper.insertAccount(parentLoginResult.getParentID(), 1, parentLoginResult.getName(), parentLoginResult.getCoin(), parentLoginResult.getEmail());
+                mHelper.insertAccount(parentLoginResult.getParentID(), 1,
+                    parentLoginResult.getName(), parentLoginResult.getCoin(),
+                    parentLoginResult.getEmail());
 
                 mHelper.insertChildren(parentLoginResult.getChildren());
 
@@ -413,6 +657,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                 mOAuthLoginInstance.logout(mContext);
 
+                LoginManager.getInstance().logOut();
+
                 handleResultCode(res.getResultCode(), res.getResultMessage());
 
                 break;
@@ -421,6 +667,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }, new Response.ErrorListener() {
           @Override
           public void onErrorResponse(VolleyError error) {
+
+            mOAuthLoginInstance.logout(mContext);
+
+            LoginManager.getInstance().logOut();
 
             handleError(error);
           }
@@ -435,11 +685,101 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
   }
 
-  private void requestExternalLogin(NaverUserInfo info) {
+  private void requestFacebookLogin(FacebookProfile info) {
 
     dismissLoading();
 
-    Toast.makeText(getApplicationContext(), info.getEmail(), Toast.LENGTH_SHORT).show();
+    OutParentRegister model = new OutParentRegister();
+
+    model.setEmail(info.getEmail());
+    model.setSex(info.getGender());
+    model.setName(info.getName());
+    model.setPassword(" ");
+    model.setBirthday(info.getBirthday());
+    model.setPhoneNumber(STApplication.getPhoneNumber());
+    model.setAppVersion(STApplication.getAppVersionName());
+    model.setNationalCode(STApplication.getNationalCode());
+    model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+    model.setLang(STApplication.getLanguageCode());
+    model.setOutCompanyName("Facebook");
+
+    SimpleXmlRequest request = HttpHelper.getExternalLogin(model,
+        new Response.Listener<ParentLoginResult>() {
+          @Override
+          public void onResponse(ParentLoginResult res) {
+
+            switch (res.getResultCode()) {
+
+              case SUCCESS:
+
+                dismissLoading();
+
+                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+
+                mHelper.insertChildren(res.getChildren());
+
+                sendEmptyMessage(COMPLETE_LOGIN);
+
+                break;
+
+              case 1028:
+
+                dismissLoading();
+
+                parentLoginResult = res;
+
+//                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+
+//                mHelper.insertChildren(res.getChildren());
+
+//                sendEmptyMessage(REQUEST_PASSWORD);
+
+                SettingPasswordDialog dialog = new SettingPasswordDialog(LoginActivity.this);
+                dialog.setListener(new SettingPasswordDialog.OnPasswordDialogListener() {
+                  @Override
+                  public void OnCancel() {
+                    LoginManager.getInstance().logOut();
+                  }
+
+                  @Override
+                  public void OnConfirm(String password) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("pwd", password);
+
+                    sendMessage(REQUEST_EXTENAL_INPUT_PASSWORD, bundle);
+                  }
+                });
+                dialog.show();
+
+                break;
+
+              default:
+
+                LoginManager.getInstance().logOut();
+
+                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                break;
+            }
+
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+
+            LoginManager.getInstance().logOut();
+
+            handleError(error);
+          }
+        });
+
+    addRequest(request);
+  }
+
+  private void requestNaverLogin(NaverUserInfo info) {
+
+    dismissLoading();
 
     OutParentRegister model = new OutParentRegister();
 
@@ -466,8 +806,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
               case SUCCESS:
 
                 dismissLoading();
-
-                Toast.makeText(getApplicationContext(), res.getName(), Toast.LENGTH_SHORT).show();
 
                 mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
 
@@ -522,6 +860,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }, new Response.ErrorListener() {
           @Override
           public void onErrorResponse(VolleyError error) {
+
+            mOAuthLoginInstance.logout(mContext);
 
             handleError(error);
           }

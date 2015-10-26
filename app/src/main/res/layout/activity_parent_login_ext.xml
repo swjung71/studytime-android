@@ -73,13 +73,26 @@
                     android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
                     android:orientation="vertical">
 
-                <Button android:layout_width="@dimen/login_parent_content_width"
+                <!--<Button android:layout_width="@dimen/login_parent_content_width"
                         android:layout_height="@dimen/login_parent_content_height"
                         android:layout_gravity="center_horizontal"/>
+-->
+                <com.google.android.gms.common.SignInButton
+                        android:id="@+id/buttonGoogleLogin"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/login_parent_content_text_size"
+                        android:layout_gravity="center_horizontal"
+                        android:text="구글 아이디로 로그인"/>
 
-                <Button android:layout_width="@dimen/login_parent_content_width"
+                <com.facebook.login.widget.LoginButton
+                        android:id="@+id/buttonFacebookLogin"
+                        android:layout_width="@dimen/login_parent_content_width"
                         android:layout_height="@dimen/login_parent_content_height"
                         android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="@dimen/login_parent_content_text_size"
                         android:layout_gravity="center_horizontal"/>
 
                 <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
