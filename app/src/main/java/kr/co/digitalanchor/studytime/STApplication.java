@@ -21,6 +21,10 @@ import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
@@ -635,6 +639,27 @@ public class STApplication extends MultiDexApplication {
     oAuthLoginInstance.logout(applicationContext);
 
     LoginManager.getInstance().logOut();
+
+    try {
+
+      GoogleApiClient googleApiClient = new GoogleApiClient.Builder(applicationContext)
+          .addApi(Plus.API)
+          .addScope(new Scope(Scopes.PLUS_LOGIN))
+          .addScope(new Scope(Scopes.PLUS_ME))
+          .build();
+
+      if (googleApiClient.isConnected()) {
+
+        Plus.AccountApi.clearDefaultAccount(googleApiClient);
+        Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient);
+        
+        googleApiClient.disconnect();
+      }
+
+    } catch (Exception e) {
+
+      Logger.e(e.toString());
+    }
 
     clear();
 

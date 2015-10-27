@@ -1,11 +1,15 @@
 package kr.co.digitalanchor.studytime.login;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -68,6 +72,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-06-10.
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
+    ActivityCompat.OnRequestPermissionsResultCallback,
     GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
   private final int REQUEST_LOGIN = 50001;
@@ -77,6 +82,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
   private final int REQUEST_EXTENAL_INPUT_PASSWORD = 50005;
   private final int REQUEST_NAVER_LOGIN = 50006;
   private final int REQUEST_FACEBOOK_LOGIN = 50007;
+  private final int REQUEST_GOOGLE_LOGIN = 50008;
 
   private Context mContext;
 
@@ -101,13 +107,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
   /** Google+ */
   private SignInButton mPlusSignInButton;
 
+  /* RequestCode for resolutions involving sign-in */
+  private static final int RC_SIGN_IN = 1;
+
+  /* RequestCode for resolutions to get GET_ACCOUNTS permission on M */
+  private static final int RC_PERM_GET_ACCOUNTS = 2;
+
+  /* Keys for persisting instance variables in savedInstanceState */
+  private static final String KEY_IS_RESOLVING = "is_resolving";
+  private static final String KEY_SHOULD_RESOLVE = "should_resolve";
+
   /* Is there a ConnectionResult resolution in progress? */
   private boolean mIsResolving = false;
   /* Should we automatically resolve ConnectionResults when possible? */
   private boolean mShouldResolve = false;
 
   /* Request code used to invoke sign in user interactions. */
-  private static final int RC_SIGN_IN = 0;
   private GoogleApiClient mGoogleApiClient;
 
   Button mButtonFindPwd;
@@ -135,6 +150,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
       mCallbackManager = CallbackManager.Factory.create();
 
       setContentView(R.layout.activity_parent_login_ext);
+
+      if (savedInstanceState != null) {
+        mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
+        mShouldResolve = savedInstanceState.getBoolean(KEY_SHOULD_RESOLVE);
+      }
 
     } catch (Exception e) {
 
@@ -248,11 +268,54 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    mGoogleApiClient.disconnect();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
+    outState.putBoolean(KEY_SHOULD_RESOLVE, mShouldResolve);
+  }
+
+  @Override
   protected void onHandleMessage(Message msg) {
 
     Bundle bundle = null;
 
     switch (msg.what) {
+
+      case REQUEST_GOOGLE_LOGIN:
+
+        bundle = msg.getData();
+
+        FacebookProfile google = bundle.getParcelable("info");
+
+        Logger.d(google.getName());
+
+        if (google == null) {
+
+          LoginManager.getInstance().logOut();
+
+          dismissLoading();
+
+          signOut();
+
+          break;
+
+        }
+
+        requestGoogleLogin(google);
+
+        break;
 
       case REQUEST_EXTENAL_INPUT_PASSWORD:
 
@@ -356,6 +419,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
   }
 
+  private void signOut() {
+    // Clear the default account so that GoogleApiClient will not automatically
+    // connect in the future.
+    if (mGoogleApiClient.isConnected()) {
+      Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+      mGoogleApiClient.disconnect();
+    }
+
+  }
 
   @Override
   public void onClick(View v) {
@@ -432,6 +504,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
   }
 
   @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+    if (requestCode == RC_PERM_GET_ACCOUNTS) {
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+        getAccountInfo();
+
+      } else {
+        Logger.d("GET_ACCOUNTS Permission Denied.");
+      }
+    }
+  }
+
+  private void getAccountInfo() {
+
+
+  }
+
+  @Override
   public void onConnected(Bundle bundle) {
 
     Logger.d("onConnected");
@@ -440,7 +531,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     dismissLoading();
 
-    if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+    if (checkAccountsPermission()) {
 
       Person currentPerson = Plus.PeopleApi
           .getCurrentPerson(mGoogleApiClient);
@@ -449,14 +540,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
       String personGooglePlusProfile = currentPerson.getUrl();
       String birth = currentPerson.getBirthday();
       String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+      int gender = currentPerson.getGender();
 
       Logger.d("name " + personName + "\n" +
           "personPhotoUrl " + personPhotoUrl + "\n" +
           "personGooglePlusProfile " + personGooglePlusProfile + "\n" +
           "birth " + birth + "\n" +
-          "email " + email + "\n");
-      Toast.makeText(getApplicationContext(),
-          email, Toast.LENGTH_LONG).show();
+          "email " + email + "\n" +
+          "gender " + gender + "\n");
+
+      Bundle data = new Bundle();
+
+      FacebookProfile info = new FacebookProfile();
+
+      info.setName(personName);
+      info.setEmail(email);
+      info.setBirthday(birth);
+      info.setGender(String.valueOf(gender));
+
+      data.putParcelable("info", info);
+
+      sendMessage(REQUEST_GOOGLE_LOGIN, data);
 
     } else {
 
@@ -472,8 +576,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     Logger.d("onConnectionSuspended");
 
-    dismissLoading();
-    mGoogleApiClient.connect();
   }
 
   @Override
@@ -490,18 +592,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
           mIsResolving = true;
         } catch (IntentSender.SendIntentException e) {
           Logger.e("Could not resolve ConnectionResult.", e);
-          Toast.makeText(LoginActivity.this, "Could not resolve ConnectionResult", Toast.LENGTH_LONG).show();
           mIsResolving = false;
         }
-      } else {
-        // Could not resolve the connection result, show the user an
-        // error dialog.
-        Toast.makeText(LoginActivity.this, "Error on Login, check your google + login method", Toast.LENGTH_LONG).show();
       }
-    } else {
-      // Show the signed-out UI
-
-      Toast.makeText(LoginActivity.this, "Error on Login, check your google + login method", Toast.LENGTH_LONG).show();
     }
   }
 
@@ -510,7 +603,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     super.onActivityResult(requestCode, resultCode, data);
 
-    mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == RC_SIGN_IN) {
+      // If the error resolution was not successful we should not resolve further.
+      if (resultCode != RESULT_OK) {
+        mShouldResolve = false;
+      }
+
+      mIsResolving = false;
+      mGoogleApiClient.connect();
+
+    } else {
+
+      mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
   }
 
   private boolean isValidateLoginInfo() {
@@ -556,6 +661,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
       Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
 
+      return false;
+    }
+  }
+
+  private boolean checkAccountsPermission() {
+    final String perm = Manifest.permission.GET_ACCOUNTS;
+    int permissionCheck = ContextCompat.checkSelfPermission(this, perm);
+    if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+      // We have the permission
+      return true;
+    } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
+      // Need to show permission rationale, display a snackbar and then request
+      // the permission again when the snackbar is dismissed.
+      return false;
+    } else {
+      // No explanation needed, we can request the permission.
+      ActivityCompat.requestPermissions(this,
+          new String[]{perm},
+          RC_PERM_GET_ACCOUNTS);
       return false;
     }
   }
@@ -683,6 +807,97 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     showMain();
 
+  }
+
+  private void requestGoogleLogin(FacebookProfile info) {
+
+    dismissLoading();
+
+    OutParentRegister model = new OutParentRegister();
+
+    model.setEmail(info.getEmail());
+    model.setSex(info.getGender());
+    model.setName(info.getName());
+    model.setPassword(" ");
+    model.setBirthday(info.getBirthday());
+    model.setPhoneNumber(STApplication.getPhoneNumber());
+    model.setAppVersion(STApplication.getAppVersionName());
+    model.setNationalCode(STApplication.getNationalCode());
+    model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+    model.setLang(STApplication.getLanguageCode());
+    model.setOutCompanyName("Google");
+
+    SimpleXmlRequest request = HttpHelper.getExternalLogin(model,
+        new Response.Listener<ParentLoginResult>() {
+          @Override
+          public void onResponse(ParentLoginResult res) {
+
+            switch (res.getResultCode()) {
+
+              case SUCCESS:
+
+                dismissLoading();
+
+                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+
+                mHelper.insertChildren(res.getChildren());
+
+                sendEmptyMessage(COMPLETE_LOGIN);
+
+                break;
+
+              case 1028:
+
+                dismissLoading();
+
+                parentLoginResult = res;
+
+//                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
+
+//                mHelper.insertChildren(res.getChildren());
+
+//                sendEmptyMessage(REQUEST_PASSWORD);
+
+                SettingPasswordDialog dialog = new SettingPasswordDialog(LoginActivity.this);
+                dialog.setListener(new SettingPasswordDialog.OnPasswordDialogListener() {
+                  @Override
+                  public void OnCancel() {
+                    LoginManager.getInstance().logOut();
+                  }
+
+                  @Override
+                  public void OnConfirm(String password) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("pwd", password);
+
+                    sendMessage(REQUEST_EXTENAL_INPUT_PASSWORD, bundle);
+                  }
+                });
+                dialog.show();
+
+                break;
+
+              default:
+
+                signOut();
+
+                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                break;
+            }
+
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+
+            signOut();
+            handleError(error);
+          }
+        });
+
+    addRequest(request);
   }
 
   private void requestFacebookLogin(FacebookProfile info) {
