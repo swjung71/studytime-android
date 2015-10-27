@@ -243,12 +243,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
       @Override
       public void onCancel() {
-        Toast.makeText(LoginActivity.this, "User cancelled", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(LoginActivity.this, "User cancelled", Toast.LENGTH_SHORT).show();
       }
 
       @Override
       public void onError(FacebookException error) {
-        Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
 
         Logger.e(error.getMessage());
       }
@@ -535,6 +535,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
       Person currentPerson = Plus.PeopleApi
           .getCurrentPerson(mGoogleApiClient);
+
+      if (currentPerson == null) {
+
+        mGoogleApiClient.disconnect();
+
+        return;
+      }
+
+
       String personName = currentPerson.getDisplayName();
       String personPhotoUrl = currentPerson.getImage().getUrl();
       String personGooglePlusProfile = currentPerson.getUrl();
@@ -564,17 +573,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     } else {
 
-      Toast.makeText(getApplicationContext(),
-          "Person information is null", Toast.LENGTH_LONG).show();
+//      Toast.makeText(getApplicationContext(),
+//          "Person information is null", Toast.LENGTH_LONG).show();
 
       mGoogleApiClient.disconnect();
     }
+
   }
 
   @Override
   public void onConnectionSuspended(int i) {
 
     Logger.d("onConnectionSuspended");
+
+    dismissLoading();
 
   }
 
@@ -666,6 +678,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
   }
 
   private boolean checkAccountsPermission() {
+
     final String perm = Manifest.permission.GET_ACCOUNTS;
     int permissionCheck = ContextCompat.checkSelfPermission(this, perm);
     if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
