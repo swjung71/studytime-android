@@ -831,8 +831,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     model.setEmail(info.getEmail());
     model.setSex(info.getGender());
     model.setName(info.getName());
-    model.setPassword(" ");
-    model.setBirthday(info.getBirthday());
+    model.setPassword("");
+    model.setBirthday(TextUtils.isEmpty(info.getBirthday()) ? "" : info.getBirthday());
     model.setPhoneNumber(STApplication.getPhoneNumber());
     model.setAppVersion(STApplication.getAppVersionName());
     model.setNationalCode(STApplication.getNationalCode());
@@ -922,8 +922,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     model.setEmail(info.getEmail());
     model.setSex(info.getGender());
     model.setName(info.getName());
-    model.setPassword(" ");
-    model.setBirthday(info.getBirthday());
+    model.setPassword("");
+    model.setBirthday(TextUtils.isEmpty(info.getBirthday()) ? "" : info.getBirthday());
     model.setPhoneNumber(STApplication.getPhoneNumber());
     model.setAppVersion(STApplication.getAppVersionName());
     model.setNationalCode(STApplication.getNationalCode());

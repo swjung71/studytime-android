@@ -44,6 +44,7 @@
                         android:singleLine="true"
                         android:inputType="textUri"
                         android:textSize="@dimen/login_parent_content_text_size"
+                        android:privateImeOptions="defaultInputmode=english;symbol=true"
                         android:textColorHint="@color/bgColorType01"/>
 
                 <kr.co.digitalanchor.studytime.view.FontEditText
