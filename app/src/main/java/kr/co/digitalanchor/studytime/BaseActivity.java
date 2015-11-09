@@ -372,6 +372,7 @@ public class BaseActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    @Deprecated
     protected void showOfferWall() {
 
         String id = STApplication.getString(StaticValues.AD_ID);
@@ -385,10 +386,6 @@ public class BaseActivity extends FragmentActivity {
 
         Logger.d("ad id" + id);
 
-        AdPOPcornStyler.themeStyle.rewardThemeColor = Color.parseColor("#A65EA8");
-        AdPOPcornStyler.themeStyle.themeColor = Color.parseColor("#A65EA8");
-        AdPOPcornStyler.themeStyle.rewardCheckThemeColor = Color.parseColor("#A65EA8");
-        AdPOPcornStyler.offerwall.Title = "하트얻기";
 
         IgawAdpopcorn.openOfferWall(this);
 
