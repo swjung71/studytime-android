@@ -55,8 +55,10 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     private final int COMPLETE_CHILD_LOGIN = 50002;
     private final int REQUEST_ADULT_FILE_LIST = 50005;
     private final int REQUEST_ADULT_FILE = 50004;
+    private final int REQUEST_CHILD_LIST = 50007;
 
     private final int ACTIVITY_ADDITIONAL_INFO = 60001;
+    private final int ACTIVITY_CHIDREN_INFO = 60002;
 
     EditText mEditEmailAddr;
 
@@ -105,7 +107,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         mEditPassword = (EditText) findViewById(R.id.editPassword);
 
-        mEditChildName = (EditText) findViewById(R.id.editChildName);
+//        mEditChildName = (EditText) findViewById(R.id.editChildName);
 
         ((Button) findViewById(R.id.buttonLogin)).setOnClickListener(this);
     }
@@ -126,6 +128,12 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             case REQUEST_ADD_INFO:
 
                 showAddInfo(parentId, name);
+
+                break;
+
+            case REQUEST_CHILD_LIST:
+
+                showChildList(parentId);
 
                 break;
 
@@ -167,7 +175,10 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 if (isValidate()) {
 
+                    sendEmptyMessage(REQUEST_CHILD_LIST);
+/** TEST 2015.11.10 이름 입력이 필요 없을듯
                     sendEmptyMessage(REQUEST_CHILD_LOGIN);
+ */
                 }
 
                 break;
@@ -183,13 +194,35 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ACTIVITY_ADDITIONAL_INFO) {
+        switch (requestCode) {
 
-            if (resultCode == RESULT_OK) {
+            case ACTIVITY_ADDITIONAL_INFO:
 
-                sendEmptyMessage(COMPLETE_CHILD_LOGIN);
-            }
+                if (resultCode == RESULT_OK) {
+
+                    sendEmptyMessage(COMPLETE_CHILD_LOGIN);
+                }
+
+                break;
+
+            case ACTIVITY_CHIDREN_INFO:
+
+                break;
+
+            default:
+
+                break;
         }
+    }
+
+    private void showChildList(String parentId) {
+
+        Intent intent = new Intent();
+
+        intent.setClass(getApplicationContext(), SelectChildActivity.class);
+        intent.putExtra("ParentID", parentId);
+
+        startActivityForResult(intent, ACTIVITY_ADDITIONAL_INFO);
     }
 
     private void showAddInfo(String parentId, String name) {
@@ -260,7 +293,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
             }
 
             tmp = null;
-
+/* 개발중 2015.11.10 이름 입력이 뒤로 가야할거 같아서
             tmp = mEditChildName.getText().toString();
 
             if (TextUtils.isEmpty(tmp)) {
@@ -269,7 +302,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 break;
             }
-
+*/
         } while (false);
 
         if (TextUtils.isEmpty(msg)) {
@@ -309,9 +342,9 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                         dismissLoading();
 
                         parentId = response.getParentID();
-
+/*
                         name = mEditChildName.getText().toString();
-
+*/
                         sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
                         break;

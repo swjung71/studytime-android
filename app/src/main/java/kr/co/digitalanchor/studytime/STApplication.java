@@ -100,7 +100,7 @@ public class STApplication extends MultiDexApplication {
     /**
      * Log Setting
      * */
-    Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
+    Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
 
     RequestManager.init(this);
     createImageCache();
@@ -668,7 +668,7 @@ public class STApplication extends MultiDexApplication {
 
     try {
       accessibilityEnabled = Settings.Secure.getInt(applicationContext.getContentResolver(),
-          android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
+          Settings.Secure.ACCESSIBILITY_ENABLED);
 
 //            Logger.d("Accessibility: " + accessibilityEnabled);
 

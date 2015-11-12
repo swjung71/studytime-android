@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,10 +24,8 @@ import com.igaworks.adpopcorn.IgawAdpopcornExtension;
 import com.igaworks.interfaces.IgawRewardItem;
 import com.igaworks.interfaces.IgawRewardItemEventListener;
 import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -57,645 +54,612 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-06-19.
  */
 public class ListChildActivity extends BaseActivity implements View.OnClickListener,
-        MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener,
-        IgawRewardItemEventListener {
+    MenuPopup.OnClickMenuItemListener, AdapterView.OnItemClickListener,
+    IgawRewardItemEventListener {
 
-    private final int REQUEST_UPDATE_COIN = 50001;
+  private final int REQUEST_UPDATE_COIN = 50001;
 
-    private final int REQUEST_UPDATE_DATA = 50002;
+  private final int REQUEST_UPDATE_DATA = 50002;
 
-    TextView mLabelPoint;
+  ImageButton mButtonMenu;
 
-    ImageButton mButtonPoint;
+  ListView mList;
 
-    ImageButton mButtonMenu;
+  MenuPopup mMenu;
 
-    ListView mList;
+  View mHeader;
 
-    MenuPopup mMenu;
+  View mFooter;
 
-    View mHeader;
+  TextView mBadge;
 
-    View mFooter;
+  ChildListAdapter mAdapter;
 
-    TextView mBadge;
+  ArrayList<Child> mChildren;
 
-    ChildListAdapter mAdapter;
+  DBHelper mHelper;
 
-    ArrayList<Child> mChildren;
+  RegisterChildReceiver registerChildReceiver;
 
-    DBHelper mHelper;
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-    RegisterChildReceiver registerChildReceiver;
+    setContentView(R.layout.activity_child_list);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    initView();
 
-        setContentView(R.layout.activity_child_list);
+    mHelper = new DBHelper(getApplicationContext());
 
-        initView();
+    IgawCommon.setClientRewardEventListener(this);
 
-        mHelper = new DBHelper(getApplicationContext());
+    IgawAdpopcornExtension.getClientPendingRewardItems(getApplicationContext());
 
-        IgawCommon.setClientRewardEventListener(this);
+    getNewNotice();
 
-        IgawAdpopcornExtension.getClientPendingRewardItems(getApplicationContext());
+  }
 
-        getNewNotice();
+  public void initView() {
 
+    mButtonMenu = (ImageButton) findViewById(R.id.buttonMenu);
+    mButtonMenu.setOnClickListener(this);
+
+    mMenu = new MenuPopup(getApplicationContext());
+    mMenu.setOnClickMenuItemListener(this);
+
+    mBadge = (TextView) findViewById(R.id.badge);
+
+    findViewById(R.id.buttonSendLink).setOnClickListener(this);
+
+    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+
+    mHeader = inflater.inflate(R.layout.layout_child_header, null);
+    mFooter = inflater.inflate(R.layout.layout_child_footer, null);
+    mFooter.setOnClickListener(this);
+
+    mList = (ListView) findViewById(R.id.list);
+
+    mList.setOnItemClickListener(this);
+
+    mList.setEmptyView(findViewById(android.R.id.empty));
+    mList.addHeaderView(mHeader);
+    mList.addFooterView(mFooter);
+
+    mList.setAdapter(makeAdapter());
+
+
+  }
+
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+
+
+    if (registerChildReceiver == null) {
+
+      registerChildReceiver = new RegisterChildReceiver();
     }
 
-    public void initView() {
+    IntentFilter intentFilter = new IntentFilter();
 
-        mLabelPoint = (TextView) findViewById(R.id.labelPoint);
+    intentFilter.addAction(NEW_MESSAGE_ARRIVED);
+    intentFilter.addAction(REGISTER_CHILD);
 
-        mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
-        mButtonPoint.setOnClickListener(this);
+    registerReceiver(registerChildReceiver, intentFilter);
 
-        mButtonMenu = (ImageButton) findViewById(R.id.buttonMenu);
-        mButtonMenu.setOnClickListener(this);
+    requestSyncData();
 
-        mMenu = new MenuPopup(getApplicationContext());
-        mMenu.setOnClickMenuItemListener(this);
+    updateBadge();
+  }
 
-        mBadge = (TextView) findViewById(R.id.badge);
+  @Override
+  protected void onStop() {
+    super.onStop();
 
-        findViewById(R.id.buttonSendLink).setOnClickListener(this);
-
-        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-
-        mHeader = inflater.inflate(R.layout.layout_child_header, null);
-        mFooter = inflater.inflate(R.layout.layout_child_footer, null);
-        mFooter.setOnClickListener(this);
-
-        mList = (ListView) findViewById(R.id.list);
-
-        mList.setOnItemClickListener(this);
-
-        mList.setEmptyView(findViewById(android.R.id.empty));
-        mList.addHeaderView(mHeader);
-        mList.addFooterView(mFooter);
-
-        mList.setAdapter(makeAdapter());
+    unregisterReceiver(registerChildReceiver);
+  }
 
 
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    if (position < 1) {
+
+      return;
     }
 
+    Child child = mChildren.get(position - 1);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    showChildDetail(child);
 
+  }
 
-        if (registerChildReceiver == null) {
+  @Override
+  public void onClick(View v) {
 
-            registerChildReceiver = new RegisterChildReceiver();
-        }
+    switch (v.getId()) {
 
-        IntentFilter intentFilter = new IntentFilter();
-
-        intentFilter.addAction(NEW_MESSAGE_ARRIVED);
-        intentFilter.addAction(REGISTER_CHILD);
-
-        registerReceiver(registerChildReceiver, intentFilter);
-
-        requestSyncData();
-
-        updateBadge();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        unregisterReceiver(registerChildReceiver);
-    }
-
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        if (position < 1) {
-
-            return;
-        }
-
-        Child child = mChildren.get(position - 1);
-
-        showChildDetail(child);
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.buttonPoint:
-
-//                if (!isDuplicateRuns()) {
-//
-//                    showOfferWall();
-//                }
-
-                if (!isDuplicateRuns()) {
-
-                    showPurchase();
-                }
-
-
-                break;
-
-            case R.id.buttonMenu:
-
-                if (mMenu != null) {
-
-                    mMenu.show(v);
-                }
-
-                break;
-
-            case R.id.footerSendLink:
-            case R.id.buttonSendLink:
-
-                sendLink();
-
-                break;
-
-            default:
-
-                break;
-        }
-    }
-
-    @Override
-    protected void onHandleMessage(Message msg) {
-
-        switch (msg.what) {
-
-            case REQUEST_UPDATE_COIN:
-
-                break;
-
-            case REQUEST_UPDATE_DATA:
-
-                drawView();
-
-                getData();
-
-                break;
-
-            default:
-
-                Toast.makeText(getApplicationContext(), "onHandleMessage default", Toast.LENGTH_SHORT).show();
-
-                break;
-        }
-
-    }
-
-    @Override
-    public void onClickModify() {
-
-        showModifyInfo();
-    }
-
-    @Override
-    public void onClickFAQ() {
-
-        showFAQ();
-    }
-
-    @Override
-    public void onClickInquiry() {
-
-        sendEmail();
-    }
-
-    @Override
-    public void onClickWithdraw() {
-
-        showWithDraw();
-
-    }
-
-    @Override
-    public void onClickLogOut() {
-
-        STApplication.resetApplication();
-
-    }
-
-    @Override
-    public void onClickNotice() {
-
-        showNotice();
-    }
-
-    @Override
-    public void onClickNotificationBooad() {
-
-        showNotificationBoard();
-    }
-
-    private void drawView() {
-
-        Account account = mHelper.getAccountInfo();
+      case R.id.buttonMenu:
 
         if (mMenu != null) {
 
-            mMenu.setName(account.getName());
-
-            mMenu.addNewNotice((account.getNotice() > 0) ? true : false);
+          mMenu.show(v);
         }
 
-        if (mLabelPoint != null) {
+        break;
 
-            mLabelPoint.setText(String.valueOf(account.getCoin()));
-        }
+      case R.id.footerSendLink:
+      case R.id.buttonSendLink:
+
+        sendLink();
+
+        break;
+
+      default:
+
+        break;
+    }
+  }
+
+  @Override
+  protected void onHandleMessage(Message msg) {
+
+    switch (msg.what) {
+
+      case REQUEST_UPDATE_DATA:
+
+        drawView();
+
+        getData();
+
+        break;
+
+      default:
+
+        Toast.makeText(getApplicationContext(), "onHandleMessage default", Toast.LENGTH_SHORT).show();
+
+        break;
     }
 
-    private ChildListAdapter makeAdapter() {
+  }
 
-        if (mChildren == null) {
+  @Override
+  public void onClickModify() {
 
-            mChildren = new ArrayList<>();
-        }
+    showModifyInfo();
+  }
 
-        mAdapter = new ChildListAdapter(getApplicationContext(), 0, mChildren);
+  @Override
+  public void onClickFAQ() {
 
-        return mAdapter;
+    showFAQ();
+  }
+
+  @Override
+  public void onClickInquiry() {
+
+    sendEmail();
+  }
+
+  @Override
+  public void onClickWithdraw() {
+
+    showWithDraw();
+
+  }
+
+  @Override
+  public void onClickLogOut() {
+
+    STApplication.resetApplication();
+
+  }
+
+  @Override
+  public void onClickNotice() {
+
+    showNotice();
+  }
+
+  @Override
+  public void onClickNotificationBooad() {
+
+    showNotificationBoard();
+  }
+
+  private void drawView() {
+
+    Account account = mHelper.getAccountInfo();
+
+    if (mMenu != null) {
+
+      mMenu.setName(account.getName());
+
+      mMenu.addNewNotice((account.getNotice() > 0) ? true : false);
+    }
+  }
+
+  private ChildListAdapter makeAdapter() {
+
+    if (mChildren == null) {
+
+      mChildren = new ArrayList<>();
     }
 
-    private void showWithDraw() {
+    mAdapter = new ChildListAdapter(getApplicationContext(), 0, mChildren);
 
-        IgawAdbrix.retention("withdraw");
+    return mAdapter;
+  }
 
-        Intent intent = new Intent();
+  private void showWithDraw() {
 
-        intent.setClass(getApplicationContext(), WithdrawActivity.class);
+    IgawAdbrix.retention("withdraw");
 
-        startActivity(intent);
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), WithdrawActivity.class);
+
+    startActivity(intent);
+  }
+
+  private void showChildDetail(Child child) {
+
+    IgawAdbrix.retention("child");
+
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), ControlChildExActivity.class);
+
+    intent.putExtra("ChildID", child.getChildID());
+    intent.putExtra("Name", child.getName());
+
+    startActivity(intent);
+
+  }
+
+  private void showNotificationBoard() {
+
+    IgawAdbrix.retention("notificationBoard");
+
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), NotificationActivity.class);
+
+    startActivity(intent);
+  }
+
+  private void showModifyInfo() {
+
+    IgawAdbrix.retention("personalInfo");
+
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
+
+    startActivity(intent);
+  }
+
+  private void showFAQ() {
+
+    IgawAdbrix.retention("faq");
+
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), BoardActivity.class);
+
+    intent.putExtra("option", 1);
+
+    startActivity(intent);
+  }
+
+  private void showNotice() {
+
+    IgawAdbrix.retention("notices");
+
+    Intent intent = new Intent();
+
+    intent.setClass(getApplicationContext(), BoardActivity.class);
+
+    intent.putExtra("option", 0);
+
+    startActivity(intent);
+  }
+
+  private void sendLink() {
+
+    try {
+
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+
+      intent.putExtra("addres", "");
+      intent.putExtra("sms_body", "https://play.google.com/store/apps/details?id="
+          + this.getPackageName());
+      intent.setType("vnd.android-dir/mms-sms");
+
+      startActivity(intent);
+
+    } catch (Exception e) {
+
+      Toast.makeText(getApplicationContext(),
+          "SMS fail, please try again later!", Toast.LENGTH_LONG)
+          .show();
+    }
+  }
+
+
+  private void getData() {
+
+    mChildren = mHelper.getChildren();
+
+    mList.setAdapter(makeAdapter());
+  }
+
+  @Override
+  public void onGetRewardInfo(boolean b, String s, IgawRewardItem[] igawRewardItems) {
+
+    int point = 0;
+
+    if (!b) {
+
+      return;
     }
 
-    private void showChildDetail(Child child) {
+    for (IgawRewardItem item : igawRewardItems) {
 
-        IgawAdbrix.retention("child");
+      point += item.getRewardQuantity();
 
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), ControlChildExActivity.class);
-
-        intent.putExtra("ChildID", child.getChildID());
-        intent.putExtra("Name", child.getName());
-
-        startActivity(intent);
-
-    }
-
-    private void showNotificationBoard() {
-
-        IgawAdbrix.retention("notificationBoard");
-
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), NotificationActivity.class);
-
-        startActivity(intent);
-    }
-
-    private void showModifyInfo() {
-
-        IgawAdbrix.retention("personalInfo");
-
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), ModPrivacyActivity.class);
-
-        startActivity(intent);
-    }
-
-    private void showFAQ() {
-
-        IgawAdbrix.retention("faq");
-
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), BoardActivity.class);
-
-        intent.putExtra("option", 1);
-
-        startActivity(intent);
-    }
-
-    private void showNotice() {
-
-        IgawAdbrix.retention("notices");
-
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), BoardActivity.class);
-
-        intent.putExtra("option", 0);
-
-        startActivity(intent);
-    }
-
-    private void sendLink() {
-
-        try {
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-
-            intent.putExtra("addres", "");
-            intent.putExtra("sms_body", "https://play.google.com/store/apps/details?id="
-                    + this.getPackageName());
-            intent.setType("vnd.android-dir/mms-sms");
-
-            startActivity(intent);
-
-        } catch (Exception e) {
-
-            Toast.makeText(getApplicationContext(),
-                    "SMS fail, please try again later!", Toast.LENGTH_LONG)
-                    .show();
-        }
+      item.didGiveRewardItem();
     }
 
 
-    private void getData() {
+    requestUpdatePoint(point);
+  }
 
-        mChildren = mHelper.getChildren();
+  @Override
+  public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
 
-        mList.setAdapter(makeAdapter());
-    }
+  }
 
-    @Override
-    public void onGetRewardInfo(boolean b, String s, IgawRewardItem[] igawRewardItems) {
+  private void requestUpdatePoint(int point) {
 
-        int point = 0;
+    final Account account = mHelper.getAccountInfo();
 
-        if (!b) {
+    final SetCoin model = new SetCoin();
 
-            return;
-        }
+    model.setParentID(account.getID());
+    model.setCoin(account.getCoin() + point);
 
-        for (IgawRewardItem item : igawRewardItems) {
+    SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
+        new Response.Listener<CoinResult>() {
 
-            point += item.getRewardQuantity();
+          @Override
+          public void onResponse(CoinResult response) {
 
-            item.didGiveRewardItem();
-        }
+            switch (response.getResultCode()) {
 
+              case SUCCESS:
 
-        requestUpdatePoint(point);
-    }
+                mHelper.updateCoin(account.getID(), response.getCoin());
 
-    @Override
-    public void onDidGiveRewardItemResult(boolean b, String s, int i, String s1) {
+                drawView();
 
-    }
+                break;
 
-    private void requestUpdatePoint(int point) {
+              default:
 
-        final Account account = mHelper.getAccountInfo();
+                handleResultCode(response.getResultCode(),
+                    response.getResultMessage());
 
-        final SetCoin model = new SetCoin();
-
-        model.setParentID(account.getID());
-        model.setCoin(account.getCoin() + point);
-
-        SimpleXmlRequest request = HttpHelper.getUpdateCoin(model,
-                new Response.Listener<CoinResult>() {
-
-                    @Override
-                    public void onResponse(CoinResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                mHelper.updateCoin(account.getID(), response.getCoin());
-
-                                drawView();
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
-
-                                break;
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
-    }
-
-    private void requestSyncData() {
-
-        final Account account = mHelper.getAccountInfo();
-
-        if (TextUtils.isEmpty(account.getID())) {
-
-            return;
-        }
-
-        showLoading();
-
-        ParentModel model = new ParentModel();
-        model.setParentId(account.getID());
-
-        SimpleXmlRequest request = HttpHelper.getSyncParentData(model, new Response.Listener<ParentLoginResult>() {
-
-            @Override
-            public void onResponse(ParentLoginResult response) {
-
-                switch (response.getResultCode()) {
-
-                    case SUCCESS:
-
-                        mHelper.updateAccount(response.getParentID(), 1, account.getName(),
-                                Integer.parseInt(response.getCoin()), response.getEmail());
-
-                        mHelper.insertChildren(response.getChildren());
-
-                    default:
-
-                        sendEmptyMessage(REQUEST_UPDATE_DATA);
-
-                        dismissLoading();
-
-                        break;
-                }
+                break;
             }
 
+          }
         }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
+          @Override
+          public void onErrorResponse(VolleyError error) {
 
-
-                sendEmptyMessage(REQUEST_UPDATE_DATA);
-
-                dismissLoading();
-            }
+            handleError(error);
+          }
         });
 
-        addRequest(request);
+    addRequest(request);
+  }
+
+  private void requestSyncData() {
+
+    final Account account = mHelper.getAccountInfo();
+
+    if (TextUtils.isEmpty(account.getID())) {
+
+      return;
     }
 
-    private void updateBadge() {
+    showLoading();
 
-        Account account = mHelper.getAccountInfo();
+    ParentModel model = new ParentModel();
+    model.setParentId(account.getID());
 
-        int count = account.getNotice();
+    SimpleXmlRequest request = HttpHelper.getSyncParentData(model, new Response.Listener<ParentLoginResult>() {
 
-        if (count < 1) {
+      @Override
+      public void onResponse(ParentLoginResult response) {
 
-            mBadge.setVisibility(View.GONE);
+        switch (response.getResultCode()) {
 
-        } else if (count > 0 && count < 10) {
+          case SUCCESS:
 
-            mBadge.setText(String.valueOf(count));
+            mHelper.updateAccount(response.getParentID(), 1, account.getName(),
+                Integer.parseInt(response.getCoin()), response.getEmail());
 
-            mBadge.setVisibility(View.VISIBLE);
+            mHelper.insertChildren(response.getChildren());
 
-        } else {
+          default:
 
-            mBadge.setText("9+");
+            sendEmptyMessage(REQUEST_UPDATE_DATA);
 
-            mBadge.setVisibility(View.VISIBLE);
+            dismissLoading();
+
+            break;
         }
+      }
+
+    }, new Response.ErrorListener() {
+
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+
+        sendEmptyMessage(REQUEST_UPDATE_DATA);
+
+        dismissLoading();
+      }
+    });
+
+    addRequest(request);
+  }
+
+  private void updateBadge() {
+
+    Account account = mHelper.getAccountInfo();
+
+    int count = account.getNotice();
+
+    if (count < 1) {
+
+      mBadge.setVisibility(View.GONE);
+
+    } else if (count > 0 && count < 10) {
+
+      mBadge.setText(String.valueOf(count));
+
+      mBadge.setVisibility(View.VISIBLE);
+
+    } else {
+
+      mBadge.setText("9+");
+
+      mBadge.setVisibility(View.VISIBLE);
     }
+  }
 
-    private void getNewNotice() {
+  private void getNewNotice() {
 
-        Account account = mHelper.getAccountInfo();
+    Account account = mHelper.getAccountInfo();
 
-        ParentModel model = new ParentModel();
+    ParentModel model = new ParentModel();
 
-        model.setParentId(account.getID());
+    model.setParentId(account.getID());
 
-        SimpleXmlRequest request = HttpHelper.getNewNotice(model, new Response.Listener<NewNoticeResult>() {
-            @Override
-            public void onResponse(NewNoticeResult response) {
+    SimpleXmlRequest request = HttpHelper.getNewNotice(model, new Response.Listener<NewNoticeResult>() {
+      @Override
+      public void onResponse(NewNoticeResult response) {
 
-                switch (response.getResultCode()) {
+        switch (response.getResultCode()) {
 
-                    case SUCCESS:
+          case SUCCESS:
 
-                        List<Notice> notices = response.getNotices();
+            List<Notice> notices = response.getNotices();
 
-                        if (!response.getHasNewNotice().equals("1")) {
+            if (!response.getHasNewNotice().equals("1")) {
 
-                            return;
-                        }
+              return;
+            }
 
-                        if (notices == null || notices.size() < 1) {
+            if (notices == null || notices.size() < 1) {
 
-                            return;
-                        }
+              return;
+            }
 
-                        Notice notice = notices.get(0);
+            Notice notice = notices.get(0);
 
-                        int id = -1, mid = -1;
+            int id = -1, mid = -1;
 
-                        try {
+            try {
 
-                            id = Integer.parseInt(notice.getNoticeId());
+              id = Integer.parseInt(notice.getNoticeId());
 
-                        } catch (NumberFormatException e) {
-
-
-                            return;
-                        }
-
-                        if (id < 1) {
+            } catch (NumberFormatException e) {
 
 
-                            return;
-                        }
+              return;
+            }
 
-                        mid = STApplication.getInt(StaticValues.RECENT_NOTICE_ID, -1);
+            if (id < 1) {
 
-                        if (id > mid) {
 
-                            STApplication.putInt(StaticValues.RECENT_NOTICE_ID, id);
+              return;
+            }
 
-                            MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
+            mid = STApplication.getInt(StaticValues.RECENT_NOTICE_ID, -1);
 
-                            String content = null;
+            if (id > mid) {
 
-                            try {
+              STApplication.putInt(StaticValues.RECENT_NOTICE_ID, id);
 
-                                content = AndroidUtils.convertFromUTF8(notice.getContent()).replaceAll("n", "").replaceAll("\\\\", "\n");
+              MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
 
-                                Logger.d(content);
+              String content = null;
 
-                            } catch (NullPointerException e) {
+              try {
 
-                                return;
-                            }
+                content = AndroidUtils.convertFromUTF8(notice.getContent()).replaceAll("n", "").replaceAll("\\\\", "\n");
 
-                            builder.title(AndroidUtils.convertFromUTF8(notice.getTitle()))
-                                    .content(content)
-                                    .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog materialDialog) {
+                Logger.d(content);
 
-                                    materialDialog.dismiss();
-                                }
-                            }).build().show();
-                        }
+              } catch (NullPointerException e) {
 
-                        break;
+                return;
+              }
 
-                    default:
+              builder.title(AndroidUtils.convertFromUTF8(notice.getTitle()))
+                  .content(content)
+                  .positiveText("확인").callback(new MaterialDialog.SimpleCallback() {
+                @Override
+                public void onPositive(MaterialDialog materialDialog) {
 
-                        handleResultCode(response.getResultCode(),
-                                response.getResultMessage());
-
-                        break;
+                  materialDialog.dismiss();
                 }
-
+              }).build().show();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-                handleError(error);
-            }
-        });
+            break;
 
-        addRequest(request);
-    }
+          default:
 
-    class RegisterChildReceiver extends BroadcastReceiver {
+            handleResultCode(response.getResultCode(),
+                response.getResultMessage());
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            switch (intent.getAction()) {
-
-                case StaticValues.REGISTER_CHILD:
-                case StaticValues.NEW_MESSAGE_ARRIVED:
-
-                    getData();
-
-                    break;
-            }
+            break;
         }
+
+      }
+    }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+        handleError(error);
+      }
+    });
+
+    addRequest(request);
+  }
+
+  class RegisterChildReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+      switch (intent.getAction()) {
+
+        case StaticValues.REGISTER_CHILD:
+        case StaticValues.NEW_MESSAGE_ARRIVED:
+
+          getData();
+
+          break;
+      }
     }
+  }
 }

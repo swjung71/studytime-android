@@ -10,7 +10,7 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-06-17.
  */
-@Root(name = "ChildRegister")
+@Root(name = "ChildRegister", strict = false)
 public class ChildRegister implements Cloneable {
 
     @Attribute(name = "xmlns")
@@ -33,6 +33,9 @@ public class ChildRegister implements Cloneable {
 
     @Element(name = "GCM")
     String gcm;
+
+    @Element(name = "ChildID", required = false)
+    String childId;
 
     /**
      * 0:male, 1:female
@@ -60,6 +63,7 @@ public class ChildRegister implements Cloneable {
 
     @Element(name = "Lang")
     String lang;
+
 
     public ChildRegister() {
 
@@ -160,6 +164,14 @@ public class ChildRegister implements Cloneable {
 
     public void setLang(String lang) {
         this.lang = lang;
+    }
+
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class HttpHelper {
   /**
    * true : dev ; false : real
    */
-  public static boolean isDev = false;
+  public static boolean isDev = true;
 
   /**
    * Dev Server url http://14.63.225.89/studytime-server
@@ -1671,4 +1671,46 @@ public class HttpHelper {
     }
   }
 
+  public static SimpleXmlRequest getChildList(ParentModel model, Listener listener,
+                                                     ErrorListener errorListener) {
+
+    StringWriter writer = null;
+
+    try {
+
+      Serializer serializer = new Persister();
+
+      writer = new StringWriter();
+
+      serializer.write(model, writer);
+
+      HashMap<String, String> map = new HashMap<>();
+
+      map.put("xml", writer.toString());
+
+      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "getChildList",
+          ParentLoginResult.class, map, listener, errorListener);
+
+    } catch (Exception e) {
+
+      Logger.e(e.toString());
+
+      return null;
+
+    } finally {
+
+      if (writer != null) {
+
+        try {
+
+          writer.close();
+
+        } catch (IOException e) {
+
+        }
+
+        writer = null;
+      }
+    }
+  }
 }

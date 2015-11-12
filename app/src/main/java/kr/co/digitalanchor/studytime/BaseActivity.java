@@ -22,14 +22,11 @@ import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
-import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 import com.orhanobut.logger.Logger;
 
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 import kr.co.digitalanchor.studytime.model.db.Account;
-import kr.co.digitalanchor.studytime.purchase.ClauseViewActivity;
-import kr.co.digitalanchor.studytime.purchase.PurchaseActivity;
 
 
 /**
@@ -297,9 +294,15 @@ public class BaseActivity extends FragmentActivity {
 
                 break;
 
+            case 1024:
+
+                msg = "등록된 이메일이 아닙니다. (1024)";
+
+                break;
+
             default:
 
-                msg = "알수없는 오류입니다.";
+                msg = "알수없는 오류입니다. (" + code + ")";
 
                 break;
         }
@@ -358,18 +361,6 @@ public class BaseActivity extends FragmentActivity {
 
         sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-    }
-
-    protected void showPurchase() {
-
-        Intent intent = new Intent(getApplicationContext(), PurchaseActivity.class);
-        startActivity(intent);
-    }
-
-    protected void showPurchaseInfo() {
-
-        Intent intent = new Intent(getApplicationContext(), ClauseViewActivity.class);
-        startActivity(intent);
     }
 
     @Deprecated

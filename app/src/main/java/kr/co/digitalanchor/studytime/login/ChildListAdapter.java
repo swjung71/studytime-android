@@ -1,4 +1,4 @@
-package kr.co.digitalanchor.studytime.control;
+package kr.co.digitalanchor.studytime.login;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,31 +7,27 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import java.util.ArrayList;
+import java.util.List;
 import kr.co.digitalanchor.studytime.R;
-import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Child;
 import kr.co.digitalanchor.studytime.view.ViewHolder;
 
 /**
- * Created by Thomas on 2015-06-19.
+ * Created by Thomas on 2015-11-10.
  */
 public class ChildListAdapter extends ArrayAdapter<Child> {
 
   private Context context;
 
-  private ArrayList<Child> items;
+  private List<Child> items;
 
-  private DBHelper mHelper;
+  public ChildListAdapter(Context context, int resource, List<Child> items) {
 
-  public ChildListAdapter(Context context, int resId, ArrayList<Child> items) {
+    super(context, resource, items);
 
-    super(context, resId, items);
-
-    this.items = items;
     this.context = context;
 
-    this.mHelper = new DBHelper(context);
+    this.items = items;
   }
 
   @Override
@@ -40,16 +36,16 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
     if (convertView == null) {
 
       LayoutInflater inflater = LayoutInflater.from(context);
-      convertView = inflater.inflate(R.layout.layout_child_item, null);
+      convertView = inflater.inflate(R.layout.layout_child_item_c, null);
+
     }
 
     Child child = items.get(position);
 
     View layoutEnable = ViewHolder.get(convertView, R.id.enableChild);
-
     View layoutDisable = ViewHolder.get(convertView, R.id.disableChild);
 
-    if (child.getIsExpired().equals("N")) {
+    if (position % 2 == 0) {
 
       layoutEnable.setVisibility(View.VISIBLE);
       layoutDisable.setVisibility(View.GONE);
@@ -61,28 +57,10 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
       TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
 
       TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice);
-      labelDevice.setText(child.getDeviceModel());
+      labelDevice.setText("갤럭시 S5");
 
       TextView labelExpired = ViewHolder.get(convertView, R.id.textExpired);
-      labelExpired.setText(context.getResources().getString(R.string.payment_info,
-          child.getExpirationDate(),
-          String.valueOf(child.getRemainingDays())));
-
-
-      int count = child.getNewMessageCount();
-
-      if (count > 0) {
-
-        noti.setVisibility(View.VISIBLE);
-
-        noti.setText(count > 10 ? "10+" : String.valueOf(count));
-
-      } else {
-
-        noti.setVisibility(View.GONE);
-      }
-
-      ImageView profile = ViewHolder.get(convertView, R.id.imgProfile);
+      labelExpired.setText("2014-11-13 (5일전)");
 
     } else {
 
@@ -94,10 +72,9 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
       name.setSelected(true);
 
       TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice2);
-      labelDevice.setText(child.getDeviceModel());
+      labelDevice.setText("갤럭시 S5");
 
       ImageView profile = ViewHolder.get(convertView, R.id.imgProfileDisable);
-
     }
 
     return convertView;

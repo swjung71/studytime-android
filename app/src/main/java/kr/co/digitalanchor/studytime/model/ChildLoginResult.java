@@ -16,6 +16,9 @@ public class ChildLoginResult {
     @Element(name = "ParentID", required = false)
     String parentID;
 
+    @Element(name = "ChildYN", required = false)
+    String childYn;
+
     public int getResultCode() {
         return resultCode;
     }
@@ -38,5 +41,13 @@ public class ChildLoginResult {
 
     public void setParentID(String parentID) {
         this.parentID = parentID;
+    }
+
+    public String getChildYn() {
+        return childYn;
+    }
+
+    public void setChildYn(String childYn) {
+        this.childYn = childYn;
     }
 }

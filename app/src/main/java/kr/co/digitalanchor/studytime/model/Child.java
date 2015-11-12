@@ -6,74 +6,118 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-06-17.
  */
-@Root(name = "Child")
+@Root(name = "Child", strict = false)
 public class Child {
 
-    @Element(name = "ChildID", required = false)
-    String childID;
+  @Element(name = "ChildID", required = false)
+  String childID;
 
-    @Element(name = "Name", required = false, data = true)
-    String name;
+  @Element(name = "Name", required = false, data = true)
+  String name;
 
-    @Element(name = "Is_off", required = false)
-    String isOff;
+  @Element(name = "Is_off", required = false)
+  String isOff;
 
-    @Element(name = "MsgCount", required = false)
-    String msgCount;
+  @Element(name = "MsgCount", required = false)
+  String msgCount;
 
-    @Element(name = "IsChanged", required = false)
-    String IsChanged;
+  @Element(name = "IsChanged", required = false)
+  String IsChanged;
 
-    public Child() {
+  @Element(name = "ExpirationDate", required = false)
+  String expirationDate;
 
-    }
+  @Element(name = "ExpirationYN", required = false)
+  String expirationYN;
 
-    public Child(String childID, String name) {
+  @Element(name = "DevModel", required = false)
+  String deviceModel;
 
-        this.childID = childID;
+  @Element(name = "RemainingDays", required = false)
+  int remainingDays;
 
-        this.name = name;
+  public Child() {
 
-        this.isOff = "0";
-    }
+  }
 
-    public String getChildID() {
-        return childID;
-    }
+  public Child(String childID, String name) {
 
-    public void setChildID(String childID) {
-        this.childID = childID;
-    }
+    this.childID = childID;
 
-    public String getName() {
-        return name;
-    }
+    this.name = name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    this.isOff = "0";
+  }
 
-    public String getMsgCount() {
-        return msgCount;
-    }
+  public String getChildID() {
+    return childID;
+  }
 
-    public void setMsgCount(String msgCount) {
-        this.msgCount = msgCount;
-    }
+  public void setChildID(String childID) {
+    this.childID = childID;
+  }
 
-    public String getIsOff() {
-        return isOff;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setIsOff(String isOff) {
-        this.isOff = isOff;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getIsChanged() {
-        return IsChanged;
-    }
+  public String getMsgCount() {
+    return msgCount;
+  }
 
-    public void setIsChanged(String isChanged) {
-        IsChanged = isChanged;
-    }
+  public void setMsgCount(String msgCount) {
+    this.msgCount = msgCount;
+  }
+
+  public String getIsOff() {
+    return isOff;
+  }
+
+  public void setIsOff(String isOff) {
+    this.isOff = isOff;
+  }
+
+  public String getIsChanged() {
+    return IsChanged;
+  }
+
+  public void setIsChanged(String isChanged) {
+    IsChanged = isChanged;
+  }
+
+  public String getExpirationDate() {
+    return expirationDate;
+  }
+
+  public void setExpirationDate(String expirationDate) {
+    this.expirationDate = expirationDate;
+  }
+
+  public String getExpirationYN() {
+    return expirationYN;
+  }
+
+  public void setExpirationYN(String expirationYN) {
+    this.expirationYN = expirationYN;
+  }
+
+  public String getDeviceModel() {
+    return deviceModel;
+  }
+
+  public void setDeviceModel(String deviceModel) {
+    this.deviceModel = deviceModel;
+  }
+
+  public int getRemainingDays() {
+    return remainingDays;
+  }
+
+  public void setRemainingDays(int remainingDays) {
+    this.remainingDays = remainingDays;
+  }
 }

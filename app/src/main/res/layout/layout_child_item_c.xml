@@ -11,7 +11,7 @@
             android:layout_height="@dimen/child_item_layout_height"
             android:layout_marginLeft="@dimen/child_item_layout_margin"
             android:layout_marginRight="@dimen/child_item_layout_margin"
-            android:background="@drawable/box_type_02_bg"
+            android:background="@drawable/box_type_10_bg"
             android:padding="@dimen/child_item_layout_padding"
             android:visibility="visible">
 
@@ -21,7 +21,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:scaleType="fitStart"
-                android:src="@drawable/profile_img"/>
+                android:src="@drawable/profile_img_c"/>
 
         <kr.co.digitalanchor.studytime.view.FontTextView
                 android:id="@+id/labelName"
@@ -36,7 +36,7 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:focusable="false"
                 android:singleLine="true"
-                android:textColor="#932c96"
+                android:textColor="#0049c3"
                 android:textStyle="bold"
                 android:textSize="@dimen/child_item_name_text_size"
                 android:text="알리바바"/>
@@ -88,20 +88,6 @@
                 android:textColor="#4a4a4a"
                 android:textSize="@dimen/child_item_noti_text_size"
                 android:text="2015년 11월 10일(만료4일전)"/>
-
-        <TextView
-                android:id="@+id/labelNotiCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/child_item_noti_text_margin_right"
-                android:background="@drawable/icon_noti"
-                android:gravity="center"
-                android:text="10+"
-                android:textColor="#ff7f00"
-                android:textSize="@dimen/child_item_noti_text_size"
-                android:visibility="visible"/>
 
     </RelativeLayout>
 

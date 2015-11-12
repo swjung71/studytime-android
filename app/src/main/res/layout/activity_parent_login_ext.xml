@@ -5,282 +5,282 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg">
 
-        <ScrollView android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:paddingBottom="50dp">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="50dp">
 
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/login_parent_logo_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/login_logo"/>
+
+            <LinearLayout
+                    android:id="@+id/container_login_textboxes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                <kr.co.digitalanchor.studytime.view.FontEditText
+                        android:id="@+id/editEmailAddr"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
+                        android:background="@drawable/box_type_03_bg"
+                        android:gravity="center_vertical"
+                        android:hint="@string/edit_email_hint"
+                        android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                        android:paddingRight="@dimen/login_parent_edit_box_padding"
+                        android:singleLine="true"
+                        android:inputType="textUri"
+                        android:textSize="@dimen/login_parent_content_text_size"
+                        android:privateImeOptions="defaultInputmode=english;symbol=true"
+                        android:textColorHint="@color/bgColorType01"/>
+
+                <kr.co.digitalanchor.studytime.view.FontEditText
+                        android:id="@+id/editPassword"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                        android:background="@drawable/box_type_03_bg"
+                        android:gravity="center_vertical"
+                        android:hint="@string/edit_password_hint"
+                        android:paddingLeft="@dimen/login_parent_edit_box_padding"
+                        android:paddingRight="@dimen/login_parent_edit_box_padding"
+                        android:singleLine="true"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/login_parent_content_text_size"
+                        android:textColorHint="@color/bgColorType01"/>
+
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                    android:id="@+id/container_login_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/login_parent_email_box_margin_top">
+
+                <!--<Button android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_gravity="center_horizontal"/>
+                        -->
+
+
+                <RelativeLayout
+                        android:id="@+id/layoutFacebookLogin"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:addStatesFromChildren="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="#3b5998">
+
+                    <com.facebook.login.widget.LoginButton
+                            android:id="@+id/buttonFacebookLogin"
+                            android:layout_width="@dimen/login_parent_content_width"
+                            android:layout_height="@dimen/login_parent_content_height"
+                            android:layout_centerHorizontal="true"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp"
+                            android:textSize="@dimen/login_parent_content_text_size"
+                            android:layout_gravity="center_horizontal" />
+
+                    <FrameLayout
+                            android:id="@+id/facbookLogo"
+                            android:layout_width="@dimen/login_parent_content_logo_width"
+                            android:layout_height="match_parent">
 
                         <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="@dimen/login_parent_logo_height"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/login_logo"/>
-
-                        <LinearLayout
-                                android:id="@+id/container_login_textboxes"
-                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:visibility="gone">
+                                android:layout_gravity="center"
+                                android:src="@drawable/logo_facebook"
+                                android:focusable="false"/>
 
-                                <kr.co.digitalanchor.studytime.view.FontEditText
-                                        android:id="@+id/editEmailAddr"
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_gravity="center_horizontal"
-                                        android:layout_marginTop="@dimen/login_parent_email_box_margin_top"
-                                        android:background="@drawable/box_type_03_bg"
-                                        android:gravity="center_vertical"
-                                        android:hint="@string/edit_email_hint"
-                                        android:paddingLeft="@dimen/login_parent_edit_box_padding"
-                                        android:paddingRight="@dimen/login_parent_edit_box_padding"
-                                        android:singleLine="true"
-                                        android:inputType="textUri"
-                                        android:textSize="@dimen/login_parent_content_text_size"
-                                        android:privateImeOptions="defaultInputmode=english;symbol=true"
-                                        android:textColorHint="@color/bgColorType01"/>
+                    </FrameLayout>
 
-                                <kr.co.digitalanchor.studytime.view.FontEditText
-                                        android:id="@+id/editPassword"
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_gravity="center_horizontal"
-                                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                        android:background="@drawable/box_type_03_bg"
-                                        android:gravity="center_vertical"
-                                        android:hint="@string/edit_password_hint"
-                                        android:paddingLeft="@dimen/login_parent_edit_box_padding"
-                                        android:paddingRight="@dimen/login_parent_edit_box_padding"
-                                        android:singleLine="true"
-                                        android:inputType="textPassword"
-                                        android:textSize="@dimen/login_parent_content_text_size"
-                                        android:textColorHint="@color/bgColorType01"/>
+                    <View
+                            android:id="@+id/face_btn_div"
+                            android:layout_width="2px"
+                            android:layout_toRightOf="@id/facbookLogo"
+                            android:background="@color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_height="@dimen/login_parent_content_text_size"/>
 
+                    <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/face_btn_div"
+                            android:layout_alignParentRight="true"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/login_parent_content_text_size"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="페이스북 아이디 로그인"/>
+                </RelativeLayout>
 
-                        </LinearLayout>
+                <RelativeLayout
+                        android:id="@+id/layoutGoogleLogin"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                        android:addStatesFromChildren="true"
+                        android:layout_below="@id/layoutFacebookLogin"
+                        android:background="@drawable/btn_google_bg">
 
+                    <FrameLayout
+                            android:id="@+id/googleLogo"
+                            android:layout_width="@dimen/login_parent_content_logo_width"
+                            android:layout_height="match_parent">
 
-                        <RelativeLayout
-                                android:id="@+id/container_login_buttons"
-                                android:layout_width="match_parent"
+                        <ImageView
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/login_parent_email_box_margin_top">
+                                android:layout_gravity="center"
+                                android:src="@drawable/logo_google"
+                                android:focusable="false"/>
 
-                                <!--<Button android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_gravity="center_horizontal"/>
-                                        -->
+                    </FrameLayout>
 
+                    <View
+                            android:id="@+id/google_btn_div"
+                            android:layout_width="2px"
+                            android:layout_toRightOf="@id/googleLogo"
+                            android:background="@color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_height="@dimen/login_parent_content_text_size"/>
 
-                                <RelativeLayout
-                                        android:id="@+id/layoutFacebookLogin"
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:addStatesFromChildren="true"
-                                        android:layout_centerHorizontal="true"
-                                        android:background="#3b5998">
+                    <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/google_btn_div"
+                            android:layout_alignParentRight="true"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/login_parent_content_text_size"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="구글 아이디 로그인"/>
 
-                                        <com.facebook.login.widget.LoginButton
-                                                android:id="@+id/buttonFacebookLogin"
-                                                android:layout_width="@dimen/login_parent_content_width"
-                                                android:layout_height="@dimen/login_parent_content_height"
-                                                android:layout_centerHorizontal="true"
-                                                android:paddingTop="12dp"
-                                                android:paddingBottom="12dp"
-                                                android:textSize="@dimen/login_parent_content_text_size"
-                                                android:layout_gravity="center_horizontal" />
+                    <com.google.android.gms.common.SignInButton
+                            android:id="@+id/buttonGoogleLogin"
+                            android:layout_width="@dimen/login_parent_content_width"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="visible"
+                            android:textSize="@dimen/login_parent_content_text_size"
+                            android:layout_gravity="center_horizontal"
+                            android:text="구글 아이디로 로그인"/>
+                </RelativeLayout>
 
-                                        <FrameLayout
-                                                android:id="@+id/facbookLogo"
-                                                android:layout_width="@dimen/login_parent_content_logo_width"
-                                                android:layout_height="match_parent">
+                <RelativeLayout
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                        android:layout_below="@id/layoutGoogleLogin"
+                        android:background="#1ec800">
 
-                                                <ImageView
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content"
-                                                        android:layout_gravity="center"
-                                                        android:src="@drawable/logo_facebook"
-                                                        android:focusable="false"/>
+                    <FrameLayout
+                            android:id="@+id/naverLogo"
+                            android:layout_width="@dimen/login_parent_content_logo_width"
+                            android:layout_height="match_parent">
 
-                                        </FrameLayout>
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/logo_naver"/>
 
-                                        <View
-                                                android:id="@+id/face_btn_div"
-                                                android:layout_width="2px"
-                                                android:layout_toRightOf="@id/facbookLogo"
-                                                android:background="@color/white"
-                                                android:layout_centerVertical="true"
-                                                android:layout_height="@dimen/login_parent_content_text_size"/>
+                    </FrameLayout>
 
-                                        <kr.co.digitalanchor.studytime.view.FontTextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:layout_toRightOf="@id/face_btn_div"
-                                                android:layout_alignParentRight="true"
-                                                android:textColor="@color/white"
-                                                android:textSize="@dimen/login_parent_content_text_size"
-                                                android:textStyle="bold"
-                                                android:gravity="center"
-                                                android:text="페이스북 아이디 로그인"/>
-                                </RelativeLayout>
+                    <View
+                            android:id="@+id/naver_btn_div"
+                            android:layout_width="2px"
+                            android:layout_toRightOf="@id/naverLogo"
+                            android:background="@color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_height="@dimen/login_parent_content_text_size"/>
 
-                                <RelativeLayout
-                                        android:id="@+id/layoutGoogleLogin"
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                        android:addStatesFromChildren="true"
-                                        android:layout_below="@id/layoutFacebookLogin"
-                                        android:background="@drawable/btn_google_bg">
+                    <kr.co.digitalanchor.studytime.view.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/naver_btn_div"
+                            android:layout_alignParentRight="true"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/login_parent_content_text_size"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="네이버 아이디 로그인"/>
+                </RelativeLayout>
 
-                                        <FrameLayout
-                                                android:id="@+id/googleLogo"
-                                                android:layout_width="@dimen/login_parent_content_logo_width"
-                                                android:layout_height="match_parent">
-
-                                                <ImageView
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content"
-                                                        android:layout_gravity="center"
-                                                        android:src="@drawable/logo_google"
-                                                        android:focusable="false"/>
-
-                                        </FrameLayout>
-
-                                        <View
-                                                android:id="@+id/google_btn_div"
-                                                android:layout_width="2px"
-                                                android:layout_toRightOf="@id/googleLogo"
-                                                android:background="@color/white"
-                                                android:layout_centerVertical="true"
-                                                android:layout_height="@dimen/login_parent_content_text_size"/>
-
-                                        <kr.co.digitalanchor.studytime.view.FontTextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:layout_toRightOf="@id/google_btn_div"
-                                                android:layout_alignParentRight="true"
-                                                android:textColor="@color/white"
-                                                android:textSize="@dimen/login_parent_content_text_size"
-                                                android:textStyle="bold"
-                                                android:gravity="center"
-                                                android:text="구글 아이디 로그인"/>
-
-                                        <com.google.android.gms.common.SignInButton
-                                                android:id="@+id/buttonGoogleLogin"
-                                                android:layout_width="@dimen/login_parent_content_width"
-                                                android:layout_height="wrap_content"
-                                                android:layout_centerHorizontal="true"
-                                                android:visibility="visible"
-                                                android:textSize="@dimen/login_parent_content_text_size"
-                                                android:layout_gravity="center_horizontal"
-                                                android:text="구글 아이디로 로그인"/>
-                                </RelativeLayout>
-
-                                <RelativeLayout
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                        android:layout_below="@id/layoutGoogleLogin"
-                                        android:background="#1ec800">
-
-                                        <FrameLayout
-                                                android:id="@+id/naverLogo"
-                                                android:layout_width="@dimen/login_parent_content_logo_width"
-                                                android:layout_height="match_parent">
-
-                                                <ImageView
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content"
-                                                        android:layout_gravity="center"
-                                                        android:src="@drawable/logo_naver"/>
-
-                                        </FrameLayout>
-
-                                        <View
-                                                android:id="@+id/naver_btn_div"
-                                                android:layout_width="2px"
-                                                android:layout_toRightOf="@id/naverLogo"
-                                                android:background="@color/white"
-                                                android:layout_centerVertical="true"
-                                                android:layout_height="@dimen/login_parent_content_text_size"/>
-
-                                        <kr.co.digitalanchor.studytime.view.FontTextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:layout_toRightOf="@id/naver_btn_div"
-                                                android:layout_alignParentRight="true"
-                                                android:textColor="@color/white"
-                                                android:textSize="@dimen/login_parent_content_text_size"
-                                                android:textStyle="bold"
-                                                android:gravity="center"
-                                                android:text="네이버 아이디 로그인"/>
-                                </RelativeLayout>
-
-                                <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
-                                        android:id="@+id/buttonOAuthLoginImg"
-                                        android:layout_width="@dimen/login_parent_content_width"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_below="@id/layoutGoogleLogin"
-                                        android:layout_height="@dimen/login_parent_content_height"
-                                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                        android:layout_gravity="center_horizontal"/>
+                <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
+                        android:id="@+id/buttonOAuthLoginImg"
+                        android:layout_width="@dimen/login_parent_content_width"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/layoutGoogleLogin"
+                        android:layout_height="@dimen/login_parent_content_height"
+                        android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                        android:layout_gravity="center_horizontal"/>
 
 
-                        </RelativeLayout>
+            </RelativeLayout>
 
-                        <kr.co.digitalanchor.studytime.view.FontButton
-                                android:id="@+id/buttonLogin"
-                                android:layout_width="@dimen/login_parent_content_width"
-                                android:layout_height="@dimen/login_parent_content_height"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                android:background="@drawable/box_type_04_bg"
-                                android:gravity="center"
-                                android:text="로그인"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/login_parent_content_text_size"/>
+            <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/buttonLogin"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                    android:background="@drawable/box_type_04_bg"
+                    android:gravity="center"
+                    android:text="로그인"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/login_parent_content_text_size"/>
 
-                        <kr.co.digitalanchor.studytime.view.FontButton
-                                android:id="@+id/buttonSignUp"
-                                android:layout_width="@dimen/login_parent_content_width"
-                                android:layout_height="@dimen/login_parent_content_height"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                android:background="@drawable/box_type_04_bg"
-                                android:gravity="center"
-                                android:text="회원가입"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/login_parent_content_text_size"/>
+            <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/buttonSignUp"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                    android:background="@drawable/box_type_04_bg"
+                    android:gravity="center"
+                    android:text="회원가입"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/login_parent_content_text_size"/>
 
-                        <kr.co.digitalanchor.studytime.view.FontButton
-                                android:id="@+id/buttonFindPwd"
-                                android:layout_width="@dimen/login_parent_content_width"
-                                android:layout_height="@dimen/login_parent_content_height"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
-                                android:background="@drawable/box_type_04_bg"
-                                android:gravity="center"
-                                android:text="비밀번호 찾기"
-                                android:visibility="gone"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/login_parent_content_text_size"/>
+            <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/buttonFindPwd"
+                    android:layout_width="@dimen/login_parent_content_width"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/login_parent_password_box_margin_top"
+                    android:background="@drawable/box_type_04_bg"
+                    android:gravity="center"
+                    android:text="비밀번호 찾기"
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/login_parent_content_text_size"/>
 
 
-                </LinearLayout>
+        </LinearLayout>
 
-        </ScrollView>
+    </ScrollView>
 
 </LinearLayout>
