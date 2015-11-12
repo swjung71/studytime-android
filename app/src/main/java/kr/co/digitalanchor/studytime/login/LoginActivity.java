@@ -203,9 +203,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     mContainerBoxes = findViewById(R.id.container_login_textboxes);
 
     mOAuthLoginButton = (OAuthLoginButton) findViewById(R.id.buttonOAuthLoginImg);
+    mOAuthLoginButton.setBgResourceId(R.drawable.btn_naver_bg);
     mOAuthLoginButton.setOAuthLoginHandler(mOAuthLoginHandler);
 
     mButtonFacebook = (LoginButton) findViewById(R.id.buttonFacebookLogin);
+    mButtonFacebook.setAlpha(0.0f);
     mButtonFacebook.setReadPermissions(Arrays.asList("public_profile, email, user_birthday"));
     mButtonFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
       @Override
@@ -256,6 +258,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     mPlusSignInButton = (SignInButton) findViewById(R.id.buttonGoogleLogin);
     mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
+    mPlusSignInButton.setAlpha(0.0f);
     mPlusSignInButton.setOnClickListener(this);
 
     mGoogleApiClient = new GoogleApiClient.Builder(this)
