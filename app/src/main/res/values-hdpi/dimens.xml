@@ -44,6 +44,7 @@
     <dimen name="login_parent_logo_margin">60dp</dimen>
 
     <dimen name="login_parent_content_width">270dp</dimen>
+    <dimen name="login_parent_content_logo_width">54dp</dimen>
     <dimen name="login_parent_content_height">46dp</dimen>
     <dimen name="login_parent_content_text_size">16dp</dimen>
 

@@ -71,4 +71,6 @@
     <string name="txt_accessibility_2">&quot;켜짐&quot;</string>
 
     <string name="facebook_app_id">1230623910296946</string>
+
+    <string name="payment_info">%1$s (만료%2$s일전)</string>
 </resources>
