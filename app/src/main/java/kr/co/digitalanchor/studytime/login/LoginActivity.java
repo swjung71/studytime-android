@@ -143,7 +143,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
       FacebookSdk.sdkInitialize(getApplicationContext());
 
-      FacebookSdk.setIsDebugEnabled(true);
+      FacebookSdk.setIsDebugEnabled(false);
 
       Logger.d("is debug " + FacebookSdk.isDebugEnabled());
 
@@ -161,7 +161,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
       Logger.e(e.getMessage());
     }
 
-    OAuthLoginDefine.DEVELOPER_VERSION = true;
+    OAuthLoginDefine.DEVELOPER_VERSION = false;
 
     mContext = this;
 
