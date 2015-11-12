@@ -12,16 +12,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
-
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
@@ -42,6 +35,9 @@ import kr.co.digitalanchor.studytime.model.GetAdultDB;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.utils.StringValidator;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -50,249 +46,254 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class LoginChildActivity extends BaseActivity implements View.OnClickListener {
 
-    private final int REQUEST_CHILD_LOGIN = 50001;
-    private final int REQUEST_ADD_INFO = 50003;
-    private final int COMPLETE_CHILD_LOGIN = 50002;
-    private final int REQUEST_ADULT_FILE_LIST = 50005;
-    private final int REQUEST_ADULT_FILE = 50004;
-    private final int REQUEST_CHILD_LIST = 50007;
+  private final int REQUEST_CHILD_LOGIN = 50001;
+  private final int REQUEST_ADD_INFO = 50003;
+  private final int COMPLETE_CHILD_LOGIN = 50002;
+  private final int REQUEST_ADULT_FILE_LIST = 50005;
+  private final int REQUEST_ADULT_FILE = 50004;
+  private final int REQUEST_CHILD_LIST = 50007;
 
-    private final int ACTIVITY_ADDITIONAL_INFO = 60001;
-    private final int ACTIVITY_CHIDREN_INFO = 60002;
+  private final int ACTIVITY_ADDITIONAL_INFO = 60001;
+  private final int ACTIVITY_CHILDREN_INFO = 60002;
 
-    EditText mEditEmailAddr;
+  EditText mEditEmailAddr;
 
-    EditText mEditPassword;
+  EditText mEditPassword;
 
-    EditText mEditChildName;
+  DBHelper mDBHelper;
 
-    DBHelper mDBHelper;
+  String parentId;
 
-    String parentId;
+  String name;
 
-    String name;
+  ProgressDialog mProgressDialog;
 
-    ProgressDialog mProgressDialog;
+  boolean hasChildren;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_child_login);
+    setContentView(R.layout.activity_child_login);
 
-        mDBHelper = new DBHelper(getApplicationContext());
+    mDBHelper = new DBHelper(getApplicationContext());
 
-        // instantiate it within the onCreate method
-        mProgressDialog = new ProgressDialog(LoginChildActivity.this);
-        mProgressDialog.setMessage("DB 다운로드 중");
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mProgressDialog.setCancelable(false);
+    // instantiate it within the onCreate method
+    mProgressDialog = new ProgressDialog(LoginChildActivity.this);
+    mProgressDialog.setMessage("DB 다운로드 중");
+    mProgressDialog.setIndeterminate(true);
+    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    mProgressDialog.setCancelable(false);
 
-        initView();
-    }
+    initView();
+  }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+  @Override
+  protected void onStop() {
+    super.onStop();
 
-    }
+  }
 
-    private void initView() {
+  private void initView() {
 
-        mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
+    mEditEmailAddr = (EditText) findViewById(R.id.editEmailAddr);
 
-        mEditPassword = (EditText) findViewById(R.id.editPassword);
+    mEditPassword = (EditText) findViewById(R.id.editPassword);
 
 //        mEditChildName = (EditText) findViewById(R.id.editChildName);
 
-        ((Button) findViewById(R.id.buttonLogin)).setOnClickListener(this);
+    ((Button) findViewById(R.id.buttonLogin)).setOnClickListener(this);
+  }
+
+  @Override
+  protected void onHandleMessage(Message msg) {
+
+    Bundle data = null;
+
+    switch (msg.what) {
+
+      case REQUEST_CHILD_LOGIN:
+
+        requestLogin();
+
+        break;
+
+      case REQUEST_ADD_INFO:
+
+        showAddInfo(parentId, name);
+
+        break;
+
+      case REQUEST_CHILD_LIST:
+
+        showChildList(parentId);
+
+        break;
+
+      case REQUEST_ADULT_FILE:
+
+        data = msg.getData();
+
+        downloadAdultFile(data.getString("files"));
+
+        break;
+
+      case COMPLETE_CHILD_LOGIN:
+
+        showMain();
+
+        break;
+
+      case REQUEST_ADULT_FILE_LIST:
+
+        requestAdultFile();
+
+        break;
+
+
+      default:
+
+        break;
     }
+  }
 
-    @Override
-    protected void onHandleMessage(Message msg) {
+  @Override
+  public void onClick(View v) {
 
-        Bundle data = null;
+    switch (v.getId()) {
 
-        switch (msg.what) {
-
-            case REQUEST_CHILD_LOGIN:
-
-                requestLogin();
-
-                break;
-
-            case REQUEST_ADD_INFO:
-
-                showAddInfo(parentId, name);
-
-                break;
-
-            case REQUEST_CHILD_LIST:
-
-                showChildList(parentId);
-
-                break;
-
-            case REQUEST_ADULT_FILE:
-
-                data = msg.getData();
-
-                downloadAdultFile(data.getString("files"));
-
-                break;
-
-            case COMPLETE_CHILD_LOGIN:
-
-                showMain();
-
-                break;
-
-            case REQUEST_ADULT_FILE_LIST:
-
-                requestAdultFile();
-
-                break;
-
-
-            default:
-
-                break;
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.buttonLogin:
+      case R.id.buttonLogin:
 
 //                sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
-                if (isValidate()) {
+        if (isValidate()) {
 
-                    sendEmptyMessage(REQUEST_CHILD_LIST);
-/** TEST 2015.11.10 이름 입력이 필요 없을듯
-                    sendEmptyMessage(REQUEST_CHILD_LOGIN);
- */
-                }
-
-                break;
-
-            default:
-
-                break;
+          sendEmptyMessage(REQUEST_CHILD_LOGIN);
         }
+
+        break;
+
+      default:
+
+        break;
     }
+  }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data);
+    super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
+    switch (requestCode) {
 
-            case ACTIVITY_ADDITIONAL_INFO:
+      case ACTIVITY_ADDITIONAL_INFO:
 
-                if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
 
-                    sendEmptyMessage(COMPLETE_CHILD_LOGIN);
-                }
-
-                break;
-
-            case ACTIVITY_CHIDREN_INFO:
-
-                break;
-
-            default:
-
-                break;
+          sendEmptyMessage(COMPLETE_CHILD_LOGIN);
         }
+
+        break;
+
+      case ACTIVITY_CHILDREN_INFO:
+
+        if (resultCode == RESULT_OK) {
+
+
+        } else if (resultCode == INPUT_ADD_INFO) {
+
+          sendEmptyMessage(REQUEST_ADD_INFO);
+        }
+
+        break;
+
+      default:
+
+        break;
     }
+  }
 
-    private void showChildList(String parentId) {
+  private void showChildList(String parentId) {
 
-        Intent intent = new Intent();
+    Intent intent = new Intent();
 
-        intent.setClass(getApplicationContext(), SelectChildActivity.class);
-        intent.putExtra("ParentID", parentId);
+    intent.setClass(getApplicationContext(), SelectChildActivity.class);
+    intent.putExtra("ParentID", parentId);
 
-        startActivityForResult(intent, ACTIVITY_ADDITIONAL_INFO);
-    }
+    startActivityForResult(intent, ACTIVITY_CHILDREN_INFO);
+  }
 
-    private void showAddInfo(String parentId, String name) {
+  private void showAddInfo(String parentId, String name) {
 
-        Intent intent = new Intent();
+    Intent intent = new Intent();
 
-        intent.setClass(getApplicationContext(), AddInfoActivity.class);
+    intent.setClass(getApplicationContext(), AddInfoActivity.class);
 
-        Logger.d(parentId + " " + name);
+    Logger.d(parentId + " " + name);
 
-        intent.putExtra("ParentID", parentId);
-        intent.putExtra("Name", name);
+    intent.putExtra("ParentID", parentId);
+    intent.putExtra("Name", name);
 
-        startActivityForResult(intent, ACTIVITY_ADDITIONAL_INFO);
-    }
+    startActivityForResult(intent, ACTIVITY_ADDITIONAL_INFO);
+  }
 
-    private void showMain() {
+  private void showMain() {
 
-        Intent intent = new Intent();
-        intent.setClass(getApplicationContext(), ChildChatActivity.class);
+    Intent intent = new Intent();
+    intent.setClass(getApplicationContext(), ChildChatActivity.class);
 
-        startActivity(intent);
+    startActivity(intent);
 
-        finish();
-    }
+    finish();
+  }
 
-    private boolean isValidate() {
+  private boolean isValidate() {
 
 
-        String tmp = null;
+    String tmp = null;
 
-        String msg = null;
+    String msg = null;
 
-        do {
+    do {
 
-            tmp = mEditEmailAddr.getText().toString();
+      tmp = mEditEmailAddr.getText().toString();
 
-            if (TextUtils.isEmpty(tmp)) {
+      if (TextUtils.isEmpty(tmp)) {
 
-                msg = "이메일을 입력하세요.";
+        msg = "이메일을 입력하세요.";
 
-                break;
-            }
+        break;
+      }
 
-            if (!StringValidator.isEmail(tmp)) {
+      if (!StringValidator.isEmail(tmp)) {
 
-                msg = " 이메일 형식에 맞지 않습니다.";
+        msg = " 이메일 형식에 맞지 않습니다.";
 
-                break;
-            }
+        break;
+      }
 
-            tmp = null;
+      tmp = null;
 
-            tmp = mEditPassword.getText().toString();
+      tmp = mEditPassword.getText().toString();
 
-            if (TextUtils.isEmpty(tmp)) {
+      if (TextUtils.isEmpty(tmp)) {
 
-                msg = "비밀번호를 입력하세요.";
+        msg = "비밀번호를 입력하세요.";
 
-                break;
-            }
+        break;
+      }
 
-            if (!StringValidator.isPassword(tmp)) {
+      if (!StringValidator.isPassword(tmp)) {
 
-                msg = "비밀번호 형식에 맞지 않습니다.";
+        msg = "비밀번호 형식에 맞지 않습니다.";
 
-                break;
-            }
+        break;
+      }
 
-            tmp = null;
+      tmp = null;
 /* 개발중 2015.11.10 이름 입력이 뒤로 가야할거 같아서
             tmp = mEditChildName.getText().toString();
 
@@ -303,370 +304,387 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 break;
             }
 */
-        } while (false);
+    } while (false);
 
-        if (TextUtils.isEmpty(msg)) {
+    if (TextUtils.isEmpty(msg)) {
 
-            return true;
+      return true;
 
-        } else {
+    } else {
 
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+      Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 
-            return false;
-        }
+      return false;
     }
+  }
 
-    private void requestLogin() {
+  private void requestLogin() {
 
-        showLoading();
+    showLoading();
 
-        String tmp = null;
+    String tmp = null;
 
-        ParentLogin model = new ParentLogin();
+    ParentLogin model = new ParentLogin();
 
-        model.setEmail(mEditEmailAddr.getText().toString());
+    model.setEmail(mEditEmailAddr.getText().toString());
 
-        model.setPassword(mEditPassword.getText().toString());
+    model.setPassword(mEditPassword.getText().toString());
 
-        SimpleXmlRequest request = HttpHelper.getChildLogin(model, new Response.Listener<ChildLoginResult>() {
-            @Override
-            public void onResponse(ChildLoginResult response) {
+    SimpleXmlRequest request = HttpHelper.getChildLogin(model, new Response.Listener<ChildLoginResult>() {
+      @Override
+      public void onResponse(ChildLoginResult response) {
 
-                Bundle data = null;
+        Bundle data = null;
 
-                switch (response.getResultCode()) {
+        switch (response.getResultCode()) {
 
-                    case SUCCESS:
+          case SUCCESS:
 
-                        dismissLoading();
+            dismissLoading();
 
-                        parentId = response.getParentID();
+            parentId = response.getParentID();
 /*
                         name = mEditChildName.getText().toString();
 */
-                        sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+            hasChildren = response.getChildYn();
 
-                        break;
+            sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
-                    default:
+            break;
 
-                        handleResultCode(response.getResultCode(), response.getResultMessage());
+          default:
 
-                        break;
-                }
+            handleResultCode(response.getResultCode(), response.getResultMessage());
 
+            break;
+        }
+
+      }
+    }, new Response.ErrorListener() {
+
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+        handleError(error);
+      }
+    });
+
+    addRequest(request);
+  }
+
+  private void downloadAdultFile(String file) {
+
+    if (TextUtils.isEmpty(file)) {
+
+      if (hasChildren) {
+
+        sendEmptyMessage(REQUEST_CHILD_LIST);
+
+      } else {
+
+        sendEmptyMessage(REQUEST_ADD_INFO);
+
+      }
+
+      return;
+    }
+
+    new DownloadFileFromURL().execute(file);
+  }
+
+  private void requestAdultFile() {
+
+    showLoading();
+
+    GetAdultDB model = new GetAdultDB();
+
+    String date = null;// mDBHelper.getAdultFile();
+
+    if (date != null) {
+
+      model.setDate(date);
+    }
+
+    SimpleXmlRequest request = HttpHelper.getAdultFileList(model,
+        new Response.Listener<AdultFileResult>() {
+
+          @Override
+          public void onResponse(AdultFileResult response) {
+
+            Bundle data = null;
+
+            switch (response.getResultCode()) {
+
+              case SUCCESS:
+
+                dismissLoading();
+
+                data = new Bundle();
+
+                ArrayList<Files> files = response.getFileName();
+
+                mDBHelper.setAdultFile(response);
+
+                data.putString("files", response.getFileName().get(files.size() - 1).getFileName());
+
+                Logger.d(data.toString());
+
+                sendMessage(REQUEST_ADULT_FILE, data);
+
+                break;
+
+              default:
+
+                break;
             }
+          }
         }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
+          @Override
+          public void onErrorResponse(VolleyError error) {
 
-                handleError(error);
-            }
+            handleError(error);
+          }
         });
 
-        addRequest(request);
+    addRequest(request);
+  }
+
+  class DownloadFileFromURL extends AsyncTask<String, Integer, Boolean> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+
+      Logger.d("onPreExecute");
+
+      mProgressDialog.show();
     }
 
-    private void downloadAdultFile(String file) {
+    @Override
+    protected Boolean doInBackground(String... params) {
 
-        if (TextUtils.isEmpty(file)) {
+      boolean result = false;
 
-            sendEmptyMessage(REQUEST_ADD_INFO);
+      if (params == null || params.length < 1) {
 
-            return;
+        return result;
+      }
+
+      FTPClient ftp = new FTPClient();
+
+      long fileSize = 0L;
+      long total = 0L;
+
+      int bytesRead = -1;
+
+
+      try {
+
+        ftp.connect("14.63.225.89", 21);
+
+        ftp.login("anonymous", "nobody");
+
+        ftp.setFileType(FTP.BINARY_FILE_TYPE);
+
+        ftp.enterLocalActiveMode();
+
+        ftp.changeWorkingDirectory("/pub/");
+
+        FTPFile[] files = ftp.listFiles();
+
+        int i = 0;
+        for (; files.length > i; i++) {
+
+          if (files[i].getName().equals(params[0])) {
+
+            break;
+          }
         }
 
-        new DownloadFileFromURL().execute(file);
+        try {
+
+          fileSize = files[i].getSize();
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+          fileSize = 77041664L;
+        }
+
+        String remote = params[0];
+
+        File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
+
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+
+        InputStream inputStream = ftp.retrieveFileStream(remote);
+
+        byte[] data = new byte[4096];
+
+        bytesRead = -1;
+        total = 0;
+
+        while ((bytesRead = inputStream.read(data)) != -1) {
+
+          outputStream.write(data, 0, bytesRead);
+
+          total += bytesRead;
+
+          publishProgress((int) (total * 100 / fileSize));
+
+        }
+
+        boolean success = ftp.completePendingCommand();
+
+        outputStream.close();
+
+        inputStream.close();
+
+      } catch (Exception e) {
+
+        Logger.e(e.toString());
+
+        return true;
+
+      } finally {
+
+        try {
+
+          if (ftp.isConnected()) {
+
+            ftp.logout();
+
+            ftp.disconnect();
+          }
+
+        } catch (IOException e) {
+
+          Logger.e(e.toString());
+        }
+      }
+
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+
+          mProgressDialog.setMessage("DB 적용중");
+        }
+      });
+
+      FileInputStream fis = null;
+      FileOutputStream fos = null;
+
+      try {
+
+        String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
+
+        String dir = "/data/data/" + getApplicationContext().getPackageName() + "/databases";
+        String dest = "adult.db";
+
+        File directory = new File(dir);
+
+        if (!directory.exists()) {
+
+          directory.mkdir();
+        }
+
+        File file2 = new File(fileName);
+        File file = new File(dir + "/" + dest);
+
+
+        if (file.exists()) {
+
+          file.delete();
+        }
+
+        file.createNewFile();
+
+        fis = new FileInputStream(file2);
+
+        fos = new FileOutputStream(file);
+
+        Logger.d(fileName);
+        Logger.d(dir + "/" + dest);
+
+        Logger.d(file2.length() + " " + file.length());
+
+        byte[] data = new byte[4096];
+
+        bytesRead = -1;
+        total = 0;
+
+        while ((bytesRead = fis.read(data)) != -1) {
+
+          fos.write(data, 0, bytesRead);
+
+          total += bytesRead;
+
+          publishProgress((int) (total * 100 / fileSize));
+
+        }
+
+        result = true;
+
+      } catch (IOException e) {
+
+        Logger.e(e.toString());
+
+      } finally {
+
+        if (fis != null) {
+          try {
+            fis.close();
+          } catch (IOException e) {
+
+          }
+        }
+
+        if (fos != null) {
+          try {
+            fos.close();
+          } catch (IOException e) {
+
+          }
+        }
+      }
+
+      return result;
     }
 
-    private void requestAdultFile() {
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+      super.onProgressUpdate(values);
 
-        showLoading();
-
-        GetAdultDB model = new GetAdultDB();
-
-        String date = null;// mDBHelper.getAdultFile();
-
-        if (date != null) {
-
-            model.setDate(date);
-        }
-
-        SimpleXmlRequest request = HttpHelper.getAdultFileList(model,
-                new Response.Listener<AdultFileResult>() {
-
-                    @Override
-                    public void onResponse(AdultFileResult response) {
-
-                        Bundle data = null;
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                dismissLoading();
-
-                                data = new Bundle();
-
-                                ArrayList<Files> files = response.getFileName();
-
-                                mDBHelper.setAdultFile(response);
-
-                                data.putString("files", response.getFileName().get(files.size() - 1).getFileName());
-
-                                Logger.d(data.toString());
-
-                                sendMessage(REQUEST_ADULT_FILE, data);
-
-                                break;
-
-                            default:
-
-                                break;
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
+      mProgressDialog.setIndeterminate(false);
+      mProgressDialog.setMax(100);
+      mProgressDialog.setProgress(values[0]);
     }
 
-    class DownloadFileFromURL extends AsyncTask<String, Integer, Boolean> {
+    @Override
+    protected void onPostExecute(Boolean result) {
+      super.onPostExecute(result);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+      mProgressDialog.dismiss();
 
-            Logger.d("onPreExecute");
+      if (result) {
 
-            mProgressDialog.show();
+        if (hasChildren) {
+
+          sendEmptyMessage(REQUEST_CHILD_LIST);
+
+        } else {
+
+          sendEmptyMessage(REQUEST_ADD_INFO);
         }
 
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            boolean result = false;
-
-            if (params == null || params.length < 1) {
-
-                return result;
-            }
-
-            FTPClient ftp = new FTPClient();
-
-            long fileSize = 0L;
-            long total = 0L;
-
-            int bytesRead = -1;
-
-
-            try {
-
-                ftp.connect("14.63.225.89", 21);
-
-                ftp.login("anonymous", "nobody");
-
-                ftp.setFileType(FTP.BINARY_FILE_TYPE);
-
-                ftp.enterLocalActiveMode();
-
-                ftp.changeWorkingDirectory("/pub/");
-
-                FTPFile[] files = ftp.listFiles();
-
-                int i = 0;
-                for (; files.length > i; i++) {
-
-                    if (files[i].getName().equals(params[0])) {
-
-                        break;
-                    }
-                }
-
-                try {
-
-                    fileSize = files[i].getSize();
-
-                } catch (ArrayIndexOutOfBoundsException e) {
-
-                    fileSize = 77041664L;
-                }
-
-                String remote = params[0];
-
-                File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0]);
-
-                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-
-                InputStream inputStream = ftp.retrieveFileStream(remote);
-
-                byte[] data = new byte[4096];
-
-                bytesRead = -1;
-                total = 0;
-
-                while ((bytesRead = inputStream.read(data)) != -1) {
-
-                    outputStream.write(data, 0, bytesRead);
-
-                    total += bytesRead;
-
-                    publishProgress((int) (total * 100 / fileSize));
-
-                }
-
-                boolean success = ftp.completePendingCommand();
-
-                outputStream.close();
-
-                inputStream.close();
-
-            } catch (Exception e) {
-
-                Logger.e(e.toString());
-
-                return true;
-
-            } finally {
-
-                try {
-
-                    if (ftp.isConnected()) {
-
-                        ftp.logout();
-
-                        ftp.disconnect();
-                    }
-
-                } catch (IOException e) {
-
-                    Logger.e(e.toString());
-                }
-            }
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    mProgressDialog.setMessage("DB 적용중");
-                }
-            });
-
-            FileInputStream fis = null;
-            FileOutputStream fos = null;
-
-            try {
-
-                String fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + params[0];
-
-                String dir = "/data/data/" + getApplicationContext().getPackageName() + "/databases";
-                String dest = "adult.db";
-
-                File directory = new File(dir);
-
-                if (!directory.exists()) {
-
-                    directory.mkdir();
-                }
-
-                File file2 = new File(fileName);
-                File file = new File(dir + "/" + dest);
-
-
-                if (file.exists()) {
-
-                    file.delete();
-                }
-
-                file.createNewFile();
-
-                fis = new FileInputStream(file2);
-
-                fos = new FileOutputStream(file);
-
-                Logger.d(fileName);
-                Logger.d(dir + "/" + dest);
-
-                Logger.d(file2.length() + " " + file.length());
-
-                byte[] data = new byte[4096];
-
-                bytesRead = -1;
-                total = 0;
-
-                while ((bytesRead = fis.read(data)) != -1) {
-
-                    fos.write(data, 0, bytesRead);
-
-                    total += bytesRead;
-
-                    publishProgress((int) (total * 100 / fileSize));
-
-                }
-
-                result = true;
-
-            } catch (IOException e) {
-
-                Logger.e(e.toString());
-
-            } finally {
-
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-
-                    }
-                }
-
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.setMax(100);
-            mProgressDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-
-            mProgressDialog.dismiss();
-
-            if (result) {
-
-                sendEmptyMessage(REQUEST_ADD_INFO);
-
-            } else {
-
-                Toast.makeText(getApplicationContext(), "DB 파일 다운로드가 실패 하였습니다." +
-                        " 잠시후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-            }
-
-        }
+      } else {
+
+        Toast.makeText(getApplicationContext(), "DB 파일 다운로드가 실패 하였습니다." +
+            " 잠시후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+      }
 
     }
+
+  }
 
 }

@@ -34,6 +34,8 @@ import kr.co.digitalanchor.studytime.model.db.Account;
  */
 public class BaseActivity extends FragmentActivity {
 
+    protected final int INPUT_ADD_INFO = 20001;
+
     private final long INTERVAL = 1000;
 
     private long draft = 0;

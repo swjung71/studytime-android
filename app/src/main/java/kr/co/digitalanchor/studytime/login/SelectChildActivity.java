@@ -47,6 +47,14 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
 
     initView();
 
+
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+
+    requestChildList();
   }
 
   public void initView() {
@@ -102,6 +110,10 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
       case R.id.footerSendLink:
 
         Toast.makeText(getApplicationContext(), "Click footer", Toast.LENGTH_SHORT).show();
+
+        setResult(INPUT_ADD_INFO);
+
+        finish();
 
         break;
     }

@@ -119,8 +119,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     mEditName = (EditText) findViewById(R.id.editName);
 
-    mEditName.setVisibility(isModify ? View.VISIBLE : View.GONE);
-
   }
 
   @Override
