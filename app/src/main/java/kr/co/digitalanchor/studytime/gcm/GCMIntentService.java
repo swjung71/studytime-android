@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -14,10 +13,8 @@ import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.orhanobut.logger.Logger;
-
 import java.util.HashMap;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
@@ -44,176 +41,176 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class GCMIntentService extends IntentService {
 
-    private final int REQUEST_READ_NEW_MESSAGE = 50001;
+  private final int REQUEST_READ_NEW_MESSAGE = 50001;
 
 
-    DBHelper mHelper;
+  DBHelper mHelper;
 
-    RequestQueue mQueue;
+  RequestQueue mQueue;
 
-    public GCMIntentService() {
+  public GCMIntentService() {
 
-        super("GCMIntentService");
+    super("GCMIntentService");
 
-        mHelper = new DBHelper(STApplication.applicationContext);
+    mHelper = new DBHelper(STApplication.applicationContext);
 
-        mQueue = Volley.newRequestQueue(STApplication.applicationContext);
+    mQueue = Volley.newRequestQueue(STApplication.applicationContext);
 
+  }
+
+  @Override
+  protected void onHandleIntent(Intent intent) {
+
+    GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+
+    String messageType = gcm.getMessageType(intent);
+
+    if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)
+        || GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+
+      GCMBroadcastReceiver.completeWakefulIntent(intent);
+
+      return;
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    Bundle bundle = intent.getExtras();
 
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+    if (bundle.isEmpty()) {
 
-        String messageType = gcm.getMessageType(intent);
+      GCMBroadcastReceiver.completeWakefulIntent(intent);
 
-        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)
-                || GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+      return;
+    }
 
-            GCMBroadcastReceiver.completeWakefulIntent(intent);
+    if (!GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+      // Release the wake lock provided by the WakefulBroadcastReceiver.
+      GCMBroadcastReceiver.completeWakefulIntent(intent);
 
-            return;
-        }
+      return;
+    }
 
-        Bundle bundle = intent.getExtras();
+    Logger.d(bundle.toString());
 
-        if (bundle.isEmpty()) {
+    String code = bundle.getString("code");
 
-            GCMBroadcastReceiver.completeWakefulIntent(intent);
+    if (TextUtils.isEmpty(code)) {
 
-            return;
-        }
+      return;
+    }
 
-        if (!GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-            // Release the wake lock provided by the WakefulBroadcastReceiver.
-            GCMBroadcastReceiver.completeWakefulIntent(intent);
+    Account account = mHelper.getAccountInfo();
 
-            return;
-        }
+    if (TextUtils.isEmpty(account.getID())) {
 
-        Logger.d(bundle.toString());
+      return;
+    }
 
-        String code = bundle.getString("code");
+    switch (code) {
 
-        if (TextUtils.isEmpty(code)) {
+      /**
+       * 자녀가 GPS 요청을 받을 때
+       *
+       * recieverID : 자녀 ID
+       * senderID : 부모 ID
+       * timestamp : 부모가 요청한 시간
+       * requestID : 부모가 요청한 Unique ID
+       *
+       */
+      case "GPSREQUEST": {
 
-            return;
-        }
+        Intent startLocationService = new Intent(getApplicationContext(), LocationService.class);
 
-        Account account = mHelper.getAccountInfo();
+        startLocationService.putExtra("receiverID", bundle.getString("receiverID"));
+        startLocationService.putExtra("senderID", bundle.getString("senderID"));
+        startLocationService.putExtra("timestamp", bundle.getString("timestamp"));
+        startLocationService.putExtra("requestID", bundle.getString("requestID"));
 
-        if (TextUtils.isEmpty(account.getID())) {
+        startService(startLocationService);
 
-            return;
-        }
+      }
+      break;
 
-        switch (code) {
+      /**
+       * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (성공)
+       *
+       * recieverID : 자녀 ID
+       * senderID : 부모 ID
+       * timestamp : 부모가 요청한 시간
+       * requestID : 부모가 요청한 Unique ID
+       * name : 자녀 이름
+       * msg : 메시지
+       *
+       */
+      case "GPS_SUCCESS":
 
-            /**
-             * 자녀가 GPS 요청을 받을 때
-             *
-             * recieverID : 자녀 ID
-             * senderID : 부모 ID
-             * timestamp : 부모가 요청한 시간
-             * requestID : 부모가 요청한 Unique ID
-             *
-             */
-            case "GPSREQUEST": {
+        receiveChildLocationInfo(bundle);
 
-                Intent startLocationService = new Intent(getApplicationContext(), LocationService.class);
+        break;
 
-                startLocationService.putExtra("receiverID", bundle.getString("receiverID"));
-                startLocationService.putExtra("senderID", bundle.getString("senderID"));
-                startLocationService.putExtra("timestamp", bundle.getString("timestamp"));
-                startLocationService.putExtra("requestID", bundle.getString("requestID"));
+      /**
+       * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (실패)
+       *
+       * recieverID : 자녀 ID
+       * senderID : 부모 ID
+       * timestamp : 부모가 요청한 시간
+       * requestID : 부모가 요청한 Unique ID
+       * name : 자녀 이름
+       * msg : 메시지
+       *
+       */
+      case "GPS_FAIL":
 
-                startService(startLocationService);
+        receiveChildLocationInfoFail(bundle.getString("msg"));
 
-            }
-                break;
+        break;
 
-            /**
-             * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (성공)
-             *
-             * recieverID : 자녀 ID
-             * senderID : 부모 ID
-             * timestamp : 부모가 요청한 시간
-             * requestID : 부모가 요청한 Unique ID
-             * name : 자녀 이름
-             * msg : 메시지
-             *
-             */
-            case "GPS_SUCCESS":
+      case "RE_REG":
+      case "REG_CHILD":
 
-                receiveChildLocationInfo(bundle);
+        updateChildrenInfo(bundle);
 
-                break;
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
-            /**
-             * 자녀가 GPS 결과값을 전송할 떄 부모가 받는 GCM (실패)
-             *
-             * recieverID : 자녀 ID
-             * senderID : 부모 ID
-             * timestamp : 부모가 요청한 시간
-             * requestID : 부모가 요청한 Unique ID
-             * name : 자녀 이름
-             * msg : 메시지
-             *
-             */
-            case "GPS_FAIL":
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                receiveChildLocationInfoFail(bundle.getString("msg"));
+        break;
 
-                break;
+      case "CHAT":
 
-            case "RE_REG":
-            case "REG_CHILD":
+        requestNewMessage(bundle.getString("messageID"), bundle.getString("senderID"), bundle.getString("name"));
 
-                updateChildrenInfo(bundle);
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getIntentNewMessage(bundle.getString("senderID"),
+                AndroidUtils.convertFromUTF8(bundle.getString("name")),
+                account.getIsChild()));
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        break;
 
-                break;
-
-            case "CHAT":
-
-                requestNewMessage(bundle.getString("messageID"), bundle.getString("senderID"), bundle.getString("name"));
-
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getIntentNewMessage(bundle.getString("senderID"),
-                                AndroidUtils.convertFromUTF8(bundle.getString("name")),
-                                account.getIsChild()));
-
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
-
-                break;
-
-            case "CHAT_READ":
+      case "CHAT_READ":
 
 //                mHelper.updateChat(bundle.getString("messagePK"), bundle.getString("messageID"), 0, "");
 
-                break;
+        break;
 
-            case "ONOFF":
+      case "ONOFF":
 
-                int isOff = Integer.parseInt(bundle.getString("isOff"));
+        int isOff = Integer.parseInt(bundle.getString("isOff"));
 
-                mHelper.updateOnOff(isOff);
+        mHelper.updateOnOff(isOff);
 
-                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                break;
+        break;
 
-            case "NOTICE":
+      case "NOTICE":
 
                 /*
                 name : 보내는 사람 이름
@@ -222,374 +219,407 @@ public class GCMIntentService extends IntentService {
                 time : 메시지 보내는 시간
                  */
 
-                mHelper.addNewNotice(account.getID());
+        mHelper.addNewNotice(account.getID());
 
-                sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
+        sendBroadcast(new Intent(StaticValues.NEW_NOTICE_ARRIVED));
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getIntentNotice(account.getIsChild()));
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getIntentNotice(account.getIsChild()));
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                break;
+        break;
 
-            /**
-             * 삭제 시도 (비번 틀림)
-             */
-            case "DELETE_TRY":
+      /**
+       * 삭제 시도 (비번 틀림)
+       */
+      case "DELETE_TRY":
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                break;
+        break;
 
-            /**
-             * 삭제 성공
-             */
-            case "DELETE":
+      /**
+       * 삭제 성공
+       */
+      case "DELETE":
 
-                // TODO : 어떻게 알려줄 것인가?
+        // TODO : 어떻게 알려줄 것인가?
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                break;
+        break;
 
-            case "BLOCK_APP_CHANGE":
+      case "BLOCK_APP_CHANGE":
 
-                requestUpdateApp(bundle.getString("senderID"), bundle.getString("receiverID"));
+        requestUpdateApp(bundle.getString("senderID"), bundle.getString("receiverID"));
 
-                AndroidUtils.showNotification(STApplication.applicationContext, null,
-                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+        AndroidUtils.showNotification(STApplication.applicationContext, null,
+            bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
-                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+        AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                break;
+        break;
 
-            default:
+      case "기간 만료":
+        /**
+         * 기간 만료
+         * <code>
+         *   if ("off") {
+         *      "on"
+         *   }
+         *
+         *   isExpiration = "Y"
+         * </code>
+         */
 
-                break;
+        break;
+
+      case "결제 이벤트":
+        /**
+         * 결재 이벤트
+         * <code>
+         *   isExpiration = "N"
+         * </code>
+         */
+
+        break;
+
+      case "기기변경등(초기화)":
+        /**
+         * 초기화
+         */
+
+        STApplication.resetApplication();
+
+        break;
+
+      default:
+
+        break;
+    }
+
+    GCMBroadcastReceiver.completeWakefulIntent(intent);
+  }
+
+  private void receiveChildLocationInfoFail(String msg) {
+
+    Intent intent = new Intent(StaticValues.FAILURE_REQUEST_LOCATION);
+
+    intent.putExtra("msg", msg);
+
+    sendBroadcast(intent);
+  }
+
+
+  private void receiveChildLocationInfo(Bundle data) {
+
+    if (data == null) {
+
+      return;
+    }
+
+    Intent intent = new Intent(StaticValues.SUCCESS_REQUEST_LOCATION);
+
+    intent.putExtra("receiverID", data.getString("receiverID"));
+    intent.putExtra("senderID", data.getString("senderID"));
+    intent.putExtra("timestamp", data.getString("timestamp"));
+    intent.putExtra("requestID", data.getString("requestID"));
+
+    sendBroadcast(intent);
+
+  }
+
+  private void updateChildrenInfo(Bundle data) {
+
+    if (data != null) {
+
+      mHelper.insertChild(data.getString("senderID"), data.getString("name"));
+    }
+
+    sendBroadcast(new Intent(StaticValues.REGISTER_CHILD));
+  }
+
+  private PendingIntent getNormalStart(int isChild, Bundle bundle) {
+
+    PendingIntent pIntent = null;
+
+    Intent intent = null;
+
+    switch (isChild) {
+
+      case 0: // child
+
+        intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
+
+        if (bundle != null) {
+
+          intent.putExtras(bundle);
         }
 
-        GCMBroadcastReceiver.completeWakefulIntent(intent);
-    }
+        pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
+            intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    private void receiveChildLocationInfoFail(String msg) {
+        return pIntent;
 
-        Intent intent = new Intent(StaticValues.FAILURE_REQUEST_LOCATION);
+      case 1: // parent
 
-        intent.putExtra("msg", msg);
+        intent = new Intent(STApplication.applicationContext, ListChildActivity.class);
 
-        sendBroadcast(intent);
-    }
+        if (bundle != null) {
 
-
-    private void receiveChildLocationInfo(Bundle data) {
-
-        if (data == null) {
-
-            return;
+          intent.putExtras(bundle);
         }
 
-        Intent intent = new Intent(StaticValues.SUCCESS_REQUEST_LOCATION);
+        pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
+            intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        intent.putExtra("receiverID", data.getString("receiverID"));
-        intent.putExtra("senderID", data.getString("senderID"));
-        intent.putExtra("timestamp", data.getString("timestamp"));
-        intent.putExtra("requestID", data.getString("requestID"));
+        return pIntent;
 
-        sendBroadcast(intent);
+      default:
 
+        return null;
     }
+  }
 
-    private void updateChildrenInfo(Bundle data) {
+  private PendingIntent getIntentNotice(int isChild) {
 
-        if (data != null) {
+    Logger.d("isChild " + isChild);
 
-            mHelper.insertChild(data.getString("senderID"), data.getString("name"));
-        }
+    TaskStackBuilder stackBuilder = null;
 
-        sendBroadcast(new Intent(StaticValues.REGISTER_CHILD));
+    switch (isChild) {
+
+
+      case 0: // child
+
+        Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
+
+        PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
+            0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return pIntent;
+
+      case 1: // parent
+
+        Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
+
+        Intent notice = new Intent(STApplication.applicationContext, BoardActivity.class);
+
+        stackBuilder = TaskStackBuilder.create(STApplication.applicationContext);
+
+        stackBuilder.addNextIntent(childrenList);
+        stackBuilder.addNextIntent(notice);
+
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      default:
+
+        return null;
     }
+  }
 
-    private PendingIntent getNormalStart(int isChild, Bundle bundle) {
+  private PendingIntent getIntentNewMessage(String senderId, String senderName, int isChild) {
 
-        PendingIntent pIntent = null;
+    TaskStackBuilder stackBuilder = null;
 
-        Intent intent = null;
+    switch (isChild) {
 
-        switch (isChild) {
+      default:
 
-            case 0: // child
+        return null;
 
-                intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
+      case 0: // child
 
-                if (bundle != null) {
+        Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
 
-                    intent.putExtras(bundle);
+        PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
+            0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return pIntent;
+
+      case 1: // parent
+
+        Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
+
+        Intent controlChild = new Intent(STApplication.applicationContext, ControlChildExActivity.class);
+
+        controlChild.putExtra("ChildID", senderId);
+
+        Intent chat = new Intent(STApplication.applicationContext, ParentChatActivity.class);
+        chat.putExtra("ChildID", senderId);
+        chat.putExtra("Name", senderName);
+
+        stackBuilder = TaskStackBuilder.create(STApplication.applicationContext);
+
+        stackBuilder.addNextIntent(childrenList);
+        stackBuilder.addNextIntent(controlChild);
+        stackBuilder.addNextIntent(chat);
+
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+  }
+
+  private void requestUpdateApp(String parentId, String childId) {
+
+    LoginModel model = new LoginModel();
+
+    model.setParentId(parentId);
+    model.setChildId(childId);
+
+    SimpleXmlRequest request = HttpHelper.getExceptionApp(model,
+        new Response.Listener<ExceptionAppResult>() {
+          @Override
+          public void onResponse(ExceptionAppResult response) {
+
+            switch (response.getResultCode()) {
+
+              case SUCCESS:
+
+                List<PackageIDs> list = response.getPackages();
+
+                HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+                if (list != null && list.size() > 0) {
+
+                  for (PackageIDs key : list) {
+
+                    map.put(key.getPackageId(), 1);
+                  }
                 }
 
-                pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                List<PackageModel> packages = mHelper.getPackageListExcept();
 
-                return pIntent;
+                Logger.d("packages " + packages.size());
 
-            case 1: // parent
+                for (PackageModel model : packages) {
 
-                intent = new Intent(STApplication.applicationContext, ListChildActivity.class);
+                  Logger.d(model.getPackageName() + " " + model.getPackageId() + " " + map.toString());
 
-                if (bundle != null) {
+                  if (map.containsKey(model.getPackageId())) {
 
-                    intent.putExtras(bundle);
+                    model.setIsExceptionApp(1);
+
+                  } else {
+
+                    model.setIsExceptionApp(0);
+                  }
                 }
 
-                pIntent = PendingIntent.getActivity(STApplication.applicationContext, 0,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                return pIntent;
-
-            default:
-
-                return null;
-        }
-    }
-
-    private PendingIntent getIntentNotice(int isChild) {
-
-        Logger.d("isChild " + isChild);
-
-        TaskStackBuilder stackBuilder = null;
-
-        switch (isChild) {
-
-
-            case 0: // child
-
-                Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
-
-                PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
-                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                return pIntent;
-
-            case 1: // parent
-
-                Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
-
-                Intent notice = new Intent(STApplication.applicationContext, BoardActivity.class);
-
-                stackBuilder = TaskStackBuilder.create(STApplication.applicationContext);
-
-                stackBuilder.addNextIntent(childrenList);
-                stackBuilder.addNextIntent(notice);
-
-                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            default:
-
-                return null;
-        }
-    }
-
-    private PendingIntent getIntentNewMessage(String senderId, String senderName, int isChild) {
-
-        TaskStackBuilder stackBuilder = null;
-
-        switch (isChild) {
-
-            default:
-
-                return null;
-
-            case 0: // child
-
-                Intent intent = new Intent(STApplication.applicationContext, ChildChatActivity.class);
-
-                PendingIntent pIntent = PendingIntent.getActivity(STApplication.applicationContext,
-                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                return pIntent;
-
-            case 1: // parent
-
-                Intent childrenList = new Intent(STApplication.applicationContext, ListChildActivity.class);
-
-                Intent controlChild = new Intent(STApplication.applicationContext, ControlChildExActivity.class);
-
-                controlChild.putExtra("ChildID", senderId);
-
-                Intent chat = new Intent(STApplication.applicationContext, ParentChatActivity.class);
-                chat.putExtra("ChildID", senderId);
-                chat.putExtra("Name", senderName);
-
-                stackBuilder = TaskStackBuilder.create(STApplication.applicationContext);
-
-                stackBuilder.addNextIntent(childrenList);
-                stackBuilder.addNextIntent(controlChild);
-                stackBuilder.addNextIntent(chat);
-
-                return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
-    }
-
-    private void requestUpdateApp(String parentId, String childId) {
-
-        LoginModel model = new LoginModel();
-
-        model.setParentId(parentId);
-        model.setChildId(childId);
-
-        SimpleXmlRequest request = HttpHelper.getExceptionApp(model,
-                new Response.Listener<ExceptionAppResult>() {
-                    @Override
-                    public void onResponse(ExceptionAppResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                List<PackageIDs> list = response.getPackages();
-
-                                HashMap<String, Integer> map = new HashMap<String, Integer>();
-
-                                if (list != null && list.size() > 0) {
-
-                                    for (PackageIDs key : list) {
-
-                                        map.put(key.getPackageId(), 1);
-                                    }
-                                }
-
-                                List<PackageModel> packages = mHelper.getPackageListExcept();
-
-                                Logger.d("packages " + packages.size());
-
-                                for (PackageModel model : packages) {
-
-                                    Logger.d(model.getPackageName() + " " + model.getPackageId() + " " + map.toString());
-
-                                    if (map.containsKey(model.getPackageId())) {
-
-                                        model.setIsExceptionApp(1);
-
-                                    } else {
-
-                                        model.setIsExceptionApp(0);
-                                    }
-                                }
-
-                                mHelper.setExceptPackages(packages);
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
-
-                                break;
-                        }
-                    }
-
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
-    }
-
-    private void requestNewMessage(String messageId, final String senderId, final String senderName) {
-
-        if (TextUtils.isEmpty(messageId)) {
-
-            return;
-        }
-
-        Account account = mHelper.getAccountInfo();
-
-        ChatRead model = new ChatRead();
-
-        model.setMessageID(messageId);
-        model.setReaderID(account.getID());
-        model.setIsChild(String.valueOf(account.getIsChild()));
-
-        SimpleXmlRequest request = HttpHelper.getReadChat(model,
-                new Response.Listener<ChatReadResult>() {
-                    @Override
-                    public void onResponse(ChatReadResult response) {
-
-                        switch (response.getResultCode()) {
-
-                            case SUCCESS:
-
-                                Account account = mHelper.getAccountInfo();
-
-                                mHelper.insertMessageFromGCM(response.getMessageId(), senderId, senderId,
-                                        senderName, response.getCounter(), 0, 0,
-                                        AndroidUtils.convertFromUTF8(response.getMessage()),
-                                        response.getTime(), response.getMsgType());
-
-
-                                sendBroadcast(new Intent(StaticValues.NEW_MESSAGE_ARRIVED));
-
-                                break;
-
-                            default:
-
-                                handleResultCode(response.getResultCode(),
-                                        response.getResultMessage());
-
-                                break;
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        handleError(error);
-                    }
-                });
-
-        addRequest(request);
-    }
-
-    protected void addRequest(SimpleXmlRequest request) {
-
-        try {
-
-            mQueue.add(request);
-
-        } catch (Exception e) {
-
-            Logger.e(e.toString());
-
-        }
-    }
-
-    protected void handleResultCode(int code, String msg) {
-
-        switch (code) {
-
-            default:
-
-                if (TextUtils.isEmpty(msg)) {
-                    Logger.e(msg);
-                }
+                mHelper.setExceptPackages(packages);
 
                 break;
+
+              default:
+
+                handleResultCode(response.getResultCode(),
+                    response.getResultMessage());
+
+                break;
+            }
+          }
+
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            handleError(error);
+          }
+        });
+
+    addRequest(request);
+  }
+
+  private void requestNewMessage(String messageId, final String senderId, final String senderName) {
+
+    if (TextUtils.isEmpty(messageId)) {
+
+      return;
+    }
+
+    Account account = mHelper.getAccountInfo();
+
+    ChatRead model = new ChatRead();
+
+    model.setMessageID(messageId);
+    model.setReaderID(account.getID());
+    model.setIsChild(String.valueOf(account.getIsChild()));
+
+    SimpleXmlRequest request = HttpHelper.getReadChat(model,
+        new Response.Listener<ChatReadResult>() {
+          @Override
+          public void onResponse(ChatReadResult response) {
+
+            switch (response.getResultCode()) {
+
+              case SUCCESS:
+
+                Account account = mHelper.getAccountInfo();
+
+                mHelper.insertMessageFromGCM(response.getMessageId(), senderId, senderId,
+                    senderName, response.getCounter(), 0, 0,
+                    AndroidUtils.convertFromUTF8(response.getMessage()),
+                    response.getTime(), response.getMsgType());
+
+
+                sendBroadcast(new Intent(StaticValues.NEW_MESSAGE_ARRIVED));
+
+                break;
+
+              default:
+
+                handleResultCode(response.getResultCode(),
+                    response.getResultMessage());
+
+                break;
+            }
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+
+            handleError(error);
+          }
+        });
+
+    addRequest(request);
+  }
+
+  protected void addRequest(SimpleXmlRequest request) {
+
+    try {
+
+      mQueue.add(request);
+
+    } catch (Exception e) {
+
+      Logger.e(e.toString());
+
+    }
+  }
+
+  protected void handleResultCode(int code, String msg) {
+
+    switch (code) {
+
+      default:
+
+        if (TextUtils.isEmpty(msg)) {
+          Logger.e(msg);
         }
+
+        break;
     }
+  }
 
-    protected void handleError(VolleyError error) {
+  protected void handleError(VolleyError error) {
 
-        Logger.e(error.toString());
+    Logger.e(error.toString());
 
-    }
+  }
 }
