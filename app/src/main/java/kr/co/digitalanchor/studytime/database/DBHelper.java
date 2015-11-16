@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
@@ -144,6 +145,18 @@ public class DBHelper extends SQLiteOpenHelper {
       + IS_EXPIRED + " TEXT DEFAULT Y, "
       + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0)";
 
+  private static final String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO + "("
+      + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + ID + " INTEGER NOT NULL, "
+      + IS_PARENT + " TEXT NOT NULL, "
+      + NAME + " TEXT, "
+      + PASSWORD + " TEXT NOT NULL, "
+      + COIN + " TEXT NOT NULL, "
+      + EMAIL + " TEXT NOT NULL, "
+      + PARENT_ID + " TEXT, "
+      + IS_EXPIRED + " TEXT DEFAULT Y, "
+      + NEW_NOTICE + " INTEGER DEFAULT 0 )";
+
 
   public DBHelper(Context context) {
     super(context, DB_NAME, null, VERSION);
@@ -152,12 +165,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-
-    String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO
-        + "(" + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ID
-        + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT, "
-        + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL, "
-        + PARENT_ID + " TEXT, " + NEW_NOTICE + " INTEGER DEFAULT 0 )";
 
     String CREATE_TABLE_ONOFF = "CREATE TABLE " + TABLE_ON_OFF
         + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY, " + IS_OFF
@@ -218,6 +225,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
       case 2:
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
+        db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
         db.execSQL(CREATE_TABLE_CHILD);
@@ -900,7 +910,7 @@ public class DBHelper extends SQLiteOpenHelper {
   /**
    * 자녀용
    */
-  public void insertAccount(String id, String name, String parentId) {
+  public void insertAccount(String id, String name, String parentId, @Nullable String isExpired) {
 
     SQLiteDatabase db = this.getWritableDatabase();
 
@@ -910,6 +920,7 @@ public class DBHelper extends SQLiteOpenHelper {
     values.put(IS_PARENT, 0);
     values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
     values.put(PARENT_ID, parentId);
+    values.put(IS_EXPIRED, isExpired);
     values.put(PASSWORD, "");
     values.put(COIN, "");
     values.put(EMAIL, "");
@@ -979,7 +990,7 @@ public class DBHelper extends SQLiteOpenHelper {
       SQLiteDatabase db = this.getReadableDatabase();
 
       String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
-          PARENT_ID, NEW_NOTICE};
+          PARENT_ID, NEW_NOTICE, IS_EXPIRED};
 
       cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
           null, null);
@@ -1561,6 +1572,23 @@ public class DBHelper extends SQLiteOpenHelper {
     return result;
   }
 
+  public void updateExpired(String isExpired) {
+
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    ContentValues values = new ContentValues();
+    values.put(ONOFF_KEY, ONOFF_PK);
+    values.put(IS_EXPIRED, isExpired);
+
+    db.replace(TABLE_ON_OFF, null, values);
+
+    if (db != null) {
+
+      db.close();
+
+      db = null;
+    }
+  }
 
   /**
    * 처음으로 onOFF 정보를 넣거나 update할 때 사용

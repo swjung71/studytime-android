@@ -203,6 +203,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
         if (resultCode == RESULT_OK) {
 
+          sendEmptyMessage(COMPLETE_CHILD_LOGIN);
 
         } else if (resultCode == INPUT_ADD_INFO) {
 

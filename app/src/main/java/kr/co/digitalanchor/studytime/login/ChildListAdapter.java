@@ -45,7 +45,7 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
     View layoutEnable = ViewHolder.get(convertView, R.id.enableChild);
     View layoutDisable = ViewHolder.get(convertView, R.id.disableChild);
 
-    if (child.getExpirationYN().equals("Y")) {
+    if (child.getExpirationYN().equals("N")) {
 
       layoutEnable.setVisibility(View.VISIBLE);
       layoutDisable.setVisibility(View.GONE);

@@ -233,6 +233,15 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     do {
 
+      tmp = mEditName.getText().toString();
+
+      if (TextUtils.isEmpty(tmp)) {
+
+        msg = "이름을 입력하세요.";
+
+        break;
+      }
+
       tmp = mEditBirthDate.getText().toString();
 
       if (!TextUtils.isEmpty(tmp) && !StringValidator.isBirthDay(tmp)) {
@@ -373,20 +382,13 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     model.setMac(STApplication.getMAC());
 
-    if (isModify) {
+    if (TextUtils.isEmpty(mEditName.getText().toString())) {
 
-      if (TextUtils.isEmpty(mEditName.getText().toString())) {
-
-        model.setName(mModel.getName());
-
-      } else {
-
-        model.setName(mEditName.getText().toString());
-      }
+      model.setName(mModel.getName());
 
     } else {
 
-      model.setName(mModel.getName());
+      model.setName(mEditName.getText().toString());
     }
 
     SimpleXmlRequest request = HttpHelper.getChildRegister(model,
@@ -439,7 +441,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     Logger.i(parentId + " " + childId + "  " + mModel.getName());
 
-    mHelper.insertAccount(childId, mModel.getName(), parentId);
+    mHelper.insertAccount(childId, mModel.getName(), parentId, "Y");
 
   }
 
