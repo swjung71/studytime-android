@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
+import kr.co.digitalanchor.studytime.model.Child;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
 import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
-import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -44,6 +45,14 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_child_select);
+
+    Bundle data = getIntent().getExtras();
+
+    if (data != null) {
+
+      parentId = data.getString("ParentID");
+
+    }
 
     initView();
 
@@ -127,7 +136,7 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
 
     model.setParentId(parentId);
 
-    SimpleXmlRequest request = HttpHelper.getChildList(model,
+    SimpleXmlRequest request = HttpHelper.getSyncParentData(model,
         new Response.Listener<ParentLoginResult>() {
           @Override
           public void onResponse(ParentLoginResult res) {
@@ -137,6 +146,20 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
             switch (res.getResultCode()) {
 
               case SUCCESS:
+
+                List<Child> list = res.getChildren();
+
+                if (list != null) {
+
+                  for (Child child : list) {
+
+                    child.setName(AndroidUtils.convertFromUTF8(child.getName()));
+
+                    mChildren.add(child);
+                  }
+
+                  mAdapter.notifyDataSetChanged();
+                }
 
                 break;
 

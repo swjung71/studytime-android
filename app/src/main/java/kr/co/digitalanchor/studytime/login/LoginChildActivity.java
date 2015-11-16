@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
+import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.ChildLoginResult;
@@ -348,7 +349,24 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 */
             hasChildren = response.getChildYn();
 
-            sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+            AdultDBHelper helper = new AdultDBHelper(getApplicationContext());
+
+            if (helper.getCountRow() < 1) {
+
+              sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+
+            } else {
+
+              if (hasChildren) {
+
+                sendEmptyMessage(REQUEST_CHILD_LIST);
+
+              } else {
+
+                sendEmptyMessage(REQUEST_ADD_INFO);
+
+              }
+            }
 
             break;
 
@@ -430,6 +448,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
                 Logger.d(data.toString());
 
                 sendMessage(REQUEST_ADULT_FILE, data);
+
 
                 break;
 

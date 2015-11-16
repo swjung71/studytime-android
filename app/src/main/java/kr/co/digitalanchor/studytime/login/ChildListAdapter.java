@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 import kr.co.digitalanchor.studytime.R;
-import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.model.Child;
 import kr.co.digitalanchor.studytime.view.ViewHolder;
 
 /**
@@ -45,7 +45,7 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
     View layoutEnable = ViewHolder.get(convertView, R.id.enableChild);
     View layoutDisable = ViewHolder.get(convertView, R.id.disableChild);
 
-    if (position % 2 == 0) {
+    if (child.getExpirationYN().equals("Y")) {
 
       layoutEnable.setVisibility(View.VISIBLE);
       layoutDisable.setVisibility(View.GONE);
@@ -57,10 +57,11 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
       TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
 
       TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice);
-      labelDevice.setText("갤럭시 S5");
+      labelDevice.setText(child.getDeviceModel());
 
       TextView labelExpired = ViewHolder.get(convertView, R.id.textExpired);
-      labelExpired.setText("2014-11-13 (5일전)");
+      labelExpired.setText(getContext().getString(R.string.payment_info,
+          child.getExpirationDate(), child.getRemainingDays()));
 
     } else {
 
@@ -72,7 +73,7 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
       name.setSelected(true);
 
       TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice2);
-      labelDevice.setText("갤럭시 S5");
+      labelDevice.setText(child.getDeviceModel());
 
       ImageView profile = ViewHolder.get(convertView, R.id.imgProfileDisable);
     }
