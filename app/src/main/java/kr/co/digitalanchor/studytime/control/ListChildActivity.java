@@ -171,7 +171,13 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     Child child = mChildren.get(position - 1);
 
-    showChildDetail(child);
+    if (child.getIsExpired().equals("Y")) {
+
+      Toast.makeText(getApplicationContext(), "사용 기간이 만료되었습니다.", Toast.LENGTH_SHORT).show();
+    } else {
+
+      showChildDetail(child);
+    }
 
   }
 

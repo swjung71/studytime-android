@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import com.orhanobut.logger.Logger;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1062,6 +1063,53 @@ public class DBHelper extends SQLiteOpenHelper {
 
   }
 
+  public void insertChild(SQLiteDatabase db, String id, int isChild, String name, String isOff,
+                          String expirationDate, String isExpired, String deviceModel,
+                          int remainingDays) throws SQLException {
+
+    ContentValues values = new ContentValues();
+
+    values.put(CHILDREN_ID, id);
+    values.put(IS_PARENT, isChild);
+
+    if (name != null) {
+      values.put(NAME, AndroidUtils.convertFromUTF8(name));
+    }
+
+    if (TextUtils.isEmpty(isOff)) {
+
+      values.put(IS_OFF, "0");
+
+    } else {
+
+      values.put(IS_OFF, isOff);
+    }
+
+    if (!TextUtils.isEmpty(expirationDate)) {
+
+      values.put(EXPIRATION_DATE, expirationDate);
+    }
+
+    if (TextUtils.isEmpty(isExpired)) {
+
+      values.put(IS_EXPIRED, "Y");
+
+    } else {
+
+      values.put(IS_EXPIRED, isExpired);
+
+    }
+
+    if (!TextUtils.isEmpty(deviceModel)) {
+
+      values.put(DEVICE_MODEL, deviceModel);
+    }
+
+    values.put(REMAINING_DAYS, remainingDays);
+
+    db.replace(TABLE_CHILD, null, values);
+  }
+
   public void insertChild(String id, int isChild, String name, String isOff,
                           String expirationDate, String isExpired, String deviceModel) {
 
@@ -1121,10 +1169,32 @@ public class DBHelper extends SQLiteOpenHelper {
     if (children == null)
       return;
 
-    for (kr.co.digitalanchor.studytime.model.Child child : children) {
+    SQLiteDatabase db = this.getWritableDatabase();
 
-      insertChild(child.getChildID(), 0, child.getName(), child.getIsOff(),
-          child.getExpirationDate(), child.getExpirationYN(), child.getDeviceModel());
+    db.beginTransaction();
+
+    try {
+
+      for (kr.co.digitalanchor.studytime.model.Child child : children) {
+
+        insertChild(db, child.getChildID(), 0, child.getName(), child.getIsOff(),
+            child.getExpirationDate(), child.getExpirationYN(), child.getDeviceModel(),
+            child.getRemainingDays());
+      }
+
+      db.setTransactionSuccessful();
+
+    } catch (SQLException e) {
+
+      Logger.e(e.getMessage());
+    } finally {
+
+      db.endTransaction();
+
+      if (db != null) {
+
+        db.close();
+      }
     }
   }
 
@@ -1632,17 +1702,27 @@ public class DBHelper extends SQLiteOpenHelper {
 
       db = this.getReadableDatabase();
 
-      String[] columns = new String[]{IS_OFF};
+      int isOff = 0;
+      String isExpired = "Y";
+
+      String[] columns = new String[]{IS_OFF, IS_EXPIRED};
 
       cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
           new String[]{ONOFF_PK}, null, null, null, null);
 
       if (cursor.moveToFirst()) {
-        return cursor.getInt(0);
+
+        isOff = cursor.getInt(0);
+
+        isExpired = cursor.getString(1);
       }
 
-      return 0;
+      if (isExpired.equals("Y")) {
 
+        isOff = 0;
+      }
+
+      return isOff;
 
     } catch (Exception e) {
 

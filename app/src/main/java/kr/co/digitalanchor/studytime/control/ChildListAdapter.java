@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -63,11 +64,12 @@ public class ChildListAdapter extends ArrayAdapter<Child> {
       TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice);
       labelDevice.setText(child.getDeviceModel());
 
+      Logger.d(child.getRemainingDays() + " days");
+
       TextView labelExpired = ViewHolder.get(convertView, R.id.textExpired);
       labelExpired.setText(context.getResources().getString(R.string.payment_info,
           child.getExpirationDate(),
           String.valueOf(child.getRemainingDays())));
-
 
       int count = child.getNewMessageCount();
 
