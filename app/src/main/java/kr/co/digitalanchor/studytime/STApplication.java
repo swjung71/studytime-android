@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.intro.IntroActivity;
+import kr.co.digitalanchor.studytime.monitor.B;
 
 import static kr.co.digitalanchor.studytime.StaticValues.PREF;
 
@@ -649,10 +650,14 @@ public class STApplication extends MultiDexApplication {
       activity.finish();
     }
 
+
+
     Intent intent = new Intent(applicationContext, IntroActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
     applicationContext.startActivity(intent);
+
+    applicationContext.stopService(new Intent(applicationContext, B.class));
   }
 
   public static Pattern getUrlPattern() {

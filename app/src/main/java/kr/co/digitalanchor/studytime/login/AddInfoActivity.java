@@ -382,6 +382,11 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     model.setMac(STApplication.getMAC());
 
+    if (isModify) {
+
+      model.setChildId(mModel.getChildId());
+    }
+
     if (TextUtils.isEmpty(mEditName.getText().toString())) {
 
       model.setName(mModel.getName());

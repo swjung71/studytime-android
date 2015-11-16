@@ -124,9 +124,13 @@ public class SyncService extends Service {
 
               case 3:
 
+                dbHelper.updateExpired("Y");
+
                 break;
 
               case 4:
+
+                STApplication.resetApplication();
 
                 break;
 

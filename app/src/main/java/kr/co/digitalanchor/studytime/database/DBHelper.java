@@ -452,7 +452,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void updateApplicationAfterReg(String packageName, String packageId,
                                         int hasIconServer, int state, int changed) {
 
-    Logger.d(packageName + " " + packageId + " " + hasIconServer + " " + state + " " + changed);
+//    Logger.d(packageName + " " + packageId + " " + hasIconServer + " " + state + " " + changed);
 
     SQLiteDatabase db = this.getWritableDatabase();
 
@@ -469,7 +469,7 @@ public class DBHelper extends SQLiteOpenHelper {
     if (changed > -1)
       values.put(CHANGED, changed);
 
-    Logger.d(values.toString());
+//    Logger.d(values.toString());
 
     db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
 
