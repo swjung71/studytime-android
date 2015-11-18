@@ -7,36 +7,47 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-07-28.
  */
-@Root(name = "Login")
+@Root(name = "Login", strict = false)
 public class LoginModel {
 
-    @Attribute(name = "xmlns")
-    String tag;
+  @Attribute(name = "xmlns")
+  String tag;
 
-    @Element(name = "ParentID", required = false)
-    String parentId;
+  @Element(name = "ParentID", required = false)
+  String parentId;
 
-    @Element(name = "ChildID", required = false)
-    String childId;
+  @Element(name = "ChildID", required = false)
+  String childId;
 
-    public LoginModel() {
+  @Element(name = "DevNum", required = false)
+  String devNum;
 
-        tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
-    }
+  public LoginModel() {
 
-    public String getParentId() {
-        return parentId;
-    }
+    tag = "http://studytime.digitalanchor.co.kr/ParentRequestDataModel";
+  }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
+  public String getParentId() {
+    return parentId;
+  }
 
-    public String getChildId() {
-        return childId;
-    }
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
 
-    public void setChildId(String childId) {
-        this.childId = childId;
-    }
+  public String getChildId() {
+    return childId;
+  }
+
+  public void setChildId(String childId) {
+    this.childId = childId;
+  }
+
+  public String getDevNum() {
+    return devNum;
+  }
+
+  public void setDevNum(String devNum) {
+    this.devNum = devNum;
+  }
 }

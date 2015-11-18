@@ -868,12 +868,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                 parentLoginResult = res;
 
-//                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
-
-//                mHelper.insertChildren(res.getChildren());
-
-//                sendEmptyMessage(REQUEST_PASSWORD);
-
                 SettingPasswordDialog dialog = new SettingPasswordDialog(LoginActivity.this);
                 dialog.setListener(new SettingPasswordDialog.OnPasswordDialogListener() {
                   @Override

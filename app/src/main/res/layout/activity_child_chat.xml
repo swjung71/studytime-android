@@ -114,7 +114,7 @@
             android:orientation="vertical"
             android:background="@color/white"
             android:clickable="true"
-            android:visibility="gone">
+            android:visibility="visible">
 
         <kr.co.digitalanchor.studytime.view.FontTextView
                 android:layout_width="match_parent"
@@ -139,7 +139,7 @@
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:src="@drawable/img_payend"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/add_info_label_margin_top"/>
+                        android:layout_marginTop="@dimen/login_parent_email_box_margin_top"/>
 
                 <kr.co.digitalanchor.studytime.view.FontTextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -148,7 +148,8 @@
                         android:layout_marginTop="@dimen/add_info_label_margin_top"
                         android:text="이용 기간이 만료되어 결제가 필요합니다."
                         android:textColor="#4a4a4a"
-                        android:textSize="@dimen/signup_content_edit_text_size"/>
+                        android:textSize="@dimen/signup_content_edit_text_size"
+                        />
 
                 <kr.co.digitalanchor.studytime.view.FontTextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -156,6 +157,7 @@
                         android:gravity="center"
                         android:textColor="#4a4a4a"
                         android:text="결제는 스터디타임 웹 사이트에서 하실 수 있습니다."
+                        android:layout_marginTop="@dimen/add_info_label_margin_top"
                         android:textSize="@dimen/signup_content_edit_text_size"/>
 
                 <kr.co.digitalanchor.studytime.view.FontTextView android:layout_width="wrap_content"
@@ -164,14 +166,18 @@
                         android:gravity="center"
                         android:textColor="#4a4a4a"
                         android:text="모바일에선 결제가 불가능하며 PC에서만 결제하실 수 있습니다."
+                        android:layout_marginTop="@dimen/signup_content_edit_margin_top"
                         android:textSize="@dimen/signup_content_edit_text_size"/>
 
                 <LinearLayout android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="#ebebeb"
                         android:layout_gravity="center_horizontal"
+                        android:paddingTop="@dimen/children_list_title_bar_padding"
                         android:paddingLeft="@dimen/login_parent_edit_box_padding"
                         android:paddingRight="@dimen/login_parent_edit_box_padding"
+                        android:paddingBottom="@dimen/children_list_title_bar_padding"
+                        android:layout_marginTop="@dimen/signup_content_edit_padding"
                         android:orientation="vertical">
 
                     <kr.co.digitalanchor.studytime.view.FontTextView
@@ -179,7 +185,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:gravity="center"
-                            android:layout_marginTop="@dimen/add_info_label_margin_top"
                             android:text="문의 안내"
                             android:textColor="#4a4a4a"
                             android:textSize="@dimen/signup_content_edit_text_size"/>
@@ -199,13 +204,8 @@
                             android:textSize="@dimen/signup_content_edit_text_size"
                             android:layout_marginBottom="@dimen/add_info_label_margin_top"/>
 
-
                 </LinearLayout>
-
             </LinearLayout>
-
-
         </ScrollView>
     </LinearLayout>
-
 </RelativeLayout>

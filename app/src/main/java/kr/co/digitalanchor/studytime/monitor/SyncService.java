@@ -106,6 +106,8 @@ public class SyncService extends Service {
 
     model.setChildId(account.getID());
     model.setParentId(account.getParentId());
+    model.setDevNum(STApplication.getDeviceNumber());
+
 
     Request request = HttpHelper.getSyncChildData(model, new Response.Listener<CheckPackageResult>() {
 

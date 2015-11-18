@@ -1019,6 +1019,8 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         account.setNotice(cursor.getInt(7));
+
+        account.setIsExpired(cursor.getString(8));
       }
 
     } catch (Exception e) {
@@ -1644,13 +1646,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
   public void updateExpired(String isExpired) {
 
+    Account account = getAccountInfo();
+
     SQLiteDatabase db = this.getWritableDatabase();
 
     ContentValues values = new ContentValues();
-    values.put(ONOFF_KEY, ONOFF_PK);
+    values.put(ID, account.getID());
     values.put(IS_EXPIRED, isExpired);
 
-    db.replace(TABLE_ON_OFF, null, values);
+    db.replace(TABLE_ACCOUNT_INFO, null, values);
 
     if (db != null) {
 
@@ -1703,9 +1707,8 @@ public class DBHelper extends SQLiteOpenHelper {
       db = this.getReadableDatabase();
 
       int isOff = 0;
-      String isExpired = "Y";
 
-      String[] columns = new String[]{IS_OFF, IS_EXPIRED};
+      String[] columns = new String[]{IS_OFF};
 
       cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
           new String[]{ONOFF_PK}, null, null, null, null);
@@ -1714,12 +1717,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         isOff = cursor.getInt(0);
 
-        isExpired = cursor.getString(1);
-      }
-
-      if (isExpired.equals("Y")) {
-
-        isOff = 0;
       }
 
       return isOff;

@@ -67,6 +67,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
     ChildChatAdapter mAdapter;
 
+    View mExpiration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -89,18 +91,35 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
 
-        if (messageReceiver == null) {
+        try {
 
-            messageReceiver = new MessageReceiver();
-            messageReceiver.setMessageListener(this);
+            mAccount = mHelper.getAccountInfo();
 
+            if (messageReceiver == null) {
+
+                messageReceiver = new MessageReceiver();
+                messageReceiver.setMessageListener(this);
+
+            }
+
+            IntentFilter intentFilter = new IntentFilter(NEW_MESSAGE_ARRIVED);
+
+            registerReceiver(messageReceiver, intentFilter);
+
+            sendEmptyMessage(UPDATE_MESSAGE_LIST);
+
+            if (mAccount.getIsExpired().equals("Y")) {
+
+                mExpiration.setVisibility(View.VISIBLE);
+            } else {
+
+                mExpiration.setVisibility(View.GONE);
+            }
+
+        } catch (Exception e) {
+
+            Logger.e(e.getMessage());
         }
-
-        IntentFilter intentFilter = new IntentFilter(NEW_MESSAGE_ARRIVED);
-
-        registerReceiver(messageReceiver, intentFilter);
-
-        sendEmptyMessage(UPDATE_MESSAGE_LIST);
     }
 
     @Override
@@ -123,27 +142,36 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
     private void initView() {
 
-        mButtonSetting = (ImageButton) findViewById(R.id.buttonSetting);
-        mButtonSetting.setOnClickListener(this);
+        try {
 
-        mButtonSend = (ImageButton) findViewById(R.id.buttonSend);
-        mButtonSend.setOnClickListener(this);
+            mButtonSetting = (ImageButton) findViewById(R.id.buttonSetting);
+            mButtonSetting.setOnClickListener(this);
 
-        mButtonClose = (Button) findViewById(R.id.buttonClose);
-        mButtonClose.setOnClickListener(this);
+            mButtonSend = (ImageButton) findViewById(R.id.buttonSend);
+            mButtonSend.setOnClickListener(this);
 
-        mEditMessage = (EditText) findViewById(R.id.editMessage);
+            mButtonClose = (Button) findViewById(R.id.buttonClose);
+            mButtonClose.setOnClickListener(this);
 
-        mLayoutGuide = findViewById(R.id.layoutGuide);
+            mEditMessage = (EditText) findViewById(R.id.editMessage);
 
-        mListChat = (ListView) findViewById(R.id.listChat);
-        mListChat.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        mListChat.setStackFromBottom(true);
+            mLayoutGuide = findViewById(R.id.layoutGuide);
 
-        mMessages = new ArrayList<>();
-        mAdapter = new ChildChatAdapter(getApplicationContext(), mMessages, mAccount.getID());
+            mListChat = (ListView) findViewById(R.id.listChat);
+            mListChat.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+            mListChat.setStackFromBottom(true);
 
-        mListChat.setAdapter(mAdapter);
+            mMessages = new ArrayList<>();
+            mAdapter = new ChildChatAdapter(getApplicationContext(), mMessages, mAccount.getID());
+
+            mListChat.setAdapter(mAdapter);
+
+            mExpiration = findViewById(R.id.layoutExpiration);
+
+        } catch (Exception e) {
+
+            Logger.e(e.getMessage());
+        }
     }
 
     @Override
