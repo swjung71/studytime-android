@@ -194,6 +194,7 @@
                             android:layout_height="wrap_content"
                             android:text="웹사이트: www.dastudytime.com"
                             android:textColor="#4a4a4a"
+                            android:layout_marginTop="@dimen/add_info_label_margin_top"
                             android:textSize="@dimen/signup_content_edit_text_size"/>
 
                     <kr.co.digitalanchor.studytime.view.FontTextView
