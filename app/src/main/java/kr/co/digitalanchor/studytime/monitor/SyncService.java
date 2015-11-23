@@ -138,6 +138,7 @@ public class SyncService extends Service {
 
               default:
 
+                dbHelper.updateExpired("N");
                 dbHelper.updateOnOff(isOff);
 
                 break;

@@ -10,15 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -27,6 +24,8 @@ import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.login.AddInfoActivity;
 import kr.co.digitalanchor.studytime.model.ChatSend;
 import kr.co.digitalanchor.studytime.model.ChatSendResult;
+import kr.co.digitalanchor.studytime.model.CheckPackageResult;
+import kr.co.digitalanchor.studytime.model.LoginModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
@@ -44,6 +43,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
     private final int REQUEST_SEND_MESSAGE = 50001;
 
     private final int UPDATE_MESSAGE_LIST = 50002;
+
+    private final int UPDATE_SYNC_DATA = 50003;
 
     ImageButton mButtonSetting;
 
@@ -106,15 +107,7 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
             registerReceiver(messageReceiver, intentFilter);
 
-            sendEmptyMessage(UPDATE_MESSAGE_LIST);
-
-            if (mAccount.getIsExpired().equals("Y")) {
-
-                mExpiration.setVisibility(View.VISIBLE);
-            } else {
-
-                mExpiration.setVisibility(View.GONE);
-            }
+            sendEmptyMessage(UPDATE_SYNC_DATA);
 
         } catch (Exception e) {
 
@@ -188,6 +181,12 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
             case UPDATE_MESSAGE_LIST:
 
                 updateMessageList();
+
+                break;
+
+            case UPDATE_SYNC_DATA:
+
+                requestSyncData();
 
                 break;
 
@@ -386,6 +385,93 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
                     }
                 });
+
+        addRequest(request);
+    }
+
+    private void requestSyncData() {
+
+        LoginModel model = new LoginModel();
+
+        model.setChildId(mAccount.getID());
+        model.setParentId(mAccount.getParentId());
+        model.setDevNum(STApplication.getDeviceNumber());
+
+        SimpleXmlRequest request = HttpHelper.getSyncChildData(model, new Response.Listener<CheckPackageResult>() {
+            @Override
+            public void onResponse(CheckPackageResult response) {
+
+                int isOff = response.getIsOff();
+
+                switch (response.getResultCode()) {
+
+                    case SUCCESS:
+
+                        switch (isOff) {
+
+                            case 3:
+
+                                mHelper.updateExpired("Y");
+
+                                break;
+
+                            case 4:
+
+                                STApplication.resetApplication();
+
+                                break;
+
+                            default:
+
+                                mHelper.updateExpired("N");
+                                mHelper.updateOnOff(isOff);
+
+                                mAccount.setIsExpired("N");
+
+                                break;
+
+                        }
+
+                        break;
+
+                    default:
+
+                        handleResultCode(response.getResultCode(), response.getResultMessage());
+
+                        break;
+                }
+
+                mAccount = mHelper.getAccountInfo();
+
+                Logger.d("TAG " + mAccount.getIsExpired() );
+
+                if (mAccount.getIsExpired().equals("Y")) {
+
+                    mExpiration.setVisibility(View.VISIBLE);
+
+                } else {
+
+                    mExpiration.setVisibility(View.GONE);
+                }
+
+                sendEmptyMessage(UPDATE_MESSAGE_LIST);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                handleError(error);
+
+                if (mAccount.getIsExpired().equals("Y")) {
+
+                    mExpiration.setVisibility(View.VISIBLE);
+                } else {
+
+                    mExpiration.setVisibility(View.GONE);
+                }
+            }
+        });
 
         addRequest(request);
     }
