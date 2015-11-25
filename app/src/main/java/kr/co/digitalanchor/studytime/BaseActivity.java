@@ -1,14 +1,12 @@
 package kr.co.digitalanchor.studytime;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
@@ -23,7 +21,6 @@ import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
 import com.orhanobut.logger.Logger;
-
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -299,6 +296,12 @@ public class BaseActivity extends FragmentActivity {
             case 1024:
 
                 msg = "등록된 이메일이 아닙니다. (1024)";
+
+                break;
+
+            case 1030:
+
+                msg = "이미 등록된 기기입니다. (1030)";
 
                 break;
 

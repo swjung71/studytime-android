@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -47,135 +46,136 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  * Created by Thomas on 2015-11-10.
  */
 public class SelectChildActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-    View.OnClickListener {
+        View.OnClickListener {
 
-  private final int REQUEST_ADD_INFO = 50001;
-  private final int REQUEST_UPLOAD_PACKAGES = 50002;
-  private final int COMPLETE_ADD_INFO = 50003;
+    private final int REQUEST_ADD_INFO = 50001;
+    private final int REQUEST_UPLOAD_PACKAGES = 50002;
+    private final int COMPLETE_ADD_INFO = 50003;
 
-  private final int ACTIVATION_ACCESS_REQUEST = 40002;
+    private final int ACTIVATION_ACCESS_REQUEST = 40002;
 
-  private final int ACTIVATION_REQUEST = 40003;
+    private final int ACTIVATION_REQUEST = 40003;
 
-  ListView mList;
+    ListView mList;
 
-  View mHeader;
+    View mHeader;
 
-  View mFooter;
+    View mFooter;
 
-  ChildListAdapter mAdapter;
+    ChildListAdapter mAdapter;
 
-  List<Child> mChildren;
+    List<Child> mChildren;
 
-  private DBHelper mHelper;
+    private DBHelper mHelper;
 
-  String mParentID;
-  String mChildID;
-  String mName;
-  String mExpiration;
+    String mParentID;
+    String mChildID;
+    String mName;
+    String mExpiration;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-    super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_child_select);
+        setContentView(R.layout.activity_child_select);
 
-    Bundle data = getIntent().getExtras();
+        Bundle data = getIntent().getExtras();
 
-    if (data != null) {
+        if (data != null) {
 
-      mParentID = data.getString("ParentID");
+            mParentID = data.getString("ParentID");
+
+        }
+
+        mHelper = new DBHelper(getApplicationContext());
+
+        initView();
+
+        requestChildList();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
 
-    mHelper = new DBHelper(getApplicationContext());
+    public void initView() {
 
-    initView();
+        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 
-    requestChildList();
-  }
+        mHeader = inflater.inflate(R.layout.layout_child_header, null);
+        mFooter = inflater.inflate(R.layout.layout_child_footer_c, null);
+        mFooter.setOnClickListener(this);
 
-  @Override
-  protected void onStart() {
-    super.onStart();
+        mList = (ListView) findViewById(R.id.list);
 
-  }
+        mList.setOnItemClickListener(this);
 
-  public void initView() {
+        mList.addHeaderView(mHeader);
+        mList.addFooterView(mFooter);
 
-    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        mList.setAdapter(makeAdapter());
 
-    mHeader = inflater.inflate(R.layout.layout_child_header, null);
-    mFooter = inflater.inflate(R.layout.layout_child_footer_c, null);
-    mFooter.setOnClickListener(this);
-
-    mList = (ListView) findViewById(R.id.list);
-
-    mList.setOnItemClickListener(this);
-
-    mList.addHeaderView(mHeader);
-    mList.addFooterView(mFooter);
-
-    mList.setAdapter(makeAdapter());
-
-  }
-
-  private ChildListAdapter makeAdapter() {
-
-    if (mChildren == null) {
-
-      mChildren = new ArrayList<>();
     }
 
-    mAdapter = new ChildListAdapter(getApplicationContext(), 0, mChildren);
+    private ChildListAdapter makeAdapter() {
 
-    return mAdapter;
-  }
+        if (mChildren == null) {
 
-  @Override
-  protected void onHandleMessage(Message msg) {
+            mChildren = new ArrayList<>();
 
-    switch (msg.what) {
+        }
 
-      case REQUEST_ADD_INFO:
+        mAdapter = new ChildListAdapter(getApplicationContext(), 0, mChildren);
 
-        requestChildReg();
-
-        break;
-
-      case REQUEST_UPLOAD_PACKAGES:
-
-        requestAddApps();
-
-        break;
-
-      case COMPLETE_ADD_INFO:
-
-        startService(new Intent(getApplicationContext(), AppIconUploader.class));
-
-        setResult(RESULT_OK);
-
-        finish();
-
-        break;
-
-      default:
-
-        break;
+        return mAdapter;
     }
-  }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onHandleMessage(Message msg) {
 
-    super.onActivityResult(requestCode, resultCode, data);
+        switch (msg.what) {
 
-    switch (requestCode) {
+            case REQUEST_ADD_INFO:
 
-      case ACTIVATION_REQUEST:
+                requestChildReg();
 
-        STApplication.putBoolean(StaticValues.SHOW_ADMIN, resultCode != RESULT_OK);
+                break;
+
+            case REQUEST_UPLOAD_PACKAGES:
+
+                requestAddApps();
+
+                break;
+
+            case COMPLETE_ADD_INFO:
+
+                startService(new Intent(getApplicationContext(), AppIconUploader.class));
+
+                setResult(RESULT_OK);
+
+                finish();
+
+                break;
+
+            default:
+
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+
+            case ACTIVATION_REQUEST:
+
+                STApplication.putBoolean(StaticValues.SHOW_ADMIN, resultCode != RESULT_OK);
 
 //                completeRegister(mParentID, mChildID);
 //
@@ -183,343 +183,347 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
 //
 //                sendEmptyMessage(COMPLETE_ADD_INFO);
 
-        sendEmptyMessage(REQUEST_UPLOAD_PACKAGES);
-
-        break;
-    }
-  }
-
-  @Override
-  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    try {
-      if (position < 1) {
-
-        return;
-      }
-
-      Child child = mChildren.get(position - 1);
-
-      mName = child.getName();
-
-      mChildID = child.getChildID();
-
-      mExpiration = child.getExpirationYN();
-
-      sendEmptyMessage(REQUEST_ADD_INFO);
-
-    } catch (Exception e) {
-
-      Logger.e(e.getMessage());
-    }
-  }
-
-  @Override
-  public void onClick(View v) {
-
-    switch (v.getId()) {
-
-      case R.id.footerSendLink:
-
-        Toast.makeText(getApplicationContext(), "Click footer", Toast.LENGTH_SHORT).show();
-
-        setResult(INPUT_ADD_INFO);
-
-        finish();
-
-        break;
-    }
-  }
-
-  private void requestChildList() {
-
-    showLoading();
-
-    ParentModel model = new ParentModel();
-
-    model.setParentId(mParentID);
-
-    SimpleXmlRequest request = HttpHelper.getSyncParentData(model,
-        new Response.Listener<ParentLoginResult>() {
-          @Override
-          public void onResponse(ParentLoginResult res) {
-
-            dismissLoading();
-
-            switch (res.getResultCode()) {
-
-              case SUCCESS:
-
-                List<Child> list = res.getChildren();
-
-                if (list != null) {
-
-                  for (Child child : list) {
-
-                    child.setName(AndroidUtils.convertFromUTF8(child.getName()));
-
-                    mChildren.add(child);
-                  }
-
-                  mAdapter.notifyDataSetChanged();
-                }
+                sendEmptyMessage(REQUEST_UPLOAD_PACKAGES);
 
                 break;
+        }
+    }
 
-              default:
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                handleResultCode(res.getResultCode(), res.getResultMessage());
+        try {
+            if (position < 1) {
 
-                break;
+                return;
             }
 
-          }
-        }, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
+            Child child = mChildren.get(position - 1);
 
-            handleError(error);
-          }
-        });
+            mName = child.getName();
 
-    addRequest(request);
-  }
+            mChildID = child.getChildID();
 
-  private void requestChildReg() {
+            mExpiration = child.getExpirationYN();
 
-    showLoading();
+            sendEmptyMessage(REQUEST_ADD_INFO);
 
-    ChildRegister model = new ChildRegister();
+        } catch (Exception e) {
 
-    model.setParentID(mParentID);
+            Logger.e(e.getMessage());
+        }
+    }
 
-    model.setChildId(mChildID);
+    @Override
+    public void onClick(View v) {
 
-    model.setName(mName);
+        switch (v.getId()) {
 
-    // 전화번호
-    model.setPhoneNumber(STApplication.getPhoneNumber());
+            case R.id.footerSendLink:
 
-    // 국가 코드
-    model.setNationalCode(STApplication.getNationalCode());
+                setResult(INPUT_ADD_INFO);
 
-    // GCM
-    model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
-
-    // 언어 설정
-    model.setLang(STApplication.getLanguageCode());
-
-    // App Version
-    model.setAppVersion(STApplication.getAppVersionName());
-
-    // 유니크 넘버
-    model.setDevNum(STApplication.getDeviceNumber());
-
-    model.setMac(STApplication.getMAC());
-
-    SimpleXmlRequest request = HttpHelper.getChildRegister(model,
-        new Response.Listener<ChildRegResult>() {
-          @Override
-          public void onResponse(ChildRegResult res) {
-
-            dismissLoading();
-
-            switch (res.getResultCode()) {
-
-              case SUCCESS:
-
-                mParentID = res.getParentID();
-                mChildID = res.getChildID();
-
-                showAdmin();
+                finish();
 
                 break;
+        }
+    }
 
-              default:
+    private void requestChildList() {
 
-                handleResultCode(res.getResultCode(), res.getResultMessage());
+        showLoading();
 
-                break;
-            }
+        ParentModel model = new ParentModel();
 
-          }
-        }, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
+        model.setParentId(mParentID);
 
-            handleError(error);
-          }
-        });
+        SimpleXmlRequest request = HttpHelper.getSyncParentData(model,
+                new Response.Listener<ParentLoginResult>() {
+                    @Override
+                    public void onResponse(ParentLoginResult res) {
 
-    addRequest(request);
-  }
+                        dismissLoading();
 
-  private void completeRegister(String parentId, String childId) {
+                        switch (res.getResultCode()) {
 
-    Logger.i(parentId + " " + childId + "  " + mName);
+                            case SUCCESS:
 
-    mHelper.insertAccount(childId, mName, parentId, mExpiration);
+                                List<Child> list = res.getChildren();
 
-  }
+                                if (list != null) {
 
-  private void showAdmin() {
+                                    for (Child child : list) {
 
-    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                                        child.setName(AndroidUtils.convertFromUTF8(child.getName()));
 
-    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
-        new ComponentName(this, AdminReceiver.class));
+                                        mChildren.add(child);
 
-    startActivityForResult(intent, ACTIVATION_REQUEST);
+                                    }
+
+                                    if (mChildren.size() >= StaticValues.MAX_CHILDREN_COUNT) {
+
+                                        mFooter.setVisibility(View.GONE);
+                                    }
+
+                                    mAdapter.notifyDataSetChanged();
+                                }
+
+                                break;
+
+                            default:
+
+                                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void requestChildReg() {
+
+        showLoading();
+
+        ChildRegister model = new ChildRegister();
+
+        model.setParentID(mParentID);
+
+        model.setChildId(mChildID);
+
+        model.setName(mName);
+
+        // 전화번호
+        model.setPhoneNumber(STApplication.getPhoneNumber());
+
+        // 국가 코드
+        model.setNationalCode(STApplication.getNationalCode());
+
+        // GCM
+        model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
+
+        // 언어 설정
+        model.setLang(STApplication.getLanguageCode());
+
+        // App Version
+        model.setAppVersion(STApplication.getAppVersionName());
+
+        // 유니크 넘버
+        model.setDevNum(STApplication.getDeviceNumber());
+
+        model.setMac(STApplication.getMAC());
+
+        SimpleXmlRequest request = HttpHelper.getChildRegister(model,
+                new Response.Listener<ChildRegResult>() {
+                    @Override
+                    public void onResponse(ChildRegResult res) {
+
+                        dismissLoading();
+
+                        switch (res.getResultCode()) {
+
+                            case SUCCESS:
+
+                                mParentID = res.getParentID();
+                                mChildID = res.getChildID();
+
+                                showAdmin();
+
+                                break;
+
+                            default:
+
+                                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void completeRegister(String parentId, String childId) {
+
+        Logger.i(parentId + " " + childId + "  " + mName);
+
+        mHelper.insertAccount(childId, mName, parentId, mExpiration);
+
+    }
+
+    private void showAdmin() {
+
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+                new ComponentName(this, AdminReceiver.class));
+
+        startActivityForResult(intent, ACTIVATION_REQUEST);
 
 //        startActivityForResult(intent, REQUEST_UPLOAD_PACKAGES);
-  }
+    }
 
-  /**
-   * Package 목록 보내기
-   */
-  private void requestAddApps() {
+    /**
+     * Package 목록 보내기
+     */
+    private void requestAddApps() {
 
-    showLoading();
+        showLoading();
 
-    Account account = mHelper.getAccountInfo();
+        Account account = mHelper.getAccountInfo();
 
-    List<AddPackageElement> packages = getAppListFromDevice();
+        List<AddPackageElement> packages = getAppListFromDevice();
 
-    mHelper.addAppList(packages);
+        mHelper.addAppList(packages);
 
-    if (packages != null)
-      packages.clear();
+        if (packages != null)
+            packages.clear();
 
-    packages = null;
+        packages = null;
 
-    packages = mHelper.getAddPackageList();
+        packages = mHelper.getAddPackageList();
 
-    AddPackageModel model = new AddPackageModel();
+        AddPackageModel model = new AddPackageModel();
 
-    model.setPackages(packages);
-    model.setChildId(mChildID);
-    model.setParentId(mParentID);
+        model.setPackages(packages);
+        model.setChildId(mChildID);
+        model.setParentId(mParentID);
 
-    SimpleXmlRequest request = HttpHelper.getAddAppList(model,
-        new Response.Listener<AllPackageResult>() {
-          @Override
-          public void onResponse(AllPackageResult response) {
+        SimpleXmlRequest request = HttpHelper.getAddAppList(model,
+                new Response.Listener<AllPackageResult>() {
+                    @Override
+                    public void onResponse(AllPackageResult response) {
 
-            switch (response.getResultCode()) {
+                        switch (response.getResultCode()) {
 
-              case HttpHelper.SUCCESS:
+                            case HttpHelper.SUCCESS:
 
-                // TODO local db update
-                updateLocalDB(response.getPackages());
+                                // TODO local db update
+                                updateLocalDB(response.getPackages());
 
-                completeRegister(mParentID, mChildID);
+                                completeRegister(mParentID, mChildID);
 
-                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+                                sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-                sendEmptyMessage(COMPLETE_ADD_INFO);
+                                sendEmptyMessage(COMPLETE_ADD_INFO);
 
-                dismissLoading();
+                                dismissLoading();
 
-                break;
+                                break;
 
-              default:
+                            default:
 
-                handleResultCode(response.getResultCode(), response.getResultMessage());
+                                handleResultCode(response.getResultCode(), response.getResultMessage());
 
-                break;
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void updateLocalDB(List<PackageResult> packages) {
+
+        if (packages == null) {
+
+            return;
+        }
+
+        for (PackageResult model : packages) {
+
+            mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
+                    model.getDoExistInDB(), model.getState(), 0);
+        }
+    }
+
+    /**
+     * 처음 한번 호출
+     */
+    private List<AddPackageElement> getAppListFromDevice() {
+
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
+
+        List<AddPackageElement> packageModels = new ArrayList<>();
+
+        for (ResolveInfo r : apps) {
+
+            PackageInfo packageInfo = null;
+
+            try {
+
+                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
+
+            } catch (PackageManager.NameNotFoundException e) {
+
+                continue;
             }
 
-          }
-        }, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
+            if (packageInfo == null) {
 
-            handleError(error);
-          }
-        });
+                continue;
 
-    addRequest(request);
-  }
+            } else if (packageInfo.packageName.equals(getApplicationContext().getPackageName())
+                    || packageInfo.packageName.contains(".mms")
+                    || packageInfo.packageName.contains(".contacts")
+                    || packageInfo.packageName.contains("com.android.phone")
+                    || packageInfo.packageName.contains("com.android.settings")
+                    || packageInfo.packageName.contains("com.android.dialer")) {
 
-  private void updateLocalDB(List<PackageResult> packages) {
+                continue;
+            }
 
-    if (packages == null) {
+            AddPackageElement model = new AddPackageElement();
 
-      return;
+            model.setPackageName(packageInfo.packageName);
+            model.setHash(MD5.getHash(packageInfo.packageName));
+            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
+            model.setPackageVersion(packageInfo.versionName);
+            model.setIsExceptionApp(0);
+            model.setHasIcon(1);
+
+            model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
+
+            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+
+                model.setIsDefaultApp(1);
+
+            } else {
+
+                model.setIsDefaultApp(0);
+            }
+
+            packageModels.add(model);
+        }
+
+        return packageModels;
     }
-
-    for (PackageResult model : packages) {
-
-      mHelper.updateApplicationAfterReg(model.getPackageName(), model.getPackageId(),
-          model.getDoExistInDB(), model.getState(), 0);
-    }
-  }
-
-  /**
-   * 처음 한번 호출
-   */
-  private List<AddPackageElement> getAppListFromDevice() {
-
-    PackageManager manager = getPackageManager();
-
-    Intent intent = new Intent(Intent.ACTION_MAIN);
-
-    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-    List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
-
-    List<AddPackageElement> packageModels = new ArrayList<>();
-
-    for (ResolveInfo r : apps) {
-
-      PackageInfo packageInfo = null;
-
-      try {
-
-        packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
-
-      } catch (PackageManager.NameNotFoundException e) {
-
-        continue;
-      }
-
-      if (packageInfo == null) {
-
-        continue;
-
-      } else if (packageInfo.packageName.equals(getApplicationContext().getPackageName())
-          || packageInfo.packageName.contains(".mms")
-          || packageInfo.packageName.contains(".contacts")
-          || packageInfo.packageName.contains("com.android.phone")
-          || packageInfo.packageName.contains("com.android.settings")
-          || packageInfo.packageName.contains("com.android.dialer")) {
-
-        continue;
-      }
-
-      AddPackageElement model = new AddPackageElement();
-
-      model.setPackageName(packageInfo.packageName);
-      model.setHash(MD5.getHash(packageInfo.packageName));
-      model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
-      model.setPackageVersion(packageInfo.versionName);
-      model.setIsExceptionApp(0);
-      model.setHasIcon(1);
-
-      model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
-
-      if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
-
-        model.setIsDefaultApp(1);
-
-      } else {
-
-        model.setIsDefaultApp(0);
-      }
-
-      packageModels.add(model);
-    }
-
-    return packageModels;
-  }
 }

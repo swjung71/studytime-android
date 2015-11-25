@@ -450,7 +450,6 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 sendMessage(REQUEST_ADULT_FILE, data);
 
-
                 break;
 
               default:
