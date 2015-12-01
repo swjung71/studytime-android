@@ -225,15 +225,34 @@ public class DBHelper extends SQLiteOpenHelper {
                 break;
 
 
-            case 2:
+            case 2: {
+
+                Account account = getAccountInfo(db);
 
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
                 db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
 
+
+                if (account.getIsChild() == 1) { // 부모용
+
+                    insertAccount(db, account.getID(), 1, account.getName(), account.getCoin() + "",
+                            account.getEmail());
+
+                } else { // 자녀용
+
+                    insertAccount(db, account.getID(), account.getName(), account.getParentId(),
+                            account.getIsExpired());
+                }
+
+                List<Child> children = getChildren(db);
+
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
                 db.execSQL(CREATE_TABLE_CHILD);
 
+                insertChildrenDB(db, children);
+
                 break;
+            }
         }
     }
 
@@ -908,6 +927,20 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertAccount(SQLiteDatabase db, String id, int isChild, String name, String coin, String email) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(ID, id);
+        values.put(IS_PARENT, 1);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
+        values.put(PASSWORD, "");
+        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
+
+        db.insert(TABLE_ACCOUNT_INFO, null, values);
+    }
+
     /**
      * 자녀용
      */
@@ -935,6 +968,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db = null;
         }
+    }
+
+    public void insertAccount(SQLiteDatabase db, String id, String name, String parentId, @Nullable String isExpired) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(ID, id);
+        values.put(IS_PARENT, 0);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
+        values.put(PARENT_ID, parentId);
+        values.put(IS_EXPIRED, isExpired);
+        values.put(PASSWORD, "");
+        values.put(COIN, "");
+        values.put(EMAIL, "");
+
+        db.insert(TABLE_ACCOUNT_INFO, null, values);
+
     }
 
     public void updateAccount(String id, int isChild, String name, int coin, String email) {
@@ -979,6 +1029,62 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Account getAccountInfo(SQLiteDatabase db) {
+
+        Account account = new Account();
+
+        Cursor cursor = null;
+
+        try {
+
+            String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
+                    PARENT_ID, NEW_NOTICE};
+
+            cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
+                    null, null);
+
+            if (cursor.moveToFirst()) {
+
+                account.setID(cursor.getString(0));
+                account.setIsChild(cursor.getInt(1));
+                account.setName(cursor.getString(2));
+
+                if (cursor.getString(3) != null) {
+                    account.setPassword(cursor.getString(3));
+                }
+
+                account.setCoin(cursor.getInt(4));
+
+                if (cursor.getString(5) != null) {
+
+                    account.setEmail(cursor.getString(5));
+                }
+
+                if (cursor.getString(6) != null) {
+
+                    account.setParentId(cursor.getString(6));
+                }
+
+                account.setNotice(cursor.getInt(7));
+            }
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
+
+            cursor = null;
+
+        }
+
+        return account;
+    }
 
     public Account getAccountInfo() {
 
@@ -1166,6 +1272,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void insertChildrenDB(SQLiteDatabase db, List<Child> children) {
+
+        if (children == null)
+            return;
+
+        db.beginTransaction();
+
+        try {
+
+            for (Child child : children) {
+
+                insertChild(db, child.getChildID(), 0, child.getName(), child.getIsOFF() + "",
+                        child.getExpirationDate(), child.getIsExpired(), child.getDeviceModel(),
+                        child.getRemainingDays());
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (SQLException e) {
+
+            Logger.e(e.getMessage());
+        } finally {
+
+            db.endTransaction();
+        }
+    }
+
     public void insertChildren(List<kr.co.digitalanchor.studytime.model.Child> children) {
 
         if (children == null)
@@ -1198,6 +1331,43 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.close();
             }
         }
+    }
+
+    public ArrayList<Child> getChildren(SQLiteDatabase db) {
+
+        ArrayList<Child> children = new ArrayList<Child>();
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
+
+        Cursor cursor = db.query(true, TABLE_CHILD, result_columns, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Child child = new Child();
+                child.setChildID(cursor.getString(0));
+                child.setIsChild(cursor.getInt(1));
+
+                if (cursor.getString(2) != null) {
+                    child.setName(cursor.getString(2));
+                }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
+                children.add(child);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        return children;
+
     }
 
     public ArrayList<Child> getChildren() {
