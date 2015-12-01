@@ -3,7 +3,6 @@ package kr.co.digitalanchor.studytime.intro;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.widget.pagerindicator.IconPagerAdapter;
 
@@ -15,7 +14,7 @@ public class GuideAdapter extends FragmentPagerAdapter implements IconPagerAdapt
     private static final int[] CONTENT = new int[]{
 
             R.drawable.img_intro1, R.drawable.img_intro2, R.drawable.img_intro3,
-            R.drawable.img_intro4, R.drawable.img_intro5, R.drawable.img_intro6,
+            R.drawable.img_intro5, R.drawable.img_intro6,
     };
 
     private int mCount = CONTENT.length;
