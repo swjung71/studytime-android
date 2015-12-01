@@ -136,7 +136,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login",
+      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login2",
           ParentLoginResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -180,7 +180,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ParentRegResult>(getURL() + "parent/register",
+      return new SimpleXmlRequest<ParentRegResult>(getURL() + "parent/register2",
           ParentRegResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -451,7 +451,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff",
+      return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff2",
           CoinResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -501,7 +501,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ChildLoginResult>(getURL() + "login",
+      return new SimpleXmlRequest<ChildLoginResult>(getURL() + "login2",
           ChildLoginResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -893,7 +893,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync",
+      return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync2",
           CheckPackageResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -936,7 +936,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync",
+      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync2",
           ParentLoginResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -1604,7 +1604,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/outRegister",
+      return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/outRegister2",
           ParentLoginResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
@@ -1733,7 +1733,7 @@ public class HttpHelper {
 
       map.put("xml", writer.toString());
 
-      return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg",
+      return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg2",
           ChildRegResult.class, map, listener, errorListener);
 
     } catch (Exception e) {
