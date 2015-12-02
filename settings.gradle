@@ -1,1 +1,1 @@
-include ':app', ':circleprogressview'
+include ':app', ':circleprogressview', ':seekbarhint'
