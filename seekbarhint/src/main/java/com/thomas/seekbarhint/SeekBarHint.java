@@ -3,8 +3,11 @@ package com.thomas.seekbarhint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,7 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
 
     private int mPopupWidth;
     private int mPopupStyle;
+    private int mParentMargin;
 
     private PopupWindow mPopup;
     private TextView mPopupTextView;
@@ -40,19 +44,26 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
 
     public SeekBarHint(Context context) {
         super(context);
+
+        init(context, null);
     }
 
     public SeekBarHint(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context, attrs);
     }
 
     public SeekBarHint(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        init(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     public SeekBarHint(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+
+        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -65,7 +76,22 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
         mYLocationOffset = (int) a.getDimension(R.styleable.SeekBarHint_yOffset, 0);
         mPopupStyle = a.getInt(R.styleable.SeekBarHint_popupHintStyle, POPUP_FOLLOW);
 
+        Log.i("SeekBar", "Y Location " + mYLocationOffset);
+
         a.recycle();
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+
+            Drawable thumb = getThumb();
+
+            setThumbOffset(thumb.getBounds().width());
+
+            Log.i("Seekbar", "Thumb width " + thumb.getBounds().width() + " Offset " + getThumbOffset());
+
+        } else {
+
+            Log.i("Seekbar", "OS INT  " + Build.VERSION.SDK_INT);
+        }
 
         initHintPopup();
     }
@@ -153,15 +179,23 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
             return;
 
         if (mPopupStyle == POPUP_FOLLOW) {
+
+            Rect r = new Rect();
+            getGlobalVisibleRect(r);
+
             mPopup.showAtLocation(this,
-                    Gravity.NO_GRAVITY,
-                    (int) (this.getX() + (int) getXPosition(this)),
-                    (int) (this.getY() + mYLocationOffset + this.getHeight()));
+                    Gravity.LEFT | Gravity.TOP,
+                    (int) (r.left + (int) getXPosition(this)),
+                    r.top - r.height() - mYLocationOffset
+                    /*(int) (r.height() + mYLocationOffset + mPopupTextView.getMeasuredHeight())*/);
+
+            Log.i("Seek Bar", "bottom " + r.bottom + " height " +  r.height() + " Y " + this.getY() + " height " + this.getHeight());
         }
 
         if (mPopupStyle == POPUP_FIXED) {
             mPopup.showAtLocation(this,
-                    Gravity.CENTER | Gravity.BOTTOM, 0,
+                    Gravity.CENTER | Gravity.BOTTOM,
+                    0,
                     (int) (this.getY() + mYLocationOffset + this.getHeight()));
         }
     }
@@ -215,6 +249,18 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
 
             mExternalListener.onProgressChanged(seekBar, progress, fromUser);
         }
+
+        mPopupTextView.setText(popupText != null ? popupText : String.valueOf(progress));
+
+        if (mPopupStyle == POPUP_FOLLOW) {
+
+            Rect r = new Rect();
+            seekBar.getGlobalVisibleRect(r);
+            mPopup.update((int) (r.left + (int) getXPosition(seekBar)),
+                   r.top - r.height() - mYLocationOffset, -1, -1);
+
+            Log.i("Seek Bar", "bottom " + r.bottom + " height " + r.height() + " Y " + this.getY() + " height " + this.getHeight());
+        }
     }
 
     @Override
@@ -237,15 +283,17 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
 
     private float getXPosition(SeekBar seekBar) {
 
-        float val = (((float) seekBar.getProgress() * (float) (seekBar.getWidth()
-                - 2 * seekBar.getThumbOffset())) / seekBar.getMax());
+//        float val = (((float) seekBar.getProgress() * (float) (seekBar.getWidth() - 2 * seekBar.getThumbOffset())) / seekBar.getMax());
 
+        float val = (seekBar.getWidth() - seekBar.getPaddingLeft() - seekBar.getPaddingRight()) * seekBar.getProgress() / seekBar.getMax();
         float offset = seekBar.getThumbOffset();
 
         int textWidth = mPopupWidth;
         float textCenter = (textWidth / 2.0f);
 
         float newX = val + offset - textCenter;
+
+        Log.i("Seekbar", "X position " + newX + " X "  + " progress " + seekBar.getProgress());
 
         return newX;
     }

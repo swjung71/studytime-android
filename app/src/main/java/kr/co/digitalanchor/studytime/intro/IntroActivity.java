@@ -30,6 +30,7 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.dialog.SettingOffDialog;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
@@ -98,7 +99,11 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.buttonModeKids:
 
-                showChildIntro();
+//                showChildIntro();
+
+                SettingOffDialog dialog = new SettingOffDialog(this);
+                dialog.show();
+
 
                 break;
 
