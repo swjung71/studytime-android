@@ -82,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:progressDrawable="@drawable/progress_horizontal_custom"
+
                 android:thumb="@drawable/btn_time_control"
                 hint:popupWidth="100dp"
                 hint:yOffset="20dp"/>
