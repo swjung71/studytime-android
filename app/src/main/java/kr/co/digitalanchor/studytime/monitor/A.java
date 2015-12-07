@@ -1,6 +1,7 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.KeyguardManager;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -43,6 +44,8 @@ public class A extends AccessibilityService {
 
     AdultDBHelper mAdultDBHelper;
 
+    KeyguardManager mKeyguardManager;
+
     @Override
     protected void onServiceConnected() {
 
@@ -53,18 +56,17 @@ public class A extends AccessibilityService {
 
         mAdultDBHelper = new AdultDBHelper(getApplicationContext());
 
+        mKeyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+
         setURL();
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-/*
 
         Logger.d("package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
                 + "\nevent type " + event.getEventType());
-*/
-
 
         Account account = mHelper.getAccountInfo();
 
@@ -79,7 +81,6 @@ public class A extends AccessibilityService {
 
             if (event.getClassName().toString().equals("android.widget.EditText")
                     && event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
-
 
                 AccessibilityNodeInfo source = event.getSource();
                 CharSequence typedURL = source.getText();
@@ -132,8 +133,9 @@ public class A extends AccessibilityService {
                 }
             }
 
-        } else if (mHelper.getOnOff() == 1
-                && facebookD.equals(packageName)
+        }
+
+        if (mHelper.getOnOff() == 1
                 && !mHelper.isExcepted(packageName)) {
 
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
