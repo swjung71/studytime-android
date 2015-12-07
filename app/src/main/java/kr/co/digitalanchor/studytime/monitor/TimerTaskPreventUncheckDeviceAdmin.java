@@ -64,7 +64,6 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
 
-
     }
 
     @Override

@@ -1,23 +1,26 @@
 package kr.co.digitalanchor.studytime.monitor;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.content.Context;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
-
 import com.orhanobut.logger.Logger;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
+import kr.co.digitalanchor.studytime.StaticValues;
+import kr.co.digitalanchor.studytime.block.BlockPasswordLayout;
 import kr.co.digitalanchor.studytime.database.AdultDBHelper;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -46,11 +49,23 @@ public class A extends AccessibilityService {
 
     KeyguardManager mKeyguardManager;
 
+    Toast toast;
+
+    View blockView = null;
+
+    Object object;
+
+    ActivityManager mActivityManager;
+
+    WindowManager mWindowManager;
+
+    WindowManager.LayoutParams mLayoutParams;
+
+
     @Override
     protected void onServiceConnected() {
 
         super.onServiceConnected();
-
 
         mHelper = new DBHelper(getApplicationContext());
 
@@ -58,7 +73,31 @@ public class A extends AccessibilityService {
 
         mKeyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
+
         setURL();
+
+        toast = Toast.makeText(getApplicationContext(), "차단", Toast.LENGTH_SHORT);
+
+        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        View layout = inflater.inflate(R.layout.activity_block, null);
+
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setMargin(0.0f, 0.0f);
+        toast.setView(layout);
+
+        mActivityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+
+        mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+
+        object = new Object();
+
+        mLayoutParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_PRIORITY_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
     }
 
     @Override
@@ -76,6 +115,21 @@ public class A extends AccessibilityService {
         }
 
         String packageName = event.getPackageName().toString();
+
+        if (mHelper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                && !packageName.equals("com.android.settings.DeviceAdminAdd")
+                && !getApplicationContext().getPackageName().equals(packageName)) {
+
+            showBlockView();
+
+            return;
+
+        } else {
+
+            hideBlockView();
+
+        }
+
 
         if (chromeD.equalsIgnoreCase(packageName)) {
 
@@ -150,7 +204,6 @@ public class A extends AccessibilityService {
             }
         }
     }
-
 
     @Override
     public void onInterrupt() {
@@ -270,14 +323,62 @@ public class A extends AccessibilityService {
 
     private void showBlockToast() {
 
-        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-        View layout = inflater.inflate(R.layout.activity_block, null);
-
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setMargin(0.0f, 0.0f);
-        toast.setView(layout);
         toast.show();
+
+    }
+
+    private void showBlockView() {
+
+        synchronized (object) {
+
+            STApplication.applicationHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    try {
+
+                        if (blockView != null) {
+
+                            return;
+                        }
+
+                        blockView = new BlockPasswordLayout(getApplicationContext());
+
+                        mWindowManager.addView(blockView, mLayoutParams);
+
+                    } catch (Exception e) {
+
+                        Logger.e(e.getMessage());
+                    }
+                }
+            });
+        }
+    }
+
+    private void hideBlockView() {
+
+        STApplication.applicationHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                try {
+
+                    if (blockView == null) {
+
+                        return;
+                    }
+
+                    mWindowManager.removeView(blockView);
+
+                    blockView = null;
+
+                } catch (Exception e) {
+
+                    Logger.e(e.getMessage());
+                }
+            }
+        });
     }
 }
