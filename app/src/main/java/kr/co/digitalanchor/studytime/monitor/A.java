@@ -133,7 +133,7 @@ public class A extends AccessibilityService {
 
             }
 
-    }
+        }
 
 
         if (chromeD.equalsIgnoreCase(packageName)) {
@@ -191,7 +191,6 @@ public class A extends AccessibilityService {
                     isSame = false;
                 }
             }
-
         }
 
 
@@ -213,7 +212,21 @@ public class A extends AccessibilityService {
             }
         } else {
 
+            if (mHelper.getOnOff() == 1
+                    && facebookD.equals(packageName)
+                    && !mHelper.isExcepted(packageName)) {
 
+                if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                        performGlobalAction(GLOBAL_ACTION_HOME);
+
+                        showBlockToast();
+
+                    }
+                }
+            }
         }
     }
 
