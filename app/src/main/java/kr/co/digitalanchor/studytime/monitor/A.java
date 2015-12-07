@@ -116,19 +116,24 @@ public class A extends AccessibilityService {
 
         String packageName = event.getPackageName().toString();
 
-        if (mHelper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
-                && !packageName.equals("com.android.settings.DeviceAdminAdd")
-                && !getApplicationContext().getPackageName().equals(packageName)) {
 
-            showBlockView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            return;
+            if (mHelper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                    && !packageName.equals("com.android.settings.DeviceAdminAdd")
+                    && !getApplicationContext().getPackageName().equals(packageName)) {
 
-        } else {
+                showBlockView();
 
-            hideBlockView();
+                return;
 
-        }
+            } else {
+
+                hideBlockView();
+
+            }
+
+    }
 
 
         if (chromeD.equalsIgnoreCase(packageName)) {
@@ -189,19 +194,26 @@ public class A extends AccessibilityService {
 
         }
 
-        if (mHelper.getOnOff() == 1
-                && !mHelper.isExcepted(packageName)) {
 
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (mHelper.getOnOff() == 1
+                    && !mHelper.isExcepted(packageName)) {
 
-                    performGlobalAction(GLOBAL_ACTION_HOME);
+                if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 
-                    showBlockToast();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 
+                        performGlobalAction(GLOBAL_ACTION_HOME);
+
+                        showBlockToast();
+
+                    }
                 }
             }
+        } else {
+
+
         }
     }
 
