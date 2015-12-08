@@ -68,7 +68,7 @@ public class HttpHelper {
   /**
    * true : dev ; false : real
    */
-  public static boolean isDev = false;
+  public static boolean isDev = true;
 
   /**
    * Dev Server url http://14.63.225.89/studytime-server
