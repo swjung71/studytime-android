@@ -44,6 +44,8 @@ public class B extends Service {
 
     TimerTask taskUpdateDB;
 
+    SNotificationManager mNotificationManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -67,6 +69,8 @@ public class B extends Service {
         timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 600L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
+
+        mNotificationManager = new SNotificationManager(getApplicationContext());
 
         unregisterRestartAlarm();
 
@@ -99,7 +103,11 @@ public class B extends Service {
 
         Logger.d("onStartCommand");
 
-        startForeground(notificationId, showNotification());
+//        startForeground(notificationId, showNotification());
+
+        DBHelper helper = new DBHelper(getApplicationContext());
+
+        mNotificationManager.showForeground(helper.getOnOff());
 
         return START_STICKY;
     }
