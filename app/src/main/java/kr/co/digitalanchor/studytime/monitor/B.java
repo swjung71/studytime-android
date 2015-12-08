@@ -11,12 +11,9 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v7.app.NotificationCompat;
-
 import com.orhanobut.logger.Logger;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -44,8 +41,6 @@ public class B extends Service {
 
     TimerTask taskUpdateDB;
 
-    SNotificationManager mNotificationManager;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -70,16 +65,12 @@ public class B extends Service {
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
-        mNotificationManager = new SNotificationManager(getApplicationContext());
-
         unregisterRestartAlarm();
 
     }
 
     /**
-     * onDestroy
-     * 1. 단말 감시하는 스레드를 종료
-     * 2. 노피티피케이션을 삭제
+     * onDestroy 1. 단말 감시하는 스레드를 종료 2. 노피티피케이션을 삭제
      */
     @Override
     public void onDestroy() {
@@ -103,11 +94,7 @@ public class B extends Service {
 
         Logger.d("onStartCommand");
 
-//        startForeground(notificationId, showNotification());
-
-        DBHelper helper = new DBHelper(getApplicationContext());
-
-        mNotificationManager.showForeground(helper.getOnOff());
+        startForeground(notificationId, showNotification());
 
         return START_STICKY;
     }
