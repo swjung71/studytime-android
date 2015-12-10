@@ -321,7 +321,7 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
 
         model.setMac(STApplication.getMAC());
 
-        SimpleXmlRequest request = HttpHelper.getChildRegister(model,
+        SimpleXmlRequest request = HttpHelper.getChildReg(model,
                 new Response.Listener<ChildRegResult>() {
                     @Override
                     public void onResponse(ChildRegResult res) {
