@@ -213,6 +213,15 @@ public class GCMIntentService extends IntentService {
 
                 break;
 
+            case "MESSAGE":
+
+                AndroidUtils.showNotification(STApplication.applicationContext, null,
+                        bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
+
+                AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+
+                break;
+
             case "NOTICE":
 
                 /*
@@ -267,6 +276,12 @@ public class GCMIntentService extends IntentService {
                         bundle.getString("msg"), getNormalStart(account.getIsChild(), null));
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
+
+                break;
+
+            case "KILL_APP":
+
+                STApplication.resetApplication();
 
                 break;
 
