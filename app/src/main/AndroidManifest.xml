@@ -379,7 +379,7 @@
 
         <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
                 android:name="com.facebook.FacebookContentProvider"
-                android:exported="true"/>
+                android:exported="false"/>
     </application>
 
 </manifest>
