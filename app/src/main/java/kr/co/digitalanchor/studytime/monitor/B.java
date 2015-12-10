@@ -2,6 +2,7 @@ package kr.co.digitalanchor.studytime.monitor;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -25,6 +26,7 @@ public class B extends Service {
     /// 1 Second = 1000 Milli Seconds
     private final double ONE_SEC = 1000.0f;
     private final long ONE_SECOND = 1000L;
+
 
     private static final int REBOOT_DELAY_TIMER = 2 * 1000;
 
@@ -61,7 +63,7 @@ public class B extends Service {
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 600L * ONE_SECOND);
+        timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 300L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
@@ -94,7 +96,11 @@ public class B extends Service {
 
         Logger.d("onStartCommand");
 
-        startForeground(notificationId, showNotification());
+//        startForeground(notificationId, showNotification());
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify(notificationId, showNotification());
 
         return START_STICKY;
     }

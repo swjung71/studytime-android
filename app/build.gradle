@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 28
-        versionName "1.2.4"
+        versionCode 29
+        versionName "1.2.5"
         multiDexEnabled = true
 
     }
@@ -66,11 +66,8 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/IgawCommon_v4.0.4a.jar')
-    compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
     compile files('libs/apache-mime4j-core-0.7.2.jar')
     compile files('libs/simple-xml-2.7.1.jar')
-    compile files('libs/IgawAdbrix_v4.0.3a.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile('org.apache.httpcomponents:httpmime:4.3.6') {
 
@@ -90,4 +87,7 @@ dependencies {
     compile project(':circleprogressview')
     compile files('libs/3rdparty_login_library_android_4.1.4.jar')
     compile 'com.facebook.android:facebook-android-sdk:4.7.0'
+    compile files('libs/IgawAdbrix_v4.0.6a.jar')
+    compile files('libs/IgawAdpopcorn_v4.0.3a.jar')
+    compile files('libs/IgawCommon_v4.0.8a.jar')
 }
