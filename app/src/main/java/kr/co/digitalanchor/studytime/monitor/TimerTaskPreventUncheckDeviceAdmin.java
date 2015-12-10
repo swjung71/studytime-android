@@ -72,30 +72,33 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
         if (helper.isAllow() != 1)
             return;
 
-        if (helper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
-                && isblock()) {
+        if (Build.VERSION_CODES.LOLLIPOP < Build.VERSION.SDK_INT) {
 
-            showBlockView();
+            if (helper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                    && isblock()) {
 
-            return;
+                showBlockView();
 
-        } else {
+                return;
 
-            hideBlockView();
+            } else {
 
-        }
+                hideBlockView();
 
-        if (!STApplication.isAccessibilityEnabled() && !isSettings()) {
+            }
+
+            if (!STApplication.isAccessibilityEnabled() && !isSettings()) {
 
 //            Logger.d("Disabled");
 
-            showBlockSettingView();
+                showBlockSettingView();
 
-        } else {
+            } else {
 
 //            Logger.d("Enabled");
 
-            hideBlockSettingView();
+                hideBlockSettingView();
+            }
         }
     }
 

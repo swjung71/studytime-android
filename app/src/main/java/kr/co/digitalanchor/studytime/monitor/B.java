@@ -66,7 +66,7 @@ public class B extends Service {
 
         timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
         timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
-        timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 600L * ONE_SECOND);
+        timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 300L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 

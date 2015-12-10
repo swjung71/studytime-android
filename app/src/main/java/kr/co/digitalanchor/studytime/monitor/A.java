@@ -13,8 +13,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import com.orhanobut.logger.Logger;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import kr.co.digitalanchor.studytime.R;
@@ -103,9 +106,9 @@ public class A extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-        Logger.d("package name " + event.getPackageName().toString()
+       /* Logger.d("package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
-                + "\nevent type " + event.getEventType());
+                + "\nevent type " + event.getEventType());*/
 
         Account account = mHelper.getAccountInfo();
 
@@ -121,6 +124,7 @@ public class A extends AccessibilityService {
 
             if (mHelper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
                     && !packageName.equals("com.android.settings.DeviceAdminAdd")
+                    && !isKeyboard(packageName)
                     && !getApplicationContext().getPackageName().equals(packageName)) {
 
                 showBlockView();
@@ -132,9 +136,7 @@ public class A extends AccessibilityService {
                 hideBlockView();
 
             }
-
         }
-
 
         if (chromeD.equalsIgnoreCase(packageName)) {
 
@@ -197,7 +199,9 @@ public class A extends AccessibilityService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             if (mHelper.getOnOff() == 1
-                    && !mHelper.isExcepted(packageName)) {
+                    && !mHelper.isExcepted(packageName)
+                    && !packageName.equals("com.android.systemui")
+                    && !isKeyboard(packageName)) {
 
                 if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 
@@ -405,5 +409,27 @@ public class A extends AccessibilityService {
                 }
             }
         });
+    }
+
+    private boolean isKeyboard(String packageName) {
+
+        boolean result = false;
+
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        List<InputMethodInfo> list = manager.getEnabledInputMethodList();
+
+        for (InputMethodInfo info : list) {
+
+            if (info.getPackageName().equals(packageName)) {
+
+                result = true;
+
+                break;
+            }
+        }
+
+        return result;
+
     }
 }
