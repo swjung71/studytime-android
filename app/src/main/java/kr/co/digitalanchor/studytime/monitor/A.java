@@ -106,9 +106,9 @@ public class A extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-       /* Logger.d("package name " + event.getPackageName().toString()
+        Logger.d("package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
-                + "\nevent type " + event.getEventType());*/
+                + "\nevent type " + event.getEventType());
 
         Account account = mHelper.getAccountInfo();
 

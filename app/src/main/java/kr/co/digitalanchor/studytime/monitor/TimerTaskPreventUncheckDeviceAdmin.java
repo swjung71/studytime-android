@@ -10,13 +10,11 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
-
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.block.BlockPasswordLayout;
@@ -72,7 +70,7 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
         if (helper.isAllow() != 1)
             return;
 
-        if (Build.VERSION_CODES.LOLLIPOP < Build.VERSION.SDK_INT) {
+        if (Build.VERSION_CODES.LOLLIPOP > Build.VERSION.SDK_INT) {
 
             if (helper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
                     && isblock()) {
@@ -87,19 +85,21 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
             }
 
-            if (!STApplication.isAccessibilityEnabled() && !isSettings()) {
+        }
+
+        if (!STApplication.isAccessibilityEnabled() && !isSettings()) {
 
 //            Logger.d("Disabled");
 
-                showBlockSettingView();
+            showBlockSettingView();
 
-            } else {
+        } else {
 
 //            Logger.d("Enabled");
 
-                hideBlockSettingView();
-            }
+            hideBlockSettingView();
         }
+
     }
 
     private void hideBlockView() {
