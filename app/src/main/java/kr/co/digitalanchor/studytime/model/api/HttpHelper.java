@@ -614,6 +614,49 @@ public class HttpHelper {
         }
     }
 
+    public static SimpleXmlRequest<ChildRegResult> getChildReg(ChildRegister model,
+                                                                    Listener<ChildRegResult> listener,
+                                                                    ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg",
+                    ChildRegResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
     /**
      * 채팅 메세지 보내기
      */
