@@ -99,10 +99,10 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.buttonModeKids:
 
-//                showChildIntro();
+                showChildIntro();
 
-                SettingOffDialog dialog = new SettingOffDialog(this);
-                dialog.show();
+//                SettingOffDialog dialog = new SettingOffDialog(this);
+//                dialog.show();
 
 
                 break;
