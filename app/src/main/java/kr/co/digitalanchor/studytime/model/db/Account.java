@@ -1,10 +1,10 @@
 package kr.co.digitalanchor.studytime.model.db;
 
+import android.text.TextUtils;
+
 /**
- * 개정정보를 가져오는 파일 (자녀 및 부모 또는 선생님 정보)
- * studytime 자녀용이면 자녀, 부모용이면 부모 또는 선생님
- * 자녀이면 isChild 0, 부모면 1, 선생님이면 2
- * Created by Seung Wook Jung on 2015-06-22.
+ * 개정정보를 가져오는 파일 (자녀 및 부모 또는 선생님 정보) studytime 자녀용이면 자녀, 부모용이면 부모 또는 선생님 자녀이면 isChild 0, 부모면 1,
+ * 선생님이면 2 Created by Seung Wook Jung on 2015-06-22.
  */
 public class Account {
 
@@ -17,6 +17,7 @@ public class Account {
     private String parentId;
     private String parentName;
     private int notice;
+    private String isExpired;
 
     public Account() {
 
@@ -117,5 +118,19 @@ public class Account {
 
     public void setNotice(int notice) {
         this.notice = notice;
+    }
+
+    public String getIsExpired() {
+
+        if (TextUtils.isEmpty(isExpired)) {
+
+            isExpired = "N";
+        }
+
+        return isExpired;
+    }
+
+    public void setIsExpired(String isExpired) {
+        this.isExpired = isExpired;
     }
 }

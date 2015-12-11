@@ -51,7 +51,7 @@
                 android:textColorHint="@color/bgColorType02"
                 android:textSize="@dimen/login_parent_content_text_size" />
 
-            <kr.co.digitalanchor.studytime.view.FontEditText
+            <!--<kr.co.digitalanchor.studytime.view.FontEditText
                 android:id="@+id/editChildName"
                 android:layout_width="@dimen/login_parent_content_width"
                 android:layout_height="@dimen/login_parent_content_height"
@@ -63,7 +63,7 @@
                 android:paddingRight="@dimen/login_parent_edit_box_padding"
                 android:singleLine="true"
                 android:textColorHint="@color/bgColorType02"
-                android:textSize="@dimen/login_parent_content_text_size" />
+                android:textSize="@dimen/login_parent_content_text_size" />-->
 
             <kr.co.digitalanchor.studytime.view.FontButton
                 android:id="@+id/buttonLogin"

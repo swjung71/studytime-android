@@ -5,14 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
 import com.orhanobut.logger.Logger;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.Files;
@@ -28,7 +27,7 @@ import kr.co.digitalanchor.utils.MD5;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
 
     private static final String DB_NAME = "local";
 
@@ -80,6 +79,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String IS_OFF = "isOff";// 0이면 on 1이면 off
     private static final String IS_ALLOW = "isAllow";//  0이면 삭제 허락, 1이면 삭제 못함
+    private static final String EXPIRATION_DATE = "expirationDate"; // 사용 기간 만료일
+    private static final String IS_EXPIRED = "isExpired"; // 만료 여부
+    private static final String DEVICE_MODEL = "deviceModel"; // 자녀 모델명
+    private static final String REMAINING_DAYS = "remainingDays"; // 잔여기간
     private static final String ONOFF_PK = "1234";
     private static final String NEW_MESSAGE_COUNT = "newMessageCount";
 
@@ -131,6 +134,30 @@ public class DBHelper extends SQLiteOpenHelper {
             + ADULT_URL_DIRECTORY + " TEXT, "
             + ADULT_URL_IS_SUB + " TEXT )";
 
+    //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
+    private static final String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD + "("
+            + CHILDREN_ID + " INTEGER PRIMARY KEY,"
+            + IS_PARENT + " INTEGER NOT NULL, "
+            + NAME + " TEXT, "
+            + IS_OFF + " TEXT, "
+            + EXPIRATION_DATE + " TEXT, "
+            + DEVICE_MODEL + " TEXT, "
+            + REMAINING_DAYS + " INTEGER,"
+            + IS_EXPIRED + " TEXT DEFAULT Y, "
+            + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0)";
+
+    private static final String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO + "("
+            + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ID + " INTEGER NOT NULL, "
+            + IS_PARENT + " TEXT NOT NULL, "
+            + NAME + " TEXT, "
+            + PASSWORD + " TEXT NOT NULL, "
+            + COIN + " TEXT NOT NULL, "
+            + EMAIL + " TEXT NOT NULL, "
+            + PARENT_ID + " TEXT, "
+            + IS_EXPIRED + " TEXT DEFAULT Y, "
+            + NEW_NOTICE + " INTEGER DEFAULT 0 )";
+
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -139,17 +166,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO
-                + "(" + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ID
-                + " INTEGER NOT NULL, " + IS_PARENT + " TEXT NOT NULL, " + NAME + " TEXT, "
-                + PASSWORD + " TEXT NOT NULL, " + COIN + " TEXT NOT NULL, " + EMAIL + " TEXT NOT NULL, "
-                + PARENT_ID + " TEXT, " + NEW_NOTICE + " INTEGER DEFAULT 0 )";
-
-        //IS_PARENT 가 0이면 CHILD_ID는 자녀 ID, 1이면 parentID, 2이면 teacherID(향후 버전), NAME은 자녀 이름, 부모인 경우 이름을 저장하지 않음 (향후 버전)
-        String CREATE_TABLE_CHILD = "CREATE TABLE " + TABLE_CHILD
-                + "(" + CHILDREN_ID + " INTEGER PRIMARY KEY," + IS_PARENT +
-                " INTEGER NOT NULL, " + NAME + " TEXT, " + IS_OFF + " TEXT, "
-                + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0)";
 
         String CREATE_TABLE_ONOFF = "CREATE TABLE " + TABLE_ON_OFF
                 + "(" + ONOFF_KEY + " INTEGER PRIMARY KEY, " + IS_OFF
@@ -209,10 +225,34 @@ public class DBHelper extends SQLiteOpenHelper {
                 break;
 
 
-            case 2:
+            case 2: {
 
+                Account account = getAccountInfo(db);
+
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_INFO);
+                db.execSQL(CREATE_TABLE_ACCOUNT_INFO);
+
+
+                if (account.getIsChild() == 1) { // 부모용
+
+                    insertAccount(db, account.getID(), 1, account.getName(), account.getCoin() + "",
+                            account.getEmail());
+
+                } else { // 자녀용
+
+                    insertAccount(db, account.getID(), account.getName(), account.getParentId(),
+                            account.getIsExpired());
+                }
+
+                List<Child> children = getChildren(db);
+
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
+                db.execSQL(CREATE_TABLE_CHILD);
+
+                insertChildrenDB(db, children);
 
                 break;
+            }
         }
     }
 
@@ -286,13 +326,12 @@ public class DBHelper extends SQLiteOpenHelper {
      * App 정보 추가 자녀용
      *
      * @param packageName 패키지 네임
-     * @param hash        패키지 네임을 MD5로 인코딩
-     * @param label       런처에 표시되는 앱 이름
-     * @param timestamp   최근 설치/삭제/업데이트 시간
-     * @param excepted    예외앱 1, 차단 앱 0
-     * @param isDefault   프리로드 앱 1, 반대는 0
-     * @param iconHash    아이콘 파일 이름
-     * @param state
+     * @param hash 패키지 네임을 MD5로 인코딩
+     * @param label 런처에 표시되는 앱 이름
+     * @param timestamp 최근 설치/삭제/업데이트 시간
+     * @param excepted 예외앱 1, 차단 앱 0
+     * @param isDefault 프리로드 앱 1, 반대는 0
+     * @param iconHash 아이콘 파일 이름
      */
     public void addApplication(String packageName, String hash, String label, String version,
                                String timestamp, int excepted, int isDefault, String iconHash,
@@ -363,8 +402,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * App을 삭제 했을때 (자녀용)
-     *
-     * @param packageName
      */
     public void deleteApplication(String packageName) {
 
@@ -431,15 +468,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * App 정보를 서버에 등록 후 실행 (자녀용)
-     *
-     * @param packageName
-     * @param packageId
-     * @param hasIconServer
      */
     public void updateApplicationAfterReg(String packageName, String packageId,
                                           int hasIconServer, int state, int changed) {
 
-        Logger.d(packageName + " " + packageId + " " + hasIconServer + " " + state + " " + changed);
+//    Logger.d(packageName + " " + packageId + " " + hasIconServer + " " + state + " " + changed);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -456,7 +489,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if (changed > -1)
             values.put(CHANGED, changed);
 
-        Logger.d(values.toString());
+//    Logger.d(values.toString());
 
         db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?", new String[]{packageName});
 
@@ -655,8 +688,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * DB에 등록된 앱
-     *
-     * @return
      */
     public List<PackageModel> getPackageList() {
 
@@ -872,12 +903,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 부모용
-     *
-     * @param id
-     * @param isChild
-     * @param name
-     * @param coin
-     * @param email
      */
     public void insertAccount(String id, int isChild, String name, String coin, String email) {
 
@@ -902,14 +927,24 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertAccount(SQLiteDatabase db, String id, int isChild, String name, String coin, String email) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(ID, id);
+        values.put(IS_PARENT, 1);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : AndroidUtils.convertFromUTF8(name));
+        values.put(PASSWORD, "");
+        values.put(COIN, TextUtils.isEmpty(coin) ? "" : coin);
+        values.put(EMAIL, TextUtils.isEmpty(email) ? "" : email);
+
+        db.insert(TABLE_ACCOUNT_INFO, null, values);
+    }
+
     /**
      * 자녀용
-     *
-     * @param id
-     * @param name
-     * @param parentId
      */
-    public void insertAccount(String id, String name, String parentId) {
+    public void insertAccount(String id, String name, String parentId, @Nullable String isExpired) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -919,6 +954,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(IS_PARENT, 0);
         values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
         values.put(PARENT_ID, parentId);
+        values.put(IS_EXPIRED, isExpired);
         values.put(PASSWORD, "");
         values.put(COIN, "");
         values.put(EMAIL, "");
@@ -932,6 +968,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db = null;
         }
+    }
+
+    public void insertAccount(SQLiteDatabase db, String id, String name, String parentId, @Nullable String isExpired) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(ID, id);
+        values.put(IS_PARENT, 0);
+        values.put(NAME, TextUtils.isEmpty(name) ? "" : name);
+        values.put(PARENT_ID, parentId);
+        values.put(IS_EXPIRED, isExpired);
+        values.put(PASSWORD, "");
+        values.put(COIN, "");
+        values.put(EMAIL, "");
+
+        db.insert(TABLE_ACCOUNT_INFO, null, values);
+
     }
 
     public void updateAccount(String id, int isChild, String name, int coin, String email) {
@@ -976,16 +1029,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-
-    public Account getAccountInfo() {
+    public Account getAccountInfo(SQLiteDatabase db) {
 
         Account account = new Account();
 
         Cursor cursor = null;
 
         try {
-
-            SQLiteDatabase db = this.getReadableDatabase();
 
             String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
                     PARENT_ID, NEW_NOTICE};
@@ -1036,6 +1086,67 @@ public class DBHelper extends SQLiteOpenHelper {
         return account;
     }
 
+    public Account getAccountInfo() {
+
+        Account account = new Account();
+
+        Cursor cursor = null;
+
+        try {
+
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String[] result_columns = new String[]{ID, IS_PARENT, NAME, PASSWORD, COIN, EMAIL,
+                    PARENT_ID, NEW_NOTICE, IS_EXPIRED};
+
+            cursor = db.query(true, TABLE_ACCOUNT_INFO, result_columns, null, null, null, null,
+                    null, null);
+
+            if (cursor.moveToFirst()) {
+
+                account.setID(cursor.getString(0));
+                account.setIsChild(cursor.getInt(1));
+                account.setName(cursor.getString(2));
+
+                if (cursor.getString(3) != null) {
+                    account.setPassword(cursor.getString(3));
+                }
+
+                account.setCoin(cursor.getInt(4));
+
+                if (cursor.getString(5) != null) {
+
+                    account.setEmail(cursor.getString(5));
+                }
+
+                if (cursor.getString(6) != null) {
+
+                    account.setParentId(cursor.getString(6));
+                }
+
+                account.setNotice(cursor.getInt(7));
+
+                account.setIsExpired(cursor.getString(8));
+            }
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+        } finally {
+
+            if (cursor != null) {
+
+                cursor.close();
+            }
+
+            cursor = null;
+
+        }
+
+        return account;
+    }
+
     public void insertChild(String id, String name) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1060,7 +1171,55 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertChild(String id, int isChild, String name, String isOff) {
+    public void insertChild(SQLiteDatabase db, String id, int isChild, String name, String isOff,
+                            String expirationDate, String isExpired, String deviceModel,
+                            int remainingDays) throws SQLException {
+
+        ContentValues values = new ContentValues();
+
+        values.put(CHILDREN_ID, id);
+        values.put(IS_PARENT, isChild);
+
+        if (name != null) {
+            values.put(NAME, AndroidUtils.convertFromUTF8(name));
+        }
+
+        if (TextUtils.isEmpty(isOff)) {
+
+            values.put(IS_OFF, "0");
+
+        } else {
+
+            values.put(IS_OFF, isOff);
+        }
+
+        if (!TextUtils.isEmpty(expirationDate)) {
+
+            values.put(EXPIRATION_DATE, expirationDate);
+        }
+
+        if (TextUtils.isEmpty(isExpired)) {
+
+            values.put(IS_EXPIRED, "Y");
+
+        } else {
+
+            values.put(IS_EXPIRED, isExpired);
+
+        }
+
+        if (!TextUtils.isEmpty(deviceModel)) {
+
+            values.put(DEVICE_MODEL, deviceModel);
+        }
+
+        values.put(REMAINING_DAYS, remainingDays);
+
+        db.replace(TABLE_CHILD, null, values);
+    }
+
+    public void insertChild(String id, int isChild, String name, String isOff,
+                            String expirationDate, String isExpired, String deviceModel) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1082,6 +1241,26 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(IS_OFF, isOff);
         }
 
+        if (!TextUtils.isEmpty(expirationDate)) {
+
+            values.put(EXPIRATION_DATE, expirationDate);
+        }
+
+        if (TextUtils.isEmpty(isExpired)) {
+
+            values.put(IS_EXPIRED, "Y");
+
+        } else {
+
+            values.put(IS_EXPIRED, isExpired);
+
+        }
+
+        if (!TextUtils.isEmpty(deviceModel)) {
+
+            values.put(DEVICE_MODEL, deviceModel);
+        }
+
         db.replace(TABLE_CHILD, null, values);
 
         if (db != null) {
@@ -1093,20 +1272,69 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void insertChildrenDB(SQLiteDatabase db, List<Child> children) {
+
+        if (children == null)
+            return;
+
+        db.beginTransaction();
+
+        try {
+
+            for (Child child : children) {
+
+                insertChild(db, child.getChildID(), 0, child.getName(), child.getIsOFF() + "",
+                        child.getExpirationDate(), child.getIsExpired(), child.getDeviceModel(),
+                        child.getRemainingDays());
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (SQLException e) {
+
+            Logger.e(e.getMessage());
+        } finally {
+
+            db.endTransaction();
+        }
+    }
+
     public void insertChildren(List<kr.co.digitalanchor.studytime.model.Child> children) {
 
         if (children == null)
             return;
 
-        for (kr.co.digitalanchor.studytime.model.Child child : children) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
-            insertChild(child.getChildID(), 0, child.getName(), child.getIsOff());
+        db.beginTransaction();
+
+        try {
+
+            for (kr.co.digitalanchor.studytime.model.Child child : children) {
+
+                insertChild(db, child.getChildID(), 0, child.getName(), child.getIsOff(),
+                        child.getExpirationDate(), child.getExpirationYN(), child.getDeviceModel(),
+                        child.getRemainingDays());
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (SQLException e) {
+
+            Logger.e(e.getMessage());
+        } finally {
+
+            db.endTransaction();
+
+            if (db != null) {
+
+                db.close();
+            }
         }
     }
 
-    public ArrayList<Child> getChildren() {
+    public ArrayList<Child> getChildren(SQLiteDatabase db) {
 
-        SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Child> children = new ArrayList<Child>();
         String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
 
@@ -1142,6 +1370,53 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<Child> getChildren() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Child> children = new ArrayList<Child>();
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT,
+                EXPIRATION_DATE, IS_EXPIRED, DEVICE_MODEL, REMAINING_DAYS};
+
+        Cursor cursor = db.query(true, TABLE_CHILD, result_columns, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Child child = new Child();
+                child.setChildID(cursor.getString(0));
+                child.setIsChild(cursor.getInt(1));
+
+                if (cursor.getString(2) != null) {
+                    child.setName(cursor.getString(2));
+                }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
+                child.setExpirationDate(cursor.getString(5));
+
+                child.setIsExpired(cursor.getString(6));
+
+                child.setDeviceModel(cursor.getString(7));
+
+                child.setRemainingDays(cursor.getInt(8));
+
+                children.add(child);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        return children;
+
+    }
+
     public Child getChild(String childId) {
 
         Child child = null;
@@ -1150,7 +1425,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         child = new Child();
 
-        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT};
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF,
+                NEW_MESSAGE_COUNT, EXPIRATION_DATE, IS_EXPIRED, DEVICE_MODEL, REMAINING_DAYS};
 
         Cursor cursor = db.query(true, TABLE_CHILD, result_columns, CHILDREN_ID + "=?",
                 new String[]{childId}, null, null, null, null);
@@ -1171,6 +1447,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 child.setNewMessageCount(cursor.getInt(4));
 
+                child.setExpirationDate(cursor.getString(5));
+
+                child.setIsExpired(cursor.getString(6));
+
+                child.setDeviceModel(cursor.getString(7));
+
+                child.setRemainingDays(cursor.getInt(8));
+
             } while (cursor.moveToNext());
         }
 
@@ -1185,11 +1469,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 자녀의 on/off 상태를 업데이트 한다.
-     * 0 : on, 1 : off
-     *
-     * @param childId
-     * @param isOff
+     * 자녀의 on/off 상태를 업데이트 한다. 0 : on, 1 : off
      */
     public void updateChildToggle(String childId, int isOff) {
 
@@ -1234,15 +1514,15 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * 처음 메시지를 보내긴 전에
      *
-     * @param guestId   : 상대방 ID
+     * @param guestId : 상대방 ID
      * @param guestName : 상대방 이름
-     * @param senderId  : 메시지 보낸 사람
-     * @param msg       : 메시지
-     * @param time      : 보내는 시간 YYYY-MM-DD HH:MM:SS 형식
+     * @param senderId : 메시지 보낸 사람
+     * @param msg : 메시지
+     * @param time : 보내는 시간 YYYY-MM-DD HH:MM:SS 형식
      * @param unreadCnt :안 읽은 사람 수 (현재는 1 부터)
-     * @param isFail    : 성공 여부 (처음은 0, 실패 시 1)
-     * @param msgType   : 메시지 타입 (현재는 0)
-     * @param isGroup   : 그룹 채팅방인지
+     * @param isFail : 성공 여부 (처음은 0, 실패 시 1)
+     * @param msgType : 메시지 타입 (현재는 0)
+     * @param isGroup : 그룹 채팅방인지
      * @return messagePK : (local DB의 chat primary key
      */
     public long insertMessageBeforeSend(String guestId, String guestName, String senderId,
@@ -1283,8 +1563,8 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      * @param messagePK : local db에 있는 message primary key 값
      * @param messageID : 서버의 message primary key 값 보낼 때는 없음
-     * @param isFail    : 네트워크가 안좋아서 문자를 못보내거나, 전송은 하였으나 서버로부터 error를 받은 경우 1, 처음 보낼 때 0
-     * @param failName  : 문자를 못받은 사람의 리스트, ;로 구별 ex) 정승욱;남상미;정재욱;유정효
+     * @param isFail : 네트워크가 안좋아서 문자를 못보내거나, 전송은 하였으나 서버로부터 error를 받은 경우 1, 처음 보낼 때 0
+     * @param failName : 문자를 못받은 사람의 리스트, ;로 구별 ex) 정승욱;남상미;정재욱;유정효
      */
     public void updateMessageAfterSend(String messagePK, String messageID,
                                        int isFail, String failName) {
@@ -1318,14 +1598,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * GCM message를 받고 DB에 초기값을 저장하는 함수
-     *
-     * @param messageId
-     * @param guestName
-     * @param unreadCount
-     * @param guestId
-     * @param isGroup
-     * @param isChild
-     * @return
      */
     public long insertMessageFromGCM(String messageId, String roomId, String guestId, String guestName,
                                      String unreadCount, int isGroup, int isChild, String msg, long time, int msgType) {
@@ -1542,11 +1814,35 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public void updateExpired(String isExpired) {
+
+        Account account = getAccountInfo();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(IS_EXPIRED, isExpired);
+
+            db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{account.getID()});
+
+        } catch (Exception e) {
+            Logger.e(e.getMessage());
+
+        } finally {
+            if (db != null) {
+
+                db.close();
+
+                db = null;
+            }
+        }
+
+    }
 
     /**
      * 처음으로 onOFF 정보를 넣거나 update할 때 사용
-     *
-     * @param isOff
      */
     public void updateOnOff(int isOff) {
 
@@ -1587,17 +1883,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db = this.getReadableDatabase();
 
+            int isOff = 0;
+
             String[] columns = new String[]{IS_OFF};
 
             cursor = db.query(true, TABLE_ON_OFF, columns, ONOFF_KEY + "=?",
                     new String[]{ONOFF_PK}, null, null, null, null);
 
             if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
+
+                isOff = cursor.getInt(0);
+
             }
 
-            return 0;
-
+            return isOff;
 
         } catch (Exception e) {
 

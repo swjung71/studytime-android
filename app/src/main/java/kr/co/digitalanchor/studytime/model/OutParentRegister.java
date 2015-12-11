@@ -20,7 +20,7 @@ public class OutParentRegister {
   @Element(name = "Password", required = false)
   String password;
 
-  @Element(name = "Name", required = false)
+  @Element(name = "Name", required = false, data = true)
   String name;
 
   @Element(name = "Sex", required = false)

@@ -1,10 +1,12 @@
 package kr.co.digitalanchor.studytime.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Created by Thomas on 2015-07-28.
  */
+@Root(name = "CheckPackageResult", strict = false)
 public class CheckPackageResult {
 
     @Element(name = "ResultCode", required = false)

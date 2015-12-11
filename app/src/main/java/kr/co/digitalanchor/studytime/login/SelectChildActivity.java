@@ -9,14 +9,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Message;
-import android.provider.Settings;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.Toast;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
@@ -33,22 +29,24 @@ import kr.co.digitalanchor.studytime.devicepolicy.AdminReceiver;
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AddPackageModel;
 import kr.co.digitalanchor.studytime.model.AllPackageResult;
+import kr.co.digitalanchor.studytime.model.Child;
 import kr.co.digitalanchor.studytime.model.ChildRegResult;
 import kr.co.digitalanchor.studytime.model.ChildRegister;
 import kr.co.digitalanchor.studytime.model.PackageResult;
+import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
-import kr.co.digitalanchor.studytime.signup.ClauseViewActivity;
 import kr.co.digitalanchor.utils.AndroidUtils;
 import kr.co.digitalanchor.utils.MD5;
-import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
- * Created by Thomas on 2015-06-15.
+ * Created by Thomas on 2015-11-10.
  */
-public class AddInfoActivity extends BaseActivity implements View.OnClickListener {
+public class SelectChildActivity extends BaseActivity implements AdapterView.OnItemClickListener,
+        View.OnClickListener {
 
     private final int REQUEST_ADD_INFO = 50001;
     private final int REQUEST_UPLOAD_PACKAGES = 50002;
@@ -58,101 +56,82 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private final int ACTIVATION_REQUEST = 40003;
 
-    EditText mEditName;
+    ListView mList;
 
-    EditText mEditBirthDate;
+    View mHeader;
 
-    RadioGroup mCheckGender;
+    View mFooter;
 
-    CheckBox mCheckServiceInfo;
+    ChildListAdapter mAdapter;
 
-    CheckBox mCheckPersonalInfo;
-
-    Button mButtonServiceInfo;
-
-    Button mButtonPersonalInfo;
-
-    Button mButtonConfirm;
-
-    ChildRegister mModel;
-
-    private String mParentID;
-
-    private String mChildID;
-
-    private boolean isModify;
+    List<Child> mChildren;
 
     private DBHelper mHelper;
 
+    String mParentID;
+    String mChildID;
+    String mName;
+    String mExpiration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_add_info);
+        setContentView(R.layout.activity_child_select);
 
-        getIntentData();
+        Bundle data = getIntent().getExtras();
+
+        if (data != null) {
+
+            mParentID = data.getString("ParentID");
+
+        }
+
+        mHelper = new DBHelper(getApplicationContext());
 
         initView();
 
-        mHelper = new DBHelper(getApplicationContext());
-    }
-
-    private void initView() {
-
-        mEditBirthDate = (EditText) findViewById(R.id.editBirthDate);
-
-        mCheckGender = (RadioGroup) findViewById(R.id.radioGender);
-
-        mCheckServiceInfo = (CheckBox) findViewById(R.id.checkServiceInfo);
-
-        mCheckPersonalInfo = (CheckBox) findViewById(R.id.checkPersonalInfo);
-
-        mButtonServiceInfo = (Button) findViewById(R.id.buttonServiceInfo);
-        mButtonServiceInfo.setOnClickListener(this);
-
-        mButtonPersonalInfo = (Button) findViewById(R.id.buttonPersonalInfo);
-        mButtonPersonalInfo.setOnClickListener(this);
-
-        mButtonConfirm = (Button) findViewById(R.id.buttonConfirm);
-        mButtonConfirm.setOnClickListener(this);
-
-        mEditName = (EditText) findViewById(R.id.editName);
-
+        requestChildList();
     }
 
     @Override
-    public void onClick(View v) {
+    protected void onStart() {
+        super.onStart();
 
-        switch (v.getId()) {
-
-            case R.id.buttonServiceInfo:
-
-                showClause(0);
-
-                break;
-
-            case R.id.buttonPersonalInfo:
-
-                showClause(1);
-
-                break;
-
-            case R.id.buttonConfirm:
-
-                if (isValidate()) {
-
-                    sendEmptyMessage(REQUEST_ADD_INFO);
-                }
-
-                break;
-
-            default:
-
-                break;
-        }
     }
 
+    public void initView() {
+
+        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+
+        mHeader = inflater.inflate(R.layout.layout_child_header, null);
+        mFooter = inflater.inflate(R.layout.layout_child_footer_c, null);
+        mFooter.setOnClickListener(this);
+
+        mList = (ListView) findViewById(R.id.list);
+
+        mList.setOnItemClickListener(this);
+
+        mList.addHeaderView(mHeader);
+        mList.addFooterView(mFooter);
+
+        mList.setAdapter(makeAdapter());
+
+    }
+
+    private ChildListAdapter makeAdapter() {
+
+        if (mChildren == null) {
+
+            mChildren = new ArrayList<>();
+
+        }
+
+        mAdapter = new ChildListAdapter(getApplicationContext(), 0, mChildren);
+
+        return mAdapter;
+    }
 
     @Override
     protected void onHandleMessage(Message msg) {
@@ -161,7 +140,7 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
             case REQUEST_ADD_INFO:
 
-                requestSendAdditionalInfo();
+                requestChildReg();
 
                 break;
 
@@ -211,130 +190,116 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        try {
+            if (position < 1) {
+
+                return;
+            }
+
+            Child child = mChildren.get(position - 1);
+
+            mName = child.getName();
+
+            mChildID = child.getChildID();
+
+            mExpiration = child.getExpirationYN();
+
+            sendEmptyMessage(REQUEST_ADD_INFO);
+
+        } catch (Exception e) {
+
+            Logger.e(e.getMessage());
+        }
     }
 
     @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
+    public void onClick(View v) {
 
-        if (isModify) {
+        switch (v.getId()) {
 
-            STApplication.stopAllActivity();
+            case R.id.footerSendLink:
+
+                setResult(INPUT_ADD_INFO);
+
+                finish();
+
+                break;
         }
     }
 
-    private boolean isValidate() {
-
-        String tmp = null;
-        String msg = null;
-
-        do {
-
-            tmp = mEditName.getText().toString();
-
-            if (TextUtils.isEmpty(tmp)) {
-
-                msg = "이름을 입력하세요.";
-
-                break;
-            }
-
-            tmp = mEditBirthDate.getText().toString();
-
-            if (!TextUtils.isEmpty(tmp) && !StringValidator.isBirthDay(tmp)) {
-
-                msg = "생년월일 형식에 맞지 않습니다.";
-
-                break;
-            }
-
-            if (!mCheckServiceInfo.isChecked()) {
-
-                msg = "서비스 이용약관을 동의하세요.";
-
-                break;
-            }
-
-            if (!mCheckPersonalInfo.isChecked()) {
-
-                msg = "개인정보 취급방침에 동의하세요.";
-
-                break;
-            }
-
-        } while (false);
-
-        if (TextUtils.isEmpty(msg)) {
-
-            return true;
-
-        } else {
-
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-
-            return false;
-        }
-
-    }
-
-    private void getIntentData() {
-
-        Bundle data = getIntent().getExtras();
-
-        mModel = new ChildRegister();
-
-        if (data.containsKey("ParentID")) {
-
-            mModel.setParentID(data.getString("ParentID"));
-        }
-
-        if (data.containsKey("Name")) {
-
-            mModel.setName(data.getString("Name"));
-        }
-
-        if (data.containsKey("Modify")) {
-
-            isModify = data.getBoolean("Modify", false);
-
-
-        } else {
-
-            isModify = false;
-        }
-    }
-
-    private void showClause(int opt) {
-
-        Intent intent = new Intent();
-
-        intent.setClass(getApplicationContext(), ClauseViewActivity.class);
-
-        intent.putExtra("position", opt);
-        intent.putExtra("isParent", false);
-
-        startActivity(intent);
-    }
-
-    private void requestSendAdditionalInfo() {
+    private void requestChildList() {
 
         showLoading();
 
-        ChildRegister model = null;
+        ParentModel model = new ParentModel();
 
-        String tmp = null;
+        model.setParentId(mParentID);
 
-        try {
+        SimpleXmlRequest request = HttpHelper.getSyncParentData(model,
+                new Response.Listener<ParentLoginResult>() {
+                    @Override
+                    public void onResponse(ParentLoginResult res) {
 
-            model = mModel.clone();
+                        dismissLoading();
 
-        } catch (CloneNotSupportedException e) {
+                        switch (res.getResultCode()) {
 
-            model = new ChildRegister();
-        }
+                            case SUCCESS:
+
+                                List<Child> list = res.getChildren();
+
+                                if (list != null) {
+
+                                    for (Child child : list) {
+
+                                        child.setName(AndroidUtils.convertFromUTF8(child.getName()));
+
+                                        mChildren.add(child);
+
+                                    }
+
+                                    if (mChildren.size() >= StaticValues.MAX_CHILDREN_COUNT) {
+
+                                        mFooter.setVisibility(View.GONE);
+                                    }
+
+                                    mAdapter.notifyDataSetChanged();
+                                }
+
+                                break;
+
+                            default:
+
+                                handleResultCode(res.getResultCode(), res.getResultMessage());
+
+                                break;
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        handleError(error);
+                    }
+                });
+
+        addRequest(request);
+    }
+
+    private void requestChildReg() {
+
+        showLoading();
+
+        ChildRegister model = new ChildRegister();
+
+        model.setParentID(mParentID);
+
+        model.setChildId(mChildID);
+
+        model.setName(mName);
 
         // 전화번호
         model.setPhoneNumber(STApplication.getPhoneNumber());
@@ -344,32 +309,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         // GCM
         model.setGcm(STApplication.getString(StaticValues.GCM_REG_ID));
-
-        // Gender
-        switch (mCheckGender.getCheckedRadioButtonId()) {
-
-            case R.id.male:
-
-                model.setSex("0");
-
-                break;
-
-            case R.id.female:
-
-                model.setSex("1");
-
-                break;
-
-            default:
-
-                model.setSex("");
-                break;
-        }
-
-        tmp = mEditBirthDate.getText().toString();
-
-        // Birth date
-        model.setBirthday(TextUtils.isEmpty(tmp) ? "" : tmp);
 
         // 언어 설정
         model.setLang(STApplication.getLanguageCode());
@@ -382,53 +321,31 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         model.setMac(STApplication.getMAC());
 
-        if (isModify) {
-
-            model.setChildId(mModel.getChildId());
-        }
-
-        if (TextUtils.isEmpty(mEditName.getText().toString())) {
-
-            model.setName(mModel.getName());
-
-        } else {
-
-            model.setName(mEditName.getText().toString());
-        }
-
-        SimpleXmlRequest request = HttpHelper.getChildRegister(model,
+        SimpleXmlRequest request = HttpHelper.getChildReg(model,
                 new Response.Listener<ChildRegResult>() {
                     @Override
-                    public void onResponse(ChildRegResult response) {
+                    public void onResponse(ChildRegResult res) {
 
-                        switch (response.getResultCode()) {
+                        dismissLoading();
+
+                        switch (res.getResultCode()) {
 
                             case SUCCESS:
 
-                                dismissLoading();
+                                mParentID = res.getParentID();
+                                mChildID = res.getChildID();
 
-                                Logger.d("gfd " + response.getParentID() + " " + response.getChildID());
-
-                                mParentID = response.getParentID();
-                                mChildID = response.getChildID();
-
-                                if (!isModify) {
-
-                                    showAdmin();
-
-                                } else {
-
-                                    sendEmptyMessage(COMPLETE_ADD_INFO);
-                                }
+                                showAdmin();
 
                                 break;
 
                             default:
 
-                                handleResultCode(response.getResultCode(), response.getResultMessage());
+                                handleResultCode(res.getResultCode(), res.getResultMessage());
 
                                 break;
                         }
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -443,9 +360,9 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
     private void completeRegister(String parentId, String childId) {
 
-        Logger.i(parentId + " " + childId + "  " + mModel.getName());
+        Logger.i(parentId + " " + childId + "  " + mName);
 
-        mHelper.insertAccount(childId, mModel.getName(), parentId, "Y");
+        mHelper.insertAccount(childId, mName, parentId, mExpiration);
 
     }
 
@@ -459,13 +376,6 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
         startActivityForResult(intent, ACTIVATION_REQUEST);
 
 //        startActivityForResult(intent, REQUEST_UPLOAD_PACKAGES);
-    }
-
-    private void showSetting() {
-
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     /**
