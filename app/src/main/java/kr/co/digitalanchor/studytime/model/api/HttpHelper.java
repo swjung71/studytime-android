@@ -68,7 +68,7 @@ public class HttpHelper {
     /**
      * true : dev ; false : real
      */
-    public static boolean isDev = false;
+    public static boolean isDev = true;
 
     /**
      * Dev Server url http://14.63.225.89/studytime-server
@@ -136,7 +136,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login",
+            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/login2",
                     ParentLoginResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -180,7 +180,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ParentRegResult>(getURL() + "parent/register",
+            return new SimpleXmlRequest<ParentRegResult>(getURL() + "parent/register2",
                     ParentRegResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -451,7 +451,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff",
+            return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff2",
                     CoinResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -546,7 +546,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ChildLoginResult>(getURL() + "login",
+            return new SimpleXmlRequest<ChildLoginResult>(getURL() + "login2",
                     ChildLoginResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -614,48 +614,6 @@ public class HttpHelper {
         }
     }
 
-    public static SimpleXmlRequest<ChildRegResult> getChildReg(ChildRegister model,
-                                                                    Listener<ChildRegResult> listener,
-                                                                    ErrorListener errorListener) {
-
-        StringWriter writer = null;
-
-        try {
-
-            Serializer serializer = new Persister();
-
-            writer = new StringWriter();
-
-            serializer.write(model, writer);
-
-            HashMap<String, String> map = new HashMap<>();
-
-            map.put("xml", writer.toString());
-
-            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg",
-                    ChildRegResult.class, map, listener, errorListener);
-
-        } catch (Exception e) {
-
-            return null;
-
-        } finally {
-
-            if (writer != null) {
-
-                try {
-
-                    writer.close();
-
-                } catch (IOException e) {
-
-
-                }
-
-                writer = null;
-            }
-        }
-    }
 
     /**
      * 채팅 메세지 보내기
@@ -979,7 +937,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync",
+            return new SimpleXmlRequest<CheckPackageResult>(getURL() + "sync2",
                     CheckPackageResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -1022,7 +980,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync",
+            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync2",
                     ParentLoginResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -1690,7 +1648,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/outRegister",
+            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/outRegister2",
                     ParentLoginResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
@@ -1735,6 +1693,92 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<GeneralResult>(getURL() + "parent/setPass",
                     GeneralResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getChildList(ParentModel model, Listener listener,
+                                                ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ParentLoginResult>(getURL() + "getChildList",
+                    ParentLoginResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getChildReg(ChildRegister model, Listener listener,
+                                               ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg2",
+                    ChildRegResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
 
