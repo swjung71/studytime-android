@@ -106,6 +106,11 @@ public class SeekBarHint extends SeekBar implements SeekBar.OnSeekBarChangeListe
         return mPopupStyle;
     }
 
+    public void updatePopupText(String text) {
+
+        mPopupTextView.setText(text);
+    }
+
     private void initHintPopup() {
 
         String popupText = null;

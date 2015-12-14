@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,9 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.igaworks.IgawCommon;
 import com.orhanobut.logger.Logger;
-
 import java.io.IOException;
-
 import kr.co.cashslide.Cashslide;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -29,7 +26,6 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ChildChatActivity;
 import kr.co.digitalanchor.studytime.control.ListChildActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
-import kr.co.digitalanchor.studytime.dialog.SettingOffDialog;
 import kr.co.digitalanchor.studytime.login.LoginActivity;
 import kr.co.digitalanchor.studytime.login.LoginChildActivity;
 import kr.co.digitalanchor.studytime.model.GCMUpdate;
@@ -99,10 +95,6 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
             case R.id.buttonModeKids:
 
                 showChildIntro();
-
-//                SettingOffDialog dialog = new SettingOffDialog(this);
-//                dialog.show();
-
 
                 break;
 
