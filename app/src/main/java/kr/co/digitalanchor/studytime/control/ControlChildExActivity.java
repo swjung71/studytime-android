@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,6 +35,7 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.LoadingDialog;
+import kr.co.digitalanchor.studytime.dialog.SettingOffDialog;
 import kr.co.digitalanchor.studytime.location.MapActivity;
 import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
@@ -52,6 +54,7 @@ import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 import kr.co.digitalanchor.utils.AndroidUtils;
+import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -282,17 +285,15 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
             case REQUEST_ON_OFF:
 
-         /*       SettingOffDialog dialog = new SettingOffDialog(ControlChildExActivity.this);
-
-                dialog.show();*/
-
                 Account account = mHelper.getAccountInfo();
 
                 if (mChild.getIsOFF() == 0) {
 
-                    requestOnOff();
+                    requestOnOff(0, null);
 
                 } else {
+
+                    /*
                     Intent intent = new Intent();
                     intent.setClass(getApplicationContext(), InputPwdActivity.class);
 
@@ -300,8 +301,38 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     intent.putExtra("Name", mChild.getName());
 
                     startActivity(intent);
+                    */
+
+                    final SettingOffDialog dialog = new SettingOffDialog(ControlChildExActivity.this);
+
+                    dialog.setCallback(new SettingOffDialog.OnSimpleCallback() {
+                        @Override
+                        public void onClickConfirm(int select, String password) {
+
+                            if (StringValidator.isPassword(password)) {
+
+                                requestOnOff(select, password);
+
+                                dialog.dismiss();
+
+                            } else {
+
+                                Toast.makeText(ControlChildExActivity.this,
+                                        "비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onClickCancel() {
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
 
                 }
+
 
                 break;
 
@@ -703,7 +734,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         addRequest(request);
     }
 
-    private void requestOnOff() {
+    private void requestOnOff(int min, String password) {
 
         showLoading();
 
@@ -717,7 +748,24 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         model.setChildID(mChild.getChildID());
         model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
         model.setName(account.getName());
-        model.setCoin(HttpHelper.isDev ? 10 : account.getCoin() - 1);
+
+        if (!TextUtils.isEmpty(password)) {
+
+            model.setPassword(password);
+        }
+
+        if (STApplication.getAppVersionCode() < 30) {
+            model.setCoin(HttpHelper.isDev ? 10 : account.getCoin() - 1);
+
+        } else {
+
+            model.setCoin(0);
+        }
+
+        if (min > 0) {
+
+            model.setDurationTime(String.valueOf(min));
+        }
 
         SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
                 new Response.Listener<CoinResult>() {

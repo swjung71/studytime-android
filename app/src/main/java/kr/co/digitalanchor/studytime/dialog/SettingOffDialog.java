@@ -20,11 +20,15 @@ public class SettingOffDialog extends Dialog implements SeekBarHint.OnSeekBarHin
 
     public interface OnSimpleCallback {
 
-        void onClickButton();
+        void onClickConfirm(int select, String password);
+
+        void onClickCancel();
     }
 
     private final String[] hint = new String[]{"계속 사용", "10분", "20분", "30분", "40분", "50분",
             "1시간", "1시간 30분", "2시간", "2시간 30분", "3시간", "3시간 30분", "4시간"};
+
+    private final int[] selection = new int[]{0, 10, 20, 30, 40, 50, 60, 90, 120, 150, 180, 210, 240};
 
     private SeekBarHint mSeekBar;
 
@@ -32,6 +36,8 @@ public class SettingOffDialog extends Dialog implements SeekBarHint.OnSeekBarHin
 
     private Button mConfirm;
     private Button mCancel;
+
+    private OnSimpleCallback callback;
 
     public SettingOffDialog(Context context) {
 
@@ -59,8 +65,10 @@ public class SettingOffDialog extends Dialog implements SeekBarHint.OnSeekBarHin
         mEditText = (EditText) findViewById(R.id.editPassword);
 
         mConfirm = (Button) findViewById(R.id.confirm);
+        mConfirm.setOnClickListener(this);
 
         mCancel = (Button) findViewById(R.id.cancel);
+        mCancel.setOnClickListener(this);
 
     }
 
@@ -70,18 +78,36 @@ public class SettingOffDialog extends Dialog implements SeekBarHint.OnSeekBarHin
         return hint[progress];
     }
 
+    public void setCallback(OnSimpleCallback callback) {
+
+        this.callback = callback;
+    }
+
+    private int getSelected() {
+
+        int result = mSeekBar.getProgress();
+
+        return selection[result];
+    }
+
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()) {
+        if (callback != null)
 
-            case R.id.confirm:
+            switch (v.getId()) {
 
-                break;
+                case R.id.confirm:
 
-            case R.id.cancel:
+                    callback.onClickConfirm(getSelected(), mEditText.getText().toString());
 
-                break;
-        }
+                    break;
+
+                case R.id.cancel:
+
+                    callback.onClickCancel();
+
+                    break;
+            }
     }
 }
