@@ -211,6 +211,8 @@ public class GCMIntentService extends IntentService {
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
+                // TODO : 타이머에 대응하는 코딩해야함
+
                 break;
 
             case "MESSAGE":

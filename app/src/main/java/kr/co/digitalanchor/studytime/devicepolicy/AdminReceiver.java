@@ -1,15 +1,11 @@
 package kr.co.digitalanchor.studytime.devicepolicy;
 
 import android.app.admin.DeviceAdminReceiver;
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
-
-import com.orhanobut.logger.Logger;
-
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
 /**
@@ -41,7 +37,7 @@ public class AdminReceiver extends DeviceAdminReceiver {
     @Override
     public CharSequence onDisableRequested(Context context, Intent intent) {
 
-        return  "스타트 타임을 사용할 수 없게 됩니다.";
+        return "스타트 타임을 사용할 수 없게 됩니다.";
     }
 
 }

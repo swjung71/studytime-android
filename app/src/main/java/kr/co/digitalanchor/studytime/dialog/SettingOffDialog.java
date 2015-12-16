@@ -25,7 +25,7 @@ public class SettingOffDialog extends Dialog implements SeekBarHint.OnSeekBarHin
         void onClickCancel();
     }
 
-    private final String[] hint = new String[]{"계속 사용", "10분", "20분", "30분", "40분", "50분",
+    private final String[] hint = new String[]{"계속 ON", "10분", "20분", "30분", "40분", "50분",
             "1시간", "1시간 30분", "2시간", "2시간 30분", "3시간", "3시간 30분", "4시간"};
 
     private final int[] selection = new int[]{0, 10, 20, 30, 40, 50, 60, 90, 120, 150, 180, 210, 240};
