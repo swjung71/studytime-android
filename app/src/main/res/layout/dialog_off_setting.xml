@@ -83,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:thumb="@drawable/btn_time_control"
+                android:progressDrawable="@drawable/progress_horizontal_custom"
                 hint:popupWidth="100dp"
                 hint:yOffset="20dp"/>
 
