@@ -589,7 +589,7 @@ public class HttpHelper {
 
             map.put("xml", writer.toString());
 
-            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg",
+            return new SimpleXmlRequest<ChildRegResult>(getURL() + "childReg2",
                     ChildRegResult.class, map, listener, errorListener);
 
         } catch (Exception e) {
