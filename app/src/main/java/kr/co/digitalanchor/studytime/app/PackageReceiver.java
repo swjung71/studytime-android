@@ -10,6 +10,7 @@ import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
+import kr.co.digitalanchor.studytime.monitor.SyncService;
 
 /**
  * Created by Thomas on 2015-07-30.
@@ -59,10 +60,16 @@ public class PackageReceiver extends BroadcastReceiver {
 
                 if (context.getPackageName().equalsIgnoreCase(packageName)) {
 
-                    return;
-                }
+                    broadcastIntent.setClass(context, SyncService.class);
 
-                broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_ADDED);
+                    context.startService(broadcastIntent);
+
+                    return;
+
+                } else {
+
+                    broadcastIntent.putExtra(StaticValues.ACTION_NAME, StaticValues.ACTION_PACKAGE_ADDED);
+                }
 
                 break;
 

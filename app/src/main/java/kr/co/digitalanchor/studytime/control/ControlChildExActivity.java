@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -24,12 +24,10 @@ import com.igaworks.adbrix.IgawAdbrix;
 import com.orhanobut.logger.Logger;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -37,6 +35,7 @@ import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.LoadingDialog;
+import kr.co.digitalanchor.studytime.dialog.SettingOffDialog;
 import kr.co.digitalanchor.studytime.location.MapActivity;
 import kr.co.digitalanchor.studytime.model.AllPackageResultForParent;
 import kr.co.digitalanchor.studytime.model.CoinResult;
@@ -55,6 +54,7 @@ import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
 import kr.co.digitalanchor.utils.AndroidUtils;
+import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
@@ -82,8 +82,6 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
     ImageView mPanelToggleButton;
 
     TextView mLabelPoint;
-
-    ImageButton mButtonPoint;
 
     ImageButton mButtonMenu;
 
@@ -191,8 +189,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         mLabelPoint = (TextView) findViewById(R.id.labelPoint);
 
-        mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
-        mButtonPoint.setOnClickListener(this);
+//        mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
+//        mButtonPoint.setOnClickListener(this);
 
         mButtonToggle = (ImageButton) findViewById(R.id.buttonShutdown);
         mButtonToggle.setOnClickListener(this);
@@ -291,22 +289,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 if (mChild.getIsOFF() == 0) {
 
-                    if (HttpHelper.isDev) {
-
-                        requestOnOff();
-
-                    } else if (account.getCoin() > 0) {
-
-                        requestOnOff();
-
-                    } else {
-
-                        Toast.makeText(getApplicationContext(), "코인이 부족합니다.",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    requestOnOff(0, null);
 
                 } else {
 
+                    /*
                     Intent intent = new Intent();
                     intent.setClass(getApplicationContext(), InputPwdActivity.class);
 
@@ -314,7 +301,38 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                     intent.putExtra("Name", mChild.getName());
 
                     startActivity(intent);
+                    */
+
+                    final SettingOffDialog dialog = new SettingOffDialog(ControlChildExActivity.this);
+
+                    dialog.setCallback(new SettingOffDialog.OnSimpleCallback() {
+                        @Override
+                        public void onClickConfirm(int select, String password) {
+
+                            if (StringValidator.isPassword(password)) {
+
+                                requestOnOff(select, password);
+
+                                dialog.dismiss();
+
+                            } else {
+
+                                Toast.makeText(ControlChildExActivity.this,
+                                        "비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onClickCancel() {
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
+
                 }
+
 
                 break;
 
@@ -354,35 +372,19 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 Account account = mHelper.getAccountInfo();
 
-                if (account.getCoin() < COIN_REQUEST_LOCATION) {
 
-                    MaterialDialog.Builder builder = new MaterialDialog.Builder(ControlChildExActivity.this);
+                IgawAdbrix.retention("requestChildLocation");
 
-                    builder.content("코인이 부족합니다.\n자녀의 위치를 확인하기 위해서는 " +
-                            COIN_REQUEST_LOCATION + "코인이 필요합니다.").positiveText("확인")
-                            .callback(new MaterialDialog.SimpleCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog materialDialog) {
-
-                                    materialDialog.dismiss();
-                                }
-                            }).build().show();
-
-                } else {
-
-                    IgawAdbrix.retention("requestChildLocation");
-
-                    // LOCATION REQUEST TEST
-                    sendEmptyMessage(REQUEST_CHILD_LOCATION);
-                }
+                // LOCATION REQUEST TEST
+                sendEmptyMessage(REQUEST_CHILD_LOCATION);
 
                 break;
 
-            case R.id.buttonPoint:
-
-                showPurchase();
-
-                break;
+//            case R.id.buttonPoint:
+//
+//                showPurchase();
+//
+//                break;
 
             case R.id.buttonMenu:
 
@@ -535,7 +537,10 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         if (mLabelPoint != null) {
 
-            mLabelPoint.setText(String.valueOf(account.getCoin()));
+//            mLabelPoint.setText(String.valueOf(account.getCoin()));
+
+            mLabelPoint.setText(getResources().getString(R.string.payment_info, mChild.getName(),
+                    String.valueOf(mChild.getRemainingDays())));
         }
     }
 
@@ -729,7 +734,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         addRequest(request);
     }
 
-    private void requestOnOff() {
+    private void requestOnOff(int min, String password) {
 
         showLoading();
 
@@ -743,7 +748,24 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         model.setChildID(mChild.getChildID());
         model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
         model.setName(account.getName());
-        model.setCoin(HttpHelper.isDev ? 10 : account.getCoin() - 1);
+
+        if (!TextUtils.isEmpty(password)) {
+
+            model.setPassword(password);
+        }
+
+        if (STApplication.getAppVersionCode() < 30) {
+            model.setCoin(HttpHelper.isDev ? 10 : account.getCoin() - 1);
+
+        } else {
+
+            model.setCoin(0);
+        }
+
+        if (min > 0) {
+
+            model.setDurationTime(String.valueOf(min));
+        }
 
         SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
                 new Response.Listener<CoinResult>() {

@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
-
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Child;
@@ -20,54 +19,89 @@ import kr.co.digitalanchor.studytime.view.ViewHolder;
  */
 public class ChildListAdapter extends ArrayAdapter<Child> {
 
-    private Context context;
+  private Context context;
 
-    private ArrayList<Child> items;
+  private ArrayList<Child> items;
 
-    private DBHelper mHelper;
+  private DBHelper mHelper;
 
-    public ChildListAdapter(Context context, int resId, ArrayList<Child> items) {
+  public ChildListAdapter(Context context, int resId, ArrayList<Child> items) {
 
-        super(context, resId, items);
+    super(context, resId, items);
 
-        this.items = items;
-        this.context = context;
+    this.items = items;
+    this.context = context;
 
-        this.mHelper = new DBHelper(context);
+    this.mHelper = new DBHelper(context);
+  }
+
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+
+    if (convertView == null) {
+
+      LayoutInflater inflater = LayoutInflater.from(context);
+      convertView = inflater.inflate(R.layout.layout_child_item, null);
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    Child child = items.get(position);
 
-        if (convertView == null) {
+    View layoutEnable = ViewHolder.get(convertView, R.id.enableChild);
 
-            LayoutInflater inflater = LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.layout_child_item, null);
-        }
+    View layoutDisable = ViewHolder.get(convertView, R.id.disableChild);
 
-        Child child = items.get(position);
+    if (child.getIsExpired().equals("N")) {
 
-        TextView name = ViewHolder.get(convertView, R.id.labelName);
-        name.setText(child.getName());
-        name.setSelected(true);
+      layoutEnable.setVisibility(View.VISIBLE);
+      layoutDisable.setVisibility(View.GONE);
 
-        TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
+      TextView name = ViewHolder.get(convertView, R.id.labelName);
+      name.setText(child.getName());
+      name.setSelected(true);
 
-        int count = child.getNewMessageCount();
+      TextView noti = ViewHolder.get(convertView, R.id.labelNotiCount);
 
-        if (count > 0) {
+      TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice);
+      labelDevice.setText(child.getDeviceModel());
 
-            noti.setVisibility(View.VISIBLE);
+      Logger.d(child.getRemainingDays() + " days");
 
-            noti.setText(count > 10 ? "10+" : String.valueOf(count));
+      TextView labelExpired = ViewHolder.get(convertView, R.id.textExpired);
+      labelExpired.setText(context.getResources().getString(R.string.payment_info,
+          child.getExpirationDate(),
+          String.valueOf(child.getRemainingDays())));
 
-        } else {
+      int count = child.getNewMessageCount();
 
-            noti.setVisibility(View.GONE);
-        }
+      if (count > 0) {
 
-        ImageView profile = ViewHolder.get(convertView, R.id.imgProfile);
+        noti.setVisibility(View.VISIBLE);
 
-        return convertView;
+        noti.setText(count > 10 ? "10+" : String.valueOf(count));
+
+      } else {
+
+        noti.setVisibility(View.GONE);
+      }
+
+      ImageView profile = ViewHolder.get(convertView, R.id.imgProfile);
+
+    } else {
+
+      layoutEnable.setVisibility(View.GONE);
+      layoutDisable.setVisibility(View.VISIBLE);
+
+      TextView name = ViewHolder.get(convertView, R.id.labelName2);
+      name.setText(child.getName());
+      name.setSelected(true);
+
+      TextView labelDevice = ViewHolder.get(convertView, R.id.textDevice2);
+      labelDevice.setText(child.getDeviceModel());
+
+      ImageView profile = ViewHolder.get(convertView, R.id.imgProfileDisable);
+
     }
+
+    return convertView;
+  }
 }

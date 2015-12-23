@@ -109,15 +109,33 @@
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mediarouter-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-cast-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="nineoldandroids-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="IgawCommon_v4.0.4a" level="project" />
     <orderEntry type="library" exported="" name="play-services-games-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-wallet-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-drive-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="IgawCommon_v4.0.8a" level="project" />
     <orderEntry type="library" exported="" name="apache-mime4j-core-0.7.2" level="project" />
+    <orderEntry type="library" exported="" name="httpclient-android-4.3.5" level="project" />
+    <orderEntry type="library" exported="" name="IgawAdbrix_v4.0.6a" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
+    <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-base-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="3rdparty_login_library_android_4.1.4" level="project" />
+    <orderEntry type="library" exported="" name="IgawAdpopcorn_v4.0.3a" level="project" />
+    <orderEntry type="library" exported="" name="play-services-location-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="20140728_cashslide-sdk" level="project" />
+    <orderEntry type="library" exported="" name="facebook-android-sdk-4.7.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-panorama-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-plus-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="material-dialogs-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="IgawAdbrix_v4.0.3a" level="project" />
+    <orderEntry type="library" exported="" name="play-services-maps-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="IgawAdpopcorn_v3.5.2a" level="project" />
+    <orderEntry type="library" exported="" name="play-services-cast-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="nineoldandroids-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-7.8.0" level="project" />
@@ -125,36 +143,22 @@
     <orderEntry type="library" exported="" name="play-services-appindexing-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-appinvite-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="httpclient-android-4.3.5" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="IgawAdbrix_v4.0.6a" level="project" />
     <orderEntry type="library" exported="" name="commons-net-2.2" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
-    <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-base-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="MaterialTabs-0.11" level="project" />
-    <orderEntry type="library" exported="" name="3rdparty_login_library_android_4.1.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-vision-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="IgawAdpopcorn_v4.0.3a" level="project" />
     <orderEntry type="library" exported="" name="play-services-nearby-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-location-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="20140728_cashslide-sdk" level="project" />
     <orderEntry type="library" exported="" name="play-services-appstate-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="facebook-android-sdk-4.7.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-wearable-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-identity-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-panorama-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-plus-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="material-dialogs-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="android-ui-1.2" level="project" />
     <orderEntry type="library" exported="" name="simple-xml-2.7.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-maps-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="logger-1.10" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.3.6" level="project" />
     <orderEntry type="module" module-name="circleprogressview" exported="" />
+    <orderEntry type="module" module-name="seekbarhint" exported="" />
   </component>
 </module>

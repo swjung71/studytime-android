@@ -1,14 +1,12 @@
 package kr.co.digitalanchor.studytime;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
@@ -22,20 +20,18 @@ import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.igaworks.adpopcorn.IgawAdpopcorn;
-import com.igaworks.adpopcorn.style.AdPOPcornStyler;
 import com.orhanobut.logger.Logger;
-
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.dialog.CustomProgressDialog;
 import kr.co.digitalanchor.studytime.model.db.Account;
-import kr.co.digitalanchor.studytime.purchase.ClauseViewActivity;
-import kr.co.digitalanchor.studytime.purchase.PurchaseActivity;
 
 
 /**
  * Created by Thomas on 2015-06-10.
  */
 public class BaseActivity extends FragmentActivity {
+
+    protected final int INPUT_ADD_INFO = 20001;
 
     private final long INTERVAL = 1000;
 
@@ -226,74 +222,88 @@ public class BaseActivity extends FragmentActivity {
         switch (code) {
 
             case 1000:
-
-                msg = "서버 오류입니다. (1000)";
-
-                break;
-
             case 1001:
-
-                msg = "서버 오류입니다. (1001)";
-
-                break;
-
             case 1002:
 
-                msg = "서버 오류입니다. (1002)";
+                msg = "서버 오류입니다.";
 
                 break;
 
             case 1003:
 
-                msg = "이메일 전송에 실패하였습니다. (1003)";
+                msg = "이메일 전송에 실패하였습니다.";
 
                 break;
 
             case 1004:
 
-                msg = "이메일 전송에 실패하였습니다. (1004)";
+                msg = "이메일 전송에 실패하였습니다.";
 
                 break;
 
             case 1005:
 
-                msg = "이메일이나 비밀번호를 정확히 입력하십시오. (1005)";
+                msg = "이메일이나 비밀번호를 정확히 입력하십시오.";
 
                 break;
 
             case 1006:
 
-                msg = "이메일을 입력하십시오. (1006)";
+                msg = "이메일을 입력하십시오.";
 
                 break;
 
             case 1007:
 
-                msg = "중복 이메일이니 다른 이메일을 이용하십시오. (1007)";
+                msg = "중복 이메일이니 다른 이메일을 이용하십시오.";
 
                 break;
 
             case 1008:
 
-                msg = "비밀번호가 잘못되었습니다. (1008)";
+                msg = "비밀번호가 잘못되었습니다.";
 
                 break;
 
             case 1009:
 
-                msg = "서버 오류입니다. (1009)";
+                msg = "서버 오류입니다.";
 
                 break;
 
             case 1010:
 
-                msg = "서버 오류입니다. (1010)";
+                msg = "서버 오류입니다.";
 
                 break;
 
             case 1020:
 
-                msg = "등록할 수 있는 자녀의 수를 초과하였습니다. (1020)";
+                msg = "등록할 수 있는 자녀의 수를 초과하였습니다.";
+
+                break;
+
+            case 1024:
+
+                msg = "등록된 이메일이 아닙니다.";
+
+                break;
+
+            case 1028:
+
+                msg = "비밀번호를 입력하세요.";
+
+                break;
+
+            case 1029:
+
+                msg = "사용기간이 만료되었습니다.";
+
+                break;
+
+            case 1030:
+
+                msg = "이미 등록된 기기입니다.";
 
                 break;
 
@@ -306,7 +316,7 @@ public class BaseActivity extends FragmentActivity {
 
         Logger.e(msg);
 
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), msg + " (" + code + ")", Toast.LENGTH_SHORT).show();
     }
 
     protected void handleError(VolleyError error) {
@@ -358,18 +368,6 @@ public class BaseActivity extends FragmentActivity {
 
         sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
 
-    }
-
-    protected void showPurchase() {
-
-        Intent intent = new Intent(getApplicationContext(), PurchaseActivity.class);
-        startActivity(intent);
-    }
-
-    protected void showPurchaseInfo() {
-
-        Intent intent = new Intent(getApplicationContext(), ClauseViewActivity.class);
-        startActivity(intent);
     }
 
     @Deprecated

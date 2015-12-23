@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,9 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.igaworks.IgawCommon;
 import com.orhanobut.logger.Logger;
-
 import java.io.IOException;
-
 import kr.co.cashslide.Cashslide;
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -326,6 +322,7 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
                                             STApplication.stopAllActivity();
 
                                             materialDialog.dismiss();
+
                                         }
                                     }).build().show();
                         }

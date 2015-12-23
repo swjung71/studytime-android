@@ -12,12 +12,9 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v7.app.NotificationCompat;
-
 import com.orhanobut.logger.Logger;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -75,9 +72,7 @@ public class B extends Service {
     }
 
     /**
-     * onDestroy
-     * 1. 단말 감시하는 스레드를 종료
-     * 2. 노피티피케이션을 삭제
+     * onDestroy 1. 단말 감시하는 스레드를 종료 2. 노피티피케이션을 삭제
      */
     @Override
     public void onDestroy() {

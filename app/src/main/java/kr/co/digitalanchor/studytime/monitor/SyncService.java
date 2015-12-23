@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -13,10 +12,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
-
 import java.util.HashMap;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -37,223 +34,246 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
  */
 public class SyncService extends Service {
 
-    private final int REQUEST_SYNC = 50001;
-    private final int REQUEST_SYNC_GCM = 50002;
+  private final int REQUEST_SYNC = 50001;
+  private final int REQUEST_SYNC_GCM = 50002;
 
-    DBHelper dbHelper;
+  DBHelper dbHelper;
 
-    Handler handler;
+  Handler handler;
 
-    @Override
-    public void onCreate() {
+  @Override
+  public void onCreate() {
 
-        super.onCreate();
+    super.onCreate();
 
-        Logger.d("onCreate");
+    Logger.d("onCreate");
 
-        dbHelper = new DBHelper(STApplication.applicationContext);
+    dbHelper = new DBHelper(STApplication.applicationContext);
 
-        handler = new Handler() {
+    handler = new Handler() {
 
-            @Override
-            public void handleMessage(Message msg) {
+      @Override
+      public void handleMessage(Message msg) {
 
-                switch (msg.what) {
+        switch (msg.what) {
 
-                    case REQUEST_SYNC:
+          case REQUEST_SYNC:
 
-                        requestSync();
+            requestSync();
 
-                        break;
+            break;
 
-                    case REQUEST_SYNC_GCM:
+          case REQUEST_SYNC_GCM:
 
-                        getUpdateGCM();
+            getUpdateGCM();
 
-                        break;
-                }
+            break;
+        }
+      }
+    };
+
+  }
+
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+
+    handler.sendEmptyMessage(REQUEST_SYNC);
+
+    return super.onStartCommand(intent, flags, startId);
+  }
+
+  @Override
+  public void onDestroy() {
+
+    startService(new Intent(getApplicationContext(), B.class));
+
+    super.onDestroy();
+
+  }
+
+  @Override
+  public IBinder onBind(Intent intent) {
+    return null;
+  }
+
+  private void requestSync() {
+
+    Logger.d("requestSync");
+
+    LoginModel model = new LoginModel();
+
+    final Account account = dbHelper.getAccountInfo();
+
+    model.setChildId(account.getID());
+    model.setParentId(account.getParentId());
+    model.setDevNum(STApplication.getDeviceNumber());
+
+
+    Request request = HttpHelper.getSyncChildData(model, new Response.Listener<CheckPackageResult>() {
+
+      @Override
+      public void onResponse(CheckPackageResult response) {
+
+        Logger.d(response.toString());
+
+        switch (response.getResultCode()) {
+
+          case HttpHelper.SUCCESS:
+
+            int isOff = response.getIsOff();
+
+            switch (isOff) {
+
+              case 3:
+
+                dbHelper.updateExpired("Y");
+
+                break;
+
+              case 4:
+
+                STApplication.resetApplication();
+
+                break;
+
+              default:
+
+                dbHelper.updateExpired("N");
+                dbHelper.updateOnOff(isOff);
+
+                break;
+
             }
-        };
 
+            requestUpdateApp(account.getParentId(), account.getID());
+
+            sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
+
+            break;
+
+          default:
+
+            break;
+        }
+
+        handler.sendEmptyMessage(REQUEST_SYNC_GCM);
+      }
+
+    }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+        Logger.e(error.toString());
+
+
+      }
+    });
+
+    if (request != null) {
+
+      RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
+
+      queue.add(request);
     }
+  }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+  private void requestUpdateApp(String parentId, String childId) {
 
-        handler.sendEmptyMessage(REQUEST_SYNC);
+    LoginModel model = new LoginModel();
 
-        return super.onStartCommand(intent, flags, startId);
-    }
+    model.setParentId(parentId);
+    model.setChildId(childId);
 
-    @Override
-    public void onDestroy() {
+    SimpleXmlRequest request = HttpHelper.getExceptionApp(model,
+        new Response.Listener<ExceptionAppResult>() {
+          @Override
+          public void onResponse(ExceptionAppResult response) {
 
-        startService(new Intent(getApplicationContext(), B.class));
+            switch (response.getResultCode()) {
 
-        super.onDestroy();
+              case SUCCESS:
 
-    }
+                List<PackageIDs> list = response.getPackages();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+                HashMap<String, Integer> map = new HashMap<String, Integer>();
 
-    private void requestSync() {
+                if (list != null && list.size() > 0) {
 
-        Logger.d("requestSync");
+                  for (PackageIDs key : list) {
 
-        LoginModel model = new LoginModel();
-
-        final Account account = dbHelper.getAccountInfo();
-
-        model.setChildId(account.getID());
-        model.setParentId(account.getParentId());
-
-        Request request = HttpHelper.getSyncChildData(model, new Response.Listener<CheckPackageResult>() {
-
-            @Override
-            public void onResponse(CheckPackageResult response) {
-
-                Logger.d(response.toString());
-
-                switch (response.getResultCode()) {
-
-                    case HttpHelper.SUCCESS:
-
-                        int isOff = response.getIsOff();
-
-                        dbHelper.updateOnOff(isOff);
-
-                        requestUpdateApp(account.getParentId(), account.getID());
-
-                        sendBroadcast(new Intent(StaticValues.ACTION_SERVICE_START));
-
-                        // TODO package sync
-
-                    default:
-
-                        break;
+                    map.put(key.getPackageId(), 1);
+                  }
                 }
 
-                handler.sendEmptyMessage(REQUEST_SYNC_GCM);
+                List<PackageModel> packages = dbHelper.getPackageListExcept();
+
+                for (PackageModel model : packages) {
+
+                  if (map.containsKey(model.getPackageId())) {
+
+                    model.setIsExceptionApp(1);
+
+                  } else {
+
+                    model.setIsExceptionApp(0);
+                  }
+                }
+
+                dbHelper.setExceptPackages(packages);
+
+                break;
+
+              default:
+
+                break;
             }
+          }
 
         }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            Logger.e(error.toString());
 
-                Logger.e(error.toString());
-
-
-            }
+          }
         });
 
-        if (request != null) {
+    if (request != null) {
 
-            RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
+      RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
 
-            queue.add(request);
-        }
+      queue.add(request);
     }
+  }
 
-    private void requestUpdateApp(String parentId, String childId) {
+  private void getUpdateGCM() {
 
-        LoginModel model = new LoginModel();
+    Account account = dbHelper.getAccountInfo();
 
-        model.setParentId(parentId);
-        model.setChildId(childId);
+    GCMUpdate model = new GCMUpdate();
 
-        SimpleXmlRequest request = HttpHelper.getExceptionApp(model,
-                new Response.Listener<ExceptionAppResult>() {
-                    @Override
-                    public void onResponse(ExceptionAppResult response) {
+    model.setGCM(STApplication.getRegistrationId());
+    model.setId(account.getID());
+    model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
+    model.setVersion(STApplication.getAppVersionName());
 
-                        switch (response.getResultCode()) {
+    SimpleXmlRequest request = HttpHelper.getUpdate(model,
+        new Response.Listener<GeneralResult>() {
+          @Override
+          public void onResponse(GeneralResult response) {
 
-                            case SUCCESS:
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
 
-                                List<PackageIDs> list = response.getPackages();
+          }
+        });
 
-                                HashMap<String, Integer> map = new HashMap<String, Integer>();
+    if (request != null) {
 
-                                if (list != null && list.size() > 0) {
+      RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
 
-                                    for (PackageIDs key : list) {
-
-                                        map.put(key.getPackageId(), 1);
-                                    }
-                                }
-
-                                List<PackageModel> packages = dbHelper.getPackageListExcept();
-
-                                for (PackageModel model : packages) {
-
-                                    if (map.containsKey(model.getPackageId())) {
-
-                                        model.setIsExceptionApp(1);
-
-                                    } else {
-
-                                        model.setIsExceptionApp(0);
-                                    }
-                                }
-
-                                dbHelper.setExceptPackages(packages);
-
-                                break;
-
-                            default:
-
-                                break;
-                        }
-                    }
-
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.e(error.toString());
-
-                    }
-                });
-
-        if (request != null) {
-
-            RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
-
-            queue.add(request);
-        }
+      queue.add(request);
     }
-
-    private void getUpdateGCM() {
-
-        Account account = dbHelper.getAccountInfo();
-
-        GCMUpdate model = new GCMUpdate();
-
-        model.setGCM(STApplication.getRegistrationId());
-        model.setId(account.getID());
-        model.setIsChild((account.getIsChild() == 0) ? 1 : 0);
-        model.setVersion(STApplication.getAppVersionName());
-
-        SimpleXmlRequest request = HttpHelper.getUpdate(model,
-                new Response.Listener<GeneralResult>() {
-                    @Override
-                    public void onResponse(GeneralResult response) {
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-
-        if (request != null) {
-
-            RequestQueue queue = Volley.newRequestQueue(STApplication.applicationContext);
-
-            queue.add(request);
-        }
-    }
+  }
 }

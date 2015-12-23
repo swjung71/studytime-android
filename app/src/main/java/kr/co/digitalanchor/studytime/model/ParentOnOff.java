@@ -7,7 +7,7 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-06-17.
  */
-@Root(name = "OnOff")
+@Root(name = "OnOff", strict = false)
 public class ParentOnOff {
 
     @Attribute(name = "xmlns")
@@ -39,6 +39,9 @@ public class ParentOnOff {
 
     @Element(name = "Coin", required = false)
     int coin;
+
+    @Element(name = "DurationTime", required = false)
+    String durationTime;
 
     public ParentOnOff() {
 
@@ -101,5 +104,13 @@ public class ParentOnOff {
 
     public void setCoin(int coin) {
         this.coin = coin;
+    }
+
+    public String getDurationTime() {
+        return durationTime;
+    }
+
+    public void setDurationTime(String durationTime) {
+        this.durationTime = durationTime;
     }
 }

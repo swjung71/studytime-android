@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 29
-        versionName "1.2.5"
+        versionCode 30
+        versionName "1.2.6"
         multiDexEnabled = true
 
     }
@@ -66,8 +66,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/IgawCommon_v4.0.4a.jar')
+    compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
     compile files('libs/apache-mime4j-core-0.7.2.jar')
     compile files('libs/simple-xml-2.7.1.jar')
+    compile files('libs/IgawAdbrix_v4.0.3a.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile('org.apache.httpcomponents:httpmime:4.3.6') {
 
@@ -78,10 +81,8 @@ dependencies {
     compile files('libs/20140728_cashslide-sdk.jar')
     compile 'com.google.android.gms:play-services:7.8.0'
     compile 'it.neokree:MaterialTabs:0.11'
-    compile 'com.android.support:support-v4:23.0.1'
     compile 'com.robbypond:material-dialogs:1.0.0'
     compile 'com.orhanobut:logger:1.10'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.google.code.gson:gson:2.3.1'
     compile project(':circleprogressview')
@@ -90,4 +91,7 @@ dependencies {
     compile files('libs/IgawAdbrix_v4.0.6a.jar')
     compile files('libs/IgawAdpopcorn_v4.0.3a.jar')
     compile files('libs/IgawCommon_v4.0.8a.jar')
+    compile project(':seekbarhint')
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:support-v4:23.0.1'
 }

@@ -104,7 +104,7 @@ public class FacebookProfile implements Parcelable {
 
   }
 
-  public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+  public static final Creator CREATOR = new Creator() {
     @Override
     public FacebookProfile createFromParcel(Parcel in) {
 

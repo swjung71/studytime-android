@@ -143,7 +143,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
       FacebookSdk.sdkInitialize(getApplicationContext());
 
-      FacebookSdk.setIsDebugEnabled(false);
+      FacebookSdk.setIsDebugEnabled(true);
 
       Logger.d("is debug " + FacebookSdk.isDebugEnabled());
 
@@ -161,7 +161,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
       Logger.e(e.getMessage());
     }
 
-    OAuthLoginDefine.DEVELOPER_VERSION = false;
+    OAuthLoginDefine.DEVELOPER_VERSION = true;
 
     mContext = this;
 
@@ -867,12 +867,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 dismissLoading();
 
                 parentLoginResult = res;
-
-//                mHelper.insertAccount(res.getParentID(), 1, res.getName(), res.getCoin(), res.getEmail());
-
-//                mHelper.insertChildren(res.getChildren());
-
-//                sendEmptyMessage(REQUEST_PASSWORD);
 
                 SettingPasswordDialog dialog = new SettingPasswordDialog(LoginActivity.this);
                 dialog.setListener(new SettingPasswordDialog.OnPasswordDialogListener() {

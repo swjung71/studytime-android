@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/circleprogressview/circleprogressview.iml" filepath="$PROJECT_DIR$/circleprogressview/circleprogressview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/seekbarhint/seekbarhint.iml" filepath="$PROJECT_DIR$/seekbarhint/seekbarhint.iml" />
       <module fileurl="file://$PROJECT_DIR$/studytime-client-android.iml" filepath="$PROJECT_DIR$/studytime-client-android.iml" />
     </modules>
   </component>

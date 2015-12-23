@@ -3,7 +3,7 @@ package kr.co.digitalanchor.studytime.monitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
+import com.orhanobut.logger.Logger;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
@@ -13,16 +13,22 @@ import kr.co.digitalanchor.studytime.model.db.Account;
  */
 public class AllIntentReceiver extends BroadcastReceiver {
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
+  @Override
+  public void onReceive(Context context, Intent intent) {
 
-        DBHelper helper = new DBHelper(STApplication.applicationContext);
+    try {
+      DBHelper helper = new DBHelper(STApplication.applicationContext);
 
-        Account account = helper.getAccountInfo();
+      Account account = helper.getAccountInfo();
 
-        if (account.getIsChild() == 0) {
+      if (account.getIsChild() == 0) {
 
-            context.startService(new Intent(STApplication.applicationContext, B.class));
-        }
+        context.startService(new Intent(STApplication.applicationContext, B.class));
+      }
+
+    } catch (Exception e) {
+
+      Logger.e(e.getMessage());
     }
+  }
 }

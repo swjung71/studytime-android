@@ -38,7 +38,6 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
@@ -136,7 +135,7 @@
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.NoTitleBar"/>
         <activity
-                android:name=".control.ControlChildActivity"
+                android:name=".login.SelectChildActivity"
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.NoTitleBar"/>
         <activity
@@ -219,7 +218,7 @@
                 android:windowSoftInputMode="adjustPan"/>
 
         <!-- 애드 팝콘 (광고) Activities -->
-        <activity
+       <!-- <activity
                 android:name="com.igaworks.adpopcorn.activity.ApOfferWallActivity_NT"
                 android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity
@@ -228,7 +227,7 @@
                 android:theme="@android:style/Theme.NoTitleBar"/>
         <activity
                 android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+                android:theme="@android:style/Theme.NoTitleBar"/>-->
 
         <receiver
                 android:name="com.igaworks.IgawReceiver"
@@ -261,6 +260,7 @@
                 <category android:name="kr.co.digitalanchor.studytime"/>
             </intent-filter>
         </receiver>
+
         <receiver
                 android:name=".monitor.BootCompleteReceiver"
                 android:enabled="true"
@@ -335,12 +335,12 @@
                 android:name=".signup.NotificationActivity"
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity
-                android:name=".purchase.PurchaseActivity"
-                android:screenOrientation="portrait"/>
-        <activity
-                android:name=".purchase.ClauseViewActivity"
-                android:screenOrientation="portrait"/>
+        <!--   <activity
+                   android:name=".purchase.PurchaseActivity"
+                   android:screenOrientation="portrait"/>
+           <activity
+                   android:name=".purchase.ClauseViewActivity"
+                   android:screenOrientation="portrait"/>-->
 
         <service
                 android:name=".location.LocationService"

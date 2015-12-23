@@ -2,7 +2,6 @@ package kr.co.digitalanchor.studytime.model;
 
 import android.os.Build;
 import android.text.TextUtils;
-
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -10,168 +9,180 @@ import org.simpleframework.xml.Root;
 /**
  * Created by Thomas on 2015-06-17.
  */
-@Root(name = "ChildRegister")
+@Root(name = "ChildRegister", strict = false)
 public class ChildRegister implements Cloneable {
 
-    @Attribute(name = "xmlns")
-    String tag;
+  @Attribute(name = "xmlns")
+  String tag;
 
-    @Element(name = "ParentID")
-    String parentID;
+  @Element(name = "ParentID")
+  String parentID;
 
-    @Element(name = "Phone_number", required = false)
-    String phoneNumber;
+  @Element(name = "Phone_number", required = false)
+  String phoneNumber;
 
-    @Element(name = "Name", required = false, data = true)
-    String name;
+  @Element(name = "Name", required = false, data = true)
+  String name;
 
-    @Element(name = "National_Code", required = false)
-    String nationalCode;
+  @Element(name = "National_Code", required = false)
+  String nationalCode;
 
-    @Element(name = "Is_android")
-    String isAndroid;
+  @Element(name = "Is_android")
+  String isAndroid;
 
-    @Element(name = "GCM")
-    String gcm;
+  @Element(name = "GCM")
+  String gcm;
 
-    /**
-     * 0:male, 1:female
-     */
-    @Element(name = "Sex", required = false)
-    String sex;
+  @Element(name = "ChildID", required = false)
+  String childId;
 
-    @Element(name = "Birthday", required = false)
-    String birthday;
+  /**
+   * 0:male, 1:female
+   */
+  @Element(name = "Sex", required = false)
+  String sex;
 
-    @Element(name = "App_version")
-    String appVersion;
+  @Element(name = "Birthday", required = false)
+  String birthday;
 
-    @Element(name = "OS_version")
-    String osVersion;
+  @Element(name = "App_version")
+  String appVersion;
 
-    @Element(name = "Dev_model")
-    String devModel;
+  @Element(name = "OS_version")
+  String osVersion;
 
-    @Element(name = "Dev_num")
-    String devNum;
+  @Element(name = "Dev_model")
+  String devModel;
 
-    @Element(name = "MAC")
-    String mac;
+  @Element(name = "Dev_num")
+  String devNum;
 
-    @Element(name = "Lang")
-    String lang;
+  @Element(name = "MAC")
+  String mac;
 
-    public ChildRegister() {
+  @Element(name = "Lang")
+  String lang;
 
-        tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
 
-        osVersion = Build.VERSION.RELEASE;
+  public ChildRegister() {
 
-        devModel = Build.MODEL;
+    tag = "http://studytime.digitalanchor.co.kr/RequestDataModel";
 
-        isAndroid = "1";
+    osVersion = Build.VERSION.RELEASE;
 
-        devNum = "";
+    devModel = Build.MODEL;
+
+    isAndroid = "1";
+
+    devNum = "";
+  }
+
+  public String getParentID() {
+    return parentID;
+  }
+
+  public void setParentID(String parentID) {
+    this.parentID = parentID;
+  }
+
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
+
+  public String getName() {
+    return TextUtils.isEmpty(name) ? " " : name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getNationalCode() {
+    return nationalCode;
+  }
+
+  public void setNationalCode(String nationalCode) {
+    this.nationalCode = nationalCode;
+  }
+
+  public String getGcm() {
+    return gcm;
+  }
+
+  public void setGcm(String gcm) {
+    this.gcm = gcm;
+  }
+
+  public String getSex() {
+    return sex;
+  }
+
+  public void setSex(String sex) {
+    this.sex = sex;
+  }
+
+  public String getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday(String birthday) {
+    this.birthday = birthday;
+  }
+
+  public String getAppVersion() {
+    return appVersion;
+  }
+
+  public void setAppVersion(String appVersion) {
+    this.appVersion = appVersion;
+  }
+
+  public String getDevNum() {
+    return devNum;
+  }
+
+  public void setDevNum(String devNum) {
+    this.devNum = devNum;
+  }
+
+  public String getMac() {
+    return mac;
+  }
+
+  public void setMac(String mac) {
+    this.mac = mac;
+  }
+
+  public String getLang() {
+    return lang;
+  }
+
+  public void setLang(String lang) {
+    this.lang = lang;
+  }
+
+  public String getChildId() {
+    return childId;
+  }
+
+  public void setChildId(String childId) {
+    this.childId = childId;
+  }
+
+  @Override
+  public ChildRegister clone() throws CloneNotSupportedException {
+
+    try {
+
+      return (ChildRegister) super.clone();
+
+    } catch (CloneNotSupportedException e) {
+
+      throw new AssertionError();
     }
-
-    public String getParentID() {
-        return parentID;
-    }
-
-    public void setParentID(String parentID) {
-        this.parentID = parentID;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getName() {
-        return TextUtils.isEmpty(name) ? " " : name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNationalCode() {
-        return nationalCode;
-    }
-
-    public void setNationalCode(String nationalCode) {
-        this.nationalCode = nationalCode;
-    }
-
-    public String getGcm() {
-        return gcm;
-    }
-
-    public void setGcm(String gcm) {
-        this.gcm = gcm;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getAppVersion() {
-        return appVersion;
-    }
-
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
-    }
-
-    public String getDevNum() {
-        return devNum;
-    }
-
-    public void setDevNum(String devNum) {
-        this.devNum = devNum;
-    }
-
-    public String getMac() {
-        return mac;
-    }
-
-    public void setMac(String mac) {
-        this.mac = mac;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
-    }
-
-    @Override
-    public ChildRegister clone() throws CloneNotSupportedException {
-
-        try {
-
-            return (ChildRegister) super.clone();
-
-        } catch (CloneNotSupportedException e) {
-
-            throw new AssertionError();
-        }
-    }
+  }
 }

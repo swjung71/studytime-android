@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:hint="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:background="@drawable/dialog_bg"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dialog_inner_bg"
+            android:orientation="vertical">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/icon_time1"/>
+
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:drawableLeft="@drawable/img_gps3"
+                android:drawablePadding="5dp"
+                android:text="ON 하려면 비밀번호를 입력해야합니다."
+                android:textColor="@color/white"
+                android:textSize="@dimen/child_item_noti_text_size"/>
+
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:drawableLeft="@drawable/img_gps3"
+                android:drawablePadding="5dp"
+                android:text="처음 한번만 등록하시면 됩니다."
+                android:textColor="@color/white"
+                android:textSize="@dimen/child_item_noti_text_size"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
+
+        <kr.co.digitalanchor.studytime.view.FontEditText
+                android:id="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_parent_content_height"
+                android:padding="10dp"
+                android:hint="비밀번호 입력"
+                android:layout_gravity="center_vertical"
+                android:inputType="textPassword"
+                android:textSize="@dimen/intro_title_info_02_text"
+                android:textColor="#a3a3a3"
+                android:textColorHint="#a3a3a3"
+                android:background="@drawable/shape_edittext_01"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="50dp"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/icon_time2"
+                android:text="시간 설정"
+                android:textColor="#995F8D"
+                android:textStyle="bold"
+                android:textSize="@dimen/child_item_name_text_size"/>
+
+        <com.thomas.seekbarhint.SeekBarHint
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:thumb="@drawable/btn_time_control"
+                android:progressDrawable="@drawable/progress_horizontal_custom"
+                hint:popupWidth="100dp"
+                hint:yOffset="20dp"/>
+
+        <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp">
+
+            <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_weight="1"
+                    android:text="취소"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/intro_title_info_02_text"
+                    android:background="@drawable/box_type_07_bg"/>
+
+            <kr.co.digitalanchor.studytime.view.FontButton
+                    android:id="@+id/confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/login_parent_content_height"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:text="확인"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/intro_title_info_02_text"
+                    android:background="@drawable/box_type_07_bg"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

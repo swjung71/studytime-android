@@ -1,54 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/child_item_layout_height">
-
-    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/child_item_layout_height"
-        android:layout_marginLeft="@dimen/child_item_layout_margin"
-        android:layout_marginRight="@dimen/child_item_layout_margin"
-        android:background="@drawable/box_type_02_bg"
-        android:padding="@dimen/child_item_layout_padding">
+        android:orientation="vertical">
+
+    <RelativeLayout
+            android:id="@+id/enableChild"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/child_item_layout_height"
+            android:layout_marginLeft="@dimen/child_item_layout_margin"
+            android:layout_marginRight="@dimen/child_item_layout_margin"
+            android:background="@drawable/box_type_02_bg"
+            android:padding="@dimen/child_item_layout_padding"
+            android:visibility="visible">
 
         <ImageView
-            android:id="@+id/imgProfile"
-            android:layout_width="@dimen/child_item_profile_img_width"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:scaleType="fitStart"
-            android:src="@drawable/profile_img" />
+                android:id="@+id/imgProfile"
+                android:layout_width="@dimen/child_item_profile_img_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:scaleType="fitStart"
+                android:src="@drawable/profile_img"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/child_item_name_text_margin"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_marginRight="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfile"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="false"
+                android:singleLine="true"
+                android:textColor="#932c96"
+                android:textStyle="bold"
+                android:textSize="@dimen/child_item_name_text_size"
+                android:text="알리바바"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfile"
+                android:layout_below="@id/labelName"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:textColor="#4a4a4a"
+                android:text="기종:"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/textDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/child_item_name_text_margin"
+                android:layout_alignBaseline="@id/labelDevice"
+                android:layout_toRightOf="@id/labelDevice"
+                android:textColor="#4a4a4a"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:text="SCH-000000"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelExpired"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfile"
+                android:layout_below="@id/labelDevice"
+                android:textColor="#4a4a4a"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:text="만료일:"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/textExpired"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/child_item_name_text_margin"
+                android:layout_alignBaseline="@id/labelExpired"
+                android:layout_toRightOf="@id/labelExpired"
+                android:textColor="#4a4a4a"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:text="2015년 11월 10일(만료4일전)"/>
 
         <TextView
-            android:id="@+id/labelNotiCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/child_item_noti_text_margin_right"
-            android:background="@drawable/icon_noti"
-            android:gravity="center"
-            android:text="10+"
-            android:textColor="#ff7f00"
-            android:textSize="@dimen/child_item_noti_text_size"
-            android:visibility="gone"/>
+                android:id="@+id/labelNotiCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/child_item_noti_text_margin_right"
+                android:background="@drawable/icon_noti"
+                android:gravity="center"
+                android:text="10+"
+                android:textColor="#ff7f00"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:visibility="visible"/>
 
-        <TextView
-            android:id="@+id/labelName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/child_item_name_text_margin"
-            android:layout_marginRight="@dimen/child_item_name_text_margin"
-            android:layout_toLeftOf="@id/labelNotiCount"
-            android:layout_toRightOf="@id/imgProfile"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusable="false"
-            android:singleLine="true"
-            android:textColor="#4a4a4a"
-            android:textSize="@dimen/child_item_name_text_size" />
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/disableChild"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/child_item_layout_height"
+            android:layout_marginLeft="@dimen/child_item_layout_margin"
+            android:layout_marginRight="@dimen/child_item_layout_margin"
+            android:background="@drawable/box_type_15_bg"
+            android:padding="@dimen/child_item_layout_padding">
+
+        <ImageView
+                android:id="@+id/imgProfileDisable"
+                android:layout_width="@dimen/child_item_profile_img_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:scaleType="fitStart"
+                android:src="@drawable/profile_img_dark"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelName2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/child_item_name_text_margin"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_marginRight="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfileDisable"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="false"
+                android:singleLine="true"
+                android:textColor="#4a4a4a"
+                android:textStyle="bold"
+                android:textSize="@dimen/child_item_name_text_size"
+                android:text="알리바바"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelDevice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfileDisable"
+                android:layout_below="@id/labelName2"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:textColor="#4a4a4a"
+                android:text="기종:"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/textDevice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/child_item_name_text_margin"
+                android:layout_alignBaseline="@id/labelDevice2"
+                android:layout_toRightOf="@id/labelDevice2"
+                android:textColor="#4a4a4a"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:text="SCH-000000"/>
+
+        <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelExpired2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="@dimen/child_item_name_text_margin"
+                android:layout_toRightOf="@id/imgProfileDisable"
+                android:layout_below="@id/labelDevice2"
+                android:textColor="#4a4a4a"
+                android:textSize="@dimen/child_item_noti_text_size"
+                android:text="기간이 만료되었습니다."/>
+
 
     </RelativeLayout>
 </LinearLayout>

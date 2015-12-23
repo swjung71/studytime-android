@@ -65,4 +65,5 @@ public class StaticValues {
   public static String OAUTH_NAVER_CLIENT_SECRET = "QCwWAttSYP";
   public static String OAUTH_NAVER_CLIENT_NAME = "네이버 아이디로 로그인";
 
+  public static int MAX_CHILDREN_COUNT = 5;
 }

@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,10 +24,8 @@ import com.igaworks.adpopcorn.IgawAdpopcornExtension;
 import com.igaworks.interfaces.IgawRewardItem;
 import com.igaworks.interfaces.IgawRewardItemEventListener;
 import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -63,10 +60,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     private final int REQUEST_UPDATE_COIN = 50001;
 
     private final int REQUEST_UPDATE_DATA = 50002;
-
-    TextView mLabelPoint;
-
-    ImageButton mButtonPoint;
 
     ImageButton mButtonMenu;
 
@@ -107,11 +100,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     }
 
     public void initView() {
-
-        mLabelPoint = (TextView) findViewById(R.id.labelPoint);
-
-        mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
-        mButtonPoint.setOnClickListener(this);
 
         mButtonMenu = (ImageButton) findViewById(R.id.buttonMenu);
         mButtonMenu.setOnClickListener(this);
@@ -183,7 +171,28 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         Child child = mChildren.get(position - 1);
 
-        showChildDetail(child);
+        if (child.getIsExpired().equals("Y")) {
+
+//            Toast.makeText(getApplicationContext(), "사용 기간이 만료되었습니다.", Toast.LENGTH_SHORT).show();
+
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(ListChildActivity.this);
+
+            builder.content("사용 기간이 만료되었습니다.\n\n웹사이트에서 결제해 주세요.")
+                    .positiveText("확인")
+                    .cancelable(true)
+                    .callback(new MaterialDialog.SimpleCallback() {
+
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            dialog.dismiss();
+                        }
+
+                    }).build().show();
+
+        } else {
+
+            showChildDetail(child);
+        }
 
     }
 
@@ -191,21 +200,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
-
-            case R.id.buttonPoint:
-
-//                if (!isDuplicateRuns()) {
-//
-//                    showOfferWall();
-//                }
-
-                if (!isDuplicateRuns()) {
-
-                    showPurchase();
-                }
-
-
-                break;
 
             case R.id.buttonMenu:
 
@@ -233,10 +227,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
     protected void onHandleMessage(Message msg) {
 
         switch (msg.what) {
-
-            case REQUEST_UPDATE_COIN:
-
-                break;
 
             case REQUEST_UPDATE_DATA:
 
@@ -308,11 +298,6 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             mMenu.setName(account.getName());
 
             mMenu.addNewNotice((account.getNotice() > 0) ? true : false);
-        }
-
-        if (mLabelPoint != null) {
-
-            mLabelPoint.setText(String.valueOf(account.getCoin()));
         }
     }
 
