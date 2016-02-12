@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class A extends AccessibilityService {
 
     WindowManager.LayoutParams mLayoutParams;
 
-
+    public static boolean isDummy = false;
     @Override
     protected void onServiceConnected() {
 
@@ -79,6 +80,7 @@ public class A extends AccessibilityService {
 
         setURL();
 
+        //toast에 layout 적용 LG폰의 guest모드 때문에 적용
         toast = Toast.makeText(getApplicationContext(), "차단", Toast.LENGTH_SHORT);
 
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -106,7 +108,7 @@ public class A extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-        Logger.d("package name " + event.getPackageName().toString()
+        Logger.d("swj package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
                 + "\nevent type " + event.getEventType());
 
@@ -114,29 +116,16 @@ public class A extends AccessibilityService {
 
         if (account.getIsChild() != 0) {
 
+            Logger.d("swj is not child");
             return;
         }
+
 
         String packageName = event.getPackageName().toString();
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        Logger.d("swj pk [" + packageName + "]  version = " + Build.VERSION.SDK_INT);
 
-            if (mHelper.isAllow() == 1 && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
-                    && !packageName.equals("com.android.settings.DeviceAdminAdd")
-                    && !isKeyboard(packageName)
-                    && !getApplicationContext().getPackageName().equals(packageName)) {
-
-                showBlockView();
-
-                return;
-
-            } else {
-
-                hideBlockView();
-
-            }
-        }
 
         if (chromeD.equalsIgnoreCase(packageName)) {
 
@@ -196,25 +185,37 @@ public class A extends AccessibilityService {
         }
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//
+///*
+//            Logger.d("is over Lolipop packageName [" + packageName + "]");
+//
+//            if (mHelper.getOnOff() == 1
+//                    && !mHelper.isExcepted(packageName)
+//                    && !packageName.equals("com.android.systemui")
+//                    && !isKeyboard(packageName)
+//                    && !packageName.equals("com.lge.sizechangable.weather")
+//                    && !getApplicationContext().getPackageName().equals(packageName)) {
+//
+//                if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+//
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//
+//                        performGlobalAction(GLOBAL_ACTION_HOME);
+//
+//                        Logger.d("swj accessiblity block " + packageName);
+//                        showBlockToast();
+//
+//                        return;
+//
+//                    }
+//                }
+//
+//            }
+//*/
+//        } else {
 
-            if (mHelper.getOnOff() == 1
-                    && !mHelper.isExcepted(packageName)
-                    && !packageName.equals("com.android.systemui")
-                    && !isKeyboard(packageName)) {
-
-                if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
-                        performGlobalAction(GLOBAL_ACTION_HOME);
-
-                        showBlockToast();
-
-                    }
-                }
-            }
-        } else {
+            //Logger.d("is under Lolipop packageName [" + packageName + "]");
 
             if (mHelper.getOnOff() == 1
                     && facebookD.equals(packageName)
@@ -226,10 +227,84 @@ public class A extends AccessibilityService {
 
                         performGlobalAction(GLOBAL_ACTION_HOME);
 
+                        Logger.d("swj facebookD block " + packageName );
+
                         showBlockToast();
+
+                        return;
 
                     }
                 }
+            }
+        //}
+
+        //SWJ 2016-01-08
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            // TODO: 16. 2. 12. text를 읽어서 더 정밀하게 디바이스 관리자 처리하기
+            //swj 1이면 삭제 불가, off상태,
+            //SHOW_ADMIN이면 비밀번호를 넣고 삭제 가능한 상태가 됨
+            //isAllow == 0이면 삭제가능한 상태
+
+            /*Logger.d("in A : " + packageName);
+            Logger.d("in A : isAllow " + mHelper.isAllow());
+            Logger.d("in A : STApplication.getBoolean(StaticValues.SHOW_ADMIN, false) " +
+                    STApplication.getBoolean(StaticValues.SHOW_ADMIN, false));
+
+            Logger.d("in A : isKeyboard " + isKeyboard(packageName));
+            Logger.d("in A : className " + event.getClassName());
+            
+            List<CharSequence> list =  event.getText();
+            for (CharSequence a: list) {
+                Logger.d("in A : text " + a.toString());
+                if(a.toString().contains("Studytime")){
+                    Logger.d("in A : contain Studytime");
+                }
+            }*/
+
+            Logger.d("SWJ in A : packagename " + packageName);
+            boolean isDeviceAdmin = false;
+            List<CharSequence> list =  event.getText();
+            for (CharSequence a: list) {
+                String temp = a.toString();
+                if(temp.contains("디바이스 관리자")
+                        || temp.contains("기기 관리자")
+                        || temp.contains("휴대폰 관리자")
+                        || temp.contains("장치 관리자")
+                        || temp.contains("휴대폰 관리")){
+                    Logger.d("in A : contain Studytime");
+                    isDeviceAdmin = true;
+                }
+            }
+            
+            if (mHelper.isAllow() == 1
+                    //true가 disable된 상태
+                    && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
+                    && !packageName.equals("com.android.settings.DeviceAdminAdd")
+                    && !isDeviceAdmin
+                    //&& !packageName.equals("com.android.settings")
+                    && !isKeyboard(packageName)
+                    //swj 확인 필요
+                    //&& !packageName.equals("com.android.systemui")
+                    && !getApplicationContext().getPackageName().equals(packageName)) {
+
+                showBlockView();
+
+                Logger.d("swj password blcok in A");
+
+                return;
+
+            } else {
+
+                hideBlockView();
+
+                //Logger.d("isAllow : " + mHelper.isAllow());
+                //Logger.d("STApplication.getBoolean(StaticValues.SHOW_ADMIN, false:" + STApplication.getBoolean(StaticValues.SHOW_ADMIN, false));
+                //Logger.d("packageName.equals(com.android.settings.DeviceAdminAdd): " + packageName.equals("com.android.settings.DeviceAdminAdd"));
+                //Logger.d("packageName : " + packageName);
+                Logger.d("swj password blcok hide in A");
+
+                return;
             }
         }
     }
@@ -356,6 +431,7 @@ public class A extends AccessibilityService {
 
     }
 
+    //최상위 view에 넣는 것, 디바이스 관리자 화면에서 차단 화면 뛰워 주기
     private void showBlockView() {
 
         synchronized (object) {
