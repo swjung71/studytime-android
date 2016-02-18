@@ -87,7 +87,7 @@ public class MaterialProgressBar extends ImageView {
                 R.styleable.MaterialProgressBar_background_color, DEFAULT_CIRCLE_BG_LIGHT);
 
         mProgressColor = a.getColor(
-                R.styleable.MaterialProgressBar_progress_color, DEFAULT_CIRCLE_BG_LIGHT);//ToDO 默认颜色
+                R.styleable.MaterialProgressBar_progress_color, DEFAULT_CIRCLE_BG_LIGHT);
 
         mInnerRadius = a.getDimensionPixelOffset(
                 R.styleable.MaterialProgressBar_inner_radius, -1);
