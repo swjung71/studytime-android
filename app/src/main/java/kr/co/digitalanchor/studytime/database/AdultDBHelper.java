@@ -125,9 +125,9 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
     } catch (SQLException e) {
 
-      Logger.e(e.toString());
+      //Logger.e(e.toString());
 
-      return result;
+      //return result;
 
     } finally {
 
@@ -137,9 +137,10 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
         cursor = null;
       }
+      return result;
     }
 
-    return result;
+
   }
 
   public void setTableAdultUrl(BufferedReader br) {
@@ -254,8 +255,6 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
       Logger.e(e.toString());
 
-      return result;
-
     } finally {
 
       if (cursor != null) {
@@ -264,8 +263,9 @@ public class AdultDBHelper extends SQLiteOpenHelper {
 
         cursor = null;
       }
-    }
 
-    return result;
+      Logger.i("Adult Count : " + result);
+      return result;
+    }
   }
 }

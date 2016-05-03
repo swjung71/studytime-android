@@ -10,6 +10,7 @@ import java.net.URLConnection;
 
 /**
  * Created by user on 2015-08-12.
+ * 현재 사용하지 않은 클래스
  */
 public class DownloadFileTask extends AsyncTask<String, Integer, String> {
 

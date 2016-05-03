@@ -7,6 +7,8 @@ import kr.co.digitalanchor.studytime.R;
 
 /**
  * Created by Thomas on 2015-06-24.
+ * LG폰의 guest모드에서 차단 화면이 나오지 않아서 Toast로 변경하였음
+ * 현재는 사용하지 않고 있음
  */
 public class BlockActivity extends BaseActivity {
 

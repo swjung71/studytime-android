@@ -41,6 +41,10 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
@@ -149,9 +153,9 @@
 
         <!--
             LoginActivity
-
             부모용/자식용 로그인 (공통?)
         -->
+
         <activity
                 android:name=".login.LoginActivity"
                 android:excludeFromRecents="true"
@@ -170,7 +174,6 @@
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.NoTitleBar"
                 android:windowSoftInputMode="adjustPan"/>
-
         <!-- 회원 가입 Activity -->
 
         <activity

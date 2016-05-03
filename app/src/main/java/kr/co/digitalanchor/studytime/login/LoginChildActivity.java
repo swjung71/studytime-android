@@ -168,7 +168,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
       case R.id.buttonLogin:
 
-//                sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
+        //sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
         if (isValidate()) {
 
@@ -352,7 +352,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
             AdultDBHelper helper = new AdultDBHelper(getApplicationContext());
 
-            if (helper.getCountRow() < 1) {
+            if (helper.getCountRow() < 2) {
 
               sendEmptyMessage(REQUEST_ADULT_FILE_LIST);
 
@@ -446,7 +446,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
 
                 data.putString("files", response.getFileName().get(files.size() - 1).getFileName());
 
-                Logger.d(data.toString());
+                Logger.d("requestAdultFile " + data.toString());
 
                 sendMessage(REQUEST_ADULT_FILE, data);
 
@@ -475,7 +475,7 @@ public class LoginChildActivity extends BaseActivity implements View.OnClickList
     protected void onPreExecute() {
       super.onPreExecute();
 
-      Logger.d("onPreExecute");
+      Logger.d("Start Download onPreExecute");
 
       mProgressDialog.show();
     }

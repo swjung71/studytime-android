@@ -49,19 +49,6 @@ public class AppManageService extends Service {
     private boolean isRun = false;
 
     @Override
-    public void onCreate() {
-
-        super.onCreate();
-
-        dbHelper = new DBHelper(getApplicationContext());
-
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
-
-        packageManager = getPackageManager();
-
-    }
-
-    @Override
     public void onDestroy() {
 
         super.onDestroy();
@@ -174,6 +161,19 @@ public class AppManageService extends Service {
         return null;
     }
 
+    @Override
+    public void onCreate() {
+
+        super.onCreate();
+
+        dbHelper = new DBHelper(getApplicationContext());
+
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        packageManager = getPackageManager();
+
+    }
+
     /**
      * 업데이트 내용
      *
@@ -219,7 +219,8 @@ public class AppManageService extends Service {
                     || packageInfo.packageName.contains(".mms")
                     || packageInfo.packageName.contains(".contacts")
                     || packageInfo.packageName.contains("com.android.phone")
-                    || packageInfo.packageName.contains("com.android.settings")
+                    //SWJ 2016-01-08
+                    //|| packageInfo.packageName.contains("com.android.settings")
                     || packageInfo.packageName.contains("com.android.dialer")) {
 
                 continue;
@@ -254,7 +255,12 @@ public class AppManageService extends Service {
                     packageModel.setPackageVersion(packageInfo.versionName);
                 }
 
-                packageModel.setIsExceptionApp(0);
+                //SWJ 2016-01-08
+                if(packageInfo.packageName.contains("com.android.settings")){
+                    packageModel.setIsExceptionApp(1);
+                }else {
+                    packageModel.setIsExceptionApp(0);
+                }
                 packageModel.setIconHash(MD5.getHash(packageInfo.packageName + packageInfo.versionName));
                 packageModel.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.lastUpdateTime));
 

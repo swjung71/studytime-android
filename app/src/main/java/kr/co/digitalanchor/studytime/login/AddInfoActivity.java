@@ -17,12 +17,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
@@ -585,7 +588,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
                     || packageInfo.packageName.contains(".mms")
                     || packageInfo.packageName.contains(".contacts")
                     || packageInfo.packageName.contains("com.android.phone")
-                    || packageInfo.packageName.contains("com.android.settings")
+                    //SWJ 2016-01-08
+                    //|| packageInfo.packageName.contains("com.android.settings")
                     || packageInfo.packageName.contains("com.android.dialer")) {
 
                 continue;
@@ -597,7 +601,12 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             model.setHash(MD5.getHash(packageInfo.packageName));
             model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
             model.setPackageVersion(packageInfo.versionName);
-            model.setIsExceptionApp(0);
+            //SWJ 2016-01-08
+            if(packageInfo.packageName.contains("com.android.settings")){
+                model.setIsDefaultApp(1);
+            }else {
+                model.setIsExceptionApp(0);
+            }
             model.setHasIcon(1);
 
             model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));

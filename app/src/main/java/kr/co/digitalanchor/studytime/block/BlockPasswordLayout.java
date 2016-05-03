@@ -13,6 +13,7 @@ import kr.co.digitalanchor.studytime.devicepolicy.DummyActivity;
 
 /**
  * Created by Thomas on 2015-07-13.
+ * 디바이스 관리자 화면에 들어갈 때 뛰우는 패스워드 입력 화면
  */
 public class BlockPasswordLayout extends FrameLayout implements View.OnClickListener {
 
@@ -45,12 +46,15 @@ public class BlockPasswordLayout extends FrameLayout implements View.OnClickList
 
             case R.id.buttonAdmin:
 
+
+                //Logger.d("swj buttonAdmin ");
                 showDeviceAdminSettings();
 
                 break;
 
             case R.id.buttonInputPassword:
 
+                //Logger.d("swj buttonInputPassword");
                 showPasswordLayout();
 
                 break;
@@ -64,8 +68,6 @@ public class BlockPasswordLayout extends FrameLayout implements View.OnClickList
     }
 
     private void showDeviceAdminSettings() {
-
-        // TODO hide top view
 
         Intent intent = new Intent(context, DummyActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

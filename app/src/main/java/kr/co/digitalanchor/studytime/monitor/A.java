@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +16,13 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
 import com.orhanobut.logger.Logger;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
@@ -108,9 +110,9 @@ public class A extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
-        Logger.d("swj package name " + event.getPackageName().toString()
+        /*Logger.d("swj package name " + event.getPackageName().toString()
                 + "\nclass name " + event.getClassName().toString()
-                + "\nevent type " + event.getEventType());
+                + "\nevent type " + event.getEventType());*/
 
         Account account = mHelper.getAccountInfo();
 
@@ -124,7 +126,7 @@ public class A extends AccessibilityService {
         String packageName = event.getPackageName().toString();
 
 
-        Logger.d("swj pk [" + packageName + "]  version = " + Build.VERSION.SDK_INT);
+        //Logger.d("swj pk [" + packageName + "]  version = " + Build.VERSION.SDK_INT);
 
 
         if (chromeD.equalsIgnoreCase(packageName)) {
@@ -217,7 +219,7 @@ public class A extends AccessibilityService {
 
             //Logger.d("is under Lolipop packageName [" + packageName + "]");
 
-            if (mHelper.getOnOff() == 1
+            if (mHelper.ONOFF == 1
                     && facebookD.equals(packageName)
                     && !mHelper.isExcepted(packageName)) {
 
@@ -262,7 +264,7 @@ public class A extends AccessibilityService {
                 }
             }*/
 
-            Logger.d("SWJ in A : packagename " + packageName);
+            //Logger.d("SWJ in A : packagename " + packageName);
             boolean isDeviceAdmin = false;
             List<CharSequence> list =  event.getText();
             for (CharSequence a: list) {
@@ -276,8 +278,14 @@ public class A extends AccessibilityService {
                     isDeviceAdmin = true;
                 }
             }
-            
-            if (mHelper.isAllow() == 1
+
+            /*Logger.d("SWJ isAllow : " + mHelper.isAllow());
+            Logger.d("SWJ packageName : " + packageName);
+            Logger.d("SWJ STApplication : " + STApplication.getBoolean(StaticValues.SHOW_ADMIN, false));
+            Logger.d("SWJ isDeviceAdmin : " + isDeviceAdmin);
+            Logger.d("SWJ isKeyboard : " + isKeyboard(packageName));*/
+
+            if (mHelper.ISALLOW == 1
                     //true가 disable된 상태
                     && STApplication.getBoolean(StaticValues.SHOW_ADMIN, false)
                     && !packageName.equals("com.android.settings.DeviceAdminAdd")
@@ -302,7 +310,7 @@ public class A extends AccessibilityService {
                 //Logger.d("STApplication.getBoolean(StaticValues.SHOW_ADMIN, false:" + STApplication.getBoolean(StaticValues.SHOW_ADMIN, false));
                 //Logger.d("packageName.equals(com.android.settings.DeviceAdminAdd): " + packageName.equals("com.android.settings.DeviceAdminAdd"));
                 //Logger.d("packageName : " + packageName);
-                Logger.d("swj password blcok hide in A");
+                //Logger.d("swj password blcok hide in A");
 
                 return;
             }

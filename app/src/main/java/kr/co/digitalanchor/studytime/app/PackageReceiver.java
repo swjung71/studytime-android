@@ -24,7 +24,7 @@ public class PackageReceiver extends BroadcastReceiver {
 
         Account account = helper.getAccountInfo();
 
-        Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
+        //Logger.d("isChild " + account.getIsChild()  + "  OnOff " + helper.getOnOff());
 
         if (TextUtils.isEmpty(account.getID())) {
 

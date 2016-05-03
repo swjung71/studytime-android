@@ -33,6 +33,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-06-11.
+ * 현재 사용하지 않음
  */
 public class BlockPasswordActivity extends BaseActivity implements View.OnClickListener {
 

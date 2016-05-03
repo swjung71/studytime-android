@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -12,8 +13,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
+
 import java.util.HashMap;
 import java.util.List;
+
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.database.DBHelper;
@@ -31,6 +34,7 @@ import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
 
 /**
  * Created by Thomas on 2015-07-28.
+ * TimerTask는 Async한 통신 응답을 기다릴 수 없어서 서비스가 통신을 대신함
  */
 public class SyncService extends Service {
 
@@ -127,9 +131,13 @@ public class SyncService extends Service {
               case 3:
 
                 dbHelper.updateExpired("Y");
-
+                //0이면 on
+                dbHelper.updateOnOff2(0);
+                //0이면 삭제 가능
+                //dbHelper.updateAllow(0);
                 break;
 
+              //Device 번호가 달라서 새롭게 업데이트 하는 것
               case 4:
 
                 STApplication.resetApplication();
@@ -139,7 +147,10 @@ public class SyncService extends Service {
               default:
 
                 dbHelper.updateExpired("N");
-                dbHelper.updateOnOff(isOff);
+
+                //Logger.d("SWJ SyncService : updateOnOff2");
+                dbHelper.updateOnOff2(isOff);
+                //dbHelper.updateAllow(1);
 
                 break;
 

@@ -16,6 +16,7 @@ import android.support.multidex.MultiDexApplication;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.Toast;
+
 import com.captechconsulting.captechbuzz.model.images.ImageCacheManager;
 import com.captechconsulting.captechbuzz.model.images.RequestManager;
 import com.facebook.login.LoginManager;
@@ -24,6 +25,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import kr.co.digitalanchor.studytime.database.DBHelper;
 import kr.co.digitalanchor.studytime.intro.IntroActivity;
 
@@ -72,6 +75,8 @@ public class STApplication extends MultiDexApplication {
     private static int DISK_IMAGECACHE_QUALITY = 100;  //PNG is lossless so quality is ignored but must be provided
 
     static Pattern URL_PATTERN;
+
+    public static boolean isFirstTimeAccessbilityTurnOn = false;
 
     @Override
     public void onCreate() {
@@ -660,6 +665,7 @@ public class STApplication extends MultiDexApplication {
         return URL_PATTERN;
     }
 
+    //return studytime이 세팅되어 있지 않으면 false를 return
     public static boolean isAccessibilityEnabled() {
 
         int accessibilityEnabled = 0;
@@ -670,23 +676,23 @@ public class STApplication extends MultiDexApplication {
             accessibilityEnabled = Settings.Secure.getInt(applicationContext.getContentResolver(),
                     android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
 
-//            Logger.d("Accessibility: " + accessibilityEnabled);
+            //Logger.d("Accessibility: " + accessibilityEnabled);
 
         } catch (Settings.SettingNotFoundException e) {
-//            Logger.d("Error finding setting, default accessibility to not found: " + e.getMessage());
+            Logger.d("Error finding setting, default accessibility to not found: " + e.getMessage());
         }
 
         TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
 
         if (accessibilityEnabled == 1) {
 
-//            Logger.d("***Accessibility IS ENABLED***: ");
+            //Logger.d("***Accessibility IS ENABLED***: ");
 
 
             String settingValue = Settings.Secure.getString(applicationContext.getContentResolver(),
                     Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
 
-//            Logger.d("Setting: " + settingValue);
+            //Logger.d("Setting: " + settingValue);
 
             if (settingValue != null) {
 
@@ -697,11 +703,13 @@ public class STApplication extends MultiDexApplication {
 
                     String accessabilityService = splitter.next();
 
-//                    Logger.d("Setting: " + accessabilityService);
+                    //Logger.d("Setting: " + accessabilityService);
 
                     if (accessabilityService.equalsIgnoreCase("kr.co.digitalanchor.studytime/kr.co.digitalanchor.studytime.monitor.A")) {
 
-//                        Logger.d("We've found the correct setting - accessibility is switched on!");
+                        //Logger.d("We've found the correct setting - accessibility is switched on!");
+
+                        isFirstTimeAccessbilityTurnOn = true;
 
                         return true;
                     }
@@ -712,7 +720,7 @@ public class STApplication extends MultiDexApplication {
 
         } else {
 
-//            Logger.d("***ACCESSIBILIY IS DISABLED***");
+            Logger.d("***ACCESSIBILIY IS DISABLED***");
         }
 
         return accessibilityFound;

@@ -7,11 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.orhanobut.logger.Logger;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import kr.co.digitalanchor.studytime.model.AddPackageElement;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.Files;
@@ -158,6 +161,9 @@ public class DBHelper extends SQLiteOpenHelper {
             + IS_EXPIRED + " TEXT DEFAULT Y, "
             + NEW_NOTICE + " INTEGER DEFAULT 0 )";
 
+
+    public static int ISALLOW = -1;
+    public static int ONOFF = 0;
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -511,6 +517,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = null;
 
+        //Logger.i("isExcepted : " + packageName);
         try {
 
             cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, result_columns, PACKAGE_NAME + "=?",
@@ -538,7 +545,7 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor = null;
 
         }
-
+        //Logger.d("is Excepted result : " + result);
         return result;
     }
 
@@ -797,9 +804,25 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void setExceptPackages(List<PackageModel> packages) {
 
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
         for (PackageModel model : packages) {
 
-            setExceptPackage(model);
+            values.put(EXCEPTED, model.getIsExceptionApp());
+
+            db.update(TABLE_APPLICATION_FOR_CHILD, values, PACKAGE_NAME + "=?",
+                    new String[]{model.getPackageName()});
+
+            //setExceptPackage(model);
+        }
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
         }
     }
 
@@ -1622,8 +1645,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_MESSAGE, null, values);
     }
 
-    //TODO read chat message
-
     /**
      * 메시지 가져온다, 최대 100개
      *
@@ -1639,7 +1660,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(true, TABLE_MESSAGE, columns, ROOM_ID + "=?", new String[]{roomID},
-                null, null, TIMESTAMP + " ASC", "100");
+                null, null, TIMESTAMP + " ASC", "50");
 
         if (cursor.moveToFirst()) {
 
@@ -1827,6 +1848,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db.update(TABLE_ACCOUNT_INFO, values, ID + "=?", new String[]{account.getID()});
 
+
         } catch (Exception e) {
             Logger.e(e.getMessage());
 
@@ -1850,8 +1872,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
+        // isOff = 1이면 off
         values.put(IS_OFF, isOff);
+        //isAllow = 0이면 삭제 가능
         values.put(IS_ALLOW, "1");
+
+        db.replace(TABLE_ON_OFF, null, values);
+
+        if (db != null) {
+
+            db.close();
+
+            db = null;
+        }
+    }
+
+    public void updateOnOff2(int isOff) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ONOFF_KEY, ONOFF_PK);
+        // isOff = 1이면 off
+        values.put(IS_OFF, isOff);
+        //isAllow = 0이면 삭제 가능
+        //values.put(IS_ALLOW, "1");
+        values.put(IS_ALLOW, ISALLOW);
 
         db.replace(TABLE_ON_OFF, null, values);
 
@@ -1879,11 +1925,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
 
+        //int result = 0;
+        int isOff = 0;
         try {
 
             db = this.getReadableDatabase();
 
-            int isOff = 0;
+
 
             String[] columns = new String[]{IS_OFF};
 
@@ -1896,11 +1944,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             }
 
-            return isOff;
-
         } catch (Exception e) {
 
-            return 0;
+            //return 0;
 
         } finally {
 
@@ -1911,18 +1957,24 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cursor = null;
 
+            ONOFF = isOff;
+            return isOff;
+
         }
     }
 
+    //0이면 삭제가능 1이면 삭제불가
+    // SWJ SyncService에서 expire되면 0을 보냄
     public void updateAllow(int w) {
-
-        Logger.d("test");
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ONOFF_KEY, ONOFF_PK);
-        values.put(IS_OFF, getOnOff());
+        //0이면 on, 1이면 off
+        values.put(IS_OFF, ONOFF);
+        //0이면 삭제 가능
+        Logger.d("SWJ updateAllow" + w);
         values.put(IS_ALLOW, w);
 
         db.replace(TABLE_ON_OFF, null, values);
@@ -1946,6 +1998,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
 
+        int result = 1;
+
         try {
 
             db = this.getReadableDatabase();
@@ -1956,14 +2010,15 @@ public class DBHelper extends SQLiteOpenHelper {
                     new String[]{ONOFF_PK}, null, null, null, null);
 
             if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
+                //return cursor.getInt(0);
+                result = cursor.getInt(0);
             }
 
-            return -1;
+            //return -1;
 
         } catch (Exception e) {
 
-            return -1;
+            //return -1;
 
         } finally {
 
@@ -1973,6 +2028,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             cursor = null;
+
+            ISALLOW = result;
+
+            return result;
 
         }
     }

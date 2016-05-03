@@ -15,10 +15,10 @@ import android.widget.TextView;
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
-import kr.co.digitalanchor.utils.AndroidUtils;
 
 /**
  * Created by Thomas on 2015-10-01.
+ * Accessbility 설정 요청 화면
  */
 public class BlockSettingLayout extends FrameLayout implements View.OnClickListener {
 

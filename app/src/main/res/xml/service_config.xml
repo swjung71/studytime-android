@@ -5,6 +5,7 @@
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
     android:description="@string/txt_accessibility_summary"
-    android:notificationTimeout="300"
+    android:notificationTimeout="100"
     android:packageNames="@null"
-    android:settingsActivity="kr.co.digitalanchor.BlockActivity" />
+    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity"/>
+    <!--SWJ 2016-01-08 android:settingsActivity="kr.co.digitalanchor.BlockActivity" -->

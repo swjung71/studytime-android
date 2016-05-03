@@ -28,7 +28,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
             Account account = helper.getAccountInfo();
 
-            Logger.d("isChild " + account.getIsChild() + "  OnOff " + helper.getOnOff());
+            //Logger.d("isChild " + account.getIsChild() + "  OnOff " + helper.getOnOff());
 
             if (account.getIsChild() == 0) {
 

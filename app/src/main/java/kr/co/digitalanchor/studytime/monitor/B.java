@@ -12,13 +12,19 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v7.app.NotificationCompat;
+
 import com.orhanobut.logger.Logger;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
 import kr.co.digitalanchor.studytime.R;
 import kr.co.digitalanchor.studytime.block.BlockActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
 
+/*
+ * timerTask들을 호출하는 서비스
+ */
 public class B extends Service {
 
     private final int notificationId = Integer.MAX_VALUE;
@@ -61,8 +67,8 @@ public class B extends Service {
         taskUpdatePackageList = new TimerTaskUpdatePackageList(this);
         taskUpdateDB = new TimerTaskUpdateDB(this);
 
-        timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.5f * ONE_SEC));                  // 500 Milli Seconds
-        timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.5f * ONE_SEC));
+        timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.8f * ONE_SEC));                  // 500 Milli Seconds
+        timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.8f * ONE_SEC));
         timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 300L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);

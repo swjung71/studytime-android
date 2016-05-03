@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 30
-        versionName "1.2.6"
+        versionCode 42
+        versionName "1.3.8"
         multiDexEnabled = true
 
     }
@@ -24,7 +24,6 @@ android {
             keyPassword "123456"
         }
     }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -92,6 +91,8 @@ dependencies {
     compile files('libs/IgawAdpopcorn_v4.0.3a.jar')
     compile files('libs/IgawCommon_v4.0.8a.jar')
     compile project(':seekbarhint')
+    //compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'
+
 }
