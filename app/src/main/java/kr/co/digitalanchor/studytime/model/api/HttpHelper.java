@@ -1,14 +1,21 @@
 package kr.co.digitalanchor.studytime.model.api;
 
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.MultipartRequest;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.orhanobut.logger.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+
 import kr.co.digitalanchor.studytime.model.AddPackageModel;
 import kr.co.digitalanchor.studytime.model.AdultFileResult;
 import kr.co.digitalanchor.studytime.model.AllPackage;
@@ -47,8 +54,10 @@ import kr.co.digitalanchor.studytime.model.OutParentRegister;
 import kr.co.digitalanchor.studytime.model.ParentInfoChange;
 import kr.co.digitalanchor.studytime.model.ParentLogin;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentLoginResult2;
 import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
+import kr.co.digitalanchor.studytime.model.ParentOnOff2;
 import kr.co.digitalanchor.studytime.model.ParentPhoneInfo;
 import kr.co.digitalanchor.studytime.model.ParentPrivacyInfo;
 import kr.co.digitalanchor.studytime.model.ParentPrivacyInfoResult;
@@ -57,8 +66,14 @@ import kr.co.digitalanchor.studytime.model.ParentRegister;
 import kr.co.digitalanchor.studytime.model.ParentWithdraw;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.db.VersionResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
+
+import static com.android.volley.Request.Method.GET;
+import static com.android.volley.Request.Method.POST;
 
 /**
  * Created by Thomas on 2015-06-17.
@@ -74,11 +89,11 @@ public class HttpHelper {
      * Dev Server url http://14.63.225.89/studytime-server
      */
 
-    public static final String PROTOCOL = "https://";
+    public static final String PROTOCOL = "http://";
 
     public static final String DOMAIN = "www.dastudytime.kr/";
 
-    public static final String PATH = "studytime-server/";
+    public static final String PATH = "studytime-server-1/";
 
     public static final String PROTOCOL_DEV = "http://";
 
@@ -91,11 +106,8 @@ public class HttpHelper {
     private static String getURL() {
 
         if (isDev) {
-
             return PROTOCOL_DEV + DOMAIN_DEV + PATH_DEV;
-
         } else {
-
             return PROTOCOL + DOMAIN + PATH;
         }
     }
@@ -103,9 +115,7 @@ public class HttpHelper {
     public static String getImageURL(String path) {
 
         if (isDev) {
-
             return PROTOCOL_DEV + DOMAIN_DEV + path;
-
         } else {
 
             return PROTOCOL + DOMAIN + path;
@@ -115,8 +125,8 @@ public class HttpHelper {
     /**
      * Parent Login
      *
-     * @param model params
-     * @param listener response listener
+     * @param model         params
+     * @param listener      response listener
      * @param errorListener error listener
      * @return request
      */
@@ -476,6 +486,62 @@ public class HttpHelper {
                 writer = null;
             }
         }
+    }
+
+    public static SimpleXmlRequest<CoinResult> getParentOnOffWithoutPass(ParentOnOff model,
+                                                              Listener<CoinResult> listener,
+                                                              ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<CoinResult>(getURL() + "parent/onOff3",
+                    CoinResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+    public static StringRequest getParentOnOffForiOS(ParentOnOff2 model,
+                                                         Response.Listener<String> listener,
+                                                         Response.ErrorListener errorListener) {
+
+        /*return new StringRequest(GET, "http://durewinbeacon.iptime.org:34567/api/beacon_lock.php?u_phone_num=" + model.getPhoneno() + "&cmd=" + model.getCmd(), listener,
+                errorListener);*/
+        return new StringRequest(GET, "http://211.117.60.134:9577/api/beacon_lock.php?u_phone_num=" + model.getPhoneno() + "&cmd=" + model.getCmd(), listener,
+                errorListener);
+        //return new JsonObjectRequest(GET, "http://durewinbeacon.iptime.org:34567/api/beacon_lock?u_phone_num=" + model.getPhoneno() + "&cmd=" + model.getCmd(), null, listener, errorListener);
+
     }
 
     public static SimpleXmlRequest<CoinResult> getParentOnOff2(ParentOnOff model,
@@ -982,6 +1048,49 @@ public class HttpHelper {
 
             return new SimpleXmlRequest<ParentLoginResult>(getURL() + "parent/sync2",
                     ParentLoginResult.class, map, listener, errorListener);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            return null;
+
+        } finally {
+
+            if (writer != null) {
+
+                try {
+
+                    writer.close();
+
+                } catch (IOException e) {
+
+                }
+
+                writer = null;
+            }
+        }
+    }
+
+    public static SimpleXmlRequest getSyncParentData2(ParentModel model, Listener listener,
+                                                     ErrorListener errorListener) {
+
+        StringWriter writer = null;
+
+        try {
+
+            Serializer serializer = new Persister();
+
+            writer = new StringWriter();
+
+            serializer.write(model, writer);
+
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("xml", writer.toString());
+
+            return new SimpleXmlRequest<ParentLoginResult2>(getURL() + "parent/sync3",
+                    ParentLoginResult2.class, map, listener, errorListener);
 
         } catch (Exception e) {
 

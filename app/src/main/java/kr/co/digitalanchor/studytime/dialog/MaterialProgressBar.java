@@ -1,5 +1,6 @@
 package kr.co.digitalanchor.studytime.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -261,7 +262,7 @@ public class MaterialProgressBar extends ImageView {
     public void setBackgroundColor(int colorRes) {
         if (getBackground() instanceof ShapeDrawable) {
             final Resources res = getResources();
-            ((ShapeDrawable) getBackground()).getPaint().setColor(res.getColor(colorRes));
+            ((ShapeDrawable) getBackground()).getPaint().setColor(colorRes);
         }
     }
 

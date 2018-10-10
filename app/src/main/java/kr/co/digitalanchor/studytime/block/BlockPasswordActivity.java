@@ -104,7 +104,8 @@ public class BlockPasswordActivity extends BaseActivity implements View.OnClickL
 
         showLoading();
 
-        final DBHelper helper = new DBHelper(this);
+        //final DBHelper helper = new DBHelper(this);
+        final DBHelper helper = DBHelper.getInstance(this);
         Account account = helper.getAccountInfo();
 
         Delete model = new Delete();

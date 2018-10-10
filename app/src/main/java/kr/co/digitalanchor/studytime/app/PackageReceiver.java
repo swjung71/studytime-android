@@ -20,7 +20,8 @@ public class PackageReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        DBHelper helper = new DBHelper(context);
+        //DBHelper helper = new DBHelper(context);
+        DBHelper helper = DBHelper.getInstance(context);
 
         Account account = helper.getAccountInfo();
 

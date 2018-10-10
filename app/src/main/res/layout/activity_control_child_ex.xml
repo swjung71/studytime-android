@@ -222,7 +222,9 @@
                 android:layout_marginLeft="@dimen/child_control_info_guide_01_margin_left"
                 android:layout_marginTop="@dimen/child_control_info_guide_01_margin_top"
                 android:scaleType="fitCenter"
-                android:src="@drawable/guide_text1"/>
+                android:src="@drawable/guide_text1"
+                android:visibility="invisible"
+            />
 
         <ImageView
                 android:layout_width="wrap_content"
@@ -230,6 +232,7 @@
                 android:layout_marginLeft="@dimen/child_control_info_guide_02_margin_left"
                 android:layout_marginTop="@dimen/child_control_info_guide_02_margin_top"
                 android:scaleType="fitCenter"
+                android:visibility="invisible"
                 android:src="@drawable/guide_text2"/>
 
         <ImageView

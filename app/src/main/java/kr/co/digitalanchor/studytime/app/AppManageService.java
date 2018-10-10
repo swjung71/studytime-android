@@ -48,6 +48,8 @@ public class AppManageService extends Service {
 
     private boolean isRun = false;
 
+    static public ArrayList<String> laucherList;
+
     @Override
     public void onDestroy() {
 
@@ -84,6 +86,8 @@ public class AppManageService extends Service {
 
                 requestUpdateApps(list);
 
+                laucherList = getLauncherNames();
+
                 break;
 
             case StaticValues.ACTION_PACKAGE_ADDED:
@@ -105,6 +109,8 @@ public class AppManageService extends Service {
 
                 requestUpdateApps(list);
 
+                laucherList = getLauncherNames();
+
                 break;
 
             case StaticValues.ACTION_PACKAGE_REMOVED:
@@ -112,6 +118,8 @@ public class AppManageService extends Service {
                 Logger.d(StaticValues.ACTION_PACKAGE_REMOVED);
 
                 packageName = intent.getStringExtra(StaticValues.PACKAGE_NAME);
+
+                Logger.d("delete package name : " + packageName);
 
                 model = dbHelper.getPackage(packageName);
 
@@ -124,6 +132,8 @@ public class AppManageService extends Service {
                 list.add(model);
 
                 requestUpdateApps(list);
+
+                laucherList = getLauncherNames();
 
                 break;
 
@@ -166,21 +176,27 @@ public class AppManageService extends Service {
 
         super.onCreate();
 
-        dbHelper = new DBHelper(getApplicationContext());
+        //dbHelper = new DBHelper(getApplicationContext());
+        dbHelper = DBHelper.getInstance(getApplicationContext());
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         packageManager = getPackageManager();
 
+        laucherList = getLauncherNames();
+
     }
 
     /**
-     * 업데이트 내용
+     * 업데이트 내용,
+     *
+     * package 상태를 싱크 맞출 때 이용하는 것, 즉 서버에 던질 목록을 만듦
      *
      * @return
      */
     public List<PackageModel> getMissingPackageModelList() {
 
+        Logger.i("start missing packageModel");
         PackageManager manager = getPackageManager();
 
         // 최종 업데이트될 패키지 목록
@@ -205,6 +221,10 @@ public class AppManageService extends Service {
             try {
 
                 packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
+
+                //SWJ 2016-01-08
+
+                Logger.i("packageName : " + packageInfo.packageName);
 
             } catch (PackageManager.NameNotFoundException e) {
 
@@ -237,9 +257,12 @@ public class AppManageService extends Service {
                 continue;
             }
 
+            Logger.i("install packageName : " + packageInfo.packageName);
+
             if (!listInDB.containsKey(packageInfo.packageName)) {
                 // DB에 없는 패키지는 설치로 간주 한다.
 
+                Logger.i("is not include so install");
                 PackageModel packageModel = new PackageModel();
 
                 packageModel.setPackageName(packageInfo.packageName);
@@ -255,8 +278,8 @@ public class AppManageService extends Service {
                     packageModel.setPackageVersion(packageInfo.versionName);
                 }
 
-                //SWJ 2016-01-08
-                if(packageInfo.packageName.contains("com.android.settings")){
+
+                if(packageInfo.packageName.contains("`")){
                     packageModel.setIsExceptionApp(1);
                 }else {
                     packageModel.setIsExceptionApp(0);
@@ -314,11 +337,18 @@ public class AppManageService extends Service {
             }
         }
 
+        //삭제 되었는지 확인한다.
         for (String key : listInDB.keySet()) {
 
             PackageModel model = listInDB.get(key);
 
+            //model.getstate (state 0 add 1 delete 2 update change가 0은 변화가 없음
+            //즉 지워졌고 그 상태로 유지되면 삭제 목록에 넣지 않음
             if (model.getState() == 1 && model.getChanged() == 0) {
+                continue;
+            }
+
+            if(model.getPackageName().contains("settings")){
                 continue;
             }
 
@@ -452,7 +482,7 @@ public class AppManageService extends Service {
 
     private boolean isLauncher(String packageName) {
 
-        ArrayList<String> names = getLauncherNames();
+        ArrayList<String> names = laucherList;
 
         for (int i = 0; ; i++) {
 
@@ -524,5 +554,9 @@ public class AppManageService extends Service {
         }
 
         return names;
+    }
+
+    static public ArrayList<String> getLaucherList(){
+        return laucherList;
     }
 }

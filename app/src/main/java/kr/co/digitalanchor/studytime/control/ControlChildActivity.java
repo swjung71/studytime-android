@@ -2,7 +2,9 @@ package kr.co.digitalanchor.studytime.control;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -11,9 +13,18 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.igaworks.adbrix.IgawAdbrix;
 import com.orhanobut.logger.Logger;
+
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import kr.co.digitalanchor.studytime.BaseActivity;
 import kr.co.digitalanchor.studytime.R;
@@ -21,17 +32,22 @@ import kr.co.digitalanchor.studytime.STApplication;
 import kr.co.digitalanchor.studytime.StaticValues;
 import kr.co.digitalanchor.studytime.chat.ParentChatActivity;
 import kr.co.digitalanchor.studytime.database.DBHelper;
+import kr.co.digitalanchor.studytime.dialog.SettingOffDialog;
 import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.ParentOnOff;
+import kr.co.digitalanchor.studytime.model.ParentOnOff2;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.model.db.Child2;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.NotificationActivity;
 import kr.co.digitalanchor.studytime.signup.WithdrawActivity;
+import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+import static kr.co.digitalanchor.utils.AndroidUtils.getCurrentTimeIncludeMs;
 
 /**
  * Created by Thomas on 2015-06-12.
@@ -61,7 +77,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     DBHelper mHelper;
 
-    Child mChild;
+    Child2 mChild;
 
     String mChildID;
 
@@ -72,7 +88,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         setContentView(R.layout.activity_control_child);
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         getData();
 
@@ -91,14 +108,14 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         mLabelPoint = (TextView) findViewById(R.id.labelPoint);
 
-        mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
-        mButtonPoint.setOnClickListener(this);
+        /*mButtonPoint = (ImageButton) findViewById(R.id.buttonPoint);
+        mButtonPoint.setOnClickListener(this);*/
 
         mButtonToggle = (ImageButton) findViewById(R.id.buttonShutdown);
         mButtonToggle.setOnClickListener(this);
 
-        mButtonChat = (ImageButton) findViewById(R.id.buttonChat);
-        mButtonChat.setOnClickListener(this);
+      /*  mButtonChat = (ImageButton) findViewById(R.id.buttonChat);
+        mButtonChat.setOnClickListener(this);*/
 
         mButtonUse = (ImageButton) findViewById(R.id.buttonUse);
         mButtonUse.setOnClickListener(this);
@@ -142,7 +159,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void getChildModel(String childId) {
 
-        mChild = mHelper.getChild(childId);
+        mChild = mHelper.getChild2(childId);
     }
 
     @Override
@@ -154,10 +171,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                 Account account = mHelper.getAccountInfo();
 
-
                 if (mChild.getIsOFF() == 0) {
 
-                    if (account.getCoin() > 0) {
+                    writeLog();
+                    requestOnOff(0, null);
+
+                    /*if (account.getCoin() > 0) {
 
                         requestOnOff();
 
@@ -165,17 +184,40 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                         Toast.makeText(getApplicationContext(), "코인이 부족합니다.", Toast.LENGTH_SHORT).show();
 
-                    }
+                    }*/
 
                 } else {
 
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), InputPwdActivity.class);
+                    requestOnOff(1, null);
 
-                    intent.putExtra("ChildID", mChild.getChildID());
-                    intent.putExtra("Name", mChild.getName());
 
-                    startActivity(intent);
+                   /* final SettingOffDialog dialog = new SettingOffDialog(ControlChildActivity.this);
+
+                    dialog.setCallback(new SettingOffDialog.OnSimpleCallback() {
+                        @Override
+                        public void onClickConfirm(int select, String password) {
+
+                            if (StringValidator.isPassword(password)) {
+
+                                requestOnOff(select, password);
+
+                                dialog.dismiss();
+
+                            } else {
+
+                                Toast.makeText(ControlChildActivity.this,
+                                        "비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onClickCancel() {
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();*/
                 }
 
                 break;
@@ -185,16 +227,66 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    private void requestOnOff(int min, String password) {
+
+        showLoading();
+
+        final Account account = mHelper.getAccountInfo();
+
+        ParentOnOff2 model = new ParentOnOff2();
+
+        model.setPhoneno(mChild.getPhoneNum());
+
+        // 현재가 0이면 1로 바꿀 것임 따라서 1이면 off이며 현재 1이면 0으로 바뀜 따라서 on으로 호출해야 함
+        model.setCmd(mChild.getIsOFF() == 0 ? "resume" : "pause");
+
+        StringRequest request = HttpHelper.getParentOnOffForiOS(model, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+                Logger.i(response.toString());
+                if(response.toString().contains("ok")) {
+
+                    //0이면 on 1이면 off
+                    if (mChild.getIsOFF() == 0) {
+                        mHelper.updateChildToggle(mChild.getChildID(), 1);
+                        mChild.setIsOFF(1);
+                    } else {
+                        mHelper.updateChildToggle(mChild.getChildID(), 0);
+                        mChild.setIsOFF(0);
+                    }
+                }
+
+                requestOnOff();
+                drawView();
+
+                toggleOnOff();
+
+                dismissLoading();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Logger.i(error.getMessage());
+                Toast.makeText(getApplicationContext(), "자녀용 iOS를 on/off하던 도중 에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                dismissLoading();
+            }
+        });
+
+        addRequestForIOS(request);
+    }
+
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
 
-            case R.id.buttonPoint:
+            /*case R.id.buttonPoint:
 
                 showOfferWall();
 
-                break;
+                break;*/
 
             case R.id.buttonMenu:
 
@@ -303,7 +395,10 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         if (mLabelPoint != null) {
 
-            mLabelPoint.setText(String.valueOf(account.getCoin()));
+//            mLabelPoint.setText(String.valueOf(account.getCoin()));
+
+            mLabelPoint.setText(getResources().getString(R.string.payment_info, mChild.getName(),
+                    String.valueOf(mChild.getRemainingDays())));
         }
     }
 
@@ -383,7 +478,7 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void requestOnOff() {
 
-        showLoading();
+        //showLoading();
 
         IgawAdbrix.retention("onOff");
 
@@ -393,11 +488,12 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
         model.setParentID(account.getID());
         model.setChildID(mChild.getChildID());
-        model.setIsOff(mChild.getIsOFF() == 0 ? "1" : "0");
+        model.setIsOff(mChild.getIsOFF() == 0 ? "0" : "1");
         model.setName(account.getName());
-        model.setCoin(account.getCoin() - 1);
+        //model.setCoin(account.getCoin() - 1);
 
-        SimpleXmlRequest request = HttpHelper.getParentOnOff(model,
+
+        SimpleXmlRequest request = HttpHelper.getParentOnOffWithoutPass(model,
                 new Response.Listener<CoinResult>() {
                     @Override
                     public void onResponse(CoinResult response) {
@@ -410,32 +506,32 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                                 if (mChild.getIsOFF() == 0) {
 
-                                    mHelper.updateChildToggle(mChild.getChildID(), 1);
+                                    //mHelper.updateChildToggle(mChild.getChildID(), 1);
 
-                                    mHelper.updateCoin(account.getID(), response.getCoin());
+                                    //mHelper.updateCoin(account.getID(), response.getCoin());
 
-                                    mChild.setIsOFF(1);
+                                    //mChild.setIsOFF(1);
 
                                 } else {
 
-                                    mHelper.updateChildToggle(mChild.getChildID(), 0);
+                                    //mHelper.updateChildToggle(mChild.getChildID(), 0);
 
-                                    mChild.setIsOFF(0);
+                                    //mChild.setIsOFF(0);
 
                                 }
 
-                                drawView();
+                                /*drawView();
 
-                                toggleOnOff();
+                                toggleOnOff();*/
 
-                                dismissLoading();
+                                //dismissLoading();
 
                                 break;
 
                             default:
 
                                 handleResultCode(response.getResultCode(), response.getResultMessage());
-
+                                //dismissLoading();
                                 break;
                         }
 
@@ -465,6 +561,8 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
     private void toggleOnOff() {
 
+        Logger.i("ControlChildActivity :O isOff : " + mChild.getIsOFF());
+
         switch (mChild.getIsOFF()) {
 
             case 0:
@@ -483,5 +581,54 @@ public class ControlChildActivity extends BaseActivity implements View.OnClickLi
 
                 break;
         }
+    }
+
+    private void writeLog(){
+        File file = getFileSystem();
+
+        Logger.i("File path : " + file.getAbsolutePath());
+
+        //File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS), "logForOnOff.txt");
+
+        //String filename = "logForOnOffParent";
+        FileOutputStream outputStream;
+        try{
+
+            String value = "[잠금명령전송] " + getCurrentTimeIncludeMs() + "\n";
+
+            outputStream = new FileOutputStream(file, true);
+            outputStream.write(value.getBytes());
+            outputStream.close();
+
+        }catch (Exception e){
+            Logger.e(e.getMessage());
+        }
+
+
+    }
+
+    private File getFileSystem(){
+
+        File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS), "logForOnOff_iOS.txt");
+
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            /*if (!file.mkdirs()) {
+                Logger.e("Directory not created");
+            }else{
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }*/
+        }
+
+        return file;
     }
 }

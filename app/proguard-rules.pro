@@ -20,6 +20,8 @@
 
 -keep class com.igaworks.** { *; }
 -dontwarn com.igaworks.**
+-keep class rx.internal.** { *; }
+-dontwarn rx.internal.**
 
 -dontshrink
 

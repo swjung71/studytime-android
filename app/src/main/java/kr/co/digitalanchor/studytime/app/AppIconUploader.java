@@ -54,7 +54,8 @@ public class AppIconUploader extends Service {
 
         Logger.d("onCreate");
 
-        dbHelper = new DBHelper(getApplicationContext());
+        //dbHelper = new DBHelper(getApplicationContext());
+        dbHelper = DBHelper.getInstance(getApplicationContext());
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 

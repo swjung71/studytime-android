@@ -66,7 +66,8 @@ public class ModPrivacyActivity extends BaseActivity implements View.OnClickList
 
         initView();
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         sendEmptyMessage(REQUEST_GET_INFO);
     }

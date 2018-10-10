@@ -153,7 +153,8 @@ public class AndroidUtils {
 
     public static void initializeApp(Context context) {
 
-        DBHelper helper = new DBHelper(context);
+        //DBHelper helper = new DBHelper(context);
+        DBHelper helper = DBHelper.getInstance(context);
     }
 
     public static void showKeyboard(View view) {

@@ -17,13 +17,13 @@
             android:background="@color/transparent"
             android:src="@drawable/button_on_selector" />
 
-        <ImageButton
+        <!--<ImageButton
             android:id="@+id/buttonChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/child_control_chat_margin_top"
             android:background="@null"
-            android:src="@drawable/button_chat" />
+            android:src="@drawable/button_chat" />-->
 
     </LinearLayout>
 
@@ -44,6 +44,36 @@
         android:background="@color/black_opacity_50">
 
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/children_list_point_box_height"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:background="@drawable/profile_tag_bg"
+            android:orientation="horizontal"
+            android:paddingRight="@dimen/children_list_point_box_padding"
+            android:paddingLeft="@dimen/children_list_point_box_padding">
+
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_user2"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"/>
+
+            <kr.co.digitalanchor.studytime.view.FontTextView
+                android:id="@+id/labelPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="@dimen/children_list_point_label_padding_left"
+                android:paddingRight="@dimen/children_list_point_label_padding_left"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/children_list_empty_text_size"/>
+
+        </LinearLayout>
+        <!--<LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="34.67dp"
             android:layout_alignParentLeft="true"
@@ -75,7 +105,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/button_point" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <ImageButton
             android:id="@+id/buttonMenu"
@@ -118,7 +148,8 @@
             android:layout_marginLeft="@dimen/child_control_info_guide_01_margin_left"
             android:layout_marginTop="@dimen/child_control_info_guide_01_margin_top"
             android:scaleType="fitCenter"
-            android:src="@drawable/guide_text1" />
+            android:src="@drawable/guide_text1"
+            android:visibility="invisible"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -126,7 +157,8 @@
             android:layout_marginLeft="@dimen/child_control_info_guide_02_margin_left"
             android:layout_marginTop="@dimen/child_control_info_guide_02_margin_top"
             android:scaleType="fitCenter"
-            android:src="@drawable/guide_text2" />
+            android:src="@drawable/guide_text2"
+            android:visibility="invisible"/>
 
         <ImageView
             android:layout_width="wrap_content"

@@ -98,7 +98,8 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
         initView();
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
     }
 
     private void initView() {
@@ -426,6 +427,26 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
 
                                 break;
 
+                            case 1009:
+
+                                dismissLoading();
+
+                                Logger.d("gfd " + response.getParentID() + " " + response.getChildID());
+
+                                mParentID = response.getParentID();
+                                mChildID = response.getChildID();
+
+                                if (!isModify) {
+
+                                    showAdmin();
+
+                                } else {
+
+                                    sendEmptyMessage(COMPLETE_ADD_INFO);
+                                }
+
+                                break;
+
                             default:
 
                                 handleResultCode(response.getResultCode(), response.getResultMessage());
@@ -602,11 +623,13 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
             model.setPackageVersion(packageInfo.versionName);
             //SWJ 2016-01-08
+
             if(packageInfo.packageName.contains("com.android.settings")){
                 model.setIsDefaultApp(1);
             }else {
                 model.setIsExceptionApp(0);
             }
+
             model.setHasIcon(1);
 
             model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
@@ -623,6 +646,61 @@ public class AddInfoActivity extends BaseActivity implements View.OnClickListene
             packageModels.add(model);
         }
 
+        AddPackageElement settings = querySettingPkgName();
+
+        if(settings != null){
+            packageModels.add(settings);
+        }
+
         return packageModels;
+    }
+
+    private AddPackageElement querySettingPkgName() {
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+        List<ResolveInfo> resolveInfos = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        if (resolveInfos == null || resolveInfos.size() == 0) {
+            return null;
+        }
+
+        List<AddPackageElement> packageModels = new ArrayList<>();
+
+        for (ResolveInfo r : resolveInfos) {
+
+            PackageInfo packageInfo = null;
+
+            try {
+
+                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
+
+            } catch (PackageManager.NameNotFoundException e) {
+
+                continue;
+            }
+
+            if (packageInfo == null) {
+
+                continue;
+
+            }
+
+            AddPackageElement model = new AddPackageElement();
+
+            model.setPackageName(packageInfo.packageName);
+            model.setHash(MD5.getHash(packageInfo.packageName));
+            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
+            model.setPackageVersion(packageInfo.versionName);
+            model.setIsDefaultApp(1);
+            model.setHasIcon(1);
+            model.setIsExceptionApp(1);
+            model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
+            packageModels.add(model);
+
+            Logger.i("setting package name : " + packageInfo.packageName);
+            return model;
+        }
+        return  null;
     }
 }

@@ -61,16 +61,16 @@ public class B extends Service {
         timerDaemon = new Timer(true);
 
         /// Create Tasks
-        taskBlocking = new TimerTaskWork(this);
+        //taskBlocking = new TimerTaskWork(this);
         taskPreventAdmin = new TimerTaskPreventUncheckDeviceAdmin(this);
         taskSyncData = new TimerTaskSyncData(this);
         taskUpdatePackageList = new TimerTaskUpdatePackageList(this);
         taskUpdateDB = new TimerTaskUpdateDB(this);
 
-        timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.8f * ONE_SEC));                  // 500 Milli Seconds
-        timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (0.8f * ONE_SEC));
+        //timerDaemon.scheduleAtFixedRate(taskBlocking, 0, (long) (double) (0.8f * ONE_SEC));                  // 500 Milli Seconds
+        timerDaemon.scheduleAtFixedRate(taskPreventAdmin, 0, (long) (double) (1.5f * ONE_SEC));
         timerDaemon.scheduleAtFixedRate(taskSyncData, 100L * ONE_SECOND, 300L * ONE_SECOND);
-        timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);
+        timerDaemon.scheduleAtFixedRate(taskUpdatePackageList, 150L * ONE_SECOND, 6L + 60L * 60L * ONE_SECOND);  //6L + 60L *
         timerDaemon.scheduleAtFixedRate(taskUpdateDB, 24L * 60L * 60L * ONE_SECOND, 24L * 60L * 60L * ONE_SECOND);
 
         unregisterRestartAlarm();
@@ -123,7 +123,8 @@ public class B extends Service {
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
 
         if (helper.getOnOff() != 1) {
 

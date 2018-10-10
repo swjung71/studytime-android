@@ -67,7 +67,8 @@ public class TimerTaskWork extends TimerTask {
 
         mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
-        mHelper = new DBHelper(mContext);
+        //mHelper = new DBHelper(mContext);
+        mHelper = DBHelper.getInstance(mContext);
 
     }
 

@@ -114,7 +114,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void selectIntro() {
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         if (TextUtils.isEmpty(account.getID())) {
@@ -163,7 +164,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void showNextScreen(final int delayed) {
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         final Intent intent = new Intent();
@@ -357,7 +359,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void getUpdateGCM() {
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         if (TextUtils.isEmpty(account.getID())) {
@@ -394,7 +397,8 @@ public class IntroActivity extends BaseActivity implements View.OnClickListener 
 
     private void getAvailableUpdate() {
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         if (account == null) {

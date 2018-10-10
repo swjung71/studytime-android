@@ -139,7 +139,8 @@ public class MapActivity extends BaseActivity {
 
         showLoading();
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        //DBHelper dbHelper = new DBHelper(getApplicationContext());
+        DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
 
         final Account account = dbHelper.getAccountInfo();
 
@@ -162,7 +163,8 @@ public class MapActivity extends BaseActivity {
 
                                 dismissLoading();
 
-                                DBHelper dbHelper = new DBHelper(getApplicationContext());
+                                //DBHelper dbHelper = new DBHelper(getApplicationContext());
+                                DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
 
                                 dbHelper.updateCoin(account.getID(), response.getCoin());
 

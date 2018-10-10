@@ -81,7 +81,8 @@ public class NotificationActivity extends BaseActivity {
 
         ParentModel model = new ParentModel();
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        //DBHelper dbHelper = new DBHelper(getApplicationContext());
+        DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
 
         Account account = dbHelper.getAccountInfo();
 

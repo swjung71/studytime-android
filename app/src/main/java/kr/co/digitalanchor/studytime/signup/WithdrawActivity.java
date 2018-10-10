@@ -101,7 +101,8 @@ public class WithdrawActivity extends BaseActivity implements View.OnClickListen
 
     private void requestParentWithdraw() {
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
 
         Account account = helper.getAccountInfo();
 

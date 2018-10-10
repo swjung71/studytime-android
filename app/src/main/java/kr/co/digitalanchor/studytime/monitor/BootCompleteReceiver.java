@@ -24,15 +24,17 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 
-            DBHelper helper = new DBHelper(context);
+            //DBHelper helper = new DBHelper(context);
+            DBHelper helper = DBHelper.getInstance(context);
 
             Account account = helper.getAccountInfo();
 
-            //Logger.d("isChild " + account.getIsChild() + "  OnOff " + helper.getOnOff());
+            Logger.d("isChild " + account.getIsChild() + "  OnOff " + helper.getOnOff());
 
             if (account.getIsChild() == 0) {
 
                 context.startService(new Intent(context, B.class));
+                context.startService(new Intent(context, LockService.class));
 /*
                 Intent MonitorServiceIntent = new Intent(context, MonitorService.class);
 

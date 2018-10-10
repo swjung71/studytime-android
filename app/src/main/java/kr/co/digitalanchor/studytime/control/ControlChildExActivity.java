@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -24,6 +25,10 @@ import com.igaworks.adbrix.IgawAdbrix;
 import com.orhanobut.logger.Logger;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +62,7 @@ import kr.co.digitalanchor.utils.AndroidUtils;
 import kr.co.digitalanchor.utils.StringValidator;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
+import static kr.co.digitalanchor.utils.AndroidUtils.getCurrentTimeIncludeMs;
 
 /**
  * Created by Thomas on 2015-06-12.
@@ -126,7 +132,8 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         setContentView(R.layout.activity_control_child_ex);
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         getData();
 
@@ -278,6 +285,54 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
         mChild = mHelper.getChild(childId);
     }
 
+    private File getFileSystem(){
+
+        File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS), "logForOnOff.txt");
+
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            /*if (!file.mkdirs()) {
+                Logger.e("Directory not created");
+            }else{
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }*/
+        }
+
+        return file;
+    }
+
+    private void writeLog(){
+        File file = getFileSystem();
+
+        Logger.i("File path : " + file.getAbsolutePath());
+
+        //File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS), "logForOnOff.txt");
+
+        //String filename = "logForOnOffParent";
+        FileOutputStream outputStream;
+        try{
+
+            String value = "[잠금명령전송] " + getCurrentTimeIncludeMs() + "\n";
+
+            outputStream = new FileOutputStream(file, true);
+            outputStream.write(value.getBytes());
+            outputStream.close();
+
+        }catch (Exception e){
+            Logger.e(e.getMessage());
+        }
+
+
+    }
     @Override
     protected void onHandleMessage(Message msg) {
 
@@ -289,6 +344,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
                 if (mChild.getIsOFF() == 0) {
 
+                    writeLog();
                     requestOnOff(0, null);
 
                 } else {
@@ -312,6 +368,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
                             if (StringValidator.isPassword(password)) {
 
                                 requestOnOff(select, password);
+
 
                                 dialog.dismiss();
 
@@ -364,7 +421,6 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
         switch (v.getId()) {
 
-
             case R.id.buttonLocation:
 
                 // MAP REQUEST TEST
@@ -416,6 +472,7 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
             case R.id.buttonShutdown:
 
                 sendEmptyMessage(REQUEST_ON_OFF);
+
 
                 break;
 
@@ -835,9 +892,11 @@ public class ControlChildExActivity extends BaseActivity implements View.OnClick
 
     private void toggleOnOff() {
 
+        Logger.i("EX toggleOnOff : " + mChild.getIsOFF() );
         switch (mChild.getIsOFF()) {
 
             case 0:
+
 
                 mButtonToggle.setImageResource(R.drawable.button_on_selector);
 

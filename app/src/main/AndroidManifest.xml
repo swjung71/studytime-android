@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="kr.co.digitalanchor.studytime"
-        android:installLocation="internalOnly">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="kr.co.digitalanchor.studytime"
+    android:installLocation="internalOnly">
 
     <supports-screens
-            android:anyDensity="true"
-            android:largeScreens="true"
-            android:normalScreens="true"
-            android:smallScreens="false"
-            android:xlargeScreens="true"/>
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="false"
+        android:xlargeScreens="true" />
 
     <!-- hardware -->
     <uses-feature
-            android:name="android.hardware.telephony"
-            android:required="false"/>
+        android:name="android.hardware.telephony"
+        android:required="false" />
     <uses-feature
-            android:name="android.hardware.wifi"
-            android:required="false"/>
+        android:name="android.hardware.wifi"
+        android:required="false" />
 
-    <uses-sdk tools:overrideLibrary="com.facebook"/>
+    <uses-sdk tools:overrideLibrary="com.facebook" />
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.SEND_SMS"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-    <uses-permission android:name="android.permission.READ_PROFILE"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -49,55 +49,56 @@
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
     -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- GCM requires a Google account. -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <permission
-            android:name="kr.co.digitalanchor.studytime.permission.C2D_MESSAGE"
-            android:protectionLevel="signature"/>
+        android:name="kr.co.digitalanchor.studytime.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
 
-    <uses-permission android:name="kr.co.digitalanchor.studytime.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="kr.co.digitalanchor.studytime.permission.C2D_MESSAGE" />
 
     <application
-            android:name=".STApplication"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+        android:name=".STApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-                android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <!--364295bf67e37eb535ce145add81bbc1-->
 
         <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version"/>
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="@string/google_maps_key"/>
-
-        <!-- 광고 대행사 용 (발급 전) -->
-        <meta-data
-                android:name="igaworks_app_key"
-                android:value="93071393"/>
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
-                android:name="igaworks_hash_key"
-                android:value="0e161219e6a840a8"/>
+            android:name="igaworks_app_key"
+            android:value="93071393" />
+
+        <!-- 광고 대행사 용 (발급 전) -->
         <meta-data
-                android:name="igaworks_reward_server_type"
-                android:value="client"/>
+            android:name="igaworks_hash_key"
+            android:value="0e161219e6a840a8" />
+        <meta-data
+            android:name="igaworks_reward_server_type"
+            android:value="client" />
 
         <!-- google analytics configuration -->
-        <meta-data
-                android:name="com.google.android.gms.analytics.globalConfigResource"
-                android:resource="@xml/global_tracker"/>
+       <!-- <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker" />-->
 
         <!--
             IntroActivity (공통)
@@ -105,51 +106,55 @@
             스플래쉬과 부모용/자식용 선택
         -->
         <activity
-                android:name=".signup.BoardActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".signup.BoardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-                android:name=".monitor.B"
-                android:enabled="true"
-                android:exported="false"/>
+            android:name=".monitor.B"
+            android:enabled="true"
+            android:exported="false" />
         <service
-                android:name=".monitor.SyncService"
-                android:enabled="true"
-                android:exported="false"/>
+            android:name=".monitor.SyncService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
-                android:name=".intro.IntroActivity"
-                android:excludeFromRecents="true"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan">
+            android:name=".intro.IntroActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-                android:name=".signup.ClauseViewActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".signup.ClauseViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".control.ListChildActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".control.ListChildActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".login.SelectChildActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".login.SelectChildActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".control.ControlChildExActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".control.ControlChildExActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".signup.WithdrawActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".control.ControlChildActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name=".signup.WithdrawActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
 
         <!--
             LoginActivity
@@ -157,30 +162,30 @@
         -->
 
         <activity
-                android:name=".login.LoginActivity"
-                android:excludeFromRecents="true"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan"/>
+            android:name=".login.LoginActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-                android:name=".login.LoginChildActivity"
-                android:excludeFromRecents="true"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan"/>
+            android:name=".login.LoginChildActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-                android:name=".login.AddInfoActivity"
-                android:excludeFromRecents="true"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan"/>
+            android:name=".login.AddInfoActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
         <!-- 회원 가입 Activity -->
 
         <activity
-                android:name=".signup.SignUpActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustResize"/>
+            android:name=".signup.SignUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- 부모용 메인 (자녀 목록) Activity -->
         <!-- 자녀 상세 (자녀 목록 다음) Activity -->
@@ -189,155 +194,169 @@
         <!-- 자녀용 메인 (채팅창?) Activity -->
 
         <activity
-                android:name=".signup.ModPrivacyActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan"/>
+            android:name=".signup.ModPrivacyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-                android:name=".chat.ChildChatActivity"
-                android:excludeFromRecents="true"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+            android:name=".chat.ChildChatActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-                android:name=".chat.ParentChatActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustResize"/>
+            android:name=".chat.ParentChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
-                android:name=".block.BlockActivity"
-                android:excludeFromRecents="true"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:taskAffinity="kr.co.digitalanchor.studytime.block"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".block.BlockActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity="kr.co.digitalanchor.studytime.block"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".block.BlockPasswordActivity"
-                android:excludeFromRecents="true"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:taskAffinity="kr.co.digitalanchor.studytime.block"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan"/>
+            android:name=".block.BlockPasswordActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity="kr.co.digitalanchor.studytime.block"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- 애드 팝콘 (광고) Activities -->
-       <!-- <activity
-                android:name="com.igaworks.adpopcorn.activity.ApOfferWallActivity_NT"
-                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-        <activity
-                android:name="com.igaworks.adpopcorn.activity.ApCSActivity_NT"
-                android:screenOrientation="landscape"
-                android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity
-                android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
-                android:theme="@android:style/Theme.NoTitleBar"/>-->
+        <!-- <activity
+                 android:name="com.igaworks.adpopcorn.activity.ApOfferWallActivity_NT"
+                 android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+         <activity
+                 android:name="com.igaworks.adpopcorn.activity.ApCSActivity_NT"
+                 android:screenOrientation="landscape"
+                 android:theme="@android:style/Theme.NoTitleBar"/>
+         <activity
+                 android:name="com.igaworks.adpopcorn.activity.ApVideoAdActivity"
+                 android:theme="@android:style/Theme.NoTitleBar"/>-->
 
         <receiver
-                android:name="com.igaworks.IgawReceiver"
-                android:exported="true">
+            android:name="com.igaworks.IgawReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
         <activity
-                android:name=".intro.GuideActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".intro.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-                android:name=".control.InputPwdActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="adjustPan|stateAlwaysVisible"/>
+            android:name=".control.InputPwdActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateAlwaysVisible" />
 
         <!-- GCM -->
-        <service android:name=".gcm.GCMIntentService"/>
+        <service android:name=".gcm.GCMIntentService" />
 
         <receiver
-                android:name=".gcm.GCMBroadcastReceiver"
-                android:permission="com.google.android.c2dm.permission.SEND">
+            android:name=".gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="kr.co.digitalanchor.studytime"/>
+                <category android:name="kr.co.digitalanchor.studytime" />
             </intent-filter>
         </receiver>
 
         <receiver
-                android:name=".monitor.BootCompleteReceiver"
-                android:enabled="true"
-                android:exported="false">
+            android:name=".monitor.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver android:name=".monitor.AllIntentReceiver">
             <intent-filter>
-                <action android:name="kr.co.digitalanchor.action.SERVICE_START"/>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.BATTERY_CHANGED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="kr.co.digitalanchor.action.SERVICE_START" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <!--<action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />-->
             </intent-filter>
         </receiver>
         <receiver
-                android:name=".devicepolicy.AdminReceiver"
-                android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:name=".devicepolicy.AdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
-                    android:name="android.app.device_admin"
-                    android:resource="@xml/device_admin"/>
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
 
             <intent-filter>
 
                 <!-- This action is required -->
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED"/>
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
             </intent-filter>
         </receiver>
 
         <!-- google analytics compaignTracking -->
-        <receiver
-                android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-                android:exported="true">
+       <!-- <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
             <intent-filter>
-                <action android:name="om.android.vending.INSTALL_REFERRER"/>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
 
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="om.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />-->
 
         <activity
-                android:name=".devicepolicy.DummyActivity"
-                android:label="@string/title_activity_dummy"/>
+            android:name=".devicepolicy.DummyActivity"
+            android:label="@string/title_activity_dummy" />
 
-        <service android:name=".app.AppManageService"/>
-        <service android:name=".app.AppIconUploader"/>
-        <service android:name=".monitor.DownloadService"/>
+        <service android:name=".app.AppManageService" />
+        <service android:name=".app.AppIconUploader" />
+        <service android:name=".monitor.DownloadService" />
+        <service
+            android:name=".monitor.LockService"
+            android:exported="false" />
 
         <receiver android:name=".app.PackageReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
-                <data android:scheme="package"/>
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
         <receiver
-                android:name="kr.co.cashslide.ReferrerReceiver"
-                android:exported="true">
+            android:name="kr.co.cashslide.ReferrerReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
         <!-- 알림 모아보기 -->
         <activity
-                android:name=".signup.NotificationActivity"
-                android:screenOrientation="portrait"
-                android:theme="@android:style/Theme.NoTitleBar"/>
+            android:name=".signup.NotificationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
         <!--   <activity
                    android:name=".purchase.PurchaseActivity"
                    android:screenOrientation="portrait"/>
@@ -346,43 +365,46 @@
                    android:screenOrientation="portrait"/>-->
 
         <service
-                android:name=".location.LocationService"
-                android:exported="false"/>
+            android:name=".location.LocationService"
+            android:exported="false" />
 
         <activity
-                android:name=".location.MapActivity"
-                android:launchMode="singleInstance"
-                android:screenOrientation="portrait"/>
+            android:name=".location.MapActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
 
 
         <service
-                android:name=".monitor.A"
-                android:exported="false"
-                android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            android:name="kr.co.digitalanchor.studytime.monitor.A"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data
-                    android:name="android.accessibilityservice"
-                    android:resource="@xml/service_config"/>
+                android:name="android.accessibilityservice"
+                android:resource="@xml/service_config" />
         </service>
 
         <!-- 네이버 아이디로 로그인에서 사용하는 액티비티를 등록 -->
-        <activity android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
-                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-        <activity android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
-                android:label="OAuth2.0 In-app"/>
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
+            android:label="OAuth2.0 In-app" />
 
         <!-- 페이스 북 아이디 로그인에서 사용하는 액티비티를 등록 -->
-        <activity android:name="com.facebook.FacebookActivity"
-                android:configChanges=
-                        "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-                android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                android:label="@string/app_name"/>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
-                android:name="com.facebook.FacebookContentProvider"
-                android:exported="false"/>
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider1234"
+            android:exported="false" />
     </application>
 
 </manifest>

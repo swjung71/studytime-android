@@ -35,11 +35,13 @@ import kr.co.digitalanchor.studytime.model.CoinResult;
 import kr.co.digitalanchor.studytime.model.NewNoticeResult;
 import kr.co.digitalanchor.studytime.model.Notice;
 import kr.co.digitalanchor.studytime.model.ParentLoginResult;
+import kr.co.digitalanchor.studytime.model.ParentLoginResult2;
 import kr.co.digitalanchor.studytime.model.ParentModel;
 import kr.co.digitalanchor.studytime.model.SetCoin;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.model.db.Child2;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
 import kr.co.digitalanchor.studytime.signup.ModPrivacyActivity;
 import kr.co.digitalanchor.studytime.signup.NotificationActivity;
@@ -75,7 +77,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     ChildListAdapter mAdapter;
 
-    ArrayList<Child> mChildren;
+    ArrayList<Child2> mChildren;
 
     DBHelper mHelper;
 
@@ -89,7 +91,8 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         initView();
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         IgawCommon.setClientRewardEventListener(this);
 
@@ -169,7 +172,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             return;
         }
 
-        Child child = mChildren.get(position - 1);
+        Child2 child = mChildren.get(position - 1);
 
         if (child.getIsExpired().equals("Y")) {
 
@@ -191,7 +194,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
         } else {
 
-            showChildDetail(child);
+            showChildDetail2(child);
         }
 
     }
@@ -339,6 +342,24 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+    private void showChildDetail2(Child2 child) {
+
+        IgawAdbrix.retention("child");
+
+        Intent intent = new Intent();
+
+        if(child.getIsAndroid() == 1) {
+            intent.setClass(getApplicationContext(), ControlChildExActivity.class);
+        }else {
+            intent.setClass(getApplicationContext(), ControlChildActivity.class);
+        }
+        intent.putExtra("ChildID", child.getChildID());
+        intent.putExtra("Name", child.getName());
+
+        startActivity(intent);
+
+    }
+
     private void showNotificationBoard() {
 
         IgawAdbrix.retention("notificationBoard");
@@ -411,7 +432,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
 
     private void getData() {
 
-        mChildren = mHelper.getChildren();
+        mChildren = mHelper.getChildren2();
 
         mList.setAdapter(makeAdapter());
     }
@@ -502,10 +523,10 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
         ParentModel model = new ParentModel();
         model.setParentId(account.getID());
 
-        SimpleXmlRequest request = HttpHelper.getSyncParentData(model, new Response.Listener<ParentLoginResult>() {
+        SimpleXmlRequest request = HttpHelper.getSyncParentData2(model, new Response.Listener<ParentLoginResult2>() {
 
             @Override
-            public void onResponse(ParentLoginResult response) {
+            public void onResponse(ParentLoginResult2 response) {
 
                 switch (response.getResultCode()) {
 
@@ -514,7 +535,7 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
                         mHelper.updateAccount(response.getParentID(), 1, account.getName(),
                                 Integer.parseInt(response.getCoin()), response.getEmail());
 
-                        mHelper.insertChildren(response.getChildren());
+                        mHelper.insertChildren2(response.getChildren());
 
                     default:
 
@@ -675,6 +696,11 @@ public class ListChildActivity extends BaseActivity implements View.OnClickListe
             switch (intent.getAction()) {
 
                 case StaticValues.REGISTER_CHILD:
+
+                    requestSyncData();
+                    getData();
+                    break;
+
                 case StaticValues.NEW_MESSAGE_ARRIVED:
 
                     getData();

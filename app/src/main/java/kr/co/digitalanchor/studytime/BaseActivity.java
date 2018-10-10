@@ -16,6 +16,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.SimpleXmlRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.igaworks.IgawCommon;
 import com.igaworks.adbrix.IgawAdbrix;
@@ -215,6 +216,20 @@ public class BaseActivity extends FragmentActivity {
         }
     }
 
+    protected void addRequestForIOS(StringRequest request) {
+
+        try {
+
+            mQueue.add(request);
+
+        } catch (Exception e) {
+
+            Logger.e(e.toString());
+
+            dismissLoading();
+        }
+    }
+
     protected void handleResultCode(int code, String msg) {
 
         dismissLoading();
@@ -395,7 +410,8 @@ public class BaseActivity extends FragmentActivity {
 
         Intent intent = new Intent(Intent.ACTION_SEND);
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         String text = "이름:\n전화번호:\n" + account.getEmail() + "이 보낸메일 \n";

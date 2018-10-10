@@ -23,7 +23,8 @@ public class AdminReceiver extends DeviceAdminReceiver {
 
         STApplication.putBoolean(StaticValues.SHOW_ADMIN, false);
 
-        DBHelper helper = new DBHelper(context);
+        //DBHelper helper = new DBHelper(context);
+        DBHelper helper = DBHelper.getInstance(context);
         helper.updateAllow(1);
 
     }

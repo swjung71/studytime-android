@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="65dp"
+    android:layout_height="78dp"
+    android:orientation="vertical"
+    android:background="@color/transparent">
+
+    <ImageView
+        android:id="@+id/appIconBlock"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:scaleType="fitCenter"
+        android:clickable="true"
+        android:src="@drawable/app_icon" />
+
+    <ImageView
+        android:id="@+id/appIcon2Block"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:scaleType="fitCenter"
+        android:clickable="true"
+        android:src="@drawable/app_icon"/>
+
+    <kr.co.digitalanchor.studytime.view.FontTextView
+        android:id="@+id/appLabelBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="App Label"
+        android:textColor="#4a4a4a"
+        android:textSize="10dp"
+        android:singleLine="true"/>
+
+
+</RelativeLayout>

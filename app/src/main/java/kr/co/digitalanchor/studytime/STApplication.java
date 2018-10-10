@@ -83,29 +83,29 @@ public class STApplication extends MultiDexApplication {
 
         super.onCreate();
 
-        // TODO Application initialize
-
         applicationContext = getApplicationContext();
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
         // TODO Google analystics initialize
 
-        analytics = GoogleAnalytics.getInstance(this);
+        /*analytics = GoogleAnalytics.getInstance(this);
         analytics.setDryRun(false);
         analytics.setLocalDispatchPeriod(1800);
 
         tracker = analytics.newTracker("UA-63663050-2");
+        //tracker = analytics.newTracker(R.xml.global_tracker);
         tracker.setAppName("Studytime");
         tracker.setAppVersion(getAppVersionName());
         tracker.enableExceptionReporting(true);
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
+        tracker.setSessionTimeout(1800);*/
 
         /**
          * Log Setting
          * */
-        Logger.init("StudyTime").setLogLevel(LogLevel.FULL).hideThreadInfo();
+        Logger.init("StudyTime").setLogLevel(LogLevel.NONE).hideThreadInfo();
 
         RequestManager.init(this);
         createImageCache();
@@ -631,7 +631,8 @@ public class STApplication extends MultiDexApplication {
 
     public static void resetApplication() {
 
-        DBHelper helper = new DBHelper(applicationContext);
+        //DBHelper helper = new DBHelper(applicationContext);
+        DBHelper helper = DBHelper.getInstance(applicationContext);
 
         helper.clearAll();
 

@@ -77,7 +77,8 @@ public class ChildChatActivity extends BaseActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_child_chat);
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         mAccount = mHelper.getAccountInfo();
 

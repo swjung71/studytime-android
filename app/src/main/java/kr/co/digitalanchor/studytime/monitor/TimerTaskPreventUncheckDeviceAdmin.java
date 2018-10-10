@@ -56,7 +56,8 @@ public class TimerTaskPreventUncheckDeviceAdmin extends TimerTask {
 
         mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
-        helper = new DBHelper(context);
+        //helper = new DBHelper(context);
+        helper = DBHelper.getInstance(context);
 
         // additional
         object = new Object();

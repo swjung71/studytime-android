@@ -48,7 +48,8 @@ public class InputPwdActivity extends BaseActivity implements View.OnClickListen
 
         mEditPassword = (EditText) findViewById(R.id.editPassword);
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         getData();
     }

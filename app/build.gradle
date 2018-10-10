@@ -1,16 +1,28 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
+repositories {
+    mavenCentral()
+}
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "25.0.2"
+
+    dexOptions {
+        jumboMode = true
+        javaMaxHeapSize "4g"
+    }
 
     defaultConfig {
         applicationId "kr.co.digitalanchor.studytime"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 42
-        versionName "1.3.8"
+        versionCode 49
+        versionName "1.7.0"
         multiDexEnabled = true
+        /*jackOptions {
+            enabled true
+        }*/
 
     }
 
@@ -24,6 +36,13 @@ android {
             keyPassword "123456"
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        //incremental false
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -45,14 +64,14 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            applicationVariants.all { variant ->
+           /* applicationVariants.all { variant ->
                 variant.outputs.each {
                     output ->
                         def file = output.outputFile
                         output.outputFile = new File(file.parent,
                                 file.name.replace("app-release", "studytime-release-" + defaultConfig.versionName))
                 }
-            }
+            }*/
         }
 
         debug {
@@ -65,34 +84,39 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/IgawCommon_v4.0.4a.jar')
-    compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
-    compile files('libs/apache-mime4j-core-0.7.2.jar')
-    compile files('libs/simple-xml-2.7.1.jar')
-    compile files('libs/IgawAdbrix_v4.0.3a.jar')
-    compile files('libs/nineoldandroids-2.4.0.jar')
-    compile('org.apache.httpcomponents:httpmime:4.3.6') {
 
+    compile('org.apache.httpcomponents:httpmime:4.3.6') {
         exclude module: 'httpclient'
     }
-    compile files('libs/httpclient-android-4.3.5.jar')
-    compile files('libs/httpclient-android-4.3.5.jar')
-    compile files('libs/20140728_cashslide-sdk.jar')
+
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:7.8.0'
+    /*compile 'com.google.android.gms:play-services-analytics:9.2.0'*/
     compile 'it.neokree:MaterialTabs:0.11'
-    compile 'com.robbypond:material-dialogs:1.0.0'
+    compile 'com.robbypond:material-dialogs:1.0.0@aar'
     compile 'com.orhanobut:logger:1.10'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.google.code.gson:gson:2.3.1'
     compile project(':circleprogressview')
-    compile files('libs/3rdparty_login_library_android_4.1.4.jar')
+
     compile 'com.facebook.android:facebook-android-sdk:4.7.0'
-    compile files('libs/IgawAdbrix_v4.0.6a.jar')
-    compile files('libs/IgawAdpopcorn_v4.0.3a.jar')
-    compile files('libs/IgawCommon_v4.0.8a.jar')
     compile project(':seekbarhint')
-    //compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'
+    compile 'net.jodah:expiringmap:0.5.7'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.2.1'
 
+    /*compile files('libs/IgawCommon_v4.0.4a.jar')
+   compile files('libs/IgawAdpopcorn_v3.5.2a.jar')
+   compile files('libs/apache-mime4j-core-0.7.2.jar')
+   compile files('libs/simple-xml-2.7.1.jar')
+   compile files('libs/IgawAdbrix_v4.0.3a.jar')
+   compile files('libs/nineoldandroids-2.4.0.jar')*/
+    /* compile files('libs/IgawAdbrix_v4.0.6a.jar')
+   compile files('libs/IgawAdpopcorn_v4.0.3a.jar')*/
+     /*  compile files('libs/httpclient-android-4.3.5.jar')
+    compile files('libs/20140728_cashslide-sdk.jar')*/
+    /*  compile files('libs/3rdparty_login_library_android_4.1.4.jar')*/
+    //compile 'eu.chainfire:libsuperuser:1.0.0.+'
 }

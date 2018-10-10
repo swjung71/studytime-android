@@ -150,7 +150,8 @@ private boolean flag = true;
 
             mLabelTitle.setText("공지사항");
 
-            DBHelper helper = new DBHelper(getApplicationContext());
+            //DBHelper helper = new DBHelper(getApplicationContext());
+            DBHelper helper = DBHelper.getInstance(getApplicationContext());
 
             String id = helper.getAccountInfo().getID();
 
@@ -167,7 +168,8 @@ private boolean flag = true;
 
         showLoading();
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         Board model = new Board(account.getID());
@@ -212,7 +214,8 @@ private boolean flag = true;
 
         showLoading();
 
-        DBHelper helper = new DBHelper(getApplicationContext());
+        //DBHelper helper = new DBHelper(getApplicationContext());
+        DBHelper helper = DBHelper.getInstance(getApplicationContext());
         Account account = helper.getAccountInfo();
 
         Board model = new Board(account.getID());

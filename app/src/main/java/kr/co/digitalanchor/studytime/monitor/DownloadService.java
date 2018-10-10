@@ -98,7 +98,8 @@ public class DownloadService extends Service {
 
         super.onCreate();
 
-        dbHelper = new DBHelper(getApplicationContext());
+        //dbHelper = new DBHelper(getApplicationContext());
+        dbHelper = DBHelper.getInstance(getApplicationContext());
     }
 
     @Override

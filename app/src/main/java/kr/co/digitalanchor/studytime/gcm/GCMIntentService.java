@@ -35,6 +35,7 @@ import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.api.HttpHelper;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.signup.BoardActivity;
+import kr.co.digitalanchor.studytime.view.LockView;
 import kr.co.digitalanchor.utils.AndroidUtils;
 
 import static kr.co.digitalanchor.studytime.model.api.HttpHelper.SUCCESS;
@@ -55,7 +56,8 @@ public class GCMIntentService extends IntentService {
 
         super("GCMIntentService");
 
-        mHelper = new DBHelper(STApplication.applicationContext);
+        //mHelper = new DBHelper(STApplication.applicationContext);
+        mHelper = DBHelper.getInstance(STApplication.applicationContext);
 
         mQueue = Volley.newRequestQueue(STApplication.applicationContext);
 
@@ -211,7 +213,7 @@ public class GCMIntentService extends IntentService {
 
                 AndroidUtils.acquireCpuWakeLock(STApplication.applicationContext);
 
-                // TODO : 타이머에 대응하는 코딩해야함
+
 
                 break;
 
@@ -501,6 +503,7 @@ public class GCMIntentService extends IntentService {
 
                                 mHelper.setExceptPackages(packages);
 
+                                LockView.changeExceptionApp();
                                 break;
 
                             default:

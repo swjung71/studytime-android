@@ -22,6 +22,7 @@ import kr.co.digitalanchor.studytime.model.PackageModel;
 import kr.co.digitalanchor.studytime.model.db.Account;
 import kr.co.digitalanchor.studytime.model.db.ChatMessage;
 import kr.co.digitalanchor.studytime.model.db.Child;
+import kr.co.digitalanchor.studytime.model.db.Child2;
 import kr.co.digitalanchor.utils.AndroidUtils;
 import kr.co.digitalanchor.utils.MD5;
 
@@ -30,7 +31,9 @@ import kr.co.digitalanchor.utils.MD5;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
+
+    private static DBHelper sInstance;
 
     private static final String DB_NAME = "local";
 
@@ -83,6 +86,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String IS_OFF = "isOff";// 0이면 on 1이면 off
     private static final String IS_ALLOW = "isAllow";//  0이면 삭제 허락, 1이면 삭제 못함
     private static final String EXPIRATION_DATE = "expirationDate"; // 사용 기간 만료일
+    private static final String IS_ANDROID = "isAndroid"; // 사용 기간 만료일
+    private static final String PHONE_NUM = "phoneNum"; // 사용 기간 만료일
     private static final String IS_EXPIRED = "isExpired"; // 만료 여부
     private static final String DEVICE_MODEL = "deviceModel"; // 자녀 모델명
     private static final String REMAINING_DAYS = "remainingDays"; // 잔여기간
@@ -147,7 +152,9 @@ public class DBHelper extends SQLiteOpenHelper {
             + DEVICE_MODEL + " TEXT, "
             + REMAINING_DAYS + " INTEGER,"
             + IS_EXPIRED + " TEXT DEFAULT Y, "
-            + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0)";
+            + NEW_MESSAGE_COUNT + " INTEGER DEFAULT 0, "
+            + IS_ANDROID + " TEXT, "
+            + PHONE_NUM + " TEXT )";
 
     private static final String CREATE_TABLE_ACCOUNT_INFO = "CREATE TABLE " + TABLE_ACCOUNT_INFO + "("
             + ACCOUNT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -167,7 +174,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
+    }
 
+    public static synchronized DBHelper getInstance(Context context){
+        if(sInstance == null){
+            sInstance = new DBHelper(context.getApplicationContext());
+        }
+        return sInstance;
     }
 
     @Override
@@ -250,6 +263,19 @@ public class DBHelper extends SQLiteOpenHelper {
                             account.getIsExpired());
                 }
 
+                List<Child> children = getChildren(db);
+
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
+                db.execSQL(CREATE_TABLE_CHILD);
+
+                insertChildrenDB(db, children);
+
+                break;
+            }
+
+            case 3: {
+
+                Logger.i("update DB for version 4");
                 List<Child> children = getChildren(db);
 
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILD);
@@ -882,6 +908,43 @@ public class DBHelper extends SQLiteOpenHelper {
         return packages;
     }
 
+    public List<PackageModel> getExceptionApp() {
+
+        List<PackageModel> packages = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columns = new String[]{PACKAGE_NAME, PACKAGE_ID, EXCEPTED, LABEL_NAME};
+
+        String[] strings = new String[]{"0"};
+        Cursor cursor = db.query(true, TABLE_APPLICATION_FOR_CHILD, columns, EXCEPTED+"!=?", strings, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                PackageModel model = new PackageModel();
+
+                model.setPackageName(cursor.getString(0));
+                model.setPackageId(cursor.getString(1));
+                model.setIsExceptionApp(cursor.getInt(2));
+                model.setLabelName(cursor.getString(3));
+
+                packages.add(model);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        return packages;
+    }
+
     public List<PackageModel> getPackageListNoIcon() {
 
         List<PackageModel> packages = new ArrayList<>();
@@ -1241,6 +1304,63 @@ public class DBHelper extends SQLiteOpenHelper {
         db.replace(TABLE_CHILD, null, values);
     }
 
+    public void insertChild(SQLiteDatabase db, String id, int isChild, String name, String isOff,
+                            String expirationDate, String isExpired, String deviceModel,
+                            int remainingDays, String isAndroid, String phoneNum) throws SQLException {
+
+        ContentValues values = new ContentValues();
+
+        values.put(CHILDREN_ID, id);
+        values.put(IS_PARENT, isChild);
+
+        if (name != null) {
+            values.put(NAME, AndroidUtils.convertFromUTF8(name));
+        }
+
+        if (TextUtils.isEmpty(isOff)) {
+
+            values.put(IS_OFF, "0");
+
+        } else {
+
+            values.put(IS_OFF, isOff);
+        }
+
+        if (!TextUtils.isEmpty(expirationDate)) {
+
+            values.put(EXPIRATION_DATE, expirationDate);
+        }
+
+        if (TextUtils.isEmpty(isExpired)) {
+
+            values.put(IS_EXPIRED, "Y");
+
+        } else {
+
+            values.put(IS_EXPIRED, isExpired);
+
+        }
+
+        if (!TextUtils.isEmpty(deviceModel)) {
+
+            values.put(DEVICE_MODEL, deviceModel);
+        }
+
+        if(TextUtils.isEmpty(isAndroid)){
+            values.put(IS_ANDROID, 1);
+        } else {
+            values.put(IS_ANDROID, isAndroid);
+        }
+
+        if(!TextUtils.isEmpty(phoneNum)){
+            values.put(PHONE_NUM, phoneNum);
+        }
+
+        values.put(REMAINING_DAYS, remainingDays);
+
+        db.replace(TABLE_CHILD, null, values);
+    }
+
     public void insertChild(String id, int isChild, String name, String isOff,
                             String expirationDate, String isExpired, String deviceModel) {
 
@@ -1356,6 +1476,40 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertChildren2(List<kr.co.digitalanchor.studytime.model.Child2> children) {
+
+        if (children == null)
+            return;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+
+            for (kr.co.digitalanchor.studytime.model.Child2 child : children) {
+
+                insertChild(db, child.getChildID(), 0, child.getName(), child.getIsOff(),
+                        child.getExpirationDate(), child.getExpirationYN(), child.getDeviceModel(),
+                        child.getRemainingDays(), ""+child.getIsAndroid(), child.getPhoneNum());
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (SQLException e) {
+
+            Logger.e(e.getMessage());
+        } finally {
+
+            db.endTransaction();
+
+            if (db != null) {
+
+                db.close();
+            }
+        }
+    }
+
     public ArrayList<Child> getChildren(SQLiteDatabase db) {
 
         ArrayList<Child> children = new ArrayList<Child>();
@@ -1440,6 +1594,57 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<Child2> getChildren2() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Child2> children = new ArrayList<Child2>();
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF, NEW_MESSAGE_COUNT,
+                EXPIRATION_DATE, IS_EXPIRED, DEVICE_MODEL, REMAINING_DAYS, IS_ANDROID, PHONE_NUM};
+
+        Cursor cursor = db.query(true, TABLE_CHILD, result_columns, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Child2 child = new Child2();
+                child.setChildID(cursor.getString(0));
+                child.setIsChild(cursor.getInt(1));
+
+                if (cursor.getString(2) != null) {
+                    child.setName(cursor.getString(2));
+                }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
+                child.setExpirationDate(cursor.getString(5));
+
+                child.setIsExpired(cursor.getString(6));
+
+                child.setDeviceModel(cursor.getString(7));
+
+                child.setRemainingDays(cursor.getInt(8));
+
+                child.setIsAndroid(cursor.getInt(9));
+
+                child.setPhoneNum(cursor.getString(10));
+
+                children.add(child);
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        return children;
+
+    }
+
     public Child getChild(String childId) {
 
         Child child = null;
@@ -1477,6 +1682,61 @@ public class DBHelper extends SQLiteOpenHelper {
                 child.setDeviceModel(cursor.getString(7));
 
                 child.setRemainingDays(cursor.getInt(8));
+
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+
+            cursor.close();
+        }
+
+        cursor = null;
+
+        return child;
+    }
+
+    public Child2 getChild2(String childId) {
+
+        Child2 child = null;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        child = new Child2();
+
+        String[] result_columns = new String[]{CHILDREN_ID, IS_PARENT, NAME, IS_OFF,
+                NEW_MESSAGE_COUNT, EXPIRATION_DATE, IS_EXPIRED, DEVICE_MODEL, REMAINING_DAYS, IS_ANDROID, PHONE_NUM};
+
+        Cursor cursor = db.query(true, TABLE_CHILD, result_columns, CHILDREN_ID + "=?",
+                new String[]{childId}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                child.setChildID(cursor.getString(0));
+
+                child.setIsChild(cursor.getInt(1));
+
+                if (cursor.getString(2) != null) {
+                    child.setName(cursor.getString(2));
+                }
+
+                child.setIsOFF(cursor.getInt(3));
+
+                child.setNewMessageCount(cursor.getInt(4));
+
+                child.setExpirationDate(cursor.getString(5));
+
+                child.setIsExpired(cursor.getString(6));
+
+                child.setDeviceModel(cursor.getString(7));
+
+                child.setRemainingDays(cursor.getInt(8));
+
+                child.setIsAndroid(cursor.getInt(9));
+
+                child.setPhoneNum(cursor.getString(10));
 
             } while (cursor.moveToNext());
         }
@@ -1917,6 +2177,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * on off state를 return함
      *
+     * 1이 잠겨 있는 앱
      * @return if 0, then on, if 1, then off, if -1, no date
      */
     public int getOnOff() {
@@ -1930,8 +2191,6 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
 
             db = this.getReadableDatabase();
-
-
 
             String[] columns = new String[]{IS_OFF};
 

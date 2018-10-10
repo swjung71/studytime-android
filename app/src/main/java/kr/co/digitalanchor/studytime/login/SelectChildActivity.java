@@ -88,7 +88,8 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
 
         }
 
-        mHelper = new DBHelper(getApplicationContext());
+        //mHelper = new DBHelper(getApplicationContext());
+        mHelper = DBHelper.getInstance(getApplicationContext());
 
         initView();
 
@@ -524,6 +525,61 @@ public class SelectChildActivity extends BaseActivity implements AdapterView.OnI
             packageModels.add(model);
         }
 
+        AddPackageElement settings = querySettingPkgName();
+
+        if(settings != null){
+            packageModels.add(settings);
+        }
         return packageModels;
+    }
+
+    private AddPackageElement querySettingPkgName() {
+        PackageManager manager = getPackageManager();
+
+        Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+        List<ResolveInfo> resolveInfos = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        if (resolveInfos == null || resolveInfos.size() == 0) {
+            return null;
+        }
+
+        List<AddPackageElement> packageModels = new ArrayList<>();
+
+        for (ResolveInfo r : resolveInfos) {
+
+            PackageInfo packageInfo = null;
+
+            try {
+
+                packageInfo = manager.getPackageInfo(r.activityInfo.packageName, 0);
+
+            } catch (PackageManager.NameNotFoundException e) {
+
+                continue;
+            }
+
+            if (packageInfo == null) {
+
+                continue;
+
+            }
+
+            AddPackageElement model = new AddPackageElement();
+
+            model.setPackageName(packageInfo.packageName);
+            model.setHash(MD5.getHash(packageInfo.packageName));
+            model.setLabelName(packageInfo.applicationInfo.loadLabel(manager).toString());
+            model.setPackageVersion(packageInfo.versionName);
+            model.setIsDefaultApp(1);
+            model.setIsExceptionApp(1);
+            model.setHasIcon(1);
+
+            Logger.i("setting package name : " + packageInfo.packageName);
+            //return resolveInfos.get(0).activityInfo.packageName;
+
+            model.setTimestamp(AndroidUtils.convertCurrentTime4Chat(packageInfo.firstInstallTime));
+            return model;
+        }
+        return null;
     }
 }

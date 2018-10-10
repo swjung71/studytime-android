@@ -52,7 +52,8 @@ public class SyncService extends Service {
 
     Logger.d("onCreate");
 
-    dbHelper = new DBHelper(STApplication.applicationContext);
+//    dbHelper = new DBHelper(STApplication.applicationContext);
+    dbHelper = DBHelper.getInstance(STApplication.applicationContext);
 
     handler = new Handler() {
 
@@ -90,6 +91,7 @@ public class SyncService extends Service {
   public void onDestroy() {
 
     startService(new Intent(getApplicationContext(), B.class));
+    startService(new Intent(getApplicationContext(), LockService.class));
 
     super.onDestroy();
 
